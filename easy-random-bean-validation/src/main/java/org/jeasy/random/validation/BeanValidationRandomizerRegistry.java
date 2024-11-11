@@ -45,16 +45,20 @@ public class BeanValidationRandomizerRegistry implements RandomizerRegistry {
 
     protected Map<Class<? extends Annotation>, BeanValidationAnnotationHandler> annotationHandlers = new HashMap<>();
 
+    Map<Class<? extends Annotation>, BeanValidationAnnotationHandler> getAnnotationHandlers() {
+        return this.annotationHandlers;
+    }
+
     @Override
     public void init(EasyRandomParameters parameters) {
         long seed = parameters.getSeed();
         annotationHandlers.put(AssertFalse.class, new AssertFalseAnnotationHandler());
         annotationHandlers.put(AssertTrue.class, new AssertTrueAnnotationHandler());
         annotationHandlers.put(Null.class, new NullAnnotationHandler());
-        annotationHandlers.put(Future.class, new FutureAnnotationHandler(parameters));
-        annotationHandlers.put(FutureOrPresent.class, new FutureOrPresentAnnotationHandler(parameters));
-        annotationHandlers.put(Past.class, new PastAnnotationHandler(parameters));
-        annotationHandlers.put(PastOrPresent.class, new PastOrPresentAnnotationHandler(parameters));
+        annotationHandlers.put(Future.class, new FutureAnnotationHandler());
+        annotationHandlers.put(FutureOrPresent.class, new FutureOrPresentAnnotationHandler());
+        annotationHandlers.put(Past.class, new PastAnnotationHandler());
+        annotationHandlers.put(PastOrPresent.class, new PastOrPresentAnnotationHandler());
         annotationHandlers.put(Min.class, new MinMaxAnnotationHandler(seed));
         annotationHandlers.put(Max.class, new MinMaxAnnotationHandler(seed));
         annotationHandlers.put(DecimalMin.class, new DecimalMinMaxAnnotationHandler(seed));

@@ -30,6 +30,7 @@ import org.jeasy.random.api.RandomizerRegistry;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Central class to get registered randomizers by Field or by Type.
@@ -38,7 +39,7 @@ import java.util.*;
  */
 class RegistriesRandomizerProvider implements RandomizerProvider {
 
-    private final List<RandomizerRegistry> registries = new ArrayList<>();
+    private final List<RandomizerRegistry> registries = new CopyOnWriteArrayList<>();
 
     private final Comparator<Object> priorityComparator = new PriorityComparator();
 
@@ -62,8 +63,8 @@ class RegistriesRandomizerProvider implements RandomizerProvider {
         return registries.stream()
                 .map(provider::getRandomizer)
                 .filter(Objects::nonNull)
-                .sorted(priorityComparator)
-                .findFirst().orElse(null);
+                .min(priorityComparator)
+                .orElse(null);
     }
 
     @FunctionalInterface

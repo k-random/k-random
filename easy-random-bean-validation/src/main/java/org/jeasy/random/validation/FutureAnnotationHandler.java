@@ -24,32 +24,43 @@
 package org.jeasy.random.validation;
 
 import java.lang.reflect.Field;
-import java.time.LocalDate;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.api.Randomizer;
 
-class FutureAnnotationHandler implements BeanValidationAnnotationHandler {
+import static org.jeasy.random.EasyRandomParameters.DEFAULT_DATE_RANGE;
 
-    private EasyRandom easyRandom;
-    private EasyRandomParameters parameters;
-
-    FutureAnnotationHandler(EasyRandomParameters parameters) {
-        this.parameters = parameters.copy();
-    }
-
-    @Override
-    public Randomizer<?> getRandomizer(Field field) {
-        if (easyRandom == null) {
-            LocalDate now = LocalDate.now();
-            parameters.setDateRange(new EasyRandomParameters.Range<>(
-                    now.plus(1, ChronoUnit.DAYS),
-                    now.plusYears(EasyRandomParameters.DEFAULT_DATE_RANGE)
-            ));
-            easyRandom = new EasyRandom(parameters);
-        }
-        return () -> easyRandom.nextObject(field.getType());
-    }
+class FutureAnnotationHandler extends AbstractTemporalBaseAnnotationHandler {
+  FutureAnnotationHandler() {
+    super(
+        Date.from(Instant.now().plusSeconds(86400L)),
+        new Date(
+            Year.now().plusYears(DEFAULT_DATE_RANGE).getValue(),
+            MonthDay.now().getMonthValue(),
+            MonthDay.now().getDayOfMonth()),
+        Instant.now().plusSeconds(86400L),
+        Instant.now().plusSeconds(86400L).plus(DEFAULT_DATE_RANGE * 365, ChronoUnit.DAYS),
+        LocalDate.now().plusDays(1L),
+        LocalDate.now().plusDays(1L).plusYears(DEFAULT_DATE_RANGE),
+        LocalDateTime.now().plusDays(1L),
+        LocalDateTime.now().plusDays(1L).plusYears(DEFAULT_DATE_RANGE),
+        LocalTime.now().plusHours(1L),
+        LocalTime.MAX,
+        MonthDay.from(MonthDay.now().atYear(LocalDate.now().getYear()).plusDays(1)),
+        MonthDay.of(12, 31),
+        OffsetDateTime.now().plusDays(1L),
+        OffsetDateTime.now().plusDays(1L).plusYears(DEFAULT_DATE_RANGE),
+        OffsetTime.now().plusHours(1L),
+        OffsetTime.MAX,
+        Year.now().plusYears(1L),
+        Year.now().plusYears(DEFAULT_DATE_RANGE + 1),
+        YearMonth.now().plusMonths(1L),
+        YearMonth.now().plusMonths(1L).plusYears(DEFAULT_DATE_RANGE),
+        ZonedDateTime.now().plusDays(1L),
+        ZonedDateTime.now().plusDays(1L).plusYears(DEFAULT_DATE_RANGE));
+  }
 }

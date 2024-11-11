@@ -21,55 +21,18 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package org.jeasy.random.randomizers.range;
+package org.jeasy.random.randomizers.text;
 
-/**
- * Generate a random {@link Float} in the given range.
- *
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
- */
-public class FloatRangeRandomizer extends AbstractRangeRandomizer<Float> {
+import org.jeasy.random.randomizers.AbstractRandomizer;
 
-  /**
-   * Create a new {@link FloatRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public FloatRangeRandomizer(final Float min, final Float max) {
-    super(min, max);
-  }
+public abstract class CharSequenceRandomizer<T extends CharSequence> extends AbstractRandomizer<T> {
 
-  /**
-   * Create a new {@link FloatRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public FloatRangeRandomizer(final Float min, final Float max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min > max) {
-      throw new IllegalArgumentException("max must be greater than min");
+    protected CharSequenceRandomizer() {
+        super();
     }
-  }
 
-  @Override
-  protected Float getDefaultMinValue() {
-    return -1 * Float.MAX_VALUE;
-  }
+    protected CharSequenceRandomizer(long seed) {
+        super(seed);
+    }
 
-  @Override
-  protected Float getDefaultMaxValue() {
-    return Float.MAX_VALUE;
-  }
-
-  @Override
-  public Float getRandomValue() {
-    return (float) nextDouble(min, max);
-  }
 }

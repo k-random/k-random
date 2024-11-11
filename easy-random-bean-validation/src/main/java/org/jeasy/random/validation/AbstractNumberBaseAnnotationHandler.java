@@ -71,6 +71,23 @@ public abstract class AbstractNumberBaseAnnotationHandler implements BeanValidat
                     random.nextLong()
             );
         }
+
+        if (fieldType.equals(Float.TYPE) || fieldType.equals(Float.class)) {
+            return new FloatRangeRandomizer(
+                    minValue == null ? null : minValue.floatValue(),
+                    maxValue == null ? null : maxValue.floatValue(),
+                    random.nextLong()
+            );
+        }
+
+        if (fieldType.equals(Double.TYPE) || fieldType.equals(Double.class)) {
+            return new DoubleRangeRandomizer(
+                    minValue == null ? null : minValue.doubleValue(),
+                    maxValue == null ? null : maxValue.doubleValue(),
+                    random.nextLong()
+            );
+        }
+
         if (fieldType.equals(BigInteger.class)) {
             return new BigIntegerRangeRandomizer(
                     minValue == null ? null : minValue.intValue(),

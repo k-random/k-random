@@ -23,30 +23,40 @@
  */
 package org.jeasy.random.validation;
 
-import org.jeasy.random.EasyRandom;
-import org.jeasy.random.EasyRandomParameters;
-import org.jeasy.random.api.Randomizer;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
-import java.lang.reflect.Field;
-import java.time.LocalDate;
+import static org.jeasy.random.EasyRandomParameters.DEFAULT_DATE_RANGE;
 
-class PastOrPresentAnnotationHandler implements BeanValidationAnnotationHandler {
-
-    private EasyRandom easyRandom;
-    private EasyRandomParameters parameters;
-
-    PastOrPresentAnnotationHandler(EasyRandomParameters parameters) {
-        this.parameters = parameters.copy();
-    }
-
-    @Override
-    public Randomizer<?> getRandomizer(Field field) {
-        if (easyRandom == null) {
-            LocalDate now = LocalDate.now();
-            parameters.setDateRange(new EasyRandomParameters.Range<>(
-                    now.minusYears(EasyRandomParameters.DEFAULT_DATE_RANGE), now));
-            easyRandom = new EasyRandom(parameters);
-        }
-        return () -> easyRandom.nextObject(field.getType());
-    }
+class PastOrPresentAnnotationHandler extends AbstractTemporalBaseAnnotationHandler {
+  PastOrPresentAnnotationHandler() {
+    super(
+        Date.from(
+            LocalDate.now()
+                .minusYears(DEFAULT_DATE_RANGE)
+                .atStartOfDay(ZoneId.of("UTC"))
+                .toInstant()),
+        Date.from(Instant.now()),
+        Instant.now().minus(DEFAULT_DATE_RANGE * 365, ChronoUnit.DAYS),
+        Instant.now().minusSeconds(DEFAULT_DATE_RANGE),
+        LocalDate.now().minusYears(DEFAULT_DATE_RANGE),
+        LocalDate.now(),
+        LocalDateTime.now().minusSeconds(DEFAULT_DATE_RANGE).minusYears(DEFAULT_DATE_RANGE),
+        LocalDateTime.now().minusSeconds(DEFAULT_DATE_RANGE),
+        LocalTime.MIN,
+        LocalTime.now().minusSeconds(DEFAULT_DATE_RANGE),
+        MonthDay.of(1, 1),
+        MonthDay.now(),
+        OffsetDateTime.now().minusSeconds(10).minusYears(DEFAULT_DATE_RANGE),
+        OffsetDateTime.now().minusSeconds(10),
+        OffsetTime.MIN,
+        OffsetTime.now().minusSeconds(10),
+        Year.now().minusYears(DEFAULT_DATE_RANGE),
+        Year.now(),
+        YearMonth.now().minusYears(DEFAULT_DATE_RANGE),
+        YearMonth.now(),
+        ZonedDateTime.now().minusSeconds(10).minusYears(DEFAULT_DATE_RANGE),
+        ZonedDateTime.now().minusSeconds(10));
+  }
 }
