@@ -23,18 +23,13 @@ class PatternAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidAccordingToValidationConstraints() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
-    // then
     assertThat(testBean.getTestString()).matches("^A$");
   }
 
   @Test
   void generatedBeanShouldBeValidUsingBeanValidationApi() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
     Validator validator;
@@ -43,7 +38,6 @@ class PatternAnnotationHandlerTest {
     }
     Set<ConstraintViolation<TestBean>> violations = validator.validate(testBean);
 
-    // then
     assertThat(violations).isEmpty();
   }
 

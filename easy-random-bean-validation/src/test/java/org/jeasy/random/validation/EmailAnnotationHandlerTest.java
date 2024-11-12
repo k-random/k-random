@@ -24,8 +24,6 @@ class EmailAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidUsingBeanValidationApi() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
     Validator validator;
@@ -34,7 +32,6 @@ class EmailAnnotationHandlerTest {
     }
     Set<ConstraintViolation<TestBean>> violations = validator.validate(testBean);
 
-    // then
     assertThat(violations).isEmpty();
   }
 

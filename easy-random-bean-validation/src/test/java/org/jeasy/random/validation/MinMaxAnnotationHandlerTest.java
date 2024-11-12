@@ -26,15 +26,12 @@ class MinMaxAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidAccordingToValidationConstraints() {
-    // given
     short shortValue = 10;
     int intValue = 10;
     long longValue = 10L;
 
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
-    // then
     assertThat(testBean.getTestMinBigDecimal()).isGreaterThanOrEqualTo(BigDecimal.TEN);
     assertThat(testBean.getTestMaxBigDecimal()).isLessThanOrEqualTo(BigDecimal.TEN);
     assertThat(testBean.getTestMinBigInteger()).isGreaterThanOrEqualTo(BigInteger.TEN);
@@ -55,8 +52,6 @@ class MinMaxAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidUsingBeanValidationApi() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
     Validator validator;
@@ -65,7 +60,6 @@ class MinMaxAnnotationHandlerTest {
     }
     Set<ConstraintViolation<TestBean>> violations = validator.validate(testBean);
 
-    // then
     assertThat(violations).isEmpty();
   }
 

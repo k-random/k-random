@@ -30,11 +30,8 @@ class PastAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidAccordingToValidationConstraints() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
-    // then
     assertThat(testBean.getTestDate()).isBefore(Date.from(Instant.now()));
     assertThat(testBean.getTestCalendar()).isLessThan(Calendar.getInstance());
     assertThat(testBean.getTestInstant()).isBefore(Instant.now());
@@ -55,8 +52,6 @@ class PastAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidUsingBeanValidationApi() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
     Validator validator;
@@ -65,7 +60,6 @@ class PastAnnotationHandlerTest {
     }
     Set<ConstraintViolation<TestBean>> violations = validator.validate(testBean);
 
-    // then
     assertThat(violations).isEmpty();
   }
 

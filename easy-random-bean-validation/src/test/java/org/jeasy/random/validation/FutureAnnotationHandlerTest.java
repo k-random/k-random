@@ -31,11 +31,8 @@ class FutureAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidAccordingToValidationConstraints() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
-    // then
     assertThat(testBean.getTestDate()).isAfter(Date.from(Instant.now()));
     assertThat(testBean.getTestCalendar()).isGreaterThan(Calendar.getInstance());
     assertThat(testBean.getTestInstant()).isAfter(Instant.now());
@@ -56,8 +53,6 @@ class FutureAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidUsingBeanValidationApi() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
     Validator validator;
@@ -66,7 +61,6 @@ class FutureAnnotationHandlerTest {
     }
     Set<ConstraintViolation<TestBean>> violations = validator.validate(testBean);
 
-    // then
     assertThat(violations).isEmpty();
   }
 

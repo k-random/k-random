@@ -26,13 +26,10 @@ class DecimalMinMaxAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidAccordingToValidationConstraints() {
-    // given
     BigDecimal bigDecimal = new BigDecimal("10.0");
 
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
-    // then
     assertThat(testBean.getTestMinBigDecimal()).isGreaterThanOrEqualTo(bigDecimal);
     assertThat(testBean.getTestMaxBigDecimal()).isLessThanOrEqualTo(bigDecimal);
     assertThat(testBean.getTestMinBigInteger()).isGreaterThanOrEqualTo(BigInteger.TEN);
@@ -59,8 +56,6 @@ class DecimalMinMaxAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidUsingBeanValidationApi() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
     Validator validator;
@@ -69,7 +64,6 @@ class DecimalMinMaxAnnotationHandlerTest {
     }
     Set<ConstraintViolation<TestBean>> violations = validator.validate(testBean);
 
-    // then
     assertThat(violations).isEmpty();
   }
 

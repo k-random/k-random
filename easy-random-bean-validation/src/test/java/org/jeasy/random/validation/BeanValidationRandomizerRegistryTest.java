@@ -31,14 +31,11 @@ class BeanValidationRandomizerRegistryTest {
   @MethodSource("provideArguments")
   void mapContainsExpectedKeyValuePairs(
       Class<? extends Annotation> annotation, Class<?> annotationHandler) {
-    // given
     underTest.init(easyRandomParameters);
 
-    // when
     Map<Class<? extends Annotation>, BeanValidationAnnotationHandler> map =
         underTest.getAnnotationHandlers();
 
-    // then
     assertThat(map).containsKey(annotation);
     assertThat(map.get(annotation)).isInstanceOf(annotationHandler);
   }

@@ -25,17 +25,14 @@ class NegativeAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidAccordingToValidationConstraints() {
-    // given
     byte byteValue = 0;
     short shortValue = 0;
     int intValue = 0;
     long longValue = 0L;
     float floatValue = 0F;
 
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
-    // then
     assertThat(testBean.getTestBigDecimal()).isLessThan(BigDecimal.ZERO);
     assertThat(testBean.getTestBigInteger()).isLessThan(BigInteger.ZERO);
     assertThat(testBean.getTestPrimitiveByte()).isLessThan(byteValue);
@@ -54,8 +51,6 @@ class NegativeAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidUsingBeanValidationApi() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
     Validator validator;
@@ -64,7 +59,6 @@ class NegativeAnnotationHandlerTest {
     }
     Set<ConstraintViolation<TestBean>> violations = validator.validate(testBean);
 
-    // then
     assertThat(violations).isEmpty();
   }
 

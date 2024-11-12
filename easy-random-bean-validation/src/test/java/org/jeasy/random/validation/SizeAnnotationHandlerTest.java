@@ -25,11 +25,8 @@ class SizeAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidAccordingToValidationConstraints() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
-    // then
     assertThat(testBean.getTestString()).hasSizeBetween(1, 10);
     assertThat(testBean.getTestList()).hasSizeBetween(1, 10);
     assertThat(testBean.getTestArray()).hasSizeBetween(1, 10);
@@ -38,8 +35,6 @@ class SizeAnnotationHandlerTest {
 
   @Test
   void generatedBeanShouldBeValidUsingBeanValidationApi() {
-    // given
-    // when
     TestBean testBean = easyRandom.nextObject(TestBean.class);
 
     Validator validator;
@@ -48,7 +43,6 @@ class SizeAnnotationHandlerTest {
     }
     Set<ConstraintViolation<TestBean>> violations = validator.validate(testBean);
 
-    // then
     assertThat(violations).isEmpty();
   }
 
