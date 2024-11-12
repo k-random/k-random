@@ -39,18 +39,10 @@ class EmailAnnotationHandlerTest {
   }
 
   static class TestBean {
-    public TestBean(String testField) {
-      this.testField = testField;
-    }
+    @Email private String testField;
 
     public String getTestField() {
       return testField;
     }
-
-    public void setTestField(final String testField) {
-      this.testField = testField;
-    }
-
-    @Email private String testField;
   }
 }
