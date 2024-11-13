@@ -60,7 +60,7 @@ public class DoubleRangeRandomizer extends AbstractRangeRandomizer<Double> {
 
     @Override
     protected Double getDefaultMinValue() {
-        return Double.MIN_VALUE;
+        return Double.MAX_VALUE * -1;
     }
 
     @Override

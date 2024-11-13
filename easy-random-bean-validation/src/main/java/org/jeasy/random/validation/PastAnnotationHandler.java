@@ -23,33 +23,40 @@
  */
 package org.jeasy.random.validation;
 
-import java.lang.reflect.Field;
-import java.time.LocalDate;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
-import org.jeasy.random.EasyRandom;
-import org.jeasy.random.EasyRandomParameters;
-import org.jeasy.random.api.Randomizer;
+import static org.jeasy.random.EasyRandomParameters.DEFAULT_DATE_RANGE;
 
-class PastAnnotationHandler implements BeanValidationAnnotationHandler {
-
-    private EasyRandom easyRandom;
-    private EasyRandomParameters parameters;
-
-    PastAnnotationHandler(EasyRandomParameters parameters) {
-        this.parameters = parameters.copy();
-    }
-
-    @Override
-    public Randomizer<?> getRandomizer(Field field) {
-        if (easyRandom == null) {
-            LocalDate now = LocalDate.now();
-            parameters.setDateRange(new EasyRandomParameters.Range<>(
-                        now.minusYears(EasyRandomParameters.DEFAULT_DATE_RANGE),
-                        now.minus(1, ChronoUnit.DAYS)
-                    ));
-            easyRandom = new EasyRandom(parameters);
-        }
-        return () -> easyRandom.nextObject(field.getType());
-    }
+class PastAnnotationHandler extends AbstractTemporalBaseAnnotationHandler {
+  PastAnnotationHandler() {
+    super(
+        Date.from(
+            LocalDate.now()
+                .minusYears(DEFAULT_DATE_RANGE)
+                .atStartOfDay(ZoneId.of("UTC"))
+                .toInstant()),
+        Date.from(Instant.now().minusSeconds(86400L)),
+        Instant.now().minusSeconds(86400L).minus(DEFAULT_DATE_RANGE * 365, ChronoUnit.DAYS),
+        Instant.now().minusSeconds(86400L),
+        LocalDate.now().minusDays(1L).minusYears(DEFAULT_DATE_RANGE),
+        LocalDate.now().minusDays(1L),
+        LocalDateTime.now().minusDays(1L).minusYears(DEFAULT_DATE_RANGE),
+        LocalDateTime.now().minusDays(1L),
+        LocalTime.MIN,
+        LocalTime.now().minusHours(1L),
+        MonthDay.of(1, 1),
+        MonthDay.from(MonthDay.now().atYear(LocalDate.now().getYear()).minusDays(1)),
+        OffsetDateTime.now().minusDays(1L).minusYears(DEFAULT_DATE_RANGE),
+        OffsetDateTime.now().minusDays(1L),
+        OffsetTime.MIN,
+        OffsetTime.now().minusHours(1L),
+        Year.now().minusYears(DEFAULT_DATE_RANGE + 1),
+        Year.now().minusYears(1L),
+        YearMonth.now().minusMonths(1L).minusYears(DEFAULT_DATE_RANGE),
+        YearMonth.now().minusMonths(1L),
+        ZonedDateTime.now().minusDays(1L).minusYears(DEFAULT_DATE_RANGE),
+        ZonedDateTime.now().minusDays(1L));
+  }
 }

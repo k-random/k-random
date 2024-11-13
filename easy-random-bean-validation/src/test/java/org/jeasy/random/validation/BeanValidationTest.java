@@ -259,7 +259,7 @@ class BeanValidationTest {
         // assertThat(bean.getEventDate()).isEqualTo("2017-07-22T13:20:35.628"); // same for eventLocalDateTime
         assertThat(bean.getMaxQuantity()).isEqualTo(-2055951745);
         assertThat(bean.getMinQuantity()).isEqualTo(91531906);
-        assertThat(bean.getMaxDiscount()).isEqualTo(new BigDecimal(1.2786858993971550457757757612853311002254486083984375));
+        assertThat(bean.getMaxDiscount()).isEqualTo(new BigDecimal("-172107030609593198957981128531960672880453250866065167379115653134715264186471404756317889349573734185935122377325065840297131101787906167574232689596204343415487947721140413473316093972316043446890413561003263715454944152781837116212717062617660104030633130749901949846721903127026505409604629859094889496576"));
         assertThat(bean.getMinDiscount()).isEqualTo(new BigDecimal(7662282876638370609146101740543801632384371011755725427644785896281033154465107481014236865090602870006608143292003443098160947481248487711461114361337135608579588927391230902925850523644737673724379044725003237691291118781433336121334962263919251188630152674215174880065707256545268445171714648124229156864D));
         assertThat(bean.getDiscount()).isEqualTo(new BigDecimal(0.182723708049134681008496272625052370131015777587890625));
         assertThat(bean.getMinQuantity()).isEqualTo(91531906);
@@ -277,8 +277,10 @@ class BeanValidationTest {
     void generatedBeanShouldBeValidUsingBeanValidationAPI() {
         BeanValidationAnnotatedBean bean = easyRandom.nextObject(BeanValidationAnnotatedBean.class);
 
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        Validator validator = validatorFactory.getValidator();
+        Validator validator;
+        try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+            validator = validatorFactory.getValidator();
+        }
         Set<ConstraintViolation<BeanValidationAnnotatedBean>> violations = validator.validate(bean);
 
         assertThat(violations).isEmpty();

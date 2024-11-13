@@ -33,7 +33,7 @@ import java.nio.charset.Charset;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class StringRandomizer extends AbstractRandomizer<String> {
+public class StringRandomizer extends CharSequenceRandomizer<String> {
 
     private final CharacterRandomizer characterRandomizer;
 

@@ -23,31 +23,39 @@
  */
 package org.jeasy.random.validation;
 
-import org.jeasy.random.EasyRandom;
-import org.jeasy.random.EasyRandomParameters;
-import org.jeasy.random.api.Randomizer;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
-import java.lang.reflect.Field;
-import java.time.LocalDate;
+import static org.jeasy.random.EasyRandomParameters.DEFAULT_DATE_RANGE;
 
-class FutureOrPresentAnnotationHandler implements BeanValidationAnnotationHandler {
-
-    private EasyRandom easyRandom;
-    private EasyRandomParameters parameters;
-
-    FutureOrPresentAnnotationHandler(EasyRandomParameters parameters) {
-        this.parameters = parameters.copy();
-    }
-
-    @Override
-    public Randomizer<?> getRandomizer(Field field) {
-        if (easyRandom == null) {
-            LocalDate now = LocalDate.now();
-            parameters.setDateRange(new EasyRandomParameters.Range<>(
-                    now, now.plusYears(EasyRandomParameters.DEFAULT_DATE_RANGE))
-            );
-            easyRandom = new EasyRandom(parameters);
-        }
-        return () -> easyRandom.nextObject(field.getType());
-    }
+class FutureOrPresentAnnotationHandler extends AbstractTemporalBaseAnnotationHandler {
+  public FutureOrPresentAnnotationHandler() {
+    super(
+        Date.from(Instant.now()),
+        new Date(
+            Year.now().plusYears(DEFAULT_DATE_RANGE).getValue(),
+            MonthDay.now().getMonthValue(),
+            MonthDay.now().getDayOfMonth()),
+        Instant.now().plusSeconds(DEFAULT_DATE_RANGE),
+        Instant.now().plus(DEFAULT_DATE_RANGE * 365, ChronoUnit.DAYS),
+        LocalDate.now(),
+        LocalDate.now().plusYears(DEFAULT_DATE_RANGE),
+        LocalDateTime.now().plusSeconds(DEFAULT_DATE_RANGE),
+        LocalDateTime.now().plusSeconds(DEFAULT_DATE_RANGE).plusYears(DEFAULT_DATE_RANGE),
+        LocalTime.now().plusSeconds(DEFAULT_DATE_RANGE),
+        LocalTime.MAX,
+        MonthDay.now(),
+        MonthDay.of(12, 31),
+        OffsetDateTime.now().plusSeconds(10),
+        OffsetDateTime.now().plusSeconds(10).plusYears(DEFAULT_DATE_RANGE),
+        OffsetTime.now().plusSeconds(10),
+        OffsetTime.MAX,
+        Year.now(),
+        Year.now().plusYears(DEFAULT_DATE_RANGE),
+        YearMonth.now(),
+        YearMonth.now().plusYears(DEFAULT_DATE_RANGE),
+        ZonedDateTime.now().plusSeconds(10),
+        ZonedDateTime.now().plusSeconds(10).plusYears(DEFAULT_DATE_RANGE));
+  }
 }
