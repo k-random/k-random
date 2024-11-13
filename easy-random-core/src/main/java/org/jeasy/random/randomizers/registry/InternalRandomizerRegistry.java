@@ -66,61 +66,76 @@ import static org.jeasy.random.util.ConversionUtils.convertDateToLocalDate;
 @Priority(-4)
 public class InternalRandomizerRegistry implements RandomizerRegistry {
 
-    private final Map<Class<?>, Randomizer<?>> randomizers = new HashMap<>();
+  private final Map<Class<?>, Randomizer<?>> randomizers = new HashMap<>();
 
-    @Override
-    public void init(EasyRandomParameters parameters) {
-        long seed = parameters.getSeed();
-        Charset charset = parameters.getCharset();
-        randomizers.put(String.class, new StringRandomizer(charset, parameters.getStringLengthRange().getMin(), parameters.getStringLengthRange().getMax(), seed));
-        CharacterRandomizer characterRandomizer = new CharacterRandomizer(charset, seed);
-        randomizers.put(Character.class, characterRandomizer);
-        randomizers.put(char.class, characterRandomizer);
-        randomizers.put(Boolean.class, new BooleanRandomizer(seed));
-        randomizers.put(boolean.class, new BooleanRandomizer(seed));
-        randomizers.put(Byte.class, new ByteRandomizer(seed));
-        randomizers.put(byte.class, new ByteRandomizer(seed));
-        randomizers.put(Short.class, new ShortRandomizer(seed));
-        randomizers.put(short.class, new ShortRandomizer(seed));
-        randomizers.put(Integer.class, new IntegerRandomizer(seed));
-        randomizers.put(int.class, new IntegerRandomizer(seed));
-        randomizers.put(Long.class, new LongRandomizer(seed));
-        randomizers.put(long.class, new LongRandomizer(seed));
-        randomizers.put(Double.class, new DoubleRandomizer(seed));
-        randomizers.put(double.class, new DoubleRandomizer(seed));
-        randomizers.put(Float.class, new FloatRandomizer(seed));
-        randomizers.put(float.class, new FloatRandomizer(seed));
-        randomizers.put(BigInteger.class, new BigIntegerRandomizer(seed));
-        randomizers.put(BigDecimal.class, new BigDecimalRandomizer(seed));
-        randomizers.put(AtomicLong.class, new AtomicLongRandomizer(seed));
-        randomizers.put(AtomicInteger.class, new AtomicIntegerRandomizer(seed));
-        Date minDate = new Date(Long.MIN_VALUE);
-        Date maxDate = new Date(Long.MAX_VALUE);
-        minDate = convertDateToLocalDate(minDate).isAfter(parameters.getDateRange().getMin())  ? minDate : valueOf(parameters.getDateRange().getMin());
-        maxDate = convertDateToLocalDate(maxDate).isBefore(parameters.getDateRange().getMax()) ? maxDate : valueOf(parameters.getDateRange().getMax());
-        randomizers.put(Date.class, new DateRangeRandomizer(minDate, maxDate, seed));
-        randomizers.put(java.sql.Date.class, new SqlDateRangeRandomizer(new java.sql.Date(minDate.getTime()), new java.sql.Date(maxDate.getTime()), seed));
-        randomizers.put(java.sql.Time.class, new SqlTimeRandomizer(seed));
-        randomizers.put(java.sql.Timestamp.class, new SqlTimestampRandomizer(seed));
-        randomizers.put(Calendar.class, new CalendarRandomizer(seed));
-        randomizers.put(URL.class, new UrlRandomizer(seed));
-        randomizers.put(URI.class, new UriRandomizer(seed));
-        randomizers.put(Locale.class, new LocaleRandomizer(seed));
-        randomizers.put(UUID.class, new UUIDRandomizer(seed));
-        // issue #280: skip fields of type Class
-        randomizers.put(Class.class, new SkipRandomizer());
-    }
+  @Override
+  public void init(EasyRandomParameters parameters) {
+    long seed = parameters.getSeed();
+    Charset charset = parameters.getCharset();
+    randomizers.put(
+        String.class,
+        new StringRandomizer(
+            charset,
+            parameters.getStringLengthRange().getMin(),
+            parameters.getStringLengthRange().getMax(),
+            seed));
+    CharacterRandomizer characterRandomizer = new CharacterRandomizer(charset, seed);
+    randomizers.put(Character.class, characterRandomizer);
+    randomizers.put(char.class, characterRandomizer);
+    randomizers.put(Boolean.class, new BooleanRandomizer(seed));
+    randomizers.put(boolean.class, new BooleanRandomizer(seed));
+    randomizers.put(Byte.class, new ByteRandomizer(seed));
+    randomizers.put(byte.class, new ByteRandomizer(seed));
+    randomizers.put(Short.class, new ShortRandomizer(seed));
+    randomizers.put(short.class, new ShortRandomizer(seed));
+    randomizers.put(Integer.class, new IntegerRandomizer(seed));
+    randomizers.put(int.class, new IntegerRandomizer(seed));
+    randomizers.put(Long.class, new LongRandomizer(seed));
+    randomizers.put(long.class, new LongRandomizer(seed));
+    randomizers.put(Double.class, new DoubleRandomizer(seed));
+    randomizers.put(double.class, new DoubleRandomizer(seed));
+    randomizers.put(Float.class, new FloatRandomizer(seed));
+    randomizers.put(float.class, new FloatRandomizer(seed));
+    randomizers.put(BigInteger.class, new BigIntegerRandomizer(seed));
+    randomizers.put(BigDecimal.class, new BigDecimalRandomizer(seed));
+    randomizers.put(AtomicLong.class, new AtomicLongRandomizer(seed));
+    randomizers.put(AtomicInteger.class, new AtomicIntegerRandomizer(seed));
+    Date minDate = new Date(Long.MIN_VALUE);
+    Date maxDate = new Date(Long.MAX_VALUE);
+    minDate =
+        convertDateToLocalDate(minDate).isAfter(parameters.getDateRange().getMin())
+            ? minDate
+            : valueOf(parameters.getDateRange().getMin());
+    maxDate =
+        convertDateToLocalDate(maxDate).isBefore(parameters.getDateRange().getMax())
+            ? maxDate
+            : valueOf(parameters.getDateRange().getMax());
+    randomizers.put(Date.class, new DateRangeRandomizer(minDate, maxDate, seed));
+    randomizers.put(
+        java.sql.Date.class,
+        new SqlDateRangeRandomizer(
+            new java.sql.Date(minDate.getTime()), new java.sql.Date(maxDate.getTime()), seed));
+    randomizers.put(java.sql.Time.class, new SqlTimeRandomizer(seed));
+    randomizers.put(java.sql.Timestamp.class, new SqlTimestampRandomizer(seed));
+    randomizers.put(Calendar.class, new CalendarRandomizer(seed));
+    randomizers.put(URL.class, new UrlRandomizer(seed));
+    randomizers.put(URI.class, new UriRandomizer(seed));
+    randomizers.put(Locale.class, new LocaleRandomizer(seed));
+    randomizers.put(UUID.class, new UUIDRandomizer(seed));
+    // issue #280: skip fields of type Class
+    randomizers.put(Class.class, new SkipRandomizer());
+    // issue #7: skip fields of type Exception
+    randomizers.put(Exception.class, new SkipRandomizer());
+  }
 
-    @Override
-    public Randomizer<?> getRandomizer(final Field field) {
-        return getRandomizer(field.getType());
-    }
+  @Override
+  public Randomizer<?> getRandomizer(final Field field) {
+    return getRandomizer(field.getType());
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Randomizer<?> getRandomizer(Class<?> type) {
-        return randomizers.get(type);
-    }
+  /** {@inheritDoc} */
+  @Override
+  public Randomizer<?> getRandomizer(Class<?> type) {
+    return randomizers.get(type);
+  }
 }
