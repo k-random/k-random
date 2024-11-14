@@ -27,71 +27,70 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalTime;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class LocalTimeRangeRandomizerTest extends AbstractRangeRandomizerTest<LocalTime> {
 
-    private LocalTime minTime, maxTime;
+  private LocalTime minTime, maxTime;
 
-    @BeforeEach
-    void setUp() {
-        minTime = LocalTime.MIN;
-        maxTime = LocalTime.MAX;
-        randomizer = new LocalTimeRangeRandomizer(minTime, maxTime);
-    }
+  @BeforeEach
+  void setUp() {
+    minTime = LocalTime.MIN;
+    maxTime = LocalTime.MAX;
+    randomizer = new LocalTimeRangeRandomizer(minTime, maxTime);
+  }
 
-    @Test
-    void generatedLocalTimeShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedLocalTimeShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedLocalTimeShouldBeWithinSpecifiedRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(minTime, maxTime);
-    }
+  @Test
+  void generatedLocalTimeShouldBeWithinSpecifiedRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(minTime, maxTime);
+  }
 
-    @Test
-    void generatedLocalTimeShouldBeAlwaysTheSameForTheSameSeed() {
-        // Given
-        randomizer = new LocalTimeRangeRandomizer(minTime, maxTime, SEED);
-        LocalTime expected = LocalTime.of(14, 14, 58, 723174202);
+  @Test
+  void generatedLocalTimeShouldBeAlwaysTheSameForTheSameSeed() {
+    // Given
+    randomizer = new LocalTimeRangeRandomizer(minTime, maxTime, SEED);
+    LocalTime expected = LocalTime.of(14, 14, 58, 723174202);
 
-        // When
-        LocalTime randomValue = randomizer.getRandomValue();
+    // When
+    LocalTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isEqualTo(expected);
-    }
+    // Then
+    assertThat(randomValue).isEqualTo(expected);
+  }
 
-    @Test
-    void whenSpecifiedMinTimeIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new LocalTimeRangeRandomizer(maxTime, minTime)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinTimeIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new LocalTimeRangeRandomizer(maxTime, minTime))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinTimeIsNull_thenShouldUseDefaultMinValue() {
-        // Given
-        randomizer = new LocalTimeRangeRandomizer(null, maxTime);
+  @Test
+  void whenSpecifiedMinTimeIsNull_thenShouldUseDefaultMinValue() {
+    // Given
+    randomizer = new LocalTimeRangeRandomizer(null, maxTime);
 
-        // When
-        LocalTime randomValue = randomizer.getRandomValue();
+    // When
+    LocalTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isBeforeOrEqualTo(maxTime);
-    }
+    // Then
+    assertThat(randomValue).isBeforeOrEqualTo(maxTime);
+  }
 
-    @Test
-    void whenSpecifiedMaxTimeIsNull_thenShouldUseDefaultMaxValue() {
-        // Given
-        randomizer = new LocalTimeRangeRandomizer(minTime, null);
+  @Test
+  void whenSpecifiedMaxTimeIsNull_thenShouldUseDefaultMaxValue() {
+    // Given
+    randomizer = new LocalTimeRangeRandomizer(minTime, null);
 
-        // when
-        LocalTime randomValue = randomizer.getRandomValue();
+    // when
+    LocalTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isAfterOrEqualTo(minTime);
-    }
-
+    // Then
+    assertThat(randomValue).isAfterOrEqualTo(minTime);
+  }
 }

@@ -27,71 +27,75 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.OffsetDateTime;
-
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class OffsetDateTimeRangeRandomizerTest extends AbstractRangeRandomizerTest<OffsetDateTime> {
 
-    private OffsetDateTime minOffsetDateTime, maxOffsetDateTime;
+  private OffsetDateTime minOffsetDateTime, maxOffsetDateTime;
 
-    @BeforeEach
-    void setUp() {
-        minOffsetDateTime = EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime().minusYears(50);
-        maxOffsetDateTime = EasyRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime().plusYears(50);
-        randomizer = new OffsetDateTimeRangeRandomizer(minOffsetDateTime, maxOffsetDateTime);
-    }
+  @BeforeEach
+  void setUp() {
+    minOffsetDateTime =
+        EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime().minusYears(50);
+    maxOffsetDateTime =
+        EasyRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime().plusYears(50);
+    randomizer = new OffsetDateTimeRangeRandomizer(minOffsetDateTime, maxOffsetDateTime);
+  }
 
-    @Test
-    void generatedOffsetDateTimeShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedOffsetDateTimeShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedOffsetDateTimeShouldBeWithinSpecifiedRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(minOffsetDateTime, maxOffsetDateTime);
-    }
+  @Test
+  void generatedOffsetDateTimeShouldBeWithinSpecifiedRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(minOffsetDateTime, maxOffsetDateTime);
+  }
 
-    @Test
-    void generatedOffsetDateTimeShouldBeAlwaysTheSameForTheSameSeed() {
-        // Given
-        randomizer = new OffsetDateTimeRangeRandomizer(minOffsetDateTime, maxOffsetDateTime, SEED);
-        OffsetDateTime expected = OffsetDateTime.parse("2046-10-12T17:24:27Z");
+  @Test
+  void generatedOffsetDateTimeShouldBeAlwaysTheSameForTheSameSeed() {
+    // Given
+    randomizer = new OffsetDateTimeRangeRandomizer(minOffsetDateTime, maxOffsetDateTime, SEED);
+    OffsetDateTime expected = OffsetDateTime.parse("2046-10-12T17:24:27Z");
 
-        // When
-        OffsetDateTime randomValue = randomizer.getRandomValue();
+    // When
+    OffsetDateTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isEqualTo(expected);
-    }
+    // Then
+    assertThat(randomValue).isEqualTo(expected);
+  }
 
-    @Test
-    void whenSpecifiedMinOffsetDateTimeIsAfterMaxOffsetDateTime_thenShouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new OffsetDateTimeRangeRandomizer(maxOffsetDateTime, minOffsetDateTime)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void
+      whenSpecifiedMinOffsetDateTimeIsAfterMaxOffsetDateTime_thenShouldThrowIllegalArgumentException() {
+    assertThatThrownBy(
+            () -> new OffsetDateTimeRangeRandomizer(maxOffsetDateTime, minOffsetDateTime))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinOffsetDateTimeIsNull_thenShouldUseDefaultMinValue() {
-        // Given
-        randomizer = new OffsetDateTimeRangeRandomizer(null, maxOffsetDateTime);
+  @Test
+  void whenSpecifiedMinOffsetDateTimeIsNull_thenShouldUseDefaultMinValue() {
+    // Given
+    randomizer = new OffsetDateTimeRangeRandomizer(null, maxOffsetDateTime);
 
-        // When
-        OffsetDateTime randomValue = randomizer.getRandomValue();
+    // When
+    OffsetDateTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isBeforeOrEqualTo(maxOffsetDateTime);
-    }
+    // Then
+    assertThat(randomValue).isBeforeOrEqualTo(maxOffsetDateTime);
+  }
 
-    @Test
-    void whenSpecifiedMaxOffsetDateTimeIsNull_thenShouldUseDefaultMaxValue() {
-        // Given
-        randomizer = new OffsetDateTimeRangeRandomizer(minOffsetDateTime, null);
+  @Test
+  void whenSpecifiedMaxOffsetDateTimeIsNull_thenShouldUseDefaultMaxValue() {
+    // Given
+    randomizer = new OffsetDateTimeRangeRandomizer(minOffsetDateTime, null);
 
-        // when
-        OffsetDateTime randomValue = randomizer.getRandomValue();
+    // when
+    OffsetDateTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isAfterOrEqualTo(minOffsetDateTime);
-    }
+    // Then
+    assertThat(randomValue).isAfterOrEqualTo(minOffsetDateTime);
+  }
 }

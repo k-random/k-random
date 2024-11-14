@@ -30,243 +30,270 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 public class WildCardMapBean {
 
-    /*
-     * Interfaces
-     */
-    
-    private Map<?, ?> unboundedWildCardTypedMap;
-    private Map<? extends Number, ? extends Runnable> boundedWildCardTypedMap;
+  /*
+   * Interfaces
+   */
 
-    private SortedMap<?, ?> unboundedWildCardTypedSortedMap;
-    private SortedMap<? extends Number, ? extends Runnable> boundedWildCardTypedSortedMap;
+  private Map<?, ?> unboundedWildCardTypedMap;
+  private Map<? extends Number, ? extends Runnable> boundedWildCardTypedMap;
 
-    private NavigableMap<?, ?> unboundedWildCardTypedNavigableMap;
-    private NavigableMap<? extends Number, ? extends Runnable> boundedWildCardTypedNavigableMap;
+  private SortedMap<?, ?> unboundedWildCardTypedSortedMap;
+  private SortedMap<? extends Number, ? extends Runnable> boundedWildCardTypedSortedMap;
 
-    private ConcurrentMap<?, ?> unboundedWildCardTypedConcurrentMap;
-    private ConcurrentMap<? extends Number, ? extends Runnable> boundedWildCardTypedConcurrentMap;
+  private NavigableMap<?, ?> unboundedWildCardTypedNavigableMap;
+  private NavigableMap<? extends Number, ? extends Runnable> boundedWildCardTypedNavigableMap;
 
-    private ConcurrentNavigableMap<?, ?> unboundedWildCardTypedConcurrentNavigableMap;
-    private ConcurrentNavigableMap<? extends Number, ? extends Runnable> boundedWildCardTypedConcurrentNavigableMap;
+  private ConcurrentMap<?, ?> unboundedWildCardTypedConcurrentMap;
+  private ConcurrentMap<? extends Number, ? extends Runnable> boundedWildCardTypedConcurrentMap;
 
-    /*
-     * Classes
-     */
-    
-    private HashMap<?, ?> unboundedWildCardTypedHashMap;
-    private HashMap<? extends Number, ? extends Runnable> boundedWildCardTypedHashMap;
-    
-    private Hashtable<?, ?> unboundedWildCardTypedHashtable;
-    private Hashtable<? extends Number, ? extends Runnable> boundedWildCardTypedHashtable;
-    
-    private LinkedHashMap<?, ?> unboundedWildCardTypedHinkedHashMap;
-    private LinkedHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedLinkedHashMap;
-    
-    private WeakHashMap<?, ?> unboundedWildCardTypedWeakHashMap;
-    private WeakHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedWeakHashMap;
-    
-    private IdentityHashMap<?, ?> unboundedWildCardTypedIdentityHashMap;
-    private IdentityHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedIdentityHashMap;
-    
-    private TreeMap<?, ?> unboundedWildCardTypedTreeMap;
-    private TreeMap<? extends Number, ? extends Runnable> boundedWildCardTypedTreeMap;
-    
-    private ConcurrentSkipListMap<?, ?> unboundedWildCardTypedConcurrentSkipListMap;
-    private ConcurrentSkipListMap<? extends Number, ? extends Runnable> boundedWildCardTypedConcurrentSkipListMap;
+  private ConcurrentNavigableMap<?, ?> unboundedWildCardTypedConcurrentNavigableMap;
+  private ConcurrentNavigableMap<? extends Number, ? extends Runnable>
+      boundedWildCardTypedConcurrentNavigableMap;
 
-	public WildCardMapBean() {
-	}
+  /*
+   * Classes
+   */
 
+  private HashMap<?, ?> unboundedWildCardTypedHashMap;
+  private HashMap<? extends Number, ? extends Runnable> boundedWildCardTypedHashMap;
 
-	public Map<?, ?> getUnboundedWildCardTypedMap() {
-		return this.unboundedWildCardTypedMap;
-	}
+  private Hashtable<?, ?> unboundedWildCardTypedHashtable;
+  private Hashtable<? extends Number, ? extends Runnable> boundedWildCardTypedHashtable;
 
-	public Map<? extends Number, ? extends Runnable> getBoundedWildCardTypedMap() {
-		return this.boundedWildCardTypedMap;
-	}
+  private LinkedHashMap<?, ?> unboundedWildCardTypedHinkedHashMap;
+  private LinkedHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedLinkedHashMap;
 
-	public SortedMap<?, ?> getUnboundedWildCardTypedSortedMap() {
-		return this.unboundedWildCardTypedSortedMap;
-	}
+  private WeakHashMap<?, ?> unboundedWildCardTypedWeakHashMap;
+  private WeakHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedWeakHashMap;
 
-	public SortedMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedSortedMap() {
-		return this.boundedWildCardTypedSortedMap;
-	}
+  private IdentityHashMap<?, ?> unboundedWildCardTypedIdentityHashMap;
+  private IdentityHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedIdentityHashMap;
 
-	public NavigableMap<?, ?> getUnboundedWildCardTypedNavigableMap() {
-		return this.unboundedWildCardTypedNavigableMap;
-	}
+  private TreeMap<?, ?> unboundedWildCardTypedTreeMap;
+  private TreeMap<? extends Number, ? extends Runnable> boundedWildCardTypedTreeMap;
 
-	public NavigableMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedNavigableMap() {
-		return this.boundedWildCardTypedNavigableMap;
-	}
+  private ConcurrentSkipListMap<?, ?> unboundedWildCardTypedConcurrentSkipListMap;
+  private ConcurrentSkipListMap<? extends Number, ? extends Runnable>
+      boundedWildCardTypedConcurrentSkipListMap;
 
-	public ConcurrentMap<?, ?> getUnboundedWildCardTypedConcurrentMap() {
-		return this.unboundedWildCardTypedConcurrentMap;
-	}
+  public WildCardMapBean() {}
 
-	public ConcurrentMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedConcurrentMap() {
-		return this.boundedWildCardTypedConcurrentMap;
-	}
+  public Map<?, ?> getUnboundedWildCardTypedMap() {
+    return this.unboundedWildCardTypedMap;
+  }
 
-	public ConcurrentNavigableMap<?, ?> getUnboundedWildCardTypedConcurrentNavigableMap() {
-		return this.unboundedWildCardTypedConcurrentNavigableMap;
-	}
+  public Map<? extends Number, ? extends Runnable> getBoundedWildCardTypedMap() {
+    return this.boundedWildCardTypedMap;
+  }
 
-	public ConcurrentNavigableMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedConcurrentNavigableMap() {
-		return this.boundedWildCardTypedConcurrentNavigableMap;
-	}
+  public SortedMap<?, ?> getUnboundedWildCardTypedSortedMap() {
+    return this.unboundedWildCardTypedSortedMap;
+  }
 
-	public HashMap<?, ?> getUnboundedWildCardTypedHashMap() {
-		return this.unboundedWildCardTypedHashMap;
-	}
+  public SortedMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedSortedMap() {
+    return this.boundedWildCardTypedSortedMap;
+  }
 
-	public HashMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedHashMap() {
-		return this.boundedWildCardTypedHashMap;
-	}
+  public NavigableMap<?, ?> getUnboundedWildCardTypedNavigableMap() {
+    return this.unboundedWildCardTypedNavigableMap;
+  }
 
-	public Hashtable<?, ?> getUnboundedWildCardTypedHashtable() {
-		return this.unboundedWildCardTypedHashtable;
-	}
+  public NavigableMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedNavigableMap() {
+    return this.boundedWildCardTypedNavigableMap;
+  }
 
-	public Hashtable<? extends Number, ? extends Runnable> getBoundedWildCardTypedHashtable() {
-		return this.boundedWildCardTypedHashtable;
-	}
+  public ConcurrentMap<?, ?> getUnboundedWildCardTypedConcurrentMap() {
+    return this.unboundedWildCardTypedConcurrentMap;
+  }
 
-	public LinkedHashMap<?, ?> getUnboundedWildCardTypedHinkedHashMap() {
-		return this.unboundedWildCardTypedHinkedHashMap;
-	}
+  public ConcurrentMap<? extends Number, ? extends Runnable>
+      getBoundedWildCardTypedConcurrentMap() {
+    return this.boundedWildCardTypedConcurrentMap;
+  }
 
-	public LinkedHashMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedLinkedHashMap() {
-		return this.boundedWildCardTypedLinkedHashMap;
-	}
+  public ConcurrentNavigableMap<?, ?> getUnboundedWildCardTypedConcurrentNavigableMap() {
+    return this.unboundedWildCardTypedConcurrentNavigableMap;
+  }
 
-	public WeakHashMap<?, ?> getUnboundedWildCardTypedWeakHashMap() {
-		return this.unboundedWildCardTypedWeakHashMap;
-	}
+  public ConcurrentNavigableMap<? extends Number, ? extends Runnable>
+      getBoundedWildCardTypedConcurrentNavigableMap() {
+    return this.boundedWildCardTypedConcurrentNavigableMap;
+  }
 
-	public WeakHashMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedWeakHashMap() {
-		return this.boundedWildCardTypedWeakHashMap;
-	}
+  public HashMap<?, ?> getUnboundedWildCardTypedHashMap() {
+    return this.unboundedWildCardTypedHashMap;
+  }
 
-	public IdentityHashMap<?, ?> getUnboundedWildCardTypedIdentityHashMap() {
-		return this.unboundedWildCardTypedIdentityHashMap;
-	}
+  public HashMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedHashMap() {
+    return this.boundedWildCardTypedHashMap;
+  }
 
-	public IdentityHashMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedIdentityHashMap() {
-		return this.boundedWildCardTypedIdentityHashMap;
-	}
+  public Hashtable<?, ?> getUnboundedWildCardTypedHashtable() {
+    return this.unboundedWildCardTypedHashtable;
+  }
 
-	public TreeMap<?, ?> getUnboundedWildCardTypedTreeMap() {
-		return this.unboundedWildCardTypedTreeMap;
-	}
+  public Hashtable<? extends Number, ? extends Runnable> getBoundedWildCardTypedHashtable() {
+    return this.boundedWildCardTypedHashtable;
+  }
 
-	public TreeMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedTreeMap() {
-		return this.boundedWildCardTypedTreeMap;
-	}
+  public LinkedHashMap<?, ?> getUnboundedWildCardTypedHinkedHashMap() {
+    return this.unboundedWildCardTypedHinkedHashMap;
+  }
 
-	public ConcurrentSkipListMap<?, ?> getUnboundedWildCardTypedConcurrentSkipListMap() {
-		return this.unboundedWildCardTypedConcurrentSkipListMap;
-	}
+  public LinkedHashMap<? extends Number, ? extends Runnable>
+      getBoundedWildCardTypedLinkedHashMap() {
+    return this.boundedWildCardTypedLinkedHashMap;
+  }
 
-	public ConcurrentSkipListMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedConcurrentSkipListMap() {
-		return this.boundedWildCardTypedConcurrentSkipListMap;
-	}
+  public WeakHashMap<?, ?> getUnboundedWildCardTypedWeakHashMap() {
+    return this.unboundedWildCardTypedWeakHashMap;
+  }
 
-	public void setUnboundedWildCardTypedMap(Map<?, ?> unboundedWildCardTypedMap) {
-		this.unboundedWildCardTypedMap = unboundedWildCardTypedMap;
-	}
+  public WeakHashMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedWeakHashMap() {
+    return this.boundedWildCardTypedWeakHashMap;
+  }
 
-	public void setBoundedWildCardTypedMap(Map<? extends Number, ? extends Runnable> boundedWildCardTypedMap) {
-		this.boundedWildCardTypedMap = boundedWildCardTypedMap;
-	}
+  public IdentityHashMap<?, ?> getUnboundedWildCardTypedIdentityHashMap() {
+    return this.unboundedWildCardTypedIdentityHashMap;
+  }
 
-	public void setUnboundedWildCardTypedSortedMap(SortedMap<?, ?> unboundedWildCardTypedSortedMap) {
-		this.unboundedWildCardTypedSortedMap = unboundedWildCardTypedSortedMap;
-	}
+  public IdentityHashMap<? extends Number, ? extends Runnable>
+      getBoundedWildCardTypedIdentityHashMap() {
+    return this.boundedWildCardTypedIdentityHashMap;
+  }
 
-	public void setBoundedWildCardTypedSortedMap(SortedMap<? extends Number, ? extends Runnable> boundedWildCardTypedSortedMap) {
-		this.boundedWildCardTypedSortedMap = boundedWildCardTypedSortedMap;
-	}
+  public TreeMap<?, ?> getUnboundedWildCardTypedTreeMap() {
+    return this.unboundedWildCardTypedTreeMap;
+  }
 
-	public void setUnboundedWildCardTypedNavigableMap(NavigableMap<?, ?> unboundedWildCardTypedNavigableMap) {
-		this.unboundedWildCardTypedNavigableMap = unboundedWildCardTypedNavigableMap;
-	}
+  public TreeMap<? extends Number, ? extends Runnable> getBoundedWildCardTypedTreeMap() {
+    return this.boundedWildCardTypedTreeMap;
+  }
 
-	public void setBoundedWildCardTypedNavigableMap(NavigableMap<? extends Number, ? extends Runnable> boundedWildCardTypedNavigableMap) {
-		this.boundedWildCardTypedNavigableMap = boundedWildCardTypedNavigableMap;
-	}
+  public ConcurrentSkipListMap<?, ?> getUnboundedWildCardTypedConcurrentSkipListMap() {
+    return this.unboundedWildCardTypedConcurrentSkipListMap;
+  }
 
-	public void setUnboundedWildCardTypedConcurrentMap(ConcurrentMap<?, ?> unboundedWildCardTypedConcurrentMap) {
-		this.unboundedWildCardTypedConcurrentMap = unboundedWildCardTypedConcurrentMap;
-	}
+  public ConcurrentSkipListMap<? extends Number, ? extends Runnable>
+      getBoundedWildCardTypedConcurrentSkipListMap() {
+    return this.boundedWildCardTypedConcurrentSkipListMap;
+  }
 
-	public void setBoundedWildCardTypedConcurrentMap(ConcurrentMap<? extends Number, ? extends Runnable> boundedWildCardTypedConcurrentMap) {
-		this.boundedWildCardTypedConcurrentMap = boundedWildCardTypedConcurrentMap;
-	}
+  public void setUnboundedWildCardTypedMap(Map<?, ?> unboundedWildCardTypedMap) {
+    this.unboundedWildCardTypedMap = unboundedWildCardTypedMap;
+  }
 
-	public void setUnboundedWildCardTypedConcurrentNavigableMap(ConcurrentNavigableMap<?, ?> unboundedWildCardTypedConcurrentNavigableMap) {
-		this.unboundedWildCardTypedConcurrentNavigableMap = unboundedWildCardTypedConcurrentNavigableMap;
-	}
+  public void setBoundedWildCardTypedMap(
+      Map<? extends Number, ? extends Runnable> boundedWildCardTypedMap) {
+    this.boundedWildCardTypedMap = boundedWildCardTypedMap;
+  }
 
-	public void setBoundedWildCardTypedConcurrentNavigableMap(ConcurrentNavigableMap<? extends Number, ? extends Runnable> boundedWildCardTypedConcurrentNavigableMap) {
-		this.boundedWildCardTypedConcurrentNavigableMap = boundedWildCardTypedConcurrentNavigableMap;
-	}
+  public void setUnboundedWildCardTypedSortedMap(SortedMap<?, ?> unboundedWildCardTypedSortedMap) {
+    this.unboundedWildCardTypedSortedMap = unboundedWildCardTypedSortedMap;
+  }
 
-	public void setUnboundedWildCardTypedHashMap(HashMap<?, ?> unboundedWildCardTypedHashMap) {
-		this.unboundedWildCardTypedHashMap = unboundedWildCardTypedHashMap;
-	}
+  public void setBoundedWildCardTypedSortedMap(
+      SortedMap<? extends Number, ? extends Runnable> boundedWildCardTypedSortedMap) {
+    this.boundedWildCardTypedSortedMap = boundedWildCardTypedSortedMap;
+  }
 
-	public void setBoundedWildCardTypedHashMap(HashMap<? extends Number, ? extends Runnable> boundedWildCardTypedHashMap) {
-		this.boundedWildCardTypedHashMap = boundedWildCardTypedHashMap;
-	}
+  public void setUnboundedWildCardTypedNavigableMap(
+      NavigableMap<?, ?> unboundedWildCardTypedNavigableMap) {
+    this.unboundedWildCardTypedNavigableMap = unboundedWildCardTypedNavigableMap;
+  }
 
-	public void setUnboundedWildCardTypedHashtable(Hashtable<?, ?> unboundedWildCardTypedHashtable) {
-		this.unboundedWildCardTypedHashtable = unboundedWildCardTypedHashtable;
-	}
+  public void setBoundedWildCardTypedNavigableMap(
+      NavigableMap<? extends Number, ? extends Runnable> boundedWildCardTypedNavigableMap) {
+    this.boundedWildCardTypedNavigableMap = boundedWildCardTypedNavigableMap;
+  }
 
-	public void setBoundedWildCardTypedHashtable(Hashtable<? extends Number, ? extends Runnable> boundedWildCardTypedHashtable) {
-		this.boundedWildCardTypedHashtable = boundedWildCardTypedHashtable;
-	}
+  public void setUnboundedWildCardTypedConcurrentMap(
+      ConcurrentMap<?, ?> unboundedWildCardTypedConcurrentMap) {
+    this.unboundedWildCardTypedConcurrentMap = unboundedWildCardTypedConcurrentMap;
+  }
 
-	public void setUnboundedWildCardTypedHinkedHashMap(LinkedHashMap<?, ?> unboundedWildCardTypedHinkedHashMap) {
-		this.unboundedWildCardTypedHinkedHashMap = unboundedWildCardTypedHinkedHashMap;
-	}
+  public void setBoundedWildCardTypedConcurrentMap(
+      ConcurrentMap<? extends Number, ? extends Runnable> boundedWildCardTypedConcurrentMap) {
+    this.boundedWildCardTypedConcurrentMap = boundedWildCardTypedConcurrentMap;
+  }
 
-	public void setBoundedWildCardTypedLinkedHashMap(LinkedHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedLinkedHashMap) {
-		this.boundedWildCardTypedLinkedHashMap = boundedWildCardTypedLinkedHashMap;
-	}
+  public void setUnboundedWildCardTypedConcurrentNavigableMap(
+      ConcurrentNavigableMap<?, ?> unboundedWildCardTypedConcurrentNavigableMap) {
+    this.unboundedWildCardTypedConcurrentNavigableMap =
+        unboundedWildCardTypedConcurrentNavigableMap;
+  }
 
-	public void setUnboundedWildCardTypedWeakHashMap(WeakHashMap<?, ?> unboundedWildCardTypedWeakHashMap) {
-		this.unboundedWildCardTypedWeakHashMap = unboundedWildCardTypedWeakHashMap;
-	}
+  public void setBoundedWildCardTypedConcurrentNavigableMap(
+      ConcurrentNavigableMap<? extends Number, ? extends Runnable>
+          boundedWildCardTypedConcurrentNavigableMap) {
+    this.boundedWildCardTypedConcurrentNavigableMap = boundedWildCardTypedConcurrentNavigableMap;
+  }
 
-	public void setBoundedWildCardTypedWeakHashMap(WeakHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedWeakHashMap) {
-		this.boundedWildCardTypedWeakHashMap = boundedWildCardTypedWeakHashMap;
-	}
+  public void setUnboundedWildCardTypedHashMap(HashMap<?, ?> unboundedWildCardTypedHashMap) {
+    this.unboundedWildCardTypedHashMap = unboundedWildCardTypedHashMap;
+  }
 
-	public void setUnboundedWildCardTypedIdentityHashMap(IdentityHashMap<?, ?> unboundedWildCardTypedIdentityHashMap) {
-		this.unboundedWildCardTypedIdentityHashMap = unboundedWildCardTypedIdentityHashMap;
-	}
+  public void setBoundedWildCardTypedHashMap(
+      HashMap<? extends Number, ? extends Runnable> boundedWildCardTypedHashMap) {
+    this.boundedWildCardTypedHashMap = boundedWildCardTypedHashMap;
+  }
 
-	public void setBoundedWildCardTypedIdentityHashMap(IdentityHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedIdentityHashMap) {
-		this.boundedWildCardTypedIdentityHashMap = boundedWildCardTypedIdentityHashMap;
-	}
+  public void setUnboundedWildCardTypedHashtable(Hashtable<?, ?> unboundedWildCardTypedHashtable) {
+    this.unboundedWildCardTypedHashtable = unboundedWildCardTypedHashtable;
+  }
 
-	public void setUnboundedWildCardTypedTreeMap(TreeMap<?, ?> unboundedWildCardTypedTreeMap) {
-		this.unboundedWildCardTypedTreeMap = unboundedWildCardTypedTreeMap;
-	}
+  public void setBoundedWildCardTypedHashtable(
+      Hashtable<? extends Number, ? extends Runnable> boundedWildCardTypedHashtable) {
+    this.boundedWildCardTypedHashtable = boundedWildCardTypedHashtable;
+  }
 
-	public void setBoundedWildCardTypedTreeMap(TreeMap<? extends Number, ? extends Runnable> boundedWildCardTypedTreeMap) {
-		this.boundedWildCardTypedTreeMap = boundedWildCardTypedTreeMap;
-	}
+  public void setUnboundedWildCardTypedHinkedHashMap(
+      LinkedHashMap<?, ?> unboundedWildCardTypedHinkedHashMap) {
+    this.unboundedWildCardTypedHinkedHashMap = unboundedWildCardTypedHinkedHashMap;
+  }
 
-	public void setUnboundedWildCardTypedConcurrentSkipListMap(ConcurrentSkipListMap<?, ?> unboundedWildCardTypedConcurrentSkipListMap) {
-		this.unboundedWildCardTypedConcurrentSkipListMap = unboundedWildCardTypedConcurrentSkipListMap;
-	}
+  public void setBoundedWildCardTypedLinkedHashMap(
+      LinkedHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedLinkedHashMap) {
+    this.boundedWildCardTypedLinkedHashMap = boundedWildCardTypedLinkedHashMap;
+  }
 
-	public void setBoundedWildCardTypedConcurrentSkipListMap(ConcurrentSkipListMap<? extends Number, ? extends Runnable> boundedWildCardTypedConcurrentSkipListMap) {
-		this.boundedWildCardTypedConcurrentSkipListMap = boundedWildCardTypedConcurrentSkipListMap;
-	}
+  public void setUnboundedWildCardTypedWeakHashMap(
+      WeakHashMap<?, ?> unboundedWildCardTypedWeakHashMap) {
+    this.unboundedWildCardTypedWeakHashMap = unboundedWildCardTypedWeakHashMap;
+  }
+
+  public void setBoundedWildCardTypedWeakHashMap(
+      WeakHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedWeakHashMap) {
+    this.boundedWildCardTypedWeakHashMap = boundedWildCardTypedWeakHashMap;
+  }
+
+  public void setUnboundedWildCardTypedIdentityHashMap(
+      IdentityHashMap<?, ?> unboundedWildCardTypedIdentityHashMap) {
+    this.unboundedWildCardTypedIdentityHashMap = unboundedWildCardTypedIdentityHashMap;
+  }
+
+  public void setBoundedWildCardTypedIdentityHashMap(
+      IdentityHashMap<? extends Number, ? extends Runnable> boundedWildCardTypedIdentityHashMap) {
+    this.boundedWildCardTypedIdentityHashMap = boundedWildCardTypedIdentityHashMap;
+  }
+
+  public void setUnboundedWildCardTypedTreeMap(TreeMap<?, ?> unboundedWildCardTypedTreeMap) {
+    this.unboundedWildCardTypedTreeMap = unboundedWildCardTypedTreeMap;
+  }
+
+  public void setBoundedWildCardTypedTreeMap(
+      TreeMap<? extends Number, ? extends Runnable> boundedWildCardTypedTreeMap) {
+    this.boundedWildCardTypedTreeMap = boundedWildCardTypedTreeMap;
+  }
+
+  public void setUnboundedWildCardTypedConcurrentSkipListMap(
+      ConcurrentSkipListMap<?, ?> unboundedWildCardTypedConcurrentSkipListMap) {
+    this.unboundedWildCardTypedConcurrentSkipListMap = unboundedWildCardTypedConcurrentSkipListMap;
+  }
+
+  public void setBoundedWildCardTypedConcurrentSkipListMap(
+      ConcurrentSkipListMap<? extends Number, ? extends Runnable>
+          boundedWildCardTypedConcurrentSkipListMap) {
+    this.boundedWildCardTypedConcurrentSkipListMap = boundedWildCardTypedConcurrentSkipListMap;
+  }
 }

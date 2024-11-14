@@ -25,61 +25,58 @@ package org.jeasy.random.randomizers.range;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
-
 import org.jeasy.random.EasyRandomParameters;
 
-/**
- * Generate a random {@link ZonedDateTime} in the given range.
- */
+/** Generate a random {@link ZonedDateTime} in the given range. */
 public class ZonedDateTimeRangeRandomizer extends AbstractRangeRandomizer<ZonedDateTime> {
 
-    /**
-     * Create a new {@link ZonedDateTimeRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public ZonedDateTimeRangeRandomizer(final ZonedDateTime min, final ZonedDateTime max) {
-        super(min, max);
-    }
+  /**
+   * Create a new {@link ZonedDateTimeRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public ZonedDateTimeRangeRandomizer(final ZonedDateTime min, final ZonedDateTime max) {
+    super(min, max);
+  }
 
-    /**
-     * Create a new {@link ZonedDateTimeRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public ZonedDateTimeRangeRandomizer(final ZonedDateTime min, final ZonedDateTime max, final long seed) {
-        super(min, max, seed);
-    }
+  /**
+   * Create a new {@link ZonedDateTimeRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public ZonedDateTimeRangeRandomizer(
+      final ZonedDateTime min, final ZonedDateTime max, final long seed) {
+    super(min, max, seed);
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min.isAfter(max)) {
-            throw new IllegalArgumentException("max must be after min");
-        }
+  @Override
+  protected void checkValues() {
+    if (min.isAfter(max)) {
+      throw new IllegalArgumentException("max must be after min");
     }
+  }
 
-    @Override
-    protected ZonedDateTime getDefaultMinValue() {
-        return EasyRandomParameters.DEFAULT_DATES_RANGE.getMin();
-    }
+  @Override
+  protected ZonedDateTime getDefaultMinValue() {
+    return EasyRandomParameters.DEFAULT_DATES_RANGE.getMin();
+  }
 
-    @Override
-    protected ZonedDateTime getDefaultMaxValue() {
-        return EasyRandomParameters.DEFAULT_DATES_RANGE.getMax();
-    }
+  @Override
+  protected ZonedDateTime getDefaultMaxValue() {
+    return EasyRandomParameters.DEFAULT_DATES_RANGE.getMax();
+  }
 
-    @Override
-    public ZonedDateTime getRandomValue() {
-        long minSeconds = min.toEpochSecond();
-        long maxSeconds = max.toEpochSecond();
-        long seconds = (long) nextDouble(minSeconds, maxSeconds);
-        int minNanoSeconds = min.getNano();
-        int maxNanoSeconds = max.getNano();
-        long nanoSeconds = (long) nextDouble(minNanoSeconds, maxNanoSeconds);
-        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(seconds, nanoSeconds), min.getZone());
-    }
-
+  @Override
+  public ZonedDateTime getRandomValue() {
+    long minSeconds = min.toEpochSecond();
+    long maxSeconds = max.toEpochSecond();
+    long seconds = (long) nextDouble(minSeconds, maxSeconds);
+    int minNanoSeconds = min.getNano();
+    int maxNanoSeconds = max.getNano();
+    long nanoSeconds = (long) nextDouble(minNanoSeconds, maxNanoSeconds);
+    return ZonedDateTime.ofInstant(Instant.ofEpochSecond(seconds, nanoSeconds), min.getZone());
+  }
 }

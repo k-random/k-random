@@ -23,12 +23,11 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.randomizers.misc.EnumRandomizer;
-
 import java.time.Month;
 import java.time.Period;
 import java.time.Year;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.randomizers.misc.EnumRandomizer;
 
 /**
  * A {@link Randomizer} that generates random {@link Period}.
@@ -37,35 +36,33 @@ import java.time.Year;
  */
 public class PeriodRandomizer implements Randomizer<Period> {
 
-    private final YearRandomizer yearRandomizer;
-    private final EnumRandomizer<Month> monthRandomizer;
-    private final DayRandomizer dayRandomizer;
+  private final YearRandomizer yearRandomizer;
+  private final EnumRandomizer<Month> monthRandomizer;
+  private final DayRandomizer dayRandomizer;
 
-    /**
-     * Create a new {@link PeriodRandomizer}.
-     */
-    public PeriodRandomizer() {
-        yearRandomizer = new YearRandomizer();
-        monthRandomizer = new EnumRandomizer<>(Month.class);
-        dayRandomizer = new DayRandomizer();
-    }
+  /** Create a new {@link PeriodRandomizer}. */
+  public PeriodRandomizer() {
+    yearRandomizer = new YearRandomizer();
+    monthRandomizer = new EnumRandomizer<>(Month.class);
+    dayRandomizer = new DayRandomizer();
+  }
 
-    /**
-     * Create a new {@link PeriodRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public PeriodRandomizer(final long seed) {
-        yearRandomizer = new YearRandomizer(seed);
-        monthRandomizer = new EnumRandomizer<>(Month.class, seed);
-        dayRandomizer = new DayRandomizer(seed);
-    }
+  /**
+   * Create a new {@link PeriodRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public PeriodRandomizer(final long seed) {
+    yearRandomizer = new YearRandomizer(seed);
+    monthRandomizer = new EnumRandomizer<>(Month.class, seed);
+    dayRandomizer = new DayRandomizer(seed);
+  }
 
-    @Override
-    public Period getRandomValue() {
-        Year randomYear = yearRandomizer.getRandomValue();
-        Month randomMonth = monthRandomizer.getRandomValue();
-        int randomDay = dayRandomizer.getRandomValue();
-        return Period.of(randomYear.getValue(), randomMonth.getValue(), randomDay);
-    }
+  @Override
+  public Period getRandomValue() {
+    Year randomYear = yearRandomizer.getRandomValue();
+    Month randomMonth = monthRandomizer.getRandomValue();
+    int randomDay = dayRandomizer.getRandomValue();
+    return Period.of(randomYear.getValue(), randomMonth.getValue(), randomDay);
+  }
 }

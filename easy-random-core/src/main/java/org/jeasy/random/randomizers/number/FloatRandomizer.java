@@ -32,23 +32,20 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
  */
 public class FloatRandomizer extends AbstractRandomizer<Float> {
 
-    /**
-     * Create a new {@link FloatRandomizer}.
-     */
-    public FloatRandomizer() {
-    }
+  /** Create a new {@link FloatRandomizer}. */
+  public FloatRandomizer() {}
 
-    /**
-     * Create a new {@link FloatRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public FloatRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link FloatRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public FloatRandomizer(final long seed) {
+    super(seed);
+  }
 
-    @Override
-    public Float getRandomValue() {
-        return random.nextFloat();
-    }
+  @Override
+  public Float getRandomValue() {
+    return random.nextFloat();
+  }
 }

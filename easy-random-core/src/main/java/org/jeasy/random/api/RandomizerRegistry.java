@@ -23,10 +23,9 @@
  */
 package org.jeasy.random.api;
 
+import java.lang.reflect.Field;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-
-import java.lang.reflect.Field;
 
 /**
  * Interface for a registry of {@link Randomizer}s.
@@ -35,26 +34,26 @@ import java.lang.reflect.Field;
  */
 public interface RandomizerRegistry {
 
-    /**
-     * Initialize the registry.
-     *
-     * @param parameters of the {@link EasyRandom} instance being configured
-     */
-    void init(EasyRandomParameters parameters);
+  /**
+   * Initialize the registry.
+   *
+   * @param parameters of the {@link EasyRandom} instance being configured
+   */
+  void init(EasyRandomParameters parameters);
 
-    /**
-     * Retrieves a randomizer for the given field.
-     *
-     * @param field the field for which a randomizer was registered
-     * @return the randomizer registered for the given field
-     */
-    Randomizer<?> getRandomizer(final Field field);
+  /**
+   * Retrieves a randomizer for the given field.
+   *
+   * @param field the field for which a randomizer was registered
+   * @return the randomizer registered for the given field
+   */
+  Randomizer<?> getRandomizer(final Field field);
 
-    /**
-     * Retrieves a randomizer for a given type.
-     *
-     * @param type the type for which a randomizer was registered
-     * @return the randomizer registered for the given type.
-     */
-    Randomizer<?> getRandomizer(final Class<?> type);
+  /**
+   * Retrieves a randomizer for a given type.
+   *
+   * @param type the type for which a randomizer was registered
+   * @return the randomizer registered for the given type.
+   */
+  Randomizer<?> getRandomizer(final Class<?> type);
 }

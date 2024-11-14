@@ -39,242 +39,243 @@ import java.util.concurrent.ConcurrentSkipListMap;
 @SuppressWarnings("rawtypes")
 public class MapBean {
 
-    /*
-     * Interfaces
-     */
-    
-    private Map map;
-    private Map<Integer, Person> typedMap;
+  /*
+   * Interfaces
+   */
 
-    private SortedMap sortedMap;
-    private SortedMap<Integer, Person> typedSortedMap;
+  private Map map;
+  private Map<Integer, Person> typedMap;
 
-    private NavigableMap navigableMap;
-    private NavigableMap<Integer, Person> typedNavigableMap;
+  private SortedMap sortedMap;
+  private SortedMap<Integer, Person> typedSortedMap;
 
-    private ConcurrentMap concurrentMap;
-    private ConcurrentMap<Integer, Person> typedConcurrentMap;
+  private NavigableMap navigableMap;
+  private NavigableMap<Integer, Person> typedNavigableMap;
 
-    private ConcurrentNavigableMap concurrentNavigableMap;
-    private ConcurrentNavigableMap<Integer, Person> typedConcurrentNavigableMap;
+  private ConcurrentMap concurrentMap;
+  private ConcurrentMap<Integer, Person> typedConcurrentMap;
 
-    /*
-     * Classes
-     */
-    
-    private HashMap hashMap;
-    private HashMap<Integer, Person> typedHashMap;
-    
-    private Hashtable hashtable;
-    private Hashtable<Integer, Person> typedHashtable;
-    
-    private LinkedHashMap linkedHashMap;
-    private LinkedHashMap<Integer, Person> typedLinkedHashMap;
-    
-    private WeakHashMap weakHashMap;
-    private WeakHashMap<Integer, Person> typedWeakHashMap;
-    
-    private IdentityHashMap identityHashMap;
-    private IdentityHashMap<Integer, Person> typedIdentityHashMap;
-    
-    private TreeMap treeMap;
-    private TreeMap<Integer, Person> typedTreeMap;
-    
-    private ConcurrentSkipListMap concurrentSkipListMap;
-    private ConcurrentSkipListMap<Integer, Person> typedConcurrentSkipListMap;
+  private ConcurrentNavigableMap concurrentNavigableMap;
+  private ConcurrentNavigableMap<Integer, Person> typedConcurrentNavigableMap;
 
-	public MapBean() {
-	}
+  /*
+   * Classes
+   */
 
-	public Map getMap() {
-		return this.map;
-	}
+  private HashMap hashMap;
+  private HashMap<Integer, Person> typedHashMap;
 
-	public Map<Integer, Person> getTypedMap() {
-		return this.typedMap;
-	}
+  private Hashtable hashtable;
+  private Hashtable<Integer, Person> typedHashtable;
 
-	public SortedMap getSortedMap() {
-		return this.sortedMap;
-	}
+  private LinkedHashMap linkedHashMap;
+  private LinkedHashMap<Integer, Person> typedLinkedHashMap;
 
-	public SortedMap<Integer, Person> getTypedSortedMap() {
-		return this.typedSortedMap;
-	}
+  private WeakHashMap weakHashMap;
+  private WeakHashMap<Integer, Person> typedWeakHashMap;
 
-	public NavigableMap getNavigableMap() {
-		return this.navigableMap;
-	}
+  private IdentityHashMap identityHashMap;
+  private IdentityHashMap<Integer, Person> typedIdentityHashMap;
 
-	public NavigableMap<Integer, Person> getTypedNavigableMap() {
-		return this.typedNavigableMap;
-	}
+  private TreeMap treeMap;
+  private TreeMap<Integer, Person> typedTreeMap;
 
-	public ConcurrentMap getConcurrentMap() {
-		return this.concurrentMap;
-	}
+  private ConcurrentSkipListMap concurrentSkipListMap;
+  private ConcurrentSkipListMap<Integer, Person> typedConcurrentSkipListMap;
 
-	public ConcurrentMap<Integer, Person> getTypedConcurrentMap() {
-		return this.typedConcurrentMap;
-	}
+  public MapBean() {}
 
-	public ConcurrentNavigableMap getConcurrentNavigableMap() {
-		return this.concurrentNavigableMap;
-	}
+  public Map getMap() {
+    return this.map;
+  }
 
-	public ConcurrentNavigableMap<Integer, Person> getTypedConcurrentNavigableMap() {
-		return this.typedConcurrentNavigableMap;
-	}
+  public Map<Integer, Person> getTypedMap() {
+    return this.typedMap;
+  }
 
-	public HashMap getHashMap() {
-		return this.hashMap;
-	}
+  public SortedMap getSortedMap() {
+    return this.sortedMap;
+  }
 
-	public HashMap<Integer, Person> getTypedHashMap() {
-		return this.typedHashMap;
-	}
+  public SortedMap<Integer, Person> getTypedSortedMap() {
+    return this.typedSortedMap;
+  }
 
-	public Hashtable getHashtable() {
-		return this.hashtable;
-	}
+  public NavigableMap getNavigableMap() {
+    return this.navigableMap;
+  }
 
-	public Hashtable<Integer, Person> getTypedHashtable() {
-		return this.typedHashtable;
-	}
+  public NavigableMap<Integer, Person> getTypedNavigableMap() {
+    return this.typedNavigableMap;
+  }
 
-	public LinkedHashMap getLinkedHashMap() {
-		return this.linkedHashMap;
-	}
+  public ConcurrentMap getConcurrentMap() {
+    return this.concurrentMap;
+  }
 
-	public LinkedHashMap<Integer, Person> getTypedLinkedHashMap() {
-		return this.typedLinkedHashMap;
-	}
+  public ConcurrentMap<Integer, Person> getTypedConcurrentMap() {
+    return this.typedConcurrentMap;
+  }
 
-	public WeakHashMap getWeakHashMap() {
-		return this.weakHashMap;
-	}
+  public ConcurrentNavigableMap getConcurrentNavigableMap() {
+    return this.concurrentNavigableMap;
+  }
 
-	public WeakHashMap<Integer, Person> getTypedWeakHashMap() {
-		return this.typedWeakHashMap;
-	}
+  public ConcurrentNavigableMap<Integer, Person> getTypedConcurrentNavigableMap() {
+    return this.typedConcurrentNavigableMap;
+  }
 
-	public IdentityHashMap getIdentityHashMap() {
-		return this.identityHashMap;
-	}
+  public HashMap getHashMap() {
+    return this.hashMap;
+  }
 
-	public IdentityHashMap<Integer, Person> getTypedIdentityHashMap() {
-		return this.typedIdentityHashMap;
-	}
+  public HashMap<Integer, Person> getTypedHashMap() {
+    return this.typedHashMap;
+  }
 
-	public TreeMap getTreeMap() {
-		return this.treeMap;
-	}
+  public Hashtable getHashtable() {
+    return this.hashtable;
+  }
 
-	public TreeMap<Integer, Person> getTypedTreeMap() {
-		return this.typedTreeMap;
-	}
+  public Hashtable<Integer, Person> getTypedHashtable() {
+    return this.typedHashtable;
+  }
 
-	public ConcurrentSkipListMap getConcurrentSkipListMap() {
-		return this.concurrentSkipListMap;
-	}
+  public LinkedHashMap getLinkedHashMap() {
+    return this.linkedHashMap;
+  }
 
-	public ConcurrentSkipListMap<Integer, Person> getTypedConcurrentSkipListMap() {
-		return this.typedConcurrentSkipListMap;
-	}
+  public LinkedHashMap<Integer, Person> getTypedLinkedHashMap() {
+    return this.typedLinkedHashMap;
+  }
 
-	public void setMap(Map map) {
-		this.map = map;
-	}
+  public WeakHashMap getWeakHashMap() {
+    return this.weakHashMap;
+  }
 
-	public void setTypedMap(Map<Integer, Person> typedMap) {
-		this.typedMap = typedMap;
-	}
+  public WeakHashMap<Integer, Person> getTypedWeakHashMap() {
+    return this.typedWeakHashMap;
+  }
 
-	public void setSortedMap(SortedMap sortedMap) {
-		this.sortedMap = sortedMap;
-	}
+  public IdentityHashMap getIdentityHashMap() {
+    return this.identityHashMap;
+  }
 
-	public void setTypedSortedMap(SortedMap<Integer, Person> typedSortedMap) {
-		this.typedSortedMap = typedSortedMap;
-	}
+  public IdentityHashMap<Integer, Person> getTypedIdentityHashMap() {
+    return this.typedIdentityHashMap;
+  }
 
-	public void setNavigableMap(NavigableMap navigableMap) {
-		this.navigableMap = navigableMap;
-	}
+  public TreeMap getTreeMap() {
+    return this.treeMap;
+  }
 
-	public void setTypedNavigableMap(NavigableMap<Integer, Person> typedNavigableMap) {
-		this.typedNavigableMap = typedNavigableMap;
-	}
+  public TreeMap<Integer, Person> getTypedTreeMap() {
+    return this.typedTreeMap;
+  }
 
-	public void setConcurrentMap(ConcurrentMap concurrentMap) {
-		this.concurrentMap = concurrentMap;
-	}
+  public ConcurrentSkipListMap getConcurrentSkipListMap() {
+    return this.concurrentSkipListMap;
+  }
 
-	public void setTypedConcurrentMap(ConcurrentMap<Integer, Person> typedConcurrentMap) {
-		this.typedConcurrentMap = typedConcurrentMap;
-	}
+  public ConcurrentSkipListMap<Integer, Person> getTypedConcurrentSkipListMap() {
+    return this.typedConcurrentSkipListMap;
+  }
 
-	public void setConcurrentNavigableMap(ConcurrentNavigableMap concurrentNavigableMap) {
-		this.concurrentNavigableMap = concurrentNavigableMap;
-	}
+  public void setMap(Map map) {
+    this.map = map;
+  }
 
-	public void setTypedConcurrentNavigableMap(ConcurrentNavigableMap<Integer, Person> typedConcurrentNavigableMap) {
-		this.typedConcurrentNavigableMap = typedConcurrentNavigableMap;
-	}
+  public void setTypedMap(Map<Integer, Person> typedMap) {
+    this.typedMap = typedMap;
+  }
 
-	public void setHashMap(HashMap hashMap) {
-		this.hashMap = hashMap;
-	}
+  public void setSortedMap(SortedMap sortedMap) {
+    this.sortedMap = sortedMap;
+  }
 
-	public void setTypedHashMap(HashMap<Integer, Person> typedHashMap) {
-		this.typedHashMap = typedHashMap;
-	}
+  public void setTypedSortedMap(SortedMap<Integer, Person> typedSortedMap) {
+    this.typedSortedMap = typedSortedMap;
+  }
 
-	public void setHashtable(Hashtable hashtable) {
-		this.hashtable = hashtable;
-	}
+  public void setNavigableMap(NavigableMap navigableMap) {
+    this.navigableMap = navigableMap;
+  }
 
-	public void setTypedHashtable(Hashtable<Integer, Person> typedHashtable) {
-		this.typedHashtable = typedHashtable;
-	}
+  public void setTypedNavigableMap(NavigableMap<Integer, Person> typedNavigableMap) {
+    this.typedNavigableMap = typedNavigableMap;
+  }
 
-	public void setLinkedHashMap(LinkedHashMap linkedHashMap) {
-		this.linkedHashMap = linkedHashMap;
-	}
+  public void setConcurrentMap(ConcurrentMap concurrentMap) {
+    this.concurrentMap = concurrentMap;
+  }
 
-	public void setTypedLinkedHashMap(LinkedHashMap<Integer, Person> typedLinkedHashMap) {
-		this.typedLinkedHashMap = typedLinkedHashMap;
-	}
+  public void setTypedConcurrentMap(ConcurrentMap<Integer, Person> typedConcurrentMap) {
+    this.typedConcurrentMap = typedConcurrentMap;
+  }
 
-	public void setWeakHashMap(WeakHashMap weakHashMap) {
-		this.weakHashMap = weakHashMap;
-	}
+  public void setConcurrentNavigableMap(ConcurrentNavigableMap concurrentNavigableMap) {
+    this.concurrentNavigableMap = concurrentNavigableMap;
+  }
 
-	public void setTypedWeakHashMap(WeakHashMap<Integer, Person> typedWeakHashMap) {
-		this.typedWeakHashMap = typedWeakHashMap;
-	}
+  public void setTypedConcurrentNavigableMap(
+      ConcurrentNavigableMap<Integer, Person> typedConcurrentNavigableMap) {
+    this.typedConcurrentNavigableMap = typedConcurrentNavigableMap;
+  }
 
-	public void setIdentityHashMap(IdentityHashMap identityHashMap) {
-		this.identityHashMap = identityHashMap;
-	}
+  public void setHashMap(HashMap hashMap) {
+    this.hashMap = hashMap;
+  }
 
-	public void setTypedIdentityHashMap(IdentityHashMap<Integer, Person> typedIdentityHashMap) {
-		this.typedIdentityHashMap = typedIdentityHashMap;
-	}
+  public void setTypedHashMap(HashMap<Integer, Person> typedHashMap) {
+    this.typedHashMap = typedHashMap;
+  }
 
-	public void setTreeMap(TreeMap treeMap) {
-		this.treeMap = treeMap;
-	}
+  public void setHashtable(Hashtable hashtable) {
+    this.hashtable = hashtable;
+  }
 
-	public void setTypedTreeMap(TreeMap<Integer, Person> typedTreeMap) {
-		this.typedTreeMap = typedTreeMap;
-	}
+  public void setTypedHashtable(Hashtable<Integer, Person> typedHashtable) {
+    this.typedHashtable = typedHashtable;
+  }
 
-	public void setConcurrentSkipListMap(ConcurrentSkipListMap concurrentSkipListMap) {
-		this.concurrentSkipListMap = concurrentSkipListMap;
-	}
+  public void setLinkedHashMap(LinkedHashMap linkedHashMap) {
+    this.linkedHashMap = linkedHashMap;
+  }
 
-	public void setTypedConcurrentSkipListMap(ConcurrentSkipListMap<Integer, Person> typedConcurrentSkipListMap) {
-		this.typedConcurrentSkipListMap = typedConcurrentSkipListMap;
-	}
+  public void setTypedLinkedHashMap(LinkedHashMap<Integer, Person> typedLinkedHashMap) {
+    this.typedLinkedHashMap = typedLinkedHashMap;
+  }
+
+  public void setWeakHashMap(WeakHashMap weakHashMap) {
+    this.weakHashMap = weakHashMap;
+  }
+
+  public void setTypedWeakHashMap(WeakHashMap<Integer, Person> typedWeakHashMap) {
+    this.typedWeakHashMap = typedWeakHashMap;
+  }
+
+  public void setIdentityHashMap(IdentityHashMap identityHashMap) {
+    this.identityHashMap = identityHashMap;
+  }
+
+  public void setTypedIdentityHashMap(IdentityHashMap<Integer, Person> typedIdentityHashMap) {
+    this.typedIdentityHashMap = typedIdentityHashMap;
+  }
+
+  public void setTreeMap(TreeMap treeMap) {
+    this.treeMap = treeMap;
+  }
+
+  public void setTypedTreeMap(TreeMap<Integer, Person> typedTreeMap) {
+    this.typedTreeMap = typedTreeMap;
+  }
+
+  public void setConcurrentSkipListMap(ConcurrentSkipListMap concurrentSkipListMap) {
+    this.concurrentSkipListMap = concurrentSkipListMap;
+  }
+
+  public void setTypedConcurrentSkipListMap(
+      ConcurrentSkipListMap<Integer, Person> typedConcurrentSkipListMap) {
+    this.typedConcurrentSkipListMap = typedConcurrentSkipListMap;
+  }
 }

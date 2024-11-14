@@ -32,9 +32,8 @@ import org.jeasy.random.api.Randomizer;
  */
 public class NullRandomizer implements Randomizer<Void> {
 
-    @Override
-    public Void getRandomValue() {
-        return null;
-    }
-
+  @Override
+  public Void getRandomValue() {
+    return null;
+  }
 }

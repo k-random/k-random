@@ -24,22 +24,22 @@
 package org.jeasy.random.beans;
 
 public class TestBean {
-    private Exception exception; // contains a field of type Class via StackTraceElement
-    private Class<?> clazz;
+  private Exception exception; // contains a field of type Class via StackTraceElement
+  private Class<?> clazz;
 
-    public Exception getException() {
-        return exception;
-    }
+  public Exception getException() {
+    return exception;
+  }
 
-    public void setException(Exception exception) {
-        this.exception = exception;
-    }
+  public void setException(Exception exception) {
+    this.exception = exception;
+  }
 
-    public Class<?> getClazz() {
-        return clazz;
-    }
+  public Class<?> getClazz() {
+    return clazz;
+  }
 
-    public void setClazz(Class<?> clazz) {
-        this.clazz = clazz;
-    }
+  public void setClazz(Class<?> clazz) {
+    this.clazz = clazz;
+  }
 }

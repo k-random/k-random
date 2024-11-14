@@ -24,14 +24,12 @@
 package org.jeasy.random.randomizers;
 
 import java.util.Locale;
-
 import org.jeasy.random.api.Randomizer;
 
 class AbstractRandomizerTest<T> {
 
-    static final long SEED = 123L;
-    static final Locale LOCALE = Locale.FRANCE;
+  static final long SEED = 123L;
+  static final Locale LOCALE = Locale.FRANCE;
 
-    Randomizer<T> randomizer;
-
+  Randomizer<T> randomizer;
 }

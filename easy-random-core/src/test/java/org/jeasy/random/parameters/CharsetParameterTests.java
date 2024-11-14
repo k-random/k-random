@@ -23,37 +23,35 @@
  */
 package org.jeasy.random.parameters;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.jeasy.random.util.CharacterUtils.collectPrintableCharactersOf;
 import static org.jeasy.random.util.CharacterUtils.filterLetters;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-import org.junit.jupiter.api.Test;
-
 import org.jeasy.random.beans.Person;
+import org.junit.jupiter.api.Test;
 
 class CharsetParameterTests {
 
-    @Test
-    void testCharset() {
-        // Given
-        Charset charset = StandardCharsets.UTF_8;
-        List<Character> letters = filterLetters(collectPrintableCharactersOf(charset));
-        EasyRandomParameters parameters = new EasyRandomParameters().charset(charset);
-        EasyRandom easyRandom = new EasyRandom(parameters);
+  @Test
+  void testCharset() {
+    // Given
+    Charset charset = StandardCharsets.UTF_8;
+    List<Character> letters = filterLetters(collectPrintableCharactersOf(charset));
+    EasyRandomParameters parameters = new EasyRandomParameters().charset(charset);
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-        // When
-        Person person = easyRandom.nextObject(Person.class);
+    // When
+    Person person = easyRandom.nextObject(Person.class);
 
-        // Then
-        char[] chars = person.getName().toCharArray();
-        for (char c : chars) {
-            assertThat(letters).contains(c);
-        }
+    // Then
+    char[] chars = person.getName().toCharArray();
+    for (char c : chars) {
+      assertThat(letters).contains(c);
     }
+  }
 }

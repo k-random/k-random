@@ -27,71 +27,70 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDate;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class LocalDateRangeRandomizerTest extends AbstractRangeRandomizerTest<LocalDate> {
 
-    private LocalDate minDate, maxDate;
+  private LocalDate minDate, maxDate;
 
-    @BeforeEach
-    void setUp() {
-        minDate = LocalDate.MIN;
-        maxDate = LocalDate.MAX;
-        randomizer = new LocalDateRangeRandomizer(minDate, maxDate);
-    }
+  @BeforeEach
+  void setUp() {
+    minDate = LocalDate.MIN;
+    maxDate = LocalDate.MAX;
+    randomizer = new LocalDateRangeRandomizer(minDate, maxDate);
+  }
 
-    @Test
-    void generatedLocalDateShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedLocalDateShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedLocalDateShouldBeWithinSpecifiedRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(minDate, maxDate);
-    }
+  @Test
+  void generatedLocalDateShouldBeWithinSpecifiedRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(minDate, maxDate);
+  }
 
-    @Test
-    void generatedLocalDateShouldBeAlwaysTheSameForTheSameSeed() {
-        // Given
-        randomizer = new LocalDateRangeRandomizer(minDate, maxDate, SEED);
-        LocalDate expected = LocalDate.ofEpochDay(163024688248L);
+  @Test
+  void generatedLocalDateShouldBeAlwaysTheSameForTheSameSeed() {
+    // Given
+    randomizer = new LocalDateRangeRandomizer(minDate, maxDate, SEED);
+    LocalDate expected = LocalDate.ofEpochDay(163024688248L);
 
-        // When
-        LocalDate randomValue = randomizer.getRandomValue();
+    // When
+    LocalDate randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isEqualTo(expected);
-    }
+    // Then
+    assertThat(randomValue).isEqualTo(expected);
+  }
 
-    @Test
-    void whenSpecifiedMinDateIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new LocalDateRangeRandomizer(maxDate, minDate)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinDateIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new LocalDateRangeRandomizer(maxDate, minDate))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinDateIsNull_thenShouldUseDefaultMinValue() {
-        // Given
-        randomizer = new LocalDateRangeRandomizer(null, maxDate);
+  @Test
+  void whenSpecifiedMinDateIsNull_thenShouldUseDefaultMinValue() {
+    // Given
+    randomizer = new LocalDateRangeRandomizer(null, maxDate);
 
-        // When
-        LocalDate randomValue = randomizer.getRandomValue();
+    // When
+    LocalDate randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isBeforeOrEqualTo(maxDate);
-    }
+    // Then
+    assertThat(randomValue).isBeforeOrEqualTo(maxDate);
+  }
 
-    @Test
-    void whenSpecifiedMaxDateIsNull_thenShouldUseDefaultMaxValue() {
-        // Given
-        randomizer = new LocalDateRangeRandomizer(minDate, null);
+  @Test
+  void whenSpecifiedMaxDateIsNull_thenShouldUseDefaultMaxValue() {
+    // Given
+    randomizer = new LocalDateRangeRandomizer(minDate, null);
 
-        // when
-        LocalDate randomValue = randomizer.getRandomValue();
+    // when
+    LocalDate randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isAfterOrEqualTo(minDate);
-    }
-
+    // Then
+    assertThat(randomValue).isAfterOrEqualTo(minDate);
+  }
 }

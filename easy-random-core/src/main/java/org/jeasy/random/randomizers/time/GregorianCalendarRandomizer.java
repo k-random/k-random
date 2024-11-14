@@ -23,38 +23,33 @@
  */
 package org.jeasy.random.randomizers.time;
 
+import java.util.GregorianCalendar;
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.number.LongRandomizer;
 
-import java.util.GregorianCalendar;
-
-/**
- * Generate a random {@link GregorianCalendarRandomizer}.
- */
+/** Generate a random {@link GregorianCalendarRandomizer}. */
 public class GregorianCalendarRandomizer implements Randomizer<GregorianCalendar> {
 
-    private final LongRandomizer delegate;
+  private final LongRandomizer delegate;
 
-    /**
-     * Create a new {@link GregorianCalendarRandomizer}.
-     */
-    public GregorianCalendarRandomizer() {
-        delegate = new LongRandomizer();
-    }
+  /** Create a new {@link GregorianCalendarRandomizer}. */
+  public GregorianCalendarRandomizer() {
+    delegate = new LongRandomizer();
+  }
 
-    /**
-     * Create a new {@link GregorianCalendarRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public GregorianCalendarRandomizer(final long seed) {
-        delegate = new LongRandomizer(seed);
-    }
+  /**
+   * Create a new {@link GregorianCalendarRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public GregorianCalendarRandomizer(final long seed) {
+    delegate = new LongRandomizer(seed);
+  }
 
-    @Override
-    public GregorianCalendar getRandomValue() {
-        GregorianCalendar gregorianCalendar = new GregorianCalendar();
-        gregorianCalendar.setTimeInMillis(Math.abs(delegate.getRandomValue()));
-        return gregorianCalendar;
-    }
+  @Override
+  public GregorianCalendar getRandomValue() {
+    GregorianCalendar gregorianCalendar = new GregorianCalendar();
+    gregorianCalendar.setTimeInMillis(Math.abs(delegate.getRandomValue()));
+    return gregorianCalendar;
+  }
 }

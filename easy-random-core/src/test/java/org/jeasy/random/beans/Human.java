@@ -25,24 +25,23 @@ package org.jeasy.random.beans;
 
 public class Human implements Mammal {
 
-    public static final long SERIAL_VERSION_UID = 593716507559065802L;
+  public static final long SERIAL_VERSION_UID = 593716507559065802L;
 
-    protected final Long id = null;
+  protected final Long id = null;
 
-    protected String name;
+  protected String name;
 
-	public Human() {
-	}
+  public Human() {}
 
-	public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-	public String getName() {
-		return this.name;
-	}
+  public String getName() {
+    return this.name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 }

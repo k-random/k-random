@@ -27,70 +27,70 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.Year;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class YearRangeRandomizerTest extends AbstractRangeRandomizerTest<Year> {
 
-    private Year minYear, maxYear;
+  private Year minYear, maxYear;
 
-    @BeforeEach
-    void setUp() {
-        minYear = Year.of(1000);
-        maxYear = Year.of(3000);
-        randomizer = new YearRangeRandomizer(minYear, maxYear);
-    }
+  @BeforeEach
+  void setUp() {
+    minYear = Year.of(1000);
+    maxYear = Year.of(3000);
+    randomizer = new YearRangeRandomizer(minYear, maxYear);
+  }
 
-    @Test
-    void generatedYearShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedYearShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedYearShouldBeWithinSpecifiedRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(minYear, maxYear);
-    }
+  @Test
+  void generatedYearShouldBeWithinSpecifiedRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(minYear, maxYear);
+  }
 
-    @Test
-    void generatedYearShouldBeAlwaysTheSameForTheSameSeed() {
-        // Given
-        randomizer = new YearRangeRandomizer(minYear, maxYear, SEED);
-        Year expected = Year.of(2446);
+  @Test
+  void generatedYearShouldBeAlwaysTheSameForTheSameSeed() {
+    // Given
+    randomizer = new YearRangeRandomizer(minYear, maxYear, SEED);
+    Year expected = Year.of(2446);
 
-        // When
-        Year randomValue = randomizer.getRandomValue();
+    // When
+    Year randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isEqualTo(expected);
-    }
+    // Then
+    assertThat(randomValue).isEqualTo(expected);
+  }
 
-    @Test
-    void whenSpecifiedMinYearIsAfterMaxYear_thenShouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new YearRangeRandomizer(maxYear, minYear)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinYearIsAfterMaxYear_thenShouldThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new YearRangeRandomizer(maxYear, minYear))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinYearIsNull_thenShouldUseDefaultMinValue() {
-        // Given
-        randomizer = new YearRangeRandomizer(null, maxYear);
+  @Test
+  void whenSpecifiedMinYearIsNull_thenShouldUseDefaultMinValue() {
+    // Given
+    randomizer = new YearRangeRandomizer(null, maxYear);
 
-        // When
-        Year randomValue = randomizer.getRandomValue();
+    // When
+    Year randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isLessThanOrEqualTo(maxYear);
-    }
+    // Then
+    assertThat(randomValue).isLessThanOrEqualTo(maxYear);
+  }
 
-    @Test
-    void whenSpecifiedMaxYearIsNull_thenShouldUseDefaultMaxValue() {
-        // Given
-        randomizer = new YearRangeRandomizer(minYear, null);
+  @Test
+  void whenSpecifiedMaxYearIsNull_thenShouldUseDefaultMaxValue() {
+    // Given
+    randomizer = new YearRangeRandomizer(minYear, null);
 
-        // when
-        Year randomValue = randomizer.getRandomValue();
+    // when
+    Year randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isGreaterThanOrEqualTo(minYear);
-    }
+    // Then
+    assertThat(randomValue).isGreaterThanOrEqualTo(minYear);
+  }
 }

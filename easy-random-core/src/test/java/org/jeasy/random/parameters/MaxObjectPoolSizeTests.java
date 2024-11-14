@@ -27,23 +27,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-import org.junit.jupiter.api.Test;
-
 import org.jeasy.random.beans.PersonTuple;
+import org.junit.jupiter.api.Test;
 
 class MaxObjectPoolSizeTests {
 
-    @Test
-    void testMaxObjectPoolSize() {
-        // Given
-        EasyRandomParameters parameters = new EasyRandomParameters().objectPoolSize(1);
-        EasyRandom easyRandom = new EasyRandom(parameters);
+  @Test
+  void testMaxObjectPoolSize() {
+    // Given
+    EasyRandomParameters parameters = new EasyRandomParameters().objectPoolSize(1);
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-        // When
-        PersonTuple persons = easyRandom.nextObject(PersonTuple.class);
+    // When
+    PersonTuple persons = easyRandom.nextObject(PersonTuple.class);
 
-        // Then
-        assertThat(persons.left).isSameAs(persons.right);
-    }
-
+    // Then
+    assertThat(persons.left).isSameAs(persons.right);
+  }
 }

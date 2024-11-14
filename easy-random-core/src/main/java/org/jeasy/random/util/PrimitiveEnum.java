@@ -29,29 +29,28 @@ package org.jeasy.random.util;
  * @author Sam Van Overmeire
  */
 enum PrimitiveEnum {
+  BYTE(Byte.TYPE, Byte.class),
+  SHORT(Short.TYPE, Short.class),
+  INTEGER(Integer.TYPE, Integer.class),
+  LONG(Long.TYPE, Long.class),
+  FLOAT(Float.TYPE, Float.class),
+  DOUBLE(Double.TYPE, Double.class),
+  BOOLEAN(Boolean.TYPE, Boolean.class),
+  CHARACTER(Character.TYPE, Character.class);
 
-    BYTE(Byte.TYPE, Byte.class),
-    SHORT(Short.TYPE, Short.class),
-    INTEGER(Integer.TYPE, Integer.class),
-    LONG(Long.TYPE, Long.class),
-    FLOAT(Float.TYPE, Float.class),
-    DOUBLE(Double.TYPE, Double.class),
-    BOOLEAN(Boolean.TYPE, Boolean.class),
-    CHARACTER(Character.TYPE, Character.class);
+  private Class<?> type;
+  private Class<?> clazz;
 
-    private Class<?> type;
-    private Class<?> clazz;
+  PrimitiveEnum(Class<?> type, Class<?> clazz) {
+    this.type = type;
+    this.clazz = clazz;
+  }
 
-    PrimitiveEnum(Class<?> type, Class<?> clazz) {
-        this.type = type;
-        this.clazz = clazz;
-    }
+  public Class<?> getType() {
+    return type;
+  }
 
-    public Class<?> getType() {
-        return type;
-    }
-
-    public Class<?> getClazz() {
-        return clazz;
-    }
+  public Class<?> getClazz() {
+    return clazz;
+  }
 }

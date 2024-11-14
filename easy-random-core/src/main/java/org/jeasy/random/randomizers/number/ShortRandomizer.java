@@ -32,23 +32,20 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
  */
 public class ShortRandomizer extends AbstractRandomizer<Short> {
 
-    /**
-     * Create a new {@link ShortRandomizer}.
-     */
-    public ShortRandomizer() {
-    }
+  /** Create a new {@link ShortRandomizer}. */
+  public ShortRandomizer() {}
 
-    /**
-     * Create a new {@link ShortRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public ShortRandomizer(long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link ShortRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public ShortRandomizer(long seed) {
+    super(seed);
+  }
 
-    @Override
-    public Short getRandomValue() {
-        return (short) random.nextInt();
-    }
+  @Override
+  public Short getRandomValue() {
+    return (short) random.nextInt();
+  }
 }

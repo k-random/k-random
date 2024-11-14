@@ -23,38 +23,35 @@
  */
 package org.jeasy.random.validation;
 
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.util.ReflectionUtils;
-
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.util.ReflectionUtils;
 
 class DecimalMinMaxAnnotationHandler extends AbstractNumberBaseAnnotationHandler {
 
-    DecimalMinMaxAnnotationHandler(long seed) {
-        super(seed);
+  DecimalMinMaxAnnotationHandler(long seed) {
+    super(seed);
+  }
+
+  @Override
+  public Randomizer<?> getRandomizer(Field field) {
+    Class<?> fieldType = field.getType();
+    DecimalMax decimalMaxAnnotation = ReflectionUtils.getAnnotation(field, DecimalMax.class);
+    DecimalMin decimalMinAnnotation = ReflectionUtils.getAnnotation(field, DecimalMin.class);
+
+    BigDecimal maxValue = null;
+    BigDecimal minValue = null;
+
+    if (decimalMaxAnnotation != null) {
+      maxValue = new BigDecimal(decimalMaxAnnotation.value());
     }
 
-    @Override
-    public Randomizer<?> getRandomizer(Field field) {
-        Class<?> fieldType = field.getType();
-        DecimalMax decimalMaxAnnotation = ReflectionUtils
-                .getAnnotation(field, DecimalMax.class);
-        DecimalMin decimalMinAnnotation = ReflectionUtils
-                .getAnnotation(field, DecimalMin.class);
-
-        BigDecimal maxValue = null;
-        BigDecimal minValue = null;
-
-        if (decimalMaxAnnotation != null) {
-            maxValue = new BigDecimal(decimalMaxAnnotation.value());
-        }
-
-        if (decimalMinAnnotation != null) {
-            minValue = new BigDecimal(decimalMinAnnotation.value());
-        }
-        return getRandomizer(fieldType, minValue, maxValue);
+    if (decimalMinAnnotation != null) {
+      minValue = new BigDecimal(decimalMinAnnotation.value());
     }
+    return getRandomizer(fieldType, minValue, maxValue);
+  }
 }

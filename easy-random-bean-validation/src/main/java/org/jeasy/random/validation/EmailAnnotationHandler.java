@@ -23,22 +23,21 @@
  */
 package org.jeasy.random.validation;
 
+import java.lang.reflect.Field;
+import java.util.Random;
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.EmailRandomizer;
 
-import java.lang.reflect.Field;
-import java.util.Random;
-
 class EmailAnnotationHandler implements BeanValidationAnnotationHandler {
 
-    private final Random random;
+  private final Random random;
 
-    EmailAnnotationHandler(final long seed) {
-        random = new Random(seed);
-    }
+  EmailAnnotationHandler(final long seed) {
+    random = new Random(seed);
+  }
 
-    @Override
-    public Randomizer<?> getRandomizer(Field field) {
-        return new EmailRandomizer(random.nextLong());
-    }
+  @Override
+  public Randomizer<?> getRandomizer(Field field) {
+    return new EmailRandomizer(random.nextLong());
+  }
 }

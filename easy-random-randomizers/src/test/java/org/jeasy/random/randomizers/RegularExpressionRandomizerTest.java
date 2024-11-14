@@ -29,36 +29,36 @@ import org.junit.jupiter.api.Test;
 
 class RegularExpressionRandomizerTest {
 
-    @Test
-    void leadingBoundaryMatcherIsRemoved() {
-        //given
-        RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("^A");
+  @Test
+  void leadingBoundaryMatcherIsRemoved() {
+    // given
+    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("^A");
 
-        //when
-        String actual = randomizer.getRandomValue();
+    // when
+    String actual = randomizer.getRandomValue();
 
-        then(actual).isEqualTo("A");
-    }
+    then(actual).isEqualTo("A");
+  }
 
-    @Test
-    void tailingBoundaryMatcherIsRemoved() {
-        //given
-        RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("A$");
+  @Test
+  void tailingBoundaryMatcherIsRemoved() {
+    // given
+    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("A$");
 
-        //when
-        String actual = randomizer.getRandomValue();
+    // when
+    String actual = randomizer.getRandomValue();
 
-        then(actual).isEqualTo("A");
-    }
+    then(actual).isEqualTo("A");
+  }
 
-    @Test
-    void leadingAndTailingBoundaryMatcherIsRemoved() {
-        //given
-        RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("^A$");
+  @Test
+  void leadingAndTailingBoundaryMatcherIsRemoved() {
+    // given
+    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("^A$");
 
-        //when
-        String actual = randomizer.getRandomValue();
+    // when
+    String actual = randomizer.getRandomValue();
 
-        then(actual).isEqualTo("A");
-    }
+    then(actual).isEqualTo("A");
+  }
 }

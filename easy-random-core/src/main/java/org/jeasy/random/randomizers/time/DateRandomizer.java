@@ -23,14 +23,13 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.EasyRandomParameters;
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.randomizers.range.DateRangeRandomizer;
+import static java.util.Date.from;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
-
-import static java.util.Date.from;
+import org.jeasy.random.EasyRandomParameters;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.randomizers.range.DateRangeRandomizer;
 
 /**
  * Generate a random {@link Date}.
@@ -39,30 +38,35 @@ import static java.util.Date.from;
  */
 public class DateRandomizer implements Randomizer<Date> {
 
-    private final DateRangeRandomizer delegate;
+  private final DateRangeRandomizer delegate;
 
-    /**
-     * Create a new {@link DateRandomizer}.
-     */
-    public DateRandomizer() {
-        delegate = new DateRangeRandomizer(toDate(EasyRandomParameters.DEFAULT_DATES_RANGE.getMin()), toDate(EasyRandomParameters.DEFAULT_DATES_RANGE.getMax()));
-    }
+  /** Create a new {@link DateRandomizer}. */
+  public DateRandomizer() {
+    delegate =
+        new DateRangeRandomizer(
+            toDate(EasyRandomParameters.DEFAULT_DATES_RANGE.getMin()),
+            toDate(EasyRandomParameters.DEFAULT_DATES_RANGE.getMax()));
+  }
 
-    /**
-     * Create a new {@link DateRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public DateRandomizer(final long seed) {
-        delegate = new DateRangeRandomizer(toDate(EasyRandomParameters.DEFAULT_DATES_RANGE.getMin()), toDate(EasyRandomParameters.DEFAULT_DATES_RANGE.getMax()), seed);
-    }
+  /**
+   * Create a new {@link DateRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public DateRandomizer(final long seed) {
+    delegate =
+        new DateRangeRandomizer(
+            toDate(EasyRandomParameters.DEFAULT_DATES_RANGE.getMin()),
+            toDate(EasyRandomParameters.DEFAULT_DATES_RANGE.getMax()),
+            seed);
+  }
 
-    @Override
-    public Date getRandomValue() {
-        return delegate.getRandomValue();
-    }
+  @Override
+  public Date getRandomValue() {
+    return delegate.getRandomValue();
+  }
 
-    private Date toDate(ZonedDateTime zonedDateTime) {
-        return from(zonedDateTime.toInstant());
-    }
+  private Date toDate(ZonedDateTime zonedDateTime) {
+    return from(zonedDateTime.toInstant());
+  }
 }

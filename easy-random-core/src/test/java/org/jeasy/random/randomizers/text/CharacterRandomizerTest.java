@@ -25,39 +25,37 @@ package org.jeasy.random.randomizers.text;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.jeasy.random.randomizers.AbstractRandomizerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.jeasy.random.randomizers.AbstractRandomizerTest;
-
 class CharacterRandomizerTest extends AbstractRandomizerTest<Character> {
 
-    @BeforeEach
-    void setUp() {
-        randomizer = new CharacterRandomizer();
-    }
+  @BeforeEach
+  void setUp() {
+    randomizer = new CharacterRandomizer();
+  }
 
-    @Test
-    void generatedValueMustNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedValueMustNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void shouldGenerateTheSameValueForTheSameSeed() {
-        // Given
-        randomizer = new CharacterRandomizer(SEED);
-        char expected = 'e';
+  @Test
+  void shouldGenerateTheSameValueForTheSameSeed() {
+    // Given
+    randomizer = new CharacterRandomizer(SEED);
+    char expected = 'e';
 
-        // When
-        Character actual = randomizer.getRandomValue();
+    // When
+    Character actual = randomizer.getRandomValue();
 
-        // Then
-        assertThat(actual).isEqualTo(expected);
-    }
+    // Then
+    assertThat(actual).isEqualTo(expected);
+  }
 
-    @Test
-    void shouldGenerateOnlyAlphabeticLetters() {
-        assertThat(randomizer.getRandomValue()).isBetween('A', 'z');
-    }
-
+  @Test
+  void shouldGenerateOnlyAlphabeticLetters() {
+    assertThat(randomizer.getRandomValue()).isBetween('A', 'z');
+  }
 }

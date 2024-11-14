@@ -29,18 +29,17 @@ import org.junit.jupiter.api.Test;
 
 public class RecordCreationTest {
 
-    @Test
-    void testRandomRecordCreation() {
-        // given
-        EasyRandom easyRandom = new EasyRandom();
+  @Test
+  void testRandomRecordCreation() {
+    // given
+    EasyRandom easyRandom = new EasyRandom();
 
-        // when
-        Person person = easyRandom.nextObject(Person.class);
+    // when
+    Person person = easyRandom.nextObject(Person.class);
 
-        // then
-        Assertions.assertThat(person).isNotNull();
-        Assertions.assertThat(person.id()).isNotNull();
-        Assertions.assertThat(person.name()).isNotNull();
-    }
-
+    // then
+    Assertions.assertThat(person).isNotNull();
+    Assertions.assertThat(person.id()).isNotNull();
+    Assertions.assertThat(person.name()).isNotNull();
+  }
 }

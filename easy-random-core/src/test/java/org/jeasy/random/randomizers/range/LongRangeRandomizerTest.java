@@ -32,46 +32,47 @@ import org.junit.jupiter.api.Test;
 
 class LongRangeRandomizerTest extends AbstractRangeRandomizerTest<Long> {
 
-    @BeforeEach
-    void setUp() {
-        min = 1L;
-        max = 10L;
-        randomizer = new LongRangeRandomizer(min, max);
-    }
+  @BeforeEach
+  void setUp() {
+    min = 1L;
+    max = 10L;
+    randomizer = new LongRangeRandomizer(min, max);
+  }
 
-    @Test
-    void generatedValueShouldBeWithinSpecifiedRange() {
-        Long randomValue = randomizer.getRandomValue();
-        assertThat(randomValue).isBetween(min, max);
-    }
+  @Test
+  void generatedValueShouldBeWithinSpecifiedRange() {
+    Long randomValue = randomizer.getRandomValue();
+    assertThat(randomValue).isBetween(min, max);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new LongRangeRandomizer(max, min)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new LongRangeRandomizer(max, min))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-        randomizer = new LongRangeRandomizer(null, max);
-        Long randomLong = randomizer.getRandomValue();
-        assertThat(randomLong).isLessThanOrEqualTo(max);
-    }
+  @Test
+  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
+    randomizer = new LongRangeRandomizer(null, max);
+    Long randomLong = randomizer.getRandomValue();
+    assertThat(randomLong).isLessThanOrEqualTo(max);
+  }
 
-    @Test
-    void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-        randomizer = new LongRangeRandomizer(min, null);
-        Long randomLong = randomizer.getRandomValue();
-        assertThat(randomLong).isGreaterThanOrEqualTo(min);
-    }
+  @Test
+  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
+    randomizer = new LongRangeRandomizer(min, null);
+    Long randomLong = randomizer.getRandomValue();
+    assertThat(randomLong).isGreaterThanOrEqualTo(min);
+  }
 
-    @Test
-    void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-        // given
-        LongRangeRandomizer longRangeRandomizer = new LongRangeRandomizer(min, max, SEED);
-        
-        // when
-        Long l = longRangeRandomizer.getRandomValue();
+  @Test
+  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
+    // given
+    LongRangeRandomizer longRangeRandomizer = new LongRangeRandomizer(min, max, SEED);
 
-        then(l).isEqualTo(7L);
-    }
+    // when
+    Long l = longRangeRandomizer.getRandomValue();
+
+    then(l).isEqualTo(7L);
+  }
 }

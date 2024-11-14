@@ -30,46 +30,46 @@ package org.jeasy.random.randomizers.range;
  */
 public class ByteRangeRandomizer extends AbstractRangeRandomizer<Byte> {
 
-    /**
-     * Create a new {@link ByteRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public ByteRangeRandomizer(final Byte min, final Byte max) {
-        super(min, max);
-    }
+  /**
+   * Create a new {@link ByteRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public ByteRangeRandomizer(final Byte min, final Byte max) {
+    super(min, max);
+  }
 
-    /**
-     * Create a new {@link ByteRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public ByteRangeRandomizer(final Byte min, final Byte max, final long seed) {
-        super(min, max, seed);
-    }
+  /**
+   * Create a new {@link ByteRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public ByteRangeRandomizer(final Byte min, final Byte max, final long seed) {
+    super(min, max, seed);
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min > max) {
-            throw new IllegalArgumentException("max must be greater than min");
-        }
+  @Override
+  protected void checkValues() {
+    if (min > max) {
+      throw new IllegalArgumentException("max must be greater than min");
     }
+  }
 
-    @Override
-    public Byte getRandomValue() {
-        return (byte) nextDouble(min, max);
-    }
+  @Override
+  public Byte getRandomValue() {
+    return (byte) nextDouble(min, max);
+  }
 
-    @Override
-    protected Byte getDefaultMaxValue() {
-        return Byte.MAX_VALUE;
-    }
+  @Override
+  protected Byte getDefaultMaxValue() {
+    return Byte.MAX_VALUE;
+  }
 
-    @Override
-    protected Byte getDefaultMinValue() {
-        return Byte.MIN_VALUE;
-    }
+  @Override
+  protected Byte getDefaultMinValue() {
+    return Byte.MIN_VALUE;
+  }
 }

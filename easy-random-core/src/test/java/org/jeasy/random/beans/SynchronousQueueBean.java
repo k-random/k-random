@@ -28,7 +28,6 @@ import java.util.concurrent.SynchronousQueue;
 @SuppressWarnings({"rawtypes", "unused"})
 public class SynchronousQueueBean {
 
-    private SynchronousQueue synchronousQueue;
-    private SynchronousQueue<Person> typedSynchronousQueue;
-
+  private SynchronousQueue synchronousQueue;
+  private SynchronousQueue<Person> typedSynchronousQueue;
 }

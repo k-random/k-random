@@ -23,11 +23,10 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.time.LocalTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random {@link OffsetTime}.
@@ -36,39 +35,37 @@ import java.time.ZoneOffset;
  */
 public class OffsetTimeRandomizer implements Randomizer<OffsetTime> {
 
-    private LocalTimeRandomizer localTimeRandomizer;
-    private ZoneOffsetRandomizer zoneOffsetRandomizer;
+  private LocalTimeRandomizer localTimeRandomizer;
+  private ZoneOffsetRandomizer zoneOffsetRandomizer;
 
-    /**
-     * Create a new {@link OffsetTimeRandomizer}.
-     */
-    public OffsetTimeRandomizer() {
-        localTimeRandomizer = new LocalTimeRandomizer();
-        zoneOffsetRandomizer = new ZoneOffsetRandomizer();
-    }
+  /** Create a new {@link OffsetTimeRandomizer}. */
+  public OffsetTimeRandomizer() {
+    localTimeRandomizer = new LocalTimeRandomizer();
+    zoneOffsetRandomizer = new ZoneOffsetRandomizer();
+  }
 
-    /**
-     * Create a new {@link OffsetTimeRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public OffsetTimeRandomizer(final long seed) {
-        localTimeRandomizer = new LocalTimeRandomizer(seed);
-        zoneOffsetRandomizer = new ZoneOffsetRandomizer(seed);
-    }
+  /**
+   * Create a new {@link OffsetTimeRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public OffsetTimeRandomizer(final long seed) {
+    localTimeRandomizer = new LocalTimeRandomizer(seed);
+    zoneOffsetRandomizer = new ZoneOffsetRandomizer(seed);
+  }
 
-    @Override
-    public OffsetTime getRandomValue() {
-        LocalTime randomLocalTime = localTimeRandomizer.getRandomValue();
-        ZoneOffset randomZoneOffset = zoneOffsetRandomizer.getRandomValue();
-        return OffsetTime.of(randomLocalTime, randomZoneOffset);
-    }
+  @Override
+  public OffsetTime getRandomValue() {
+    LocalTime randomLocalTime = localTimeRandomizer.getRandomValue();
+    ZoneOffset randomZoneOffset = zoneOffsetRandomizer.getRandomValue();
+    return OffsetTime.of(randomLocalTime, randomZoneOffset);
+  }
 
-    public void setLocalTimeRandomizer(final LocalTimeRandomizer localTimeRandomizer) {
-        this.localTimeRandomizer = localTimeRandomizer;
-    }
+  public void setLocalTimeRandomizer(final LocalTimeRandomizer localTimeRandomizer) {
+    this.localTimeRandomizer = localTimeRandomizer;
+  }
 
-    public void setZoneOffsetRandomizer(final ZoneOffsetRandomizer zoneOffsetRandomizer) {
-        this.zoneOffsetRandomizer = zoneOffsetRandomizer;
-    }
+  public void setZoneOffsetRandomizer(final ZoneOffsetRandomizer zoneOffsetRandomizer) {
+    this.zoneOffsetRandomizer = zoneOffsetRandomizer;
+  }
 }

@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers.range;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.math.BigInteger;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * Generate a random {@link BigInteger} in the given range.
@@ -34,31 +33,31 @@ import java.math.BigInteger;
  */
 public class BigIntegerRangeRandomizer implements Randomizer<BigInteger> {
 
-    private final IntegerRangeRandomizer delegate;
+  private final IntegerRangeRandomizer delegate;
 
-    /**
-     * Create a new {@link BigIntegerRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public BigIntegerRangeRandomizer(final Integer min, final Integer max) {
-        delegate = new IntegerRangeRandomizer(min, max);
-    }
+  /**
+   * Create a new {@link BigIntegerRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public BigIntegerRangeRandomizer(final Integer min, final Integer max) {
+    delegate = new IntegerRangeRandomizer(min, max);
+  }
 
-    /**
-     * Create a new {@link BigIntegerRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public BigIntegerRangeRandomizer(final Integer min, final Integer max, final long seed) {
-        delegate = new IntegerRangeRandomizer(min, max, seed);
-    }
+  /**
+   * Create a new {@link BigIntegerRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public BigIntegerRangeRandomizer(final Integer min, final Integer max, final long seed) {
+    delegate = new IntegerRangeRandomizer(min, max, seed);
+  }
 
-    @Override
-    public BigInteger getRandomValue() {
-        return new BigInteger(String.valueOf(delegate.getRandomValue()));
-    }
+  @Override
+  public BigInteger getRandomValue() {
+    return new BigInteger(String.valueOf(delegate.getRandomValue()));
+  }
 }

@@ -23,22 +23,8 @@
  */
 package org.jeasy.random.randomizers.registry;
 
-import org.jeasy.random.annotation.Priority;
-import org.jeasy.random.EasyRandomParameters;
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.api.RandomizerRegistry;
-import org.jeasy.random.randomizers.misc.BooleanRandomizer;
-import org.jeasy.random.randomizers.misc.LocaleRandomizer;
-import org.jeasy.random.randomizers.misc.SkipRandomizer;
-import org.jeasy.random.randomizers.misc.UUIDRandomizer;
-import org.jeasy.random.randomizers.net.UriRandomizer;
-import org.jeasy.random.randomizers.net.UrlRandomizer;
-import org.jeasy.random.randomizers.number.*;
-import org.jeasy.random.randomizers.range.DateRangeRandomizer;
-import org.jeasy.random.randomizers.range.SqlDateRangeRandomizer;
-import org.jeasy.random.randomizers.text.CharacterRandomizer;
-import org.jeasy.random.randomizers.text.StringRandomizer;
-import org.jeasy.random.randomizers.time.*;
+import static java.sql.Date.valueOf;
+import static org.jeasy.random.util.ConversionUtils.convertDateToLocalDate;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -54,9 +40,22 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static java.sql.Date.valueOf;
-import static org.jeasy.random.util.ConversionUtils.convertDateToLocalDate;
+import org.jeasy.random.EasyRandomParameters;
+import org.jeasy.random.annotation.Priority;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.api.RandomizerRegistry;
+import org.jeasy.random.randomizers.misc.BooleanRandomizer;
+import org.jeasy.random.randomizers.misc.LocaleRandomizer;
+import org.jeasy.random.randomizers.misc.SkipRandomizer;
+import org.jeasy.random.randomizers.misc.UUIDRandomizer;
+import org.jeasy.random.randomizers.net.UriRandomizer;
+import org.jeasy.random.randomizers.net.UrlRandomizer;
+import org.jeasy.random.randomizers.number.*;
+import org.jeasy.random.randomizers.range.DateRangeRandomizer;
+import org.jeasy.random.randomizers.range.SqlDateRangeRandomizer;
+import org.jeasy.random.randomizers.text.CharacterRandomizer;
+import org.jeasy.random.randomizers.text.StringRandomizer;
+import org.jeasy.random.randomizers.time.*;
 
 /**
  * Registry for Java built-in types.

@@ -23,11 +23,11 @@
  */
 package org.jeasy.random.validation;
 
+import static org.jeasy.random.EasyRandomParameters.DEFAULT_DATE_RANGE;
+
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-
-import static org.jeasy.random.EasyRandomParameters.DEFAULT_DATE_RANGE;
 
 class FutureOrPresentAnnotationHandler extends AbstractTemporalBaseAnnotationHandler {
   public FutureOrPresentAnnotationHandler() {

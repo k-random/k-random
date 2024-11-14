@@ -23,11 +23,10 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.randomizers.misc.EnumRandomizer;
-
 import java.time.Month;
 import java.time.MonthDay;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.randomizers.misc.EnumRandomizer;
 
 /**
  * A {@link Randomizer} that generates random {@link MonthDay}.
@@ -36,31 +35,29 @@ import java.time.MonthDay;
  */
 public class MonthDayRandomizer implements Randomizer<MonthDay> {
 
-    private final EnumRandomizer<Month> monthRandomizer;
-    private final DayRandomizer dayRandomizer;
+  private final EnumRandomizer<Month> monthRandomizer;
+  private final DayRandomizer dayRandomizer;
 
-    /**
-     * Create a new {@link MonthDayRandomizer}.
-     */
-    public MonthDayRandomizer() {
-        monthRandomizer = new EnumRandomizer<>(Month.class);
-        dayRandomizer = new DayRandomizer();
-    }
+  /** Create a new {@link MonthDayRandomizer}. */
+  public MonthDayRandomizer() {
+    monthRandomizer = new EnumRandomizer<>(Month.class);
+    dayRandomizer = new DayRandomizer();
+  }
 
-    /**
-     * Create a new {@link MonthDayRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public MonthDayRandomizer(final long seed) {
-        monthRandomizer = new EnumRandomizer<>(Month.class, seed);
-        dayRandomizer = new DayRandomizer(seed);
-    }
+  /**
+   * Create a new {@link MonthDayRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public MonthDayRandomizer(final long seed) {
+    monthRandomizer = new EnumRandomizer<>(Month.class, seed);
+    dayRandomizer = new DayRandomizer(seed);
+  }
 
-    @Override
-    public MonthDay getRandomValue() {
-        Month randomMonth = monthRandomizer.getRandomValue();
-        int randomDay = dayRandomizer.getRandomValue();
-        return MonthDay.of(randomMonth, randomDay);
-    }
+  @Override
+  public MonthDay getRandomValue() {
+    Month randomMonth = monthRandomizer.getRandomValue();
+    int randomDay = dayRandomizer.getRandomValue();
+    return MonthDay.of(randomMonth, randomDay);
+  }
 }

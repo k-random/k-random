@@ -27,71 +27,70 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Date;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class DateRangeRandomizerTest extends AbstractRangeRandomizerTest<Date> {
 
-    private Date minDate, maxDate;
+  private Date minDate, maxDate;
 
-    @BeforeEach
-    void setUp() {
-        minDate = new Date(1460448795091L);
-        maxDate = new Date(1460448795179L);
-        randomizer = new DateRangeRandomizer(minDate, maxDate);
-    }
+  @BeforeEach
+  void setUp() {
+    minDate = new Date(1460448795091L);
+    maxDate = new Date(1460448795179L);
+    randomizer = new DateRangeRandomizer(minDate, maxDate);
+  }
 
-    @Test
-    void generatedDateShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedDateShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedDateShouldBeWithinSpecifiedRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(minDate, maxDate);
-    }
+  @Test
+  void generatedDateShouldBeWithinSpecifiedRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(minDate, maxDate);
+  }
 
-    @Test
-    void generatedDateShouldBeAlwaysTheSameForTheSameSeed() {
-        // Given
-        randomizer = new DateRangeRandomizer(minDate, maxDate, SEED);
-        Date expected = new Date(1460448795154L);
+  @Test
+  void generatedDateShouldBeAlwaysTheSameForTheSameSeed() {
+    // Given
+    randomizer = new DateRangeRandomizer(minDate, maxDate, SEED);
+    Date expected = new Date(1460448795154L);
 
-        // When
-        Date randomDate = randomizer.getRandomValue();
+    // When
+    Date randomDate = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomDate).isEqualTo(expected);
-    }
+    // Then
+    assertThat(randomDate).isEqualTo(expected);
+  }
 
-    @Test
-    void whenSpecifiedMinDateIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new DateRangeRandomizer(maxDate, minDate)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinDateIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new DateRangeRandomizer(maxDate, minDate))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinDateIsNull_thenShouldUseDefaultMinValue() {
-        // Given
-        randomizer = new DateRangeRandomizer(null, maxDate);
+  @Test
+  void whenSpecifiedMinDateIsNull_thenShouldUseDefaultMinValue() {
+    // Given
+    randomizer = new DateRangeRandomizer(null, maxDate);
 
-        // When
-        Date randomDate = randomizer.getRandomValue();
+    // When
+    Date randomDate = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomDate).isBeforeOrEqualTo(maxDate);
-    }
+    // Then
+    assertThat(randomDate).isBeforeOrEqualTo(maxDate);
+  }
 
-    @Test
-    void whenSpecifiedMaxDateIsNull_thenShouldUseDefaultMaxValue() {
-        // Given
-        randomizer = new DateRangeRandomizer(minDate, null);
+  @Test
+  void whenSpecifiedMaxDateIsNull_thenShouldUseDefaultMaxValue() {
+    // Given
+    randomizer = new DateRangeRandomizer(minDate, null);
 
-        // when
-        Date randomDate = randomizer.getRandomValue();
+    // when
+    Date randomDate = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomDate).isAfterOrEqualTo(minDate);
-    }
-
+    // Then
+    assertThat(randomDate).isAfterOrEqualTo(minDate);
+  }
 }

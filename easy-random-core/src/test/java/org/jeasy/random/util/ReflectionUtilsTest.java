@@ -23,8 +23,12 @@
  */
 package org.jeasy.random.util;
 
-import org.jeasy.random.beans.*;
-import org.junit.jupiter.api.Test;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -36,286 +40,341 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.SynchronousQueue;
-
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import org.jeasy.random.beans.*;
+import org.junit.jupiter.api.Test;
 
 class ReflectionUtilsTest {
 
-    private static final int INITIAL_CAPACITY = 10;
+  private static final int INITIAL_CAPACITY = 10;
 
-    @Test
-    void testGetDeclaredFields() {
-        BigDecimal javaVersion = new BigDecimal(System.getProperty("java.specification.version"));
-        if (javaVersion.compareTo(new BigDecimal("12")) >= 0) {
-            assertThat(ReflectionUtils.getDeclaredFields(Street.class)).hasSize(21);
-        } else if (javaVersion.compareTo(new BigDecimal("9")) >= 0) {
-            assertThat(ReflectionUtils.getDeclaredFields(Street.class)).hasSize(22);
-        } else {
-            assertThat(ReflectionUtils.getDeclaredFields(Street.class)).hasSize(20);
-        }
+  @Test
+  void testGetDeclaredFields() {
+    BigDecimal javaVersion = new BigDecimal(System.getProperty("java.specification.version"));
+    if (javaVersion.compareTo(new BigDecimal("12")) >= 0) {
+      assertThat(ReflectionUtils.getDeclaredFields(Street.class)).hasSize(21);
+    } else if (javaVersion.compareTo(new BigDecimal("9")) >= 0) {
+      assertThat(ReflectionUtils.getDeclaredFields(Street.class)).hasSize(22);
+    } else {
+      assertThat(ReflectionUtils.getDeclaredFields(Street.class)).hasSize(20);
+    }
+  }
+
+  @Test
+  void testGetInheritedFields() {
+    assertThat(ReflectionUtils.getInheritedFields(SocialPerson.class)).hasSize(11);
+  }
+
+  @Test
+  void testIsStatic() throws Exception {
+    assertThat(ReflectionUtils.isStatic(Human.class.getField("SERIAL_VERSION_UID"))).isTrue();
+  }
+
+  @Test
+  void testIsInterface() {
+    assertThat(ReflectionUtils.isInterface(List.class)).isTrue();
+    assertThat(ReflectionUtils.isInterface(Mammal.class)).isTrue();
+
+    assertThat(ReflectionUtils.isInterface(MammalImpl.class)).isFalse();
+    assertThat(ReflectionUtils.isInterface(ArrayList.class)).isFalse();
+  }
+
+  @Test
+  void testIsAbstract() {
+    assertThat(ReflectionUtils.isAbstract(Foo.class)).isFalse();
+
+    assertThat(ReflectionUtils.isAbstract(Bar.class)).isTrue();
+  }
+
+  @Test
+  void testIsPublic() {
+    assertThat(ReflectionUtils.isPublic(Foo.class)).isTrue();
+    assertThat(ReflectionUtils.isPublic(Dummy.class)).isFalse();
+  }
+
+  @Test
+  void testIsArrayType() {
+    assertThat(ReflectionUtils.isArrayType(int[].class)).isTrue();
+    assertThat(ReflectionUtils.isArrayType(Foo.class)).isFalse();
+  }
+
+  @Test
+  void testIsEnumType() {
+    assertThat(ReflectionUtils.isEnumType(Gender.class)).isTrue();
+    assertThat(ReflectionUtils.isEnumType(Foo.class)).isFalse();
+  }
+
+  @Test
+  void testIsCollectionType() {
+    assertThat(ReflectionUtils.isCollectionType(CustomList.class)).isTrue();
+    assertThat(ReflectionUtils.isCollectionType(Foo.class)).isFalse();
+  }
+
+  @Test
+  void testIsMapType() {
+    assertThat(ReflectionUtils.isMapType(CustomMap.class)).isTrue();
+    assertThat(ReflectionUtils.isMapType(Foo.class)).isFalse();
+  }
+
+  @Test
+  void testIsJdkBuiltIn() {
+    assertThat(ReflectionUtils.isJdkBuiltIn(ArrayList.class)).isTrue();
+    assertThat(ReflectionUtils.isJdkBuiltIn(CustomList.class)).isFalse();
+  }
+
+  @Test
+  void getWrapperTypeTest() {
+    assertThat(ReflectionUtils.getWrapperType(Byte.TYPE)).isEqualTo(Byte.class);
+    assertThat(ReflectionUtils.getWrapperType(Short.TYPE)).isEqualTo(Short.class);
+    assertThat(ReflectionUtils.getWrapperType(Integer.TYPE)).isEqualTo(Integer.class);
+    assertThat(ReflectionUtils.getWrapperType(Long.TYPE)).isEqualTo(Long.class);
+    assertThat(ReflectionUtils.getWrapperType(Double.TYPE)).isEqualTo(Double.class);
+    assertThat(ReflectionUtils.getWrapperType(Float.TYPE)).isEqualTo(Float.class);
+    assertThat(ReflectionUtils.getWrapperType(Boolean.TYPE)).isEqualTo(Boolean.class);
+    assertThat(ReflectionUtils.getWrapperType(Character.TYPE)).isEqualTo(Character.class);
+    assertThat(ReflectionUtils.getWrapperType(String.class)).isEqualTo(String.class);
+  }
+
+  @Test
+  void testIsPrimitiveFieldWithDefaultValue() throws Exception {
+    Class<PrimitiveFieldsWithDefaultValuesBean> defaultValueClass =
+        PrimitiveFieldsWithDefaultValuesBean.class;
+    PrimitiveFieldsWithDefaultValuesBean defaultValueBean =
+        new PrimitiveFieldsWithDefaultValuesBean();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                defaultValueBean, defaultValueClass.getField("bool")))
+        .isTrue();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                defaultValueBean, defaultValueClass.getField("b")))
+        .isTrue();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                defaultValueBean, defaultValueClass.getField("s")))
+        .isTrue();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                defaultValueBean, defaultValueClass.getField("i")))
+        .isTrue();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                defaultValueBean, defaultValueClass.getField("l")))
+        .isTrue();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                defaultValueBean, defaultValueClass.getField("f")))
+        .isTrue();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                defaultValueBean, defaultValueClass.getField("d")))
+        .isTrue();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                defaultValueBean, defaultValueClass.getField("c")))
+        .isTrue();
+
+    Class<PrimitiveFieldsWithNonDefaultValuesBean> nonDefaultValueClass =
+        PrimitiveFieldsWithNonDefaultValuesBean.class;
+    PrimitiveFieldsWithNonDefaultValuesBean nonDefaultValueBean =
+        new PrimitiveFieldsWithNonDefaultValuesBean();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                nonDefaultValueBean, nonDefaultValueClass.getField("bool")))
+        .isFalse();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                nonDefaultValueBean, nonDefaultValueClass.getField("b")))
+        .isFalse();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                nonDefaultValueBean, nonDefaultValueClass.getField("s")))
+        .isFalse();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                nonDefaultValueBean, nonDefaultValueClass.getField("i")))
+        .isFalse();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                nonDefaultValueBean, nonDefaultValueClass.getField("l")))
+        .isFalse();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                nonDefaultValueBean, nonDefaultValueClass.getField("f")))
+        .isFalse();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                nonDefaultValueBean, nonDefaultValueClass.getField("d")))
+        .isFalse();
+    assertThat(
+            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
+                nonDefaultValueBean, nonDefaultValueClass.getField("c")))
+        .isFalse();
+  }
+
+  @Test
+  void testGetReadMethod() throws NoSuchFieldException {
+    assertThat(
+            ReflectionUtils.getReadMethod(
+                PrimitiveFieldsWithDefaultValuesBean.class.getDeclaredField("b")))
+        .isEmpty();
+    final Optional<Method> readMethod =
+        ReflectionUtils.getReadMethod(Foo.class.getDeclaredField("bar"));
+    assertThat(readMethod).isNotNull();
+    assertThat(readMethod.get().getName()).isEqualTo("getBar");
+  }
+
+  @Test
+  void testGetAnnotation() throws NoSuchFieldException {
+    Field field = AnnotatedBean.class.getDeclaredField("fieldAnnotation");
+    assertThat(ReflectionUtils.getAnnotation(field, NotNull.class)).isInstanceOf(NotNull.class);
+
+    field = AnnotatedBean.class.getDeclaredField("methodAnnotation");
+    assertThat(ReflectionUtils.getAnnotation(field, NotNull.class)).isInstanceOf(NotNull.class);
+
+    field = AnnotatedBean.class.getDeclaredField("noAnnotation");
+    assertThat(ReflectionUtils.getAnnotation(field, NotNull.class)).isNull();
+  }
+
+  @Test
+  void testIsAnnotationPresent() throws NoSuchFieldException {
+    Field field = AnnotatedBean.class.getDeclaredField("fieldAnnotation");
+    assertThat(ReflectionUtils.isAnnotationPresent(field, NotNull.class)).isTrue();
+
+    field = AnnotatedBean.class.getDeclaredField("methodAnnotation");
+    assertThat(ReflectionUtils.isAnnotationPresent(field, NotNull.class)).isTrue();
+
+    field = AnnotatedBean.class.getDeclaredField("noAnnotation");
+    assertThat(ReflectionUtils.isAnnotationPresent(field, NotNull.class)).isFalse();
+  }
+
+  @Test
+  void testGetEmptyImplementationForCollectionInterface() {
+    Collection<?> collection =
+        ReflectionUtils.getEmptyImplementationForCollectionInterface(List.class);
+
+    assertThat(collection).isInstanceOf(ArrayList.class).isEmpty();
+  }
+
+  @Test
+  void createEmptyCollectionForArrayBlockingQueue() {
+    Collection<?> collection =
+        ReflectionUtils.createEmptyCollectionForType(ArrayBlockingQueue.class, INITIAL_CAPACITY);
+
+    assertThat(collection).isInstanceOf(ArrayBlockingQueue.class).isEmpty();
+    assertThat(((ArrayBlockingQueue<?>) collection).remainingCapacity())
+        .isEqualTo(INITIAL_CAPACITY);
+  }
+
+  @Test
+  void synchronousQueueShouldBeRejected() {
+    assertThatThrownBy(
+            () ->
+                ReflectionUtils.createEmptyCollectionForType(
+                    SynchronousQueue.class, INITIAL_CAPACITY))
+        .isInstanceOf(UnsupportedOperationException.class);
+  }
+
+  @Test
+  void delayQueueShouldBeRejected() {
+    assertThatThrownBy(
+            () -> ReflectionUtils.createEmptyCollectionForType(DelayQueue.class, INITIAL_CAPACITY))
+        .isInstanceOf(UnsupportedOperationException.class);
+  }
+
+  @Test
+  void getEmptyImplementationForMapInterface() {
+    Map<?, ?> map = ReflectionUtils.getEmptyImplementationForMapInterface(SortedMap.class);
+
+    assertThat(map).isInstanceOf(TreeMap.class).isEmpty();
+  }
+
+  @Test
+  void setPropertyFluentBean() throws Exception {
+    // given
+    ChainedSetterBean chainedSetterBean = spy(ChainedSetterBean.class);
+    Field nameField = ChainedSetterBean.class.getDeclaredField("name");
+
+    // when
+    ReflectionUtils.setProperty(chainedSetterBean, nameField, "myName");
+
+    // then
+    verify(chainedSetterBean).setName("myName");
+    assertThat(chainedSetterBean.getName()).isEqualTo("myName");
+  }
+
+  @Test
+  void setPropertyFluentBeanPrimitiveType() throws Exception {
+    // given
+    ChainedSetterBean chainedSetterBean = spy(ChainedSetterBean.class);
+    Field indexField = ChainedSetterBean.class.getDeclaredField("index");
+
+    // when
+    ReflectionUtils.setProperty(chainedSetterBean, indexField, 100);
+
+    // then
+    verify(chainedSetterBean).setIndex(100);
+    assertThat(chainedSetterBean.getIndex()).isEqualTo(100);
+  }
+
+  @SuppressWarnings("unused")
+  private class PrimitiveFieldsWithDefaultValuesBean {
+    public boolean bool;
+    public byte b;
+    public short s;
+    public int i;
+    public long l;
+    public float f;
+    public double d;
+    public char c;
+  }
+
+  @SuppressWarnings("unused")
+  private class PrimitiveFieldsWithNonDefaultValuesBean {
+    public boolean bool = true;
+    public byte b = (byte) 1;
+    public short s = (short) 1;
+    public int i = 1;
+    public long l = 1L;
+    public float f = 1.0F;
+    public double d = 1.0D;
+    public char c = 'a';
+  }
+
+  public static class AnnotatedBean {
+    @NotNull private String fieldAnnotation;
+    private String methodAnnotation;
+    private String noAnnotation;
+
+    public String getFieldAnnotation() {
+      return fieldAnnotation;
     }
 
-    @Test
-    void testGetInheritedFields() {
-        assertThat(ReflectionUtils.getInheritedFields(SocialPerson.class)).hasSize(11);
+    public void setFieldAnnotation(String fieldAnnotation) {
+      this.fieldAnnotation = fieldAnnotation;
     }
 
-    @Test
-    void testIsStatic() throws Exception {
-        assertThat(ReflectionUtils.isStatic(Human.class.getField("SERIAL_VERSION_UID"))).isTrue();
+    @NotNull
+    public String getMethodAnnotation() {
+      return methodAnnotation;
     }
 
-    @Test
-    void testIsInterface() {
-        assertThat(ReflectionUtils.isInterface(List.class)).isTrue();
-        assertThat(ReflectionUtils.isInterface(Mammal.class)).isTrue();
-
-        assertThat(ReflectionUtils.isInterface(MammalImpl.class)).isFalse();
-        assertThat(ReflectionUtils.isInterface(ArrayList.class)).isFalse();
+    public void setMethodAnnotation(String methodAnnotation) {
+      this.methodAnnotation = methodAnnotation;
     }
 
-    @Test
-    void testIsAbstract() {
-        assertThat(ReflectionUtils.isAbstract(Foo.class)).isFalse();
-
-        assertThat(ReflectionUtils.isAbstract(Bar.class)).isTrue();
+    public String getNoAnnotation() {
+      return noAnnotation;
     }
 
-    @Test
-    void testIsPublic() {
-        assertThat(ReflectionUtils.isPublic(Foo.class)).isTrue();
-        assertThat(ReflectionUtils.isPublic(Dummy.class)).isFalse();
+    public void setNoAnnotation(String noAnnotation) {
+      this.noAnnotation = noAnnotation;
     }
+  }
 
-    @Test
-    void testIsArrayType() {
-        assertThat(ReflectionUtils.isArrayType(int[].class)).isTrue();
-        assertThat(ReflectionUtils.isArrayType(Foo.class)).isFalse();
-    }
+  private class Dummy {}
 
-    @Test
-    void testIsEnumType() {
-        assertThat(ReflectionUtils.isEnumType(Gender.class)).isTrue();
-        assertThat(ReflectionUtils.isEnumType(Foo.class)).isFalse();
-    }
-
-    @Test
-    void testIsCollectionType() {
-        assertThat(ReflectionUtils.isCollectionType(CustomList.class)).isTrue();
-        assertThat(ReflectionUtils.isCollectionType(Foo.class)).isFalse();
-    }
-
-    @Test
-    void testIsMapType() {
-        assertThat(ReflectionUtils.isMapType(CustomMap.class)).isTrue();
-        assertThat(ReflectionUtils.isMapType(Foo.class)).isFalse();
-    }
-
-    @Test
-    void testIsJdkBuiltIn() {
-        assertThat(ReflectionUtils.isJdkBuiltIn(ArrayList.class)).isTrue();
-        assertThat(ReflectionUtils.isJdkBuiltIn(CustomList.class)).isFalse();
-    }
-
-    @Test
-    void getWrapperTypeTest() {
-        assertThat(ReflectionUtils.getWrapperType(Byte.TYPE)).isEqualTo(Byte.class);
-        assertThat(ReflectionUtils.getWrapperType(Short.TYPE)).isEqualTo(Short.class);
-        assertThat(ReflectionUtils.getWrapperType(Integer.TYPE)).isEqualTo(Integer.class);
-        assertThat(ReflectionUtils.getWrapperType(Long.TYPE)).isEqualTo(Long.class);
-        assertThat(ReflectionUtils.getWrapperType(Double.TYPE)).isEqualTo(Double.class);
-        assertThat(ReflectionUtils.getWrapperType(Float.TYPE)).isEqualTo(Float.class);
-        assertThat(ReflectionUtils.getWrapperType(Boolean.TYPE)).isEqualTo(Boolean.class);
-        assertThat(ReflectionUtils.getWrapperType(Character.TYPE)).isEqualTo(Character.class);
-        assertThat(ReflectionUtils.getWrapperType(String.class)).isEqualTo(String.class);
-    }
-
-    @Test
-    void testIsPrimitiveFieldWithDefaultValue() throws Exception {
-        Class<PrimitiveFieldsWithDefaultValuesBean> defaultValueClass = PrimitiveFieldsWithDefaultValuesBean.class;
-        PrimitiveFieldsWithDefaultValuesBean defaultValueBean = new PrimitiveFieldsWithDefaultValuesBean();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(defaultValueBean, defaultValueClass.getField("bool"))).isTrue();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(defaultValueBean, defaultValueClass.getField("b"))).isTrue();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(defaultValueBean, defaultValueClass.getField("s"))).isTrue();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(defaultValueBean, defaultValueClass.getField("i"))).isTrue();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(defaultValueBean, defaultValueClass.getField("l"))).isTrue();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(defaultValueBean, defaultValueClass.getField("f"))).isTrue();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(defaultValueBean, defaultValueClass.getField("d"))).isTrue();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(defaultValueBean, defaultValueClass.getField("c"))).isTrue();
-
-        Class<PrimitiveFieldsWithNonDefaultValuesBean> nonDefaultValueClass = PrimitiveFieldsWithNonDefaultValuesBean.class;
-        PrimitiveFieldsWithNonDefaultValuesBean nonDefaultValueBean = new PrimitiveFieldsWithNonDefaultValuesBean();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultValueClass.getField("bool"))).isFalse();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultValueClass.getField("b"))).isFalse();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultValueClass.getField("s"))).isFalse();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultValueClass.getField("i"))).isFalse();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultValueClass.getField("l"))).isFalse();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultValueClass.getField("f"))).isFalse();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultValueClass.getField("d"))).isFalse();
-        assertThat(ReflectionUtils.isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultValueClass.getField("c"))).isFalse();
-    }
-
-    @Test
-    void testGetReadMethod() throws NoSuchFieldException {
-        assertThat(ReflectionUtils.getReadMethod(PrimitiveFieldsWithDefaultValuesBean.class.getDeclaredField("b"))).isEmpty();
-        final Optional<Method> readMethod =
-                ReflectionUtils.getReadMethod(Foo.class.getDeclaredField("bar"));
-        assertThat(readMethod).isNotNull();
-        assertThat(readMethod.get().getName()).isEqualTo("getBar");
-    }
-
-    @Test
-    void testGetAnnotation() throws NoSuchFieldException {
-        Field field = AnnotatedBean.class.getDeclaredField("fieldAnnotation");
-        assertThat(ReflectionUtils.getAnnotation(field, NotNull.class)).isInstanceOf(NotNull.class);
-
-        field = AnnotatedBean.class.getDeclaredField("methodAnnotation");
-        assertThat(ReflectionUtils.getAnnotation(field, NotNull.class)).isInstanceOf(NotNull.class);
-
-        field = AnnotatedBean.class.getDeclaredField("noAnnotation");
-        assertThat(ReflectionUtils.getAnnotation(field, NotNull.class)).isNull();
-    }
-
-    @Test
-    void testIsAnnotationPresent() throws NoSuchFieldException {
-        Field field = AnnotatedBean.class.getDeclaredField("fieldAnnotation");
-        assertThat(ReflectionUtils.isAnnotationPresent(field, NotNull.class)).isTrue();
-
-        field = AnnotatedBean.class.getDeclaredField("methodAnnotation");
-        assertThat(ReflectionUtils.isAnnotationPresent(field, NotNull.class)).isTrue();
-
-        field = AnnotatedBean.class.getDeclaredField("noAnnotation");
-        assertThat(ReflectionUtils.isAnnotationPresent(field, NotNull.class)).isFalse();
-    }
-
-    @Test
-    void testGetEmptyImplementationForCollectionInterface() {
-        Collection<?> collection = ReflectionUtils.getEmptyImplementationForCollectionInterface(List.class);
-
-        assertThat(collection).isInstanceOf(ArrayList.class).isEmpty();
-    }
-
-    @Test
-    void createEmptyCollectionForArrayBlockingQueue() {
-        Collection<?> collection = ReflectionUtils.createEmptyCollectionForType(ArrayBlockingQueue.class, INITIAL_CAPACITY);
-
-        assertThat(collection).isInstanceOf(ArrayBlockingQueue.class).isEmpty();
-        assertThat(((ArrayBlockingQueue<?>) collection).remainingCapacity()).isEqualTo(INITIAL_CAPACITY);
-    }
-
-    @Test
-    void synchronousQueueShouldBeRejected() {
-        assertThatThrownBy(() -> ReflectionUtils.createEmptyCollectionForType(SynchronousQueue.class, INITIAL_CAPACITY)).isInstanceOf(UnsupportedOperationException.class);
-    }
-
-    @Test
-    void delayQueueShouldBeRejected() {
-        assertThatThrownBy(() -> ReflectionUtils.createEmptyCollectionForType(DelayQueue.class, INITIAL_CAPACITY)).isInstanceOf(UnsupportedOperationException.class);
-    }
-
-    @Test
-    void getEmptyImplementationForMapInterface() {
-        Map<?, ?> map = ReflectionUtils.getEmptyImplementationForMapInterface(SortedMap.class);
-
-        assertThat(map).isInstanceOf(TreeMap.class).isEmpty();
-    }
-
-    @Test
-    void setPropertyFluentBean() throws Exception {
-        // given
-        ChainedSetterBean chainedSetterBean = spy(ChainedSetterBean.class);
-        Field nameField = ChainedSetterBean.class.getDeclaredField("name");
-
-        // when
-        ReflectionUtils.setProperty(chainedSetterBean, nameField, "myName");
-
-        // then
-        verify(chainedSetterBean).setName("myName");
-        assertThat(chainedSetterBean.getName()).isEqualTo("myName");
-    }
-
-    @Test
-    void setPropertyFluentBeanPrimitiveType() throws Exception {
-        // given
-        ChainedSetterBean chainedSetterBean = spy(ChainedSetterBean.class);
-        Field indexField = ChainedSetterBean.class.getDeclaredField("index");
-
-        // when
-        ReflectionUtils.setProperty(chainedSetterBean, indexField, 100);
-
-        // then
-        verify(chainedSetterBean).setIndex(100);
-        assertThat(chainedSetterBean.getIndex()).isEqualTo(100);
-    }
-
-    @SuppressWarnings("unused")
-    private class PrimitiveFieldsWithDefaultValuesBean {
-        public boolean bool;
-        public byte b;
-        public short s;
-        public int i;
-        public long l;
-        public float f;
-        public double d;
-        public char c;
-    }
-
-    @SuppressWarnings("unused")
-    private class PrimitiveFieldsWithNonDefaultValuesBean {
-        public boolean bool = true;
-        public byte b = (byte) 1;
-        public short s = (short) 1;
-        public int i = 1;
-        public long l = 1L;
-        public float f = 1.0F;
-        public double d = 1.0D;
-        public char c = 'a';
-    }
-
-    public static class AnnotatedBean {
-        @NotNull
-        private String fieldAnnotation;
-        private String methodAnnotation;
-        private String noAnnotation;
-
-        public String getFieldAnnotation() {
-            return fieldAnnotation;
-        }
-
-        public void setFieldAnnotation(String fieldAnnotation) {
-            this.fieldAnnotation = fieldAnnotation;
-        }
-
-        @NotNull
-        public String getMethodAnnotation() {
-            return methodAnnotation;
-        }
-
-        public void setMethodAnnotation(String methodAnnotation) {
-            this.methodAnnotation = methodAnnotation;
-        }
-
-        public String getNoAnnotation() {
-            return noAnnotation;
-        }
-
-        public void setNoAnnotation(String noAnnotation) {
-            this.noAnnotation = noAnnotation;
-        }
-    }
-
-    private class Dummy { }
-
-    @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
-    @Retention(RUNTIME)
-    @Documented
-    public @interface NotNull {
-
-    }
-
+  @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
+  @Retention(RUNTIME)
+  @Documented
+  public @interface NotNull {}
 }

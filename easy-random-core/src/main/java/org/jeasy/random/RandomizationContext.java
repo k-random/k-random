@@ -23,128 +23,127 @@
  */
 package org.jeasy.random;
 
-import org.jeasy.random.api.RandomizerContext;
+import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Field;
 import java.util.*;
-
-import static java.util.stream.Collectors.toList;
+import org.jeasy.random.api.RandomizerContext;
 
 /**
- * Context object for a single call on {@link EasyRandom#nextObject(Class)}.
- * It contains a map acting as a cache of populated beans to avoid infinite recursion.
+ * Context object for a single call on {@link EasyRandom#nextObject(Class)}. It contains a map
+ * acting as a cache of populated beans to avoid infinite recursion.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
 class RandomizationContext implements RandomizerContext {
 
-    private final EasyRandomParameters parameters;
+  private final EasyRandomParameters parameters;
 
-    private final Map<Class<?>, List<Object>> populatedBeans;
+  private final Map<Class<?>, List<Object>> populatedBeans;
 
-    private final Stack<RandomizationContextStackItem> stack;
+  private final Stack<RandomizationContextStackItem> stack;
 
-    private final Class<?> type;
+  private final Class<?> type;
 
-    private final Random random;
+  private final Random random;
 
-    private Object rootObject;
+  private Object rootObject;
 
-    RandomizationContext(final Class<?> type, final EasyRandomParameters parameters) {
-        this.type = type;
-        populatedBeans = new IdentityHashMap<>();
-        stack = new Stack<>();
-        this.parameters = parameters;
-        this.random = new Random(parameters.getSeed());
+  RandomizationContext(final Class<?> type, final EasyRandomParameters parameters) {
+    this.type = type;
+    populatedBeans = new IdentityHashMap<>();
+    stack = new Stack<>();
+    this.parameters = parameters;
+    this.random = new Random(parameters.getSeed());
+  }
+
+  void addPopulatedBean(final Class<?> type, Object object) {
+    int objectPoolSize = parameters.getObjectPoolSize();
+    List<Object> objects = populatedBeans.get(type);
+    if (objects == null) {
+      objects = new ArrayList<>(objectPoolSize);
     }
-
-    void addPopulatedBean(final Class<?> type, Object object) {
-        int objectPoolSize = parameters.getObjectPoolSize();
-        List<Object> objects = populatedBeans.get(type);
-        if (objects == null) {
-            objects = new ArrayList<>(objectPoolSize);
-        }
-        if (objects.size() < objectPoolSize) {
-            objects.add(object);
-        }
-        populatedBeans.put(type, objects);
+    if (objects.size() < objectPoolSize) {
+      objects.add(object);
     }
+    populatedBeans.put(type, objects);
+  }
 
-    Object getPopulatedBean(final Class<?> type) {
-        int actualPoolSize = populatedBeans.get(type).size();
-        int randomIndex = actualPoolSize > 1 ? random.nextInt(actualPoolSize) : 0;
-        return populatedBeans.get(type).get(randomIndex);
-    }
+  Object getPopulatedBean(final Class<?> type) {
+    int actualPoolSize = populatedBeans.get(type).size();
+    int randomIndex = actualPoolSize > 1 ? random.nextInt(actualPoolSize) : 0;
+    return populatedBeans.get(type).get(randomIndex);
+  }
 
-    boolean hasAlreadyRandomizedType(final Class<?> type) {
-        return populatedBeans.containsKey(type) && populatedBeans.get(type).size() == parameters.getObjectPoolSize();
-    }
+  boolean hasAlreadyRandomizedType(final Class<?> type) {
+    return populatedBeans.containsKey(type)
+        && populatedBeans.get(type).size() == parameters.getObjectPoolSize();
+  }
 
-    void pushStackItem(final RandomizationContextStackItem field) {
-        stack.push(field);
-    }
+  void pushStackItem(final RandomizationContextStackItem field) {
+    stack.push(field);
+  }
 
-    void popStackItem() {
-        stack.pop();
-    }
+  void popStackItem() {
+    stack.pop();
+  }
 
-    String getFieldFullName(final Field field) {
-        List<String> pathToField = getStackedFieldNames();
-        pathToField.add(field.getName());
-        return String.join(".", toLowerCase(pathToField));
-    }
+  String getFieldFullName(final Field field) {
+    List<String> pathToField = getStackedFieldNames();
+    pathToField.add(field.getName());
+    return String.join(".", toLowerCase(pathToField));
+  }
 
-    boolean hasExceededRandomizationDepth() {
-        int currentRandomizationDepth = stack.size();
-        return currentRandomizationDepth > parameters.getRandomizationDepth();
-    }
+  boolean hasExceededRandomizationDepth() {
+    int currentRandomizationDepth = stack.size();
+    return currentRandomizationDepth > parameters.getRandomizationDepth();
+  }
 
-    private List<String> getStackedFieldNames() {
-        return stack.stream().map(i -> i.getField().getName()).collect(toList());
-    }
+  private List<String> getStackedFieldNames() {
+    return stack.stream().map(i -> i.getField().getName()).collect(toList());
+  }
 
-    private List<String> toLowerCase(final List<String> strings) {
-        return strings.stream().map(String::toLowerCase).collect(toList());
-    }
+  private List<String> toLowerCase(final List<String> strings) {
+    return strings.stream().map(String::toLowerCase).collect(toList());
+  }
 
-    void setRandomizedObject(Object randomizedObject) {
-        if (this.rootObject == null) {
-            this.rootObject = randomizedObject;
-        }
+  void setRandomizedObject(Object randomizedObject) {
+    if (this.rootObject == null) {
+      this.rootObject = randomizedObject;
     }
+  }
 
-    @Override
-    public Class<?> getTargetType() {
-        return type;
-    }
+  @Override
+  public Class<?> getTargetType() {
+    return type;
+  }
 
-    @Override
-    public Object getCurrentObject() {
-        if (stack.empty()) {
-            return rootObject;
-        }
-        else {
-            return stack.lastElement().getObject();
-        }
+  @Override
+  public Object getCurrentObject() {
+    if (stack.empty()) {
+      return rootObject;
+    } else {
+      return stack.lastElement().getObject();
     }
+  }
 
-    @Override
-    public String getCurrentField() {
-        return String.join(".", getStackedFieldNames());
-    }
+  @Override
+  public String getCurrentField() {
+    return String.join(".", getStackedFieldNames());
+  }
 
-    @Override
-    public int getCurrentRandomizationDepth() {
-        return stack.size();
-    }
+  @Override
+  public int getCurrentRandomizationDepth() {
+    return stack.size();
+  }
 
-    @Override
-    public Object getRootObject() {
-        return this.rootObject;
-    }
+  @Override
+  public Object getRootObject() {
+    return this.rootObject;
+  }
 
-    @Override
-    public EasyRandomParameters getParameters() {
-        return parameters;
-    }
+  @Override
+  public EasyRandomParameters getParameters() {
+    return parameters;
+  }
 }

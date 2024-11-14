@@ -32,23 +32,20 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
  */
 public class NumberRandomizer extends AbstractRandomizer<Number> {
 
-    /**
-     * Create a new {@link NumberRandomizer}.
-     */
-    public NumberRandomizer() {
-    }
+  /** Create a new {@link NumberRandomizer}. */
+  public NumberRandomizer() {}
 
-    /**
-     * Create a new {@link NumberRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public NumberRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link NumberRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public NumberRandomizer(final long seed) {
+    super(seed);
+  }
 
-    @Override
-    public Integer getRandomValue() {
-        return random.nextInt();
-    }
+  @Override
+  public Integer getRandomValue() {
+    return random.nextInt();
+  }
 }

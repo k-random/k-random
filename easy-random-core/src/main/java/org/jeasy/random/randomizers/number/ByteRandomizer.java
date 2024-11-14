@@ -32,26 +32,24 @@ import org.jeasy.random.api.Randomizer;
  */
 public class ByteRandomizer implements Randomizer<Byte> {
 
-    private final IntegerRandomizer delegate;
+  private final IntegerRandomizer delegate;
 
-    /**
-     * Create a new {@link ByteRandomizer}.
-     */
-    public ByteRandomizer() {
-        delegate = new IntegerRandomizer();
-    }
+  /** Create a new {@link ByteRandomizer}. */
+  public ByteRandomizer() {
+    delegate = new IntegerRandomizer();
+  }
 
-    /**
-     * Create a new {@link ByteRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public ByteRandomizer(final long seed) {
-        delegate = new IntegerRandomizer(seed);
-    }
+  /**
+   * Create a new {@link ByteRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public ByteRandomizer(final long seed) {
+    delegate = new IntegerRandomizer(seed);
+  }
 
-    @Override
-    public Byte getRandomValue() {
-        return delegate.getRandomValue().byteValue();
-    }
+  @Override
+  public Byte getRandomValue() {
+    return delegate.getRandomValue().byteValue();
+  }
 }

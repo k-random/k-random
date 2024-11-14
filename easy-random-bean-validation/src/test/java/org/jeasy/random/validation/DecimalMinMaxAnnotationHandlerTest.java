@@ -1,20 +1,19 @@
 package org.jeasy.random.validation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import org.jeasy.random.EasyRandom;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.jeasy.random.EasyRandom;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class DecimalMinMaxAnnotationHandlerTest {
   private EasyRandom easyRandom;

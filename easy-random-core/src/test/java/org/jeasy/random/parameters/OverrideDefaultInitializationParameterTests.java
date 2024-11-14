@@ -27,47 +27,50 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-import org.junit.jupiter.api.Test;
-
 import org.jeasy.random.beans.BeanWithDefaultFieldValues;
+import org.junit.jupiter.api.Test;
 
 class OverrideDefaultInitializationParameterTests {
 
-    @Test
-    void whenOverrideDefaultInitializationParameterIsFalse_thenShouldKeepDefaultFieldValues() {
-        // Given
-        EasyRandomParameters parameters = new EasyRandomParameters().overrideDefaultInitialization(false);
-        EasyRandom easyRandom = new EasyRandom(parameters);
+  @Test
+  void whenOverrideDefaultInitializationParameterIsFalse_thenShouldKeepDefaultFieldValues() {
+    // Given
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().overrideDefaultInitialization(false);
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-        // When
-        BeanWithDefaultFieldValues bean = easyRandom.nextObject(BeanWithDefaultFieldValues.class);
+    // When
+    BeanWithDefaultFieldValues bean = easyRandom.nextObject(BeanWithDefaultFieldValues.class);
 
-        // Then
-        assertThat(bean.getDefaultNonNullValue()).isEqualTo("default");
-        assertThat(bean.getDefaultNonNullValueSetByConstructor()).isEqualTo("defaultSetByConstructor");
-    }
+    // Then
+    assertThat(bean.getDefaultNonNullValue()).isEqualTo("default");
+    assertThat(bean.getDefaultNonNullValueSetByConstructor()).isEqualTo("defaultSetByConstructor");
+  }
 
-    @Test
-    void whenOverrideDefaultInitializationParameterIsTrue_thenShouldRandomizeFields() {
-        // Given
-        EasyRandomParameters parameters = new EasyRandomParameters().overrideDefaultInitialization(true);
-        EasyRandom easyRandom = new EasyRandom(parameters);
+  @Test
+  void whenOverrideDefaultInitializationParameterIsTrue_thenShouldRandomizeFields() {
+    // Given
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().overrideDefaultInitialization(true);
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-        // When
-        BeanWithDefaultFieldValues bean = easyRandom.nextObject(BeanWithDefaultFieldValues.class);
+    // When
+    BeanWithDefaultFieldValues bean = easyRandom.nextObject(BeanWithDefaultFieldValues.class);
 
-        // Then
-        assertThat(bean.getDefaultNonNullValue()).isNotEqualTo("default").isNotNull();
-        assertThat(bean.getDefaultNonNullValueSetByConstructor()).isNotEqualTo("defaultSetByConstructor").isNotNull();
-    }
+    // Then
+    assertThat(bean.getDefaultNonNullValue()).isNotEqualTo("default").isNotNull();
+    assertThat(bean.getDefaultNonNullValueSetByConstructor())
+        .isNotEqualTo("defaultSetByConstructor")
+        .isNotNull();
+  }
 
-    @Test
-    void shouldNotOverrideDefaultFieldValuesByDefault() {
-        // When
-        BeanWithDefaultFieldValues bean = new EasyRandom().nextObject(BeanWithDefaultFieldValues.class);
+  @Test
+  void shouldNotOverrideDefaultFieldValuesByDefault() {
+    // When
+    BeanWithDefaultFieldValues bean = new EasyRandom().nextObject(BeanWithDefaultFieldValues.class);
 
-        // Then
-        assertThat(bean.getDefaultNonNullValue()).isEqualTo("default");
-        assertThat(bean.getDefaultNonNullValueSetByConstructor()).isEqualTo("defaultSetByConstructor");
-    }
+    // Then
+    assertThat(bean.getDefaultNonNullValue()).isEqualTo("default");
+    assertThat(bean.getDefaultNonNullValueSetByConstructor()).isEqualTo("defaultSetByConstructor");
+  }
 }

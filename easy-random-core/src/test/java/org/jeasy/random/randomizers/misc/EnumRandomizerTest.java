@@ -23,62 +23,64 @@
  */
 package org.jeasy.random.randomizers.misc;
 
-import static org.jeasy.random.randomizers.misc.EnumRandomizerTest.Gender.FEMALE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import org.junit.jupiter.api.Test;
+import static org.jeasy.random.randomizers.misc.EnumRandomizerTest.Gender.FEMALE;
 
 import org.jeasy.random.randomizers.AbstractRandomizerTest;
+import org.junit.jupiter.api.Test;
 
 class EnumRandomizerTest extends AbstractRandomizerTest<EnumRandomizerTest.Gender> {
 
-    @Test
-    void generatedValueShouldBeOfTheSpecifiedEnum() {
-        assertThat(new EnumRandomizer(Gender.class).getRandomValue()).isIn(Gender.values());
-    }
+  @Test
+  void generatedValueShouldBeOfTheSpecifiedEnum() {
+    assertThat(new EnumRandomizer(Gender.class).getRandomValue()).isIn(Gender.values());
+  }
 
-    @Test
-    void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-        assertThat(new EnumRandomizer(Gender.class, SEED).getRandomValue()).isEqualTo(FEMALE);
-    }
+  @Test
+  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
+    assertThat(new EnumRandomizer(Gender.class, SEED).getRandomValue()).isEqualTo(FEMALE);
+  }
 
-    @Test
-    void shouldAlwaysGenerateTheSameValueForTheSameSeedWithExcludedValues() {
-        assertThat(
-            new EnumRandomizer<>(TriState.class, SEED, TriState.Maybe).getRandomValue()).isEqualTo(
-            TriState.False);
-    }
+  @Test
+  void shouldAlwaysGenerateTheSameValueForTheSameSeedWithExcludedValues() {
+    assertThat(new EnumRandomizer<>(TriState.class, SEED, TriState.Maybe).getRandomValue())
+        .isEqualTo(TriState.False);
+  }
 
-    public enum Gender {
-        MALE, FEMALE
-    }
+  public enum Gender {
+    MALE,
+    FEMALE
+  }
 
-    @Test
-    void should_return_a_value_different_from_the_excluded_one() {
-        Gender valueToExclude = Gender.MALE;
-        Gender randomElement = new EnumRandomizer<>(Gender.class, valueToExclude).getRandomValue();
-        assertThat(randomElement).isNotNull();
-        assertThat(randomElement).isNotEqualTo(valueToExclude);
-    }
+  @Test
+  void should_return_a_value_different_from_the_excluded_one() {
+    Gender valueToExclude = Gender.MALE;
+    Gender randomElement = new EnumRandomizer<>(Gender.class, valueToExclude).getRandomValue();
+    assertThat(randomElement).isNotNull();
+    assertThat(randomElement).isNotEqualTo(valueToExclude);
+  }
 
-    @Test
-    void should_throw_an_exception_when_all_values_are_excluded() {
-        assertThatThrownBy(() -> new EnumRandomizer<>(Gender.class, Gender.values())).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void should_throw_an_exception_when_all_values_are_excluded() {
+    assertThatThrownBy(() -> new EnumRandomizer<>(Gender.class, Gender.values()))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    public enum Empty {}
+  public enum Empty {}
 
-    @Test
-    public void should_return_null_for_empty_enum() {
-        Empty randomElement = new EnumRandomizer<>(Empty.class).getRandomValue();
-        assertThat(randomElement).isNull();
-    }
+  @Test
+  public void should_return_null_for_empty_enum() {
+    Empty randomElement = new EnumRandomizer<>(Empty.class).getRandomValue();
+    assertThat(randomElement).isNull();
+  }
 
-    // always keep three options here, as we want to exclude one and still select the same one
-    // deterministically
-    @SuppressWarnings("unused")
-    private enum TriState {
-        True, False, Maybe
-    }
+  // always keep three options here, as we want to exclude one and still select the same one
+  // deterministically
+  @SuppressWarnings("unused")
+  private enum TriState {
+    True,
+    False,
+    Maybe
+  }
 }

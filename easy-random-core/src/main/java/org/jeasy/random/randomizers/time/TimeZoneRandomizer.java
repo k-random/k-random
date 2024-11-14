@@ -24,7 +24,6 @@
 package org.jeasy.random.randomizers.time;
 
 import java.util.TimeZone;
-
 import org.jeasy.random.randomizers.AbstractRandomizer;
 
 /**
@@ -34,24 +33,21 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
  */
 public class TimeZoneRandomizer extends AbstractRandomizer<TimeZone> {
 
-    /**
-     * Create a new {@link TimeZoneRandomizer}.
-     */
-    public TimeZoneRandomizer() {
-    }
+  /** Create a new {@link TimeZoneRandomizer}. */
+  public TimeZoneRandomizer() {}
 
-    /**
-     * Create a new {@link TimeZoneRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public TimeZoneRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link TimeZoneRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public TimeZoneRandomizer(final long seed) {
+    super(seed);
+  }
 
-    @Override
-    public TimeZone getRandomValue() {
-        String[] timeZoneIds = TimeZone.getAvailableIDs();
-        return TimeZone.getTimeZone(timeZoneIds[random.nextInt(timeZoneIds.length)]);
-    }
+  @Override
+  public TimeZone getRandomValue() {
+    String[] timeZoneIds = TimeZone.getAvailableIDs();
+    return TimeZone.getTimeZone(timeZoneIds[random.nextInt(timeZoneIds.length)]);
+  }
 }

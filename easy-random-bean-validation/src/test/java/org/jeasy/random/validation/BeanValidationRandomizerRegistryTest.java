@@ -1,6 +1,12 @@
 package org.jeasy.random.validation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
 import jakarta.validation.constraints.*;
+import java.lang.annotation.Annotation;
+import java.util.Map;
+import java.util.stream.Stream;
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,13 +15,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.lang.annotation.Annotation;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BeanValidationRandomizerRegistryTest {

@@ -29,9 +29,8 @@ import org.junit.jupiter.api.Test;
 
 class NullRandomizerTest {
 
-    @Test
-    void generatedValueShouldBeNull() {
-        assertThat(new NullRandomizer().getRandomValue()).isNull();
-    }
-
+  @Test
+  void generatedValueShouldBeNull() {
+    assertThat(new NullRandomizer().getRandomValue()).isNull();
+  }
 }

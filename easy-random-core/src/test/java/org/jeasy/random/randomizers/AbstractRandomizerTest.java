@@ -27,8 +27,7 @@ import org.jeasy.random.api.Randomizer;
 
 public abstract class AbstractRandomizerTest<T> {
 
-    protected static final long SEED = 123L;
+  protected static final long SEED = 123L;
 
-    protected Randomizer<T> randomizer;
-
+  protected Randomizer<T> randomizer;
 }

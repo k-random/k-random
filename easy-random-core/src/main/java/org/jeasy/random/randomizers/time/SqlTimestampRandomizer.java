@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.sql.Timestamp;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * Generate a random {@link Timestamp}.
@@ -34,26 +33,24 @@ import java.sql.Timestamp;
  */
 public class SqlTimestampRandomizer implements Randomizer<Timestamp> {
 
-    private final DateRandomizer delegate;
+  private final DateRandomizer delegate;
 
-    /**
-     * Create a new {@link SqlTimestampRandomizer}.
-     */
-    public SqlTimestampRandomizer() {
-        delegate = new DateRandomizer();
-    }
+  /** Create a new {@link SqlTimestampRandomizer}. */
+  public SqlTimestampRandomizer() {
+    delegate = new DateRandomizer();
+  }
 
-    /**
-     * Create a new {@link SqlTimestampRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public SqlTimestampRandomizer(final long seed) {
-        delegate = new DateRandomizer(seed);
-    }
+  /**
+   * Create a new {@link SqlTimestampRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public SqlTimestampRandomizer(final long seed) {
+    delegate = new DateRandomizer(seed);
+  }
 
-    @Override
-    public Timestamp getRandomValue() {
-        return new Timestamp(delegate.getRandomValue().getTime());
-    }
+  @Override
+  public Timestamp getRandomValue() {
+    return new Timestamp(delegate.getRandomValue().getTime());
+  }
 }

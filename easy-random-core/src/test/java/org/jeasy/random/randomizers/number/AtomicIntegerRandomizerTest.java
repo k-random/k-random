@@ -26,32 +26,30 @@ package org.jeasy.random.randomizers.number;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.junit.jupiter.api.Test;
-
 import org.jeasy.random.randomizers.AbstractRandomizerTest;
+import org.junit.jupiter.api.Test;
 
 class AtomicIntegerRandomizerTest extends AbstractRandomizerTest<AtomicInteger> {
 
-    @Test
-    void generateValueShouldNotBeNull() {
-        // given
-        AtomicIntegerRandomizer atomicIntegerRandomizer = new AtomicIntegerRandomizer();
-        
-        // when
-        AtomicInteger atomicInteger = atomicIntegerRandomizer.getRandomValue();
+  @Test
+  void generateValueShouldNotBeNull() {
+    // given
+    AtomicIntegerRandomizer atomicIntegerRandomizer = new AtomicIntegerRandomizer();
 
-        then(atomicInteger).isNotNull();
-    }
+    // when
+    AtomicInteger atomicInteger = atomicIntegerRandomizer.getRandomValue();
 
-    @Test
-    void shouldGenerateTheSameValueForTheSameSeed() {
-        // given
-        AtomicIntegerRandomizer atomicIntegerRandomizer = new AtomicIntegerRandomizer(SEED);
-        
-        // when
-        AtomicInteger atomicInteger = atomicIntegerRandomizer.getRandomValue();
+    then(atomicInteger).isNotNull();
+  }
 
-        then(atomicInteger).hasValue(-1188957731);
-    }
+  @Test
+  void shouldGenerateTheSameValueForTheSameSeed() {
+    // given
+    AtomicIntegerRandomizer atomicIntegerRandomizer = new AtomicIntegerRandomizer(SEED);
+
+    // when
+    AtomicInteger atomicInteger = atomicIntegerRandomizer.getRandomValue();
+
+    then(atomicInteger).hasValue(-1188957731);
+  }
 }

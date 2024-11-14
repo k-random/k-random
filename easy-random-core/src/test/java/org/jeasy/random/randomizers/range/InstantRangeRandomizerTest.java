@@ -23,91 +23,90 @@
  */
 package org.jeasy.random.randomizers.range;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.time.Instant;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.Instant;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 public class InstantRangeRandomizerTest extends AbstractRangeRandomizerTest<Instant> {
 
-    private Instant minInstant, maxInstant;
+  private Instant minInstant, maxInstant;
 
-    @BeforeEach
-    void setUp() {
-        minInstant = Instant.ofEpochMilli(Long.MIN_VALUE);
-        maxInstant = Instant.ofEpochMilli(Long.MAX_VALUE);
-        randomizer = new InstantRangeRandomizer(minInstant, maxInstant);
-    }
+  @BeforeEach
+  void setUp() {
+    minInstant = Instant.ofEpochMilli(Long.MIN_VALUE);
+    maxInstant = Instant.ofEpochMilli(Long.MAX_VALUE);
+    randomizer = new InstantRangeRandomizer(minInstant, maxInstant);
+  }
 
-    @Test
-    void generatedInstantShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedInstantShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedInstantShouldBeWithinSpecifiedRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(minInstant, maxInstant);
-    }
+  @Test
+  void generatedInstantShouldBeWithinSpecifiedRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(minInstant, maxInstant);
+  }
 
-    @Test
-    void generatedInstantShouldBeAlwaysTheSameForTheSameSeed() {
+  @Test
+  void generatedInstantShouldBeAlwaysTheSameForTheSameSeed() {
 
-        // Given
-        randomizer = new InstantRangeRandomizer(minInstant, maxInstant, SEED);
-        Instant expected = Instant.parse("+130459354-01-19T05:47:51.168Z");
+    // Given
+    randomizer = new InstantRangeRandomizer(minInstant, maxInstant, SEED);
+    Instant expected = Instant.parse("+130459354-01-19T05:47:51.168Z");
 
-        // When
-        Instant randomValue = randomizer.getRandomValue();
+    // When
+    Instant randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isEqualTo(expected);
-    }
+    // Then
+    assertThat(randomValue).isEqualTo(expected);
+  }
 
-    @Test
-    void whenSpecifiedMinInstantIsAfterMaxInstant_thenShouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new InstantRangeRandomizer(maxInstant, minInstant)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinInstantIsAfterMaxInstant_thenShouldThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new InstantRangeRandomizer(maxInstant, minInstant))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinInstantIsNull_thenShouldUseDefaultMinValue() {
-        // Given
-        randomizer = new InstantRangeRandomizer(null, maxInstant);
+  @Test
+  void whenSpecifiedMinInstantIsNull_thenShouldUseDefaultMinValue() {
+    // Given
+    randomizer = new InstantRangeRandomizer(null, maxInstant);
 
-        // When
-        Instant randomValue = randomizer.getRandomValue();
+    // When
+    Instant randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isBeforeOrEqualTo(maxInstant);
-    }
+    // Then
+    assertThat(randomValue).isBeforeOrEqualTo(maxInstant);
+  }
 
-    @Test
-    void whenSpecifiedMaxInstantIsNull_thenShouldUseDefaultMaxValue() {
-        // Given
-        randomizer = new InstantRangeRandomizer(minInstant, null);
+  @Test
+  void whenSpecifiedMaxInstantIsNull_thenShouldUseDefaultMaxValue() {
+    // Given
+    randomizer = new InstantRangeRandomizer(minInstant, null);
 
-        // when
-        Instant randomValue = randomizer.getRandomValue();
+    // when
+    Instant randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isAfterOrEqualTo(minInstant);
-    }
+    // Then
+    assertThat(randomValue).isAfterOrEqualTo(minInstant);
+  }
 
-    @Test
-    void whenMaxDateIsAfterMidnight_thenShouldNotThrowException() {
-        minInstant = Instant.parse("2019-10-21T23:33:44.00Z");
-        minInstant = Instant.parse("2019-10-22T00:33:22.00Z");
+  @Test
+  void whenMaxDateIsAfterMidnight_thenShouldNotThrowException() {
+    minInstant = Instant.parse("2019-10-21T23:33:44.00Z");
+    minInstant = Instant.parse("2019-10-22T00:33:22.00Z");
 
-        // Given
-        randomizer = new InstantRangeRandomizer(minInstant, maxInstant);
+    // Given
+    randomizer = new InstantRangeRandomizer(minInstant, maxInstant);
 
-        // when
-        Instant randomValue = randomizer.getRandomValue();
+    // when
+    Instant randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isBetween(minInstant, maxInstant);
-    }
-
+    // Then
+    assertThat(randomValue).isBetween(minInstant, maxInstant);
+  }
 }

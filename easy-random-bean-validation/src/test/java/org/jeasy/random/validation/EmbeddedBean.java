@@ -23,30 +23,29 @@
  */
 package org.jeasy.random.validation;
 
-import java.util.List;
-
 import jakarta.validation.constraints.Size;
+import java.util.List;
 
 public class EmbeddedBean {
 
-    private List<String> items;
+  private List<String> items;
 
-    @Size(min = 3, max = 5)
-    private List<String> otherItems;
+  @Size(min = 3, max = 5)
+  private List<String> otherItems;
 
-    public List<String> getItems() {
-        return items;
-    }
+  public List<String> getItems() {
+    return items;
+  }
 
-    public List<String> getOtherItems() {
-        return otherItems;
-    }
+  public List<String> getOtherItems() {
+    return otherItems;
+  }
 
-    public void setItems(List<String> items) {
-        this.items = items;
-    }
+  public void setItems(List<String> items) {
+    this.items = items;
+  }
 
-    public void setOtherItems(List<String> otherItems) {
-        this.otherItems = otherItems;
-    }
+  public void setOtherItems(List<String> otherItems) {
+    this.otherItems = otherItems;
+  }
 }

@@ -24,20 +24,19 @@
 package org.jeasy.random.context;
 
 public class Country {
-    private String name;
+  private String name;
 
-    public Country(String name) {
-        this.name = name;
-    }
+  public Country(String name) {
+    this.name = name;
+  }
 
-    public Country() {
-    }
+  public Country() {}
 
-    public String getName() {
-        return this.name;
-    }
+  public String getName() {
+    return this.name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 }

@@ -31,32 +31,32 @@ import org.junit.jupiter.api.Test;
 
 class GenericStringRandomizerTest extends AbstractRandomizerTest<String> {
 
-    private String[] words;
+  private String[] words;
 
-    @BeforeEach
-    void setUp() {
-        words = new String[]{"foo", "bar"};
-    }
+  @BeforeEach
+  void setUp() {
+    words = new String[] {"foo", "bar"};
+  }
 
-    @Test
-    void randomValueShouldBeGeneratedFromTheGivenWords() {
-        // given
-        randomizer = new GenericStringRandomizer(words);
+  @Test
+  void randomValueShouldBeGeneratedFromTheGivenWords() {
+    // given
+    randomizer = new GenericStringRandomizer(words);
 
-        // when
-        String randomWord = randomizer.getRandomValue();
+    // when
+    String randomWord = randomizer.getRandomValue();
 
-        then(randomWord).isIn(asList(words));
-    }
+    then(randomWord).isIn(asList(words));
+  }
 
-    @Test
-    void randomValueShouldBeAlwaysTheSameForTheSameSeed() {
-        // given
-        randomizer = new GenericStringRandomizer(words, SEED);
+  @Test
+  void randomValueShouldBeAlwaysTheSameForTheSameSeed() {
+    // given
+    randomizer = new GenericStringRandomizer(words, SEED);
 
-        // when
-        String randomWord = randomizer.getRandomValue();
+    // when
+    String randomWord = randomizer.getRandomValue();
 
-        then(randomWord).isEqualTo("bar");
-    }
+    then(randomWord).isEqualTo("bar");
+  }
 }

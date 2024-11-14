@@ -32,50 +32,49 @@ import java.util.Date;
  */
 public class DateRangeRandomizer extends AbstractRangeRandomizer<Date> {
 
-    /**
-     * Create a new {@link DateRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public DateRangeRandomizer(final Date min, final Date max) {
-        super(min, max);
-    }
+  /**
+   * Create a new {@link DateRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public DateRangeRandomizer(final Date min, final Date max) {
+    super(min, max);
+  }
 
-    /**
-     * Create a new {@link DateRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public DateRangeRandomizer(final Date min, final Date max, final long seed) {
-        super(min, max, seed);
-    }
+  /**
+   * Create a new {@link DateRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public DateRangeRandomizer(final Date min, final Date max, final long seed) {
+    super(min, max, seed);
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min.after(max)) {
-            throw new IllegalArgumentException("max must be after min");
-        }
+  @Override
+  protected void checkValues() {
+    if (min.after(max)) {
+      throw new IllegalArgumentException("max must be after min");
     }
+  }
 
-    @Override
-    protected Date getDefaultMinValue() {
-        return new Date(Long.MIN_VALUE);
-    }
+  @Override
+  protected Date getDefaultMinValue() {
+    return new Date(Long.MIN_VALUE);
+  }
 
-    @Override
-    protected Date getDefaultMaxValue() {
-        return new Date(Long.MAX_VALUE);
-    }
+  @Override
+  protected Date getDefaultMaxValue() {
+    return new Date(Long.MAX_VALUE);
+  }
 
-    @Override
-    public Date getRandomValue() {
-        long minDateTime = min.getTime();
-        long maxDateTime = max.getTime();
-        long randomDateTime = (long) nextDouble((double) minDateTime, (double) maxDateTime);
-        return new Date(randomDateTime);
-    }
-
+  @Override
+  public Date getRandomValue() {
+    long minDateTime = min.getTime();
+    long maxDateTime = max.getTime();
+    long randomDateTime = (long) nextDouble((double) minDateTime, (double) maxDateTime);
+    return new Date(randomDateTime);
+  }
 }

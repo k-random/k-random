@@ -26,32 +26,30 @@ package org.jeasy.random.randomizers.number;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.junit.jupiter.api.Test;
-
 import org.jeasy.random.randomizers.AbstractRandomizerTest;
+import org.junit.jupiter.api.Test;
 
 class AtomicLongRandomizerTest extends AbstractRandomizerTest<AtomicLong> {
 
-    @Test
-    void generateValueShouldNotBeNull() {
-        // given
-        AtomicLongRandomizer atomicLongRandomizer = new AtomicLongRandomizer();
-        
-        // when
-        AtomicLong atomicLong = atomicLongRandomizer.getRandomValue();
+  @Test
+  void generateValueShouldNotBeNull() {
+    // given
+    AtomicLongRandomizer atomicLongRandomizer = new AtomicLongRandomizer();
 
-        then(atomicLong).isNotNull();
-    }
+    // when
+    AtomicLong atomicLong = atomicLongRandomizer.getRandomValue();
 
-    @Test
-    void shouldGenerateTheSameValueForTheSameSeed() {
-        // given
-        AtomicLongRandomizer atomicLongRandomizer = new AtomicLongRandomizer(SEED);
-        
-        // when
-        AtomicLong atomicLong = atomicLongRandomizer.getRandomValue();
+    then(atomicLong).isNotNull();
+  }
 
-        then(atomicLong).hasValue(-5106534569952410475L);
-    }
+  @Test
+  void shouldGenerateTheSameValueForTheSameSeed() {
+    // given
+    AtomicLongRandomizer atomicLongRandomizer = new AtomicLongRandomizer(SEED);
+
+    // when
+    AtomicLong atomicLong = atomicLongRandomizer.getRandomValue();
+
+    then(atomicLong).hasValue(-5106534569952410475L);
+  }
 }

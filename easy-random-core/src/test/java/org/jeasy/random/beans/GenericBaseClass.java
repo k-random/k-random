@@ -24,13 +24,13 @@
 package org.jeasy.random.beans;
 
 public abstract class GenericBaseClass<T> {
-    private final T x;
+  private final T x;
 
-    public GenericBaseClass(T x) {
-        this.x = x;
-    }
+  public GenericBaseClass(T x) {
+    this.x = x;
+  }
 
-    public T getX() {
-        return x;
-    }
+  public T getX() {
+    return x;
+  }
 }

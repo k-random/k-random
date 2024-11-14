@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.util.Locale;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random emails.
@@ -34,48 +33,44 @@ import java.util.Locale;
  */
 public class EmailRandomizer extends FakerBasedRandomizer<String> {
 
-    private boolean safe;
+  private boolean safe;
 
-    /**
-     * Create a new {@link EmailRandomizer}.
-     */
-    public EmailRandomizer() {
-    }
+  /** Create a new {@link EmailRandomizer}. */
+  public EmailRandomizer() {}
 
-    /**
-     * Create a new {@link EmailRandomizer}.
-     *
-     * @param seed the initial seed
-     */
-    public EmailRandomizer(long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link EmailRandomizer}.
+   *
+   * @param seed the initial seed
+   */
+  public EmailRandomizer(long seed) {
+    super(seed);
+  }
 
-    /**
-     * Create a new {@link EmailRandomizer}.
-     *
-     * @param seed   the initial seed
-     * @param locale the locale to use
-     */
-    public EmailRandomizer(final long seed, final Locale locale) {
-        super(seed, locale);
-    }
+  /**
+   * Create a new {@link EmailRandomizer}.
+   *
+   * @param seed the initial seed
+   * @param locale the locale to use
+   */
+  public EmailRandomizer(final long seed, final Locale locale) {
+    super(seed, locale);
+  }
 
-    /**
-     * Create a new {@link EmailRandomizer}.
-     *
-     * @param seed   the initial seed
-     * @param locale the locale to use
-     * @param safe   true to generate safe emails (invalid domains), false otherwise
-     */
-    public EmailRandomizer(final long seed, final Locale locale, final boolean safe) {
-        super(seed, locale);
-        this.safe = safe;
-    }
+  /**
+   * Create a new {@link EmailRandomizer}.
+   *
+   * @param seed the initial seed
+   * @param locale the locale to use
+   * @param safe true to generate safe emails (invalid domains), false otherwise
+   */
+  public EmailRandomizer(final long seed, final Locale locale, final boolean safe) {
+    super(seed, locale);
+    this.safe = safe;
+  }
 
-    @Override
-    public String getRandomValue() {
-        return safe ? faker.internet().safeEmailAddress() : faker.internet().emailAddress();
-    }
-
+  @Override
+  public String getRandomValue() {
+    return safe ? faker.internet().safeEmailAddress() : faker.internet().emailAddress();
+  }
 }

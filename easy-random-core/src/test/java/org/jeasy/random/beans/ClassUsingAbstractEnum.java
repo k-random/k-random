@@ -25,16 +25,15 @@ package org.jeasy.random.beans;
 
 public class ClassUsingAbstractEnum {
 
-    private AbstractEnum testEnum;
+  private AbstractEnum testEnum;
 
-	public ClassUsingAbstractEnum() {
-	}
+  public ClassUsingAbstractEnum() {}
 
-	public AbstractEnum getTestEnum() {
-		return this.testEnum;
-	}
+  public AbstractEnum getTestEnum() {
+    return this.testEnum;
+  }
 
-	public void setTestEnum(AbstractEnum testEnum) {
-		this.testEnum = testEnum;
-	}
+  public void setTestEnum(AbstractEnum testEnum) {
+    this.testEnum = testEnum;
+  }
 }

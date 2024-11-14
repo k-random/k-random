@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers.number;
 
-import org.jeasy.random.randomizers.AbstractRandomizer;
-
 import java.math.BigInteger;
+import org.jeasy.random.randomizers.AbstractRandomizer;
 
 /**
  * Generate a random {@link BigInteger}.
@@ -34,26 +33,24 @@ import java.math.BigInteger;
  */
 public class BigIntegerRandomizer extends AbstractRandomizer<BigInteger> {
 
-    private static final int NUM_BITS = 128;
+  private static final int NUM_BITS = 128;
 
-    /**
-     * Create a new {@link BigIntegerRandomizer}.
-     */
-    public BigIntegerRandomizer() {
-        super();
-    }
+  /** Create a new {@link BigIntegerRandomizer}. */
+  public BigIntegerRandomizer() {
+    super();
+  }
 
-    /**
-     * Create a new {@link BigIntegerRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public BigIntegerRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link BigIntegerRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public BigIntegerRandomizer(final long seed) {
+    super(seed);
+  }
 
-    @Override
-    public BigInteger getRandomValue() {
-        return new BigInteger(NUM_BITS, random);
-    }
+  @Override
+  public BigInteger getRandomValue() {
+    return new BigInteger(NUM_BITS, random);
+  }
 }

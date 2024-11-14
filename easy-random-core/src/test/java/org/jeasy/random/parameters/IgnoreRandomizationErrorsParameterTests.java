@@ -23,61 +23,60 @@
  */
 package org.jeasy.random.parameters;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.concurrent.Callable;
+import org.assertj.core.api.Assertions;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.ObjectCreationException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.Callable;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class IgnoreRandomizationErrorsParameterTests {
 
-    private EasyRandom easyRandom;
+  private EasyRandom easyRandom;
 
-    @Test
-    void whenIgnoreRandomizationErrorsIsActivated_thenShouldReturnNull() {
-        EasyRandomParameters parameters = new EasyRandomParameters().ignoreRandomizationErrors(true);
-        easyRandom = new EasyRandom(parameters);
+  @Test
+  void whenIgnoreRandomizationErrorsIsActivated_thenShouldReturnNull() {
+    EasyRandomParameters parameters = new EasyRandomParameters().ignoreRandomizationErrors(true);
+    easyRandom = new EasyRandom(parameters);
 
-        Foo foo = easyRandom.nextObject(Foo.class);
+    Foo foo = easyRandom.nextObject(Foo.class);
 
-        Assertions.assertThat(foo).isNotNull();
-        Assertions.assertThat(foo.getName()).isNotNull();
-        Assertions.assertThat(foo.getCallable()).isNull();
+    Assertions.assertThat(foo).isNotNull();
+    Assertions.assertThat(foo.getName()).isNotNull();
+    Assertions.assertThat(foo.getCallable()).isNull();
+  }
+
+  @Test
+  void whenIgnoreRandomizationErrorsIsDeactivated_thenShouldThrowObjectGenerationException() {
+    EasyRandomParameters parameters = new EasyRandomParameters().ignoreRandomizationErrors(false);
+    easyRandom = new EasyRandom(parameters);
+
+    assertThatThrownBy(() -> easyRandom.nextObject(Foo.class))
+        .isInstanceOf(ObjectCreationException.class);
+  }
+
+  static class Foo {
+    private String name;
+    private Callable<String> callable;
+
+    public Foo() {}
+
+    public String getName() {
+      return this.name;
     }
 
-    @Test
-    void whenIgnoreRandomizationErrorsIsDeactivated_thenShouldThrowObjectGenerationException() {
-        EasyRandomParameters parameters = new EasyRandomParameters().ignoreRandomizationErrors(false);
-        easyRandom = new EasyRandom(parameters);
-
-        assertThatThrownBy(() -> easyRandom.nextObject(Foo.class)).isInstanceOf(ObjectCreationException.class);
+    public Callable<String> getCallable() {
+      return this.callable;
     }
 
-    static class Foo {
-        private String name;
-        private Callable<String> callable;
+    public void setName(String name) {
+      this.name = name;
+    }
 
-		public Foo() {
-		}
-
-		public String getName() {
-			return this.name;
-		}
-
-		public Callable<String> getCallable() {
-			return this.callable;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public void setCallable(Callable<String> callable) {
-			this.callable = callable;
-		}
-	}
+    public void setCallable(Callable<String> callable) {
+      this.callable = callable;
+    }
+  }
 }

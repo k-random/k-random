@@ -26,49 +26,46 @@ package org.jeasy.random;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.function.Supplier;
-
+import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.util.ReflectionUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import org.jeasy.random.api.Randomizer;
-
 @ExtendWith(MockitoExtension.class)
 class RandomizerProxyTest {
 
-    private  static final String FOO = "foo";
+  private static final String FOO = "foo";
 
-    @Test
-    void theRandomizerProxyShouldBehaveLikeTheSupplier() {
-        // Given
-        MySupplier supplier = new MySupplier();
+  @Test
+  void theRandomizerProxyShouldBehaveLikeTheSupplier() {
+    // Given
+    MySupplier supplier = new MySupplier();
 
-        // When
-        Randomizer<?> randomizer = ReflectionUtils.asRandomizer(supplier);
+    // When
+    Randomizer<?> randomizer = ReflectionUtils.asRandomizer(supplier);
 
-        // Then
-        assertThat(randomizer.getRandomValue()).isInstanceOf(String.class).isEqualTo(FOO);
+    // Then
+    assertThat(randomizer.getRandomValue()).isInstanceOf(String.class).isEqualTo(FOO);
+  }
+
+  @Test
+  void theRandomizerProxyShouldBehaveLikeTheSupplierDefinedWithLambda() {
+    // Given
+    Supplier<String> supplier = () -> FOO;
+
+    // When
+    Randomizer<?> randomizer = ReflectionUtils.asRandomizer(supplier);
+
+    // Then
+    assertThat(randomizer.getRandomValue()).isInstanceOf(String.class).isEqualTo(FOO);
+  }
+
+  private static class MySupplier implements Supplier<String> {
+
+    @Override
+    public String get() {
+      return FOO;
     }
-
-    @Test
-    void theRandomizerProxyShouldBehaveLikeTheSupplierDefinedWithLambda() {
-        // Given
-        Supplier<String> supplier = () -> FOO;
-
-        // When
-        Randomizer<?> randomizer = ReflectionUtils.asRandomizer(supplier);
-
-        // Then
-        assertThat(randomizer.getRandomValue()).isInstanceOf(String.class).isEqualTo(FOO);
-    }
-
-    private static class MySupplier implements Supplier<String> {
-
-        @Override
-        public String get() {
-            return FOO;
-        }
-
-    }
+  }
 }

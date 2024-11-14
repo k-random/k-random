@@ -23,11 +23,10 @@
  */
 package org.jeasy.random.randomizers.time;
 
+import java.time.Year;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
-
-import java.time.Year;
 
 /**
  * A {@link Randomizer} that generates random {@link Year}.
@@ -36,27 +35,32 @@ import java.time.Year;
  */
 public class YearRandomizer implements Randomizer<Year> {
 
-    private final IntegerRangeRandomizer yearRandomizer;
+  private final IntegerRangeRandomizer yearRandomizer;
 
-    /**
-     * Create a new {@link YearRandomizer}.
-     */
-    public YearRandomizer() {
-        yearRandomizer = new IntegerRangeRandomizer(EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().getYear(), EasyRandomParameters.DEFAULT_DATES_RANGE.getMax().getYear());
-    }
+  /** Create a new {@link YearRandomizer}. */
+  public YearRandomizer() {
+    yearRandomizer =
+        new IntegerRangeRandomizer(
+            EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().getYear(),
+            EasyRandomParameters.DEFAULT_DATES_RANGE.getMax().getYear());
+  }
 
-    /**
-     * Create a new {@link YearRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public YearRandomizer(final long seed) {
-        yearRandomizer = new IntegerRangeRandomizer(EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().getYear(), EasyRandomParameters.DEFAULT_DATES_RANGE.getMax().getYear(), seed);
-    }
+  /**
+   * Create a new {@link YearRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public YearRandomizer(final long seed) {
+    yearRandomizer =
+        new IntegerRangeRandomizer(
+            EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().getYear(),
+            EasyRandomParameters.DEFAULT_DATES_RANGE.getMax().getYear(),
+            seed);
+  }
 
-    @Override
-    public Year getRandomValue() {
-        int randomYear = yearRandomizer.getRandomValue();
-        return Year.of(randomYear);
-    }
+  @Override
+  public Year getRandomValue() {
+    int randomYear = yearRandomizer.getRandomValue();
+    return Year.of(randomYear);
+  }
 }

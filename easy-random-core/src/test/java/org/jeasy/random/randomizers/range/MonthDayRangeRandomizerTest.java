@@ -1,13 +1,12 @@
 package org.jeasy.random.randomizers.range;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.time.MonthDay;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.then;
+
+import java.time.MonthDay;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class MonthDayRangeRandomizerTest extends AbstractRangeRandomizerTest<MonthDay> {
   @BeforeEach

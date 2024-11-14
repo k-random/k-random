@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers.number;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.util.concurrent.atomic.AtomicLong;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * Generate a random {@link AtomicLong}.
@@ -34,26 +33,24 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class AtomicLongRandomizer implements Randomizer<AtomicLong> {
 
-    private final LongRandomizer delegate;
+  private final LongRandomizer delegate;
 
-    /**
-     * Create a new {@link AtomicLongRandomizer}.
-     */
-    public AtomicLongRandomizer() {
-        delegate = new LongRandomizer();
-    }
+  /** Create a new {@link AtomicLongRandomizer}. */
+  public AtomicLongRandomizer() {
+    delegate = new LongRandomizer();
+  }
 
-    /**
-     * Create a new {@link AtomicLongRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public AtomicLongRandomizer(final long seed) {
-        delegate = new LongRandomizer(seed);
-    }
+  /**
+   * Create a new {@link AtomicLongRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public AtomicLongRandomizer(final long seed) {
+    delegate = new LongRandomizer(seed);
+  }
 
-    @Override
-    public AtomicLong getRandomValue() {
-        return new AtomicLong(delegate.getRandomValue());
-    }
+  @Override
+  public AtomicLong getRandomValue() {
+    return new AtomicLong(delegate.getRandomValue());
+  }
 }

@@ -32,46 +32,47 @@ import org.junit.jupiter.api.Test;
 
 class ByteRangeRandomizerTest extends AbstractRangeRandomizerTest<Byte> {
 
-    @BeforeEach
-    void setUp() {
-        min = (byte) 1;
-        max = (byte) 10;
-        randomizer = new ByteRangeRandomizer(min, max);
-    }
+  @BeforeEach
+  void setUp() {
+    min = (byte) 1;
+    max = (byte) 10;
+    randomizer = new ByteRangeRandomizer(min, max);
+  }
 
-    @Test
-    void generatedValueShouldBeWithinSpecifiedRange() {
-        Byte randomValue = randomizer.getRandomValue();
-        assertThat(randomValue).isBetween(min, max);
-    }
+  @Test
+  void generatedValueShouldBeWithinSpecifiedRange() {
+    Byte randomValue = randomizer.getRandomValue();
+    assertThat(randomValue).isBetween(min, max);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new ByteRangeRandomizer(max, min)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new ByteRangeRandomizer(max, min))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-        randomizer = new ByteRangeRandomizer(null, max);
-        Byte randomByte = randomizer.getRandomValue();
-        assertThat(randomByte).isLessThanOrEqualTo(max);
-    }
+  @Test
+  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
+    randomizer = new ByteRangeRandomizer(null, max);
+    Byte randomByte = randomizer.getRandomValue();
+    assertThat(randomByte).isLessThanOrEqualTo(max);
+  }
 
-    @Test
-    void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-        randomizer = new ByteRangeRandomizer(min, null);
-        Byte randomByte = randomizer.getRandomValue();
-        assertThat(randomByte).isGreaterThanOrEqualTo(min);
-    }
+  @Test
+  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
+    randomizer = new ByteRangeRandomizer(min, null);
+    Byte randomByte = randomizer.getRandomValue();
+    assertThat(randomByte).isGreaterThanOrEqualTo(min);
+  }
 
-    @Test
-    void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-        // given
-        ByteRangeRandomizer byteRangeRandomizer = new ByteRangeRandomizer(min, max, SEED);
-        
-        // when
-        Byte b = byteRangeRandomizer.getRandomValue();
+  @Test
+  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
+    // given
+    ByteRangeRandomizer byteRangeRandomizer = new ByteRangeRandomizer(min, max, SEED);
 
-        then(b).isEqualTo((byte) 7);
-    }
+    // when
+    Byte b = byteRangeRandomizer.getRandomValue();
+
+    then(b).isEqualTo((byte) 7);
+  }
 }

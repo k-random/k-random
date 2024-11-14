@@ -23,55 +23,54 @@
  */
 package org.jeasy.random.randomizers;
 
-import org.jeasy.random.api.Randomizer;
+import static java.util.ResourceBundle.getBundle;
 
 import java.util.Random;
-
-import static java.util.ResourceBundle.getBundle;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * Base class for {@link org.jeasy.random.api.Randomizer} implementations.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public abstract class AbstractRandomizer<T> implements Randomizer<T>  {
+public abstract class AbstractRandomizer<T> implements Randomizer<T> {
 
-    protected final Random random;
+  protected final Random random;
 
-    protected AbstractRandomizer() {
-        random = new Random();
+  protected AbstractRandomizer() {
+    random = new Random();
+  }
+
+  protected AbstractRandomizer(final long seed) {
+    random = new Random(seed);
+  }
+
+  protected String[] getPredefinedValuesOf(final String key) {
+    return getBundle("easy-random-data").getString(key).split(",");
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName();
+  }
+
+  /**
+   * Return a random double in the given range.
+   *
+   * @param min value (inclusive)
+   * @param max value (exclusive)
+   * @return random double in the given range
+   */
+  protected double nextDouble(final double min, final double max) {
+    double value = min + (random.nextDouble() * (max - min));
+    if (value < min) {
+      return min;
+    } else if (value > max) {
+      return max;
+    } else {
+      return value;
     }
-
-    protected AbstractRandomizer(final long seed) {
-        random = new Random(seed);
-    }
-
-    protected String[] getPredefinedValuesOf(final String key) {
-        return getBundle("easy-random-data").getString(key).split(",");
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName();
-    }
-
-    /**
-     * Return a random double in the given range.
-     *
-     * @param min value (inclusive)
-     * @param max value (exclusive)
-     * @return random double in the given range
-     */
-    protected double nextDouble(final double min, final double max) {
-        double value = min + (random.nextDouble() * (max - min));
-        if (value < min) {
-            return min;
-        } else if (value > max) {
-            return max;
-        } else {
-            return value;
-        }
-        // NB: ThreadLocalRandom.current().nextDouble(min, max)) cannot be used
-        // because the seed is not configurable and is created per thread (see Javadoc)
-    }
+    // NB: ThreadLocalRandom.current().nextDouble(min, max)) cannot be used
+    // because the seed is not configurable and is created per thread (see Javadoc)
+  }
 }

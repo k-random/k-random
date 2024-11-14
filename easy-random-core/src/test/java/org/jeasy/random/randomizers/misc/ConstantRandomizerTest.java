@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 
 class ConstantRandomizerTest {
 
-    @Test
-    void shouldAlwaysGenerateTheSameValue() {
-        assertThat(new ConstantRandomizer("a").getRandomValue()).isEqualTo("a");
-    }
+  @Test
+  void shouldAlwaysGenerateTheSameValue() {
+    assertThat(new ConstantRandomizer("a").getRandomValue()).isEqualTo("a");
+  }
 }

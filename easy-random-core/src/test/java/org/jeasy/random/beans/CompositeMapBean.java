@@ -27,34 +27,37 @@ import java.util.*;
 
 public class CompositeMapBean {
 
-    private Map<Person, List<String>> personToNicknames;
-    private Map<Integer, Set<String>> personToAccounts;
-    private HashMap<ArrayList<String>, Map<Integer, TreeSet<Person>>> reallyStrangeCompositeDataStructure;
+  private Map<Person, List<String>> personToNicknames;
+  private Map<Integer, Set<String>> personToAccounts;
+  private HashMap<ArrayList<String>, Map<Integer, TreeSet<Person>>>
+      reallyStrangeCompositeDataStructure;
 
-	public CompositeMapBean() {
-	}
+  public CompositeMapBean() {}
 
-	public Map<Person, List<String>> getPersonToNicknames() {
-		return this.personToNicknames;
-	}
+  public Map<Person, List<String>> getPersonToNicknames() {
+    return this.personToNicknames;
+  }
 
-	public Map<Integer, Set<String>> getPersonToAccounts() {
-		return this.personToAccounts;
-	}
+  public Map<Integer, Set<String>> getPersonToAccounts() {
+    return this.personToAccounts;
+  }
 
-	public HashMap<ArrayList<String>, Map<Integer, TreeSet<Person>>> getReallyStrangeCompositeDataStructure() {
-		return this.reallyStrangeCompositeDataStructure;
-	}
+  public HashMap<ArrayList<String>, Map<Integer, TreeSet<Person>>>
+      getReallyStrangeCompositeDataStructure() {
+    return this.reallyStrangeCompositeDataStructure;
+  }
 
-	public void setPersonToNicknames(Map<Person, List<String>> personToNicknames) {
-		this.personToNicknames = personToNicknames;
-	}
+  public void setPersonToNicknames(Map<Person, List<String>> personToNicknames) {
+    this.personToNicknames = personToNicknames;
+  }
 
-	public void setPersonToAccounts(Map<Integer, Set<String>> personToAccounts) {
-		this.personToAccounts = personToAccounts;
-	}
+  public void setPersonToAccounts(Map<Integer, Set<String>> personToAccounts) {
+    this.personToAccounts = personToAccounts;
+  }
 
-	public void setReallyStrangeCompositeDataStructure(HashMap<ArrayList<String>, Map<Integer, TreeSet<Person>>> reallyStrangeCompositeDataStructure) {
-		this.reallyStrangeCompositeDataStructure = reallyStrangeCompositeDataStructure;
-	}
+  public void setReallyStrangeCompositeDataStructure(
+      HashMap<ArrayList<String>, Map<Integer, TreeSet<Person>>>
+          reallyStrangeCompositeDataStructure) {
+    this.reallyStrangeCompositeDataStructure = reallyStrangeCompositeDataStructure;
+  }
 }

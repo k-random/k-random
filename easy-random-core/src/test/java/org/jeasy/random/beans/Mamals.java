@@ -27,40 +27,40 @@ import java.util.List;
 
 public class Mamals {
 
-    private Mammal mamal;
-    private MammalImpl mamalImpl;
-    private List<Mammal> mamalList;
-    private List<MammalImpl> mamalImplList;
-    
-    public Mammal getMamal() {
-        return mamal;
-    }
+  private Mammal mamal;
+  private MammalImpl mamalImpl;
+  private List<Mammal> mamalList;
+  private List<MammalImpl> mamalImplList;
 
-    public void setMamal(Mammal mamal) {
-        this.mamal = mamal;
-    }
+  public Mammal getMamal() {
+    return mamal;
+  }
 
-    public MammalImpl getMamalImpl() {
-        return mamalImpl;
-    }
+  public void setMamal(Mammal mamal) {
+    this.mamal = mamal;
+  }
 
-    public void setMamalImpl(MammalImpl mamalImpl) {
-        this.mamalImpl = mamalImpl;
-    }
+  public MammalImpl getMamalImpl() {
+    return mamalImpl;
+  }
 
-    public List<Mammal> getMamalList() {
-        return mamalList;
-    }
+  public void setMamalImpl(MammalImpl mamalImpl) {
+    this.mamalImpl = mamalImpl;
+  }
 
-    public void setMamalList(List<Mammal> mamalList) {
-        this.mamalList = mamalList;
-    }
+  public List<Mammal> getMamalList() {
+    return mamalList;
+  }
 
-    public List<MammalImpl> getMamalImplList() {
-        return mamalImplList;
-    }
+  public void setMamalList(List<Mammal> mamalList) {
+    this.mamalList = mamalList;
+  }
 
-    public void setMamalImplList(List<MammalImpl> mamalImplList) {
-        this.mamalImplList = mamalImplList;
-    }
+  public List<MammalImpl> getMamalImplList() {
+    return mamalImplList;
+  }
+
+  public void setMamalImplList(List<MammalImpl> mamalImplList) {
+    this.mamalImplList = mamalImplList;
+  }
 }

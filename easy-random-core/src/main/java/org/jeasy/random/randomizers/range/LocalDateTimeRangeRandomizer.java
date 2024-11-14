@@ -34,56 +34,56 @@ import java.time.ZoneOffset;
  */
 public class LocalDateTimeRangeRandomizer extends AbstractRangeRandomizer<LocalDateTime> {
 
-    /**
-     * Create a new {@link LocalDateTimeRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public LocalDateTimeRangeRandomizer(final LocalDateTime min, final LocalDateTime max) {
-        super(min, max);
+  /**
+   * Create a new {@link LocalDateTimeRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public LocalDateTimeRangeRandomizer(final LocalDateTime min, final LocalDateTime max) {
+    super(min, max);
+  }
+
+  /**
+   * Create a new {@link LocalDateTimeRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public LocalDateTimeRangeRandomizer(
+      final LocalDateTime min, final LocalDateTime max, final long seed) {
+    super(min, max, seed);
+  }
+
+  @Override
+  protected void checkValues() {
+    if (min.isAfter(max)) {
+      throw new IllegalArgumentException("max must be after min");
     }
+  }
 
-    /**
-     * Create a new {@link LocalDateTimeRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public LocalDateTimeRangeRandomizer(final LocalDateTime min, final LocalDateTime max, final long seed) {
-        super(min, max, seed);
-    }
+  @Override
+  protected LocalDateTime getDefaultMinValue() {
+    return LocalDateTime.MIN;
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min.isAfter(max)) {
-            throw new IllegalArgumentException("max must be after min");
-        }
-    }
+  @Override
+  protected LocalDateTime getDefaultMaxValue() {
+    return LocalDateTime.MAX;
+  }
 
-    @Override
-    protected LocalDateTime getDefaultMinValue() {
-        return LocalDateTime.MIN;
-    }
+  @Override
+  public LocalDateTime getRandomValue() {
 
-    @Override
-    protected LocalDateTime getDefaultMaxValue() {
-        return LocalDateTime.MAX;
-    }
+    long minSeconds = min.toEpochSecond(ZoneOffset.UTC);
+    long maxSeconds = max.toEpochSecond(ZoneOffset.UTC);
+    long seconds = (long) nextDouble(minSeconds, maxSeconds);
+    int minNanoSeconds = min.getNano();
+    int maxNanoSeconds = max.getNano();
+    long nanoSeconds = (long) nextDouble(minNanoSeconds, maxNanoSeconds);
+    Instant instant = Instant.ofEpochSecond(seconds, nanoSeconds);
 
-    @Override
-    public LocalDateTime getRandomValue() {
-
-        long minSeconds = min.toEpochSecond(ZoneOffset.UTC);
-        long maxSeconds = max.toEpochSecond(ZoneOffset.UTC);
-        long seconds = (long) nextDouble(minSeconds, maxSeconds);
-        int minNanoSeconds = min.getNano();
-        int maxNanoSeconds = max.getNano();
-        long nanoSeconds = (long) nextDouble(minNanoSeconds, maxNanoSeconds);
-        Instant instant = Instant.ofEpochSecond(seconds, nanoSeconds);
-
-        return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
-    }
-
+    return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+  }
 }

@@ -23,12 +23,11 @@
  */
 package org.jeasy.random.randomizers.collection;
 
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.randomizers.number.ByteRandomizer;
+import static java.lang.Math.abs;
 
 import java.util.Collection;
-
-import static java.lang.Math.abs;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.randomizers.number.ByteRandomizer;
 
 /**
  * A base class for collection randomizers.
@@ -38,31 +37,30 @@ import static java.lang.Math.abs;
  */
 abstract class CollectionRandomizer<T> implements Randomizer<Collection<T>> {
 
-    final int nbElements;
+  final int nbElements;
 
-    final Randomizer<T> delegate;
+  final Randomizer<T> delegate;
 
-    CollectionRandomizer(final Randomizer<T> delegate) {
-        this(delegate, abs(new ByteRandomizer().getRandomValue()));
+  CollectionRandomizer(final Randomizer<T> delegate) {
+    this(delegate, abs(new ByteRandomizer().getRandomValue()));
+  }
+
+  CollectionRandomizer(final Randomizer<T> delegate, final int nbElements) {
+    if (delegate == null) {
+      throw new IllegalArgumentException("delegate must not be null");
     }
+    checkArguments(nbElements);
+    this.nbElements = nbElements;
+    this.delegate = delegate;
+  }
 
-    CollectionRandomizer(final Randomizer<T> delegate, final int nbElements) {
-        if (delegate == null) {
-            throw new IllegalArgumentException("delegate must not be null");
-        }
-        checkArguments(nbElements);
-        this.nbElements = nbElements;
-        this.delegate = delegate;
+  private void checkArguments(final int nbElements) {
+    if (nbElements < 0) {
+      throw new IllegalArgumentException("The number of elements to generate must be >= 0");
     }
+  }
 
-    private void checkArguments(final int nbElements) {
-        if (nbElements < 0) {
-            throw new IllegalArgumentException("The number of elements to generate must be >= 0");
-        }
-    }
-
-    T getRandomElement() {
-        return delegate.getRandomValue();
-    }
-
+  T getRandomElement() {
+    return delegate.getRandomValue();
+  }
 }

@@ -23,9 +23,8 @@
  */
 package org.jeasy.random;
 
-import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
-
 import java.lang.reflect.Array;
+import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
 
 /**
  * Random array populator.
@@ -34,25 +33,27 @@ import java.lang.reflect.Array;
  */
 class ArrayPopulator {
 
-    private final EasyRandom easyRandom;
+  private final EasyRandom easyRandom;
 
-    ArrayPopulator(final EasyRandom easyRandom) {
-        this.easyRandom = easyRandom;
-    }
+  ArrayPopulator(final EasyRandom easyRandom) {
+    this.easyRandom = easyRandom;
+  }
 
-    Object getRandomArray(final Class<?> fieldType, final RandomizationContext context) {
-        Class<?> componentType = fieldType.getComponentType();
-        int randomSize = getRandomArraySize(context.getParameters());
-        Object result = Array.newInstance(componentType, randomSize);
-        for (int i = 0; i < randomSize; i++) {
-            Object randomElement = easyRandom.doPopulateBean(componentType, context);
-            Array.set(result, i, randomElement);
-        }
-        return result;
+  Object getRandomArray(final Class<?> fieldType, final RandomizationContext context) {
+    Class<?> componentType = fieldType.getComponentType();
+    int randomSize = getRandomArraySize(context.getParameters());
+    Object result = Array.newInstance(componentType, randomSize);
+    for (int i = 0; i < randomSize; i++) {
+      Object randomElement = easyRandom.doPopulateBean(componentType, context);
+      Array.set(result, i, randomElement);
     }
+    return result;
+  }
 
-    private int getRandomArraySize(EasyRandomParameters parameters) {
-        EasyRandomParameters.Range<Integer> collectionSizeRange = parameters.getCollectionSizeRange();
-        return new IntegerRangeRandomizer(collectionSizeRange.getMin(), collectionSizeRange.getMax(), easyRandom.nextLong()).getRandomValue();
-    }
+  private int getRandomArraySize(EasyRandomParameters parameters) {
+    EasyRandomParameters.Range<Integer> collectionSizeRange = parameters.getCollectionSizeRange();
+    return new IntegerRangeRandomizer(
+            collectionSizeRange.getMin(), collectionSizeRange.getMax(), easyRandom.nextLong())
+        .getRandomValue();
+  }
 }

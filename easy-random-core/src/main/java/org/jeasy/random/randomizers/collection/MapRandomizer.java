@@ -23,13 +23,12 @@
  */
 package org.jeasy.random.randomizers.collection;
 
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.randomizers.number.ByteRandomizer;
+import static java.lang.Math.abs;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.lang.Math.abs;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.randomizers.number.ByteRandomizer;
 
 /**
  * A {@link Randomizer} that generates a {@link Map} with random entries.
@@ -40,58 +39,59 @@ import static java.lang.Math.abs;
  */
 public class MapRandomizer<K, V> implements Randomizer<Map<K, V>> {
 
-    private final int nbElements;
+  private final int nbElements;
 
-    private final Randomizer<K> keyRandomizer;
+  private final Randomizer<K> keyRandomizer;
 
-    private final Randomizer<V> valueRandomizer;
+  private final Randomizer<V> valueRandomizer;
 
-    /**
-     * Create a new {@link MapRandomizer} with a random number of entries.
-     *
-     * @param keyRandomizer   the randomizer for keys
-     * @param valueRandomizer the randomizer for values
-     */
-    public MapRandomizer(final Randomizer<K> keyRandomizer, final Randomizer<V> valueRandomizer) {
-        this(keyRandomizer, valueRandomizer, getRandomSize());
+  /**
+   * Create a new {@link MapRandomizer} with a random number of entries.
+   *
+   * @param keyRandomizer the randomizer for keys
+   * @param valueRandomizer the randomizer for values
+   */
+  public MapRandomizer(final Randomizer<K> keyRandomizer, final Randomizer<V> valueRandomizer) {
+    this(keyRandomizer, valueRandomizer, getRandomSize());
+  }
+
+  /**
+   * Create a new {@link MapRandomizer} with a fixed number of entries.
+   *
+   * @param keyRandomizer the randomizer for keys
+   * @param valueRandomizer the randomizer for values
+   * @param nbEntries the number of entries to generate
+   */
+  public MapRandomizer(
+      final Randomizer<K> keyRandomizer, final Randomizer<V> valueRandomizer, final int nbEntries) {
+    if (keyRandomizer == null) {
+      throw new IllegalArgumentException("keyRandomizer must not be null");
     }
-
-    /**
-     * Create a new {@link MapRandomizer} with a fixed number of entries.
-     *
-     * @param keyRandomizer   the randomizer for keys
-     * @param valueRandomizer the randomizer for values
-     * @param nbEntries       the number of entries to generate
-     */
-    public MapRandomizer(final Randomizer<K> keyRandomizer, final Randomizer<V> valueRandomizer, final int nbEntries) {
-        if (keyRandomizer == null) {
-            throw new IllegalArgumentException("keyRandomizer must not be null");
-        }
-        if (valueRandomizer == null) {
-            throw new IllegalArgumentException("valueRandomizer must not be null");
-        }
-        checkArguments(nbEntries);
-        this.keyRandomizer = keyRandomizer;
-        this.valueRandomizer = valueRandomizer;
-        this.nbElements = nbEntries;
+    if (valueRandomizer == null) {
+      throw new IllegalArgumentException("valueRandomizer must not be null");
     }
+    checkArguments(nbEntries);
+    this.keyRandomizer = keyRandomizer;
+    this.valueRandomizer = valueRandomizer;
+    this.nbElements = nbEntries;
+  }
 
-    @Override
-    public Map<K, V> getRandomValue() {
-        Map<K, V> result = new HashMap<>();
-        for (int i = 0; i < nbElements; i++) {
-            result.put(keyRandomizer.getRandomValue(), valueRandomizer.getRandomValue());
-        }
-        return result;
+  @Override
+  public Map<K, V> getRandomValue() {
+    Map<K, V> result = new HashMap<>();
+    for (int i = 0; i < nbElements; i++) {
+      result.put(keyRandomizer.getRandomValue(), valueRandomizer.getRandomValue());
     }
+    return result;
+  }
 
-    private void checkArguments(final int nbEntries) {
-        if (nbEntries < 0) {
-            throw new IllegalArgumentException("The number of entries to generate must be >= 0");
-        }
+  private void checkArguments(final int nbEntries) {
+    if (nbEntries < 0) {
+      throw new IllegalArgumentException("The number of entries to generate must be >= 0");
     }
+  }
 
-    private static int getRandomSize() {
-        return abs(new ByteRandomizer().getRandomValue()) + 1;
-    }
+  private static int getRandomSize() {
+    return abs(new ByteRandomizer().getRandomValue()) + 1;
+  }
 }

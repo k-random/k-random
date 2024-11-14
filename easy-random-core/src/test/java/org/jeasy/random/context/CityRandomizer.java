@@ -27,35 +27,35 @@ import org.jeasy.random.api.ContextAwareRandomizer;
 import org.jeasy.random.api.RandomizerContext;
 
 /**
- * A city randomizer that depends on the country of the currently randomized object.
- * The currently randomized object can be retrieved from the randomization context.
+ * A city randomizer that depends on the country of the currently randomized object. The currently
+ * randomized object can be retrieved from the randomization context.
  */
 public class CityRandomizer implements ContextAwareRandomizer<City> {
 
-    private RandomizerContext context;
+  private RandomizerContext context;
 
-    @Override
-    public void setRandomizerContext(RandomizerContext context) {
-        this.context = context;
-    }
+  @Override
+  public void setRandomizerContext(RandomizerContext context) {
+    this.context = context;
+  }
 
-    @Override
-    public City getRandomValue() {
-        Person person = (Person) context.getRootObject();
-        Country country = person.getCountry();
-        if (country == null) {
-            return null;
-        }
-        String countryName = country.getName();
-        if (countryName != null && countryName.equalsIgnoreCase("france")) {
-            return new City("paris");
-        }
-        if (countryName != null && countryName.equalsIgnoreCase("germany")) {
-            return new City("berlin");
-        }
-        if (countryName != null && countryName.equalsIgnoreCase("belgium")) {
-            return new City("brussels");
-        }
-        return null;
+  @Override
+  public City getRandomValue() {
+    Person person = (Person) context.getRootObject();
+    Country country = person.getCountry();
+    if (country == null) {
+      return null;
     }
+    String countryName = country.getName();
+    if (countryName != null && countryName.equalsIgnoreCase("france")) {
+      return new City("paris");
+    }
+    if (countryName != null && countryName.equalsIgnoreCase("germany")) {
+      return new City("berlin");
+    }
+    if (countryName != null && countryName.equalsIgnoreCase("belgium")) {
+      return new City("brussels");
+    }
+    return null;
+  }
 }

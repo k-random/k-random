@@ -23,10 +23,9 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.time.Instant;
 import java.util.Date;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random {@link Instant}.
@@ -35,27 +34,25 @@ import java.util.Date;
  */
 public class InstantRandomizer implements Randomizer<Instant> {
 
-    private final DateRandomizer dateRandomizer;
+  private final DateRandomizer dateRandomizer;
 
-    /**
-     * Create a new {@link InstantRandomizer}.
-     */
-    public InstantRandomizer() {
-        dateRandomizer = new DateRandomizer();
-    }
+  /** Create a new {@link InstantRandomizer}. */
+  public InstantRandomizer() {
+    dateRandomizer = new DateRandomizer();
+  }
 
-    /**
-     * Create a new {@link InstantRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public InstantRandomizer(final long seed) {
-        dateRandomizer = new DateRandomizer(seed);
-    }
+  /**
+   * Create a new {@link InstantRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public InstantRandomizer(final long seed) {
+    dateRandomizer = new DateRandomizer(seed);
+  }
 
-    @Override
-    public Instant getRandomValue() {
-        Date randomDate = dateRandomizer.getRandomValue();
-        return Instant.ofEpochMilli(randomDate.getTime());
-    }
+  @Override
+  public Instant getRandomValue() {
+    Date randomDate = dateRandomizer.getRandomValue();
+    return Instant.ofEpochMilli(randomDate.getTime());
+  }
 }

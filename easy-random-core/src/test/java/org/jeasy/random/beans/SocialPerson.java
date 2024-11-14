@@ -27,16 +27,15 @@ import java.util.Set;
 
 public class SocialPerson extends Person {
 
-    private Set<Person> friends;
+  private Set<Person> friends;
 
-    public SocialPerson() {
-    }
+  public SocialPerson() {}
 
-    public Set<Person> getFriends() {
-        return friends;
-    }
+  public Set<Person> getFriends() {
+    return friends;
+  }
 
-    public void setFriends(Set<Person> friends) {
-        this.friends = friends;
-    }
+  public void setFriends(Set<Person> friends) {
+    this.friends = friends;
+  }
 }

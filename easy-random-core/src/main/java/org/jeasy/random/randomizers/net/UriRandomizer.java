@@ -23,10 +23,9 @@
  */
 package org.jeasy.random.randomizers.net;
 
-import org.jeasy.random.randomizers.AbstractRandomizer;
-
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.jeasy.random.randomizers.AbstractRandomizer;
 
 /**
  * Generate a random {@link URI}.
@@ -35,31 +34,28 @@ import java.net.URISyntaxException;
  */
 public class UriRandomizer extends AbstractRandomizer<URI> {
 
-    private final String[] uris = getPredefinedValuesOf("uris");
+  private final String[] uris = getPredefinedValuesOf("uris");
 
-    /**
-     * Create a new {@link UriRandomizer}.
-     */
-    public UriRandomizer() {
-    }
+  /** Create a new {@link UriRandomizer}. */
+  public UriRandomizer() {}
 
-    /**
-     * Create a new {@link UriRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public UriRandomizer(long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link UriRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public UriRandomizer(long seed) {
+    super(seed);
+  }
 
-    @Override
-    public URI getRandomValue() {
-        try {
-            int randomIndex = random.nextInt(uris.length);
-            return new URI(uris[randomIndex]);
-        } catch (URISyntaxException e) {
-            // predefined URIs are valid
-            return null;
-        }
+  @Override
+  public URI getRandomValue() {
+    try {
+      int randomIndex = random.nextInt(uris.length);
+      return new URI(uris[randomIndex]);
+    } catch (URISyntaxException e) {
+      // predefined URIs are valid
+      return null;
     }
+  }
 }

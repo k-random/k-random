@@ -27,10 +27,9 @@ import jakarta.validation.constraints.NotNull;
 
 public class BeanValidationWithoutReadMethodBean {
 
-    @NotNull
-    private String fieldWithoutReadMethod;
+  @NotNull private String fieldWithoutReadMethod;
 
-    public void setFieldWithoutReadMethod(String fieldWithoutReadMethod) {
-        this.fieldWithoutReadMethod = fieldWithoutReadMethod;
-    }
+  public void setFieldWithoutReadMethod(String fieldWithoutReadMethod) {
+    this.fieldWithoutReadMethod = fieldWithoutReadMethod;
+  }
 }

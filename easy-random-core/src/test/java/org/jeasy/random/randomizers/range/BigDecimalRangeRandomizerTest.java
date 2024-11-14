@@ -29,110 +29,116 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
 import org.jeasy.random.util.ReflectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class BigDecimalRangeRandomizerTest extends AbstractRangeRandomizerTest<BigDecimal> {
 
-    private Double min, max;
+  private Double min, max;
 
-    @BeforeEach
-    void setUp() {
-        min = 1.1;
-        max = 9.9;
-        randomizer = new BigDecimalRangeRandomizer(min, max);
-    }
+  @BeforeEach
+  void setUp() {
+    min = 1.1;
+    max = 9.9;
+    randomizer = new BigDecimalRangeRandomizer(min, max);
+  }
 
-    @Test
-    void generatedValueShouldBeWithinSpecifiedRange() {
-        BigDecimal randomValue = randomizer.getRandomValue();
-        assertThat(randomValue.doubleValue()).isBetween(min, max);
-    }
+  @Test
+  void generatedValueShouldBeWithinSpecifiedRange() {
+    BigDecimal randomValue = randomizer.getRandomValue();
+    assertThat(randomValue.doubleValue()).isBetween(min, max);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new BigDecimalRangeRandomizer(max, min)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new BigDecimalRangeRandomizer(max, min))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-        randomizer = new BigDecimalRangeRandomizer(null, max);
-        BigDecimal randomBigDecimal = randomizer.getRandomValue();
-        assertThat(randomBigDecimal.doubleValue()).isLessThanOrEqualTo(max);
-    }
+  @Test
+  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
+    randomizer = new BigDecimalRangeRandomizer(null, max);
+    BigDecimal randomBigDecimal = randomizer.getRandomValue();
+    assertThat(randomBigDecimal.doubleValue()).isLessThanOrEqualTo(max);
+  }
 
-    @Test
-    void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-        randomizer = new BigDecimalRangeRandomizer(min, null);
-        BigDecimal randomBigDecimal = randomizer.getRandomValue();
-        assertThat(randomBigDecimal.doubleValue()).isGreaterThanOrEqualTo(min);
-    }
+  @Test
+  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
+    randomizer = new BigDecimalRangeRandomizer(min, null);
+    BigDecimal randomBigDecimal = randomizer.getRandomValue();
+    assertThat(randomBigDecimal.doubleValue()).isGreaterThanOrEqualTo(min);
+  }
 
-    @Test
-    void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-        // given
-        BigDecimalRangeRandomizer bigDecimalRangeRandomizer = new BigDecimalRangeRandomizer(min, max, SEED);
+  @Test
+  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
+    // given
+    BigDecimalRangeRandomizer bigDecimalRangeRandomizer =
+        new BigDecimalRangeRandomizer(min, max, SEED);
 
-        // when
-        BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    // when
+    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
 
-        then(bigDecimal).isEqualTo(new BigDecimal("7.46393298637489266411648713983595371246337890625"));
-    }
+    then(bigDecimal).isEqualTo(new BigDecimal("7.46393298637489266411648713983595371246337890625"));
+  }
 
-    @Test
-    void generatedValueShouldHaveProvidedPositiveScale() {
-        // given
-        Integer scale = 2;
-        BigDecimalRangeRandomizer bigDecimalRangeRandomizer = new BigDecimalRangeRandomizer(min, max, scale);
+  @Test
+  void generatedValueShouldHaveProvidedPositiveScale() {
+    // given
+    Integer scale = 2;
+    BigDecimalRangeRandomizer bigDecimalRangeRandomizer =
+        new BigDecimalRangeRandomizer(min, max, scale);
 
-        // when
-        BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    // when
+    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
 
-        then(bigDecimal.scale()).isEqualTo(scale);
-    }
+    then(bigDecimal.scale()).isEqualTo(scale);
+  }
 
-    @Test
-    void generatedValueShouldHaveProvidedPositiveScaleAndRoundingMode() throws NoSuchFieldException, IllegalAccessException {
-        // given
-        Integer scale = 2;
-        RoundingMode roundingMode = RoundingMode.DOWN;
-        BigDecimalRangeRandomizer bigDecimalRangeRandomizer = new BigDecimalRangeRandomizer(min, max, scale, roundingMode);
+  @Test
+  void generatedValueShouldHaveProvidedPositiveScaleAndRoundingMode()
+      throws NoSuchFieldException, IllegalAccessException {
+    // given
+    Integer scale = 2;
+    RoundingMode roundingMode = RoundingMode.DOWN;
+    BigDecimalRangeRandomizer bigDecimalRangeRandomizer =
+        new BigDecimalRangeRandomizer(min, max, scale, roundingMode);
 
-        // when
-        BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    // when
+    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
 
-        then(bigDecimal.scale()).isEqualTo(scale);
+    then(bigDecimal.scale()).isEqualTo(scale);
 
-        var field = bigDecimalRangeRandomizer.getClass().getDeclaredField("roundingMode");
-        var actualRoundingMode = ReflectionUtils.getFieldValue(bigDecimalRangeRandomizer, field);
-        then(actualRoundingMode).isEqualTo(RoundingMode.DOWN);
-    }
+    var field = bigDecimalRangeRandomizer.getClass().getDeclaredField("roundingMode");
+    var actualRoundingMode = ReflectionUtils.getFieldValue(bigDecimalRangeRandomizer, field);
+    then(actualRoundingMode).isEqualTo(RoundingMode.DOWN);
+  }
 
-    @Test
-    void generatedValueShouldHaveProvidedNegativeScale() {
-        // given
-        Integer scale = -2;
-        BigDecimalRangeRandomizer bigDecimalRangeRandomizer = new BigDecimalRangeRandomizer(min, max, scale);
+  @Test
+  void generatedValueShouldHaveProvidedNegativeScale() {
+    // given
+    Integer scale = -2;
+    BigDecimalRangeRandomizer bigDecimalRangeRandomizer =
+        new BigDecimalRangeRandomizer(min, max, scale);
 
-        // when
-        BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    // when
+    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
 
-        then(bigDecimal.scale()).isEqualTo(scale);
-    }
+    then(bigDecimal.scale()).isEqualTo(scale);
+  }
 
-    @Test
-    void testCustomRoundingMode() {
-        // given
-        Integer scale = 2;
-        int seed = 123;
-        RoundingMode roundingMode = RoundingMode.DOWN;
-        BigDecimalRangeRandomizer bigDecimalRangeRandomizer = new BigDecimalRangeRandomizer(min, max, seed, scale, roundingMode);
+  @Test
+  void testCustomRoundingMode() {
+    // given
+    Integer scale = 2;
+    int seed = 123;
+    RoundingMode roundingMode = RoundingMode.DOWN;
+    BigDecimalRangeRandomizer bigDecimalRangeRandomizer =
+        new BigDecimalRangeRandomizer(min, max, seed, scale, roundingMode);
 
-        // when
-        BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    // when
+    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
 
-        then(bigDecimal).isEqualTo(new BigDecimal("7.46"));
-    }
+    then(bigDecimal).isEqualTo(new BigDecimal("7.46"));
+  }
 }

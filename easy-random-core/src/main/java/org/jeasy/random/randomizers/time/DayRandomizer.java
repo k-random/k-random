@@ -27,27 +27,29 @@ import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
 
 /**
- * A {@link Randomizer} that generates a random day value between {@link DayRandomizer#MIN_DAY} and {@link DayRandomizer#MAX_DAY}.
- * 
+ * A {@link Randomizer} that generates a random day value between {@link DayRandomizer#MIN_DAY} and
+ * {@link DayRandomizer#MAX_DAY}.
+ *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 public class DayRandomizer implements Randomizer<Integer> {
-    
-    public static final int MIN_DAY = 1;
-    public static final int MAX_DAY = 28; // 31 may break some LocalDateTime instances when the dayOfMonth is invalid
 
-    private final IntegerRangeRandomizer dayRandomizer;
+  public static final int MIN_DAY = 1;
+  public static final int MAX_DAY =
+      28; // 31 may break some LocalDateTime instances when the dayOfMonth is invalid
 
-    public DayRandomizer() {
-        dayRandomizer = new IntegerRangeRandomizer(MIN_DAY, MAX_DAY);
-    }
+  private final IntegerRangeRandomizer dayRandomizer;
 
-    public DayRandomizer(final long seed) {
-        dayRandomizer = new IntegerRangeRandomizer(MIN_DAY, MAX_DAY, seed);
-    }
+  public DayRandomizer() {
+    dayRandomizer = new IntegerRangeRandomizer(MIN_DAY, MAX_DAY);
+  }
 
-    @Override
-    public Integer getRandomValue() {
-        return dayRandomizer.getRandomValue();
-    }
+  public DayRandomizer(final long seed) {
+    dayRandomizer = new IntegerRangeRandomizer(MIN_DAY, MAX_DAY, seed);
+  }
+
+  @Override
+  public Integer getRandomValue() {
+    return dayRandomizer.getRandomValue();
+  }
 }

@@ -27,47 +27,53 @@ import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 
 /**
- * A context object for a {@link Randomizer}.
- * This interface provides information about the randomization context.
+ * A context object for a {@link Randomizer}. This interface provides information about the
+ * randomization context.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 public interface RandomizerContext {
 
-    /**
-     * Return the target type (parameter of {@link EasyRandom#nextObject(Class)}).
-     * @return target type
-     */
-    Class<?> getTargetType();
+  /**
+   * Return the target type (parameter of {@link EasyRandom#nextObject(Class)}).
+   *
+   * @return target type
+   */
+  Class<?> getTargetType();
 
-    /**
-     * Return the root object being randomized (instance of {@link RandomizerContext#getTargetType()}.
-     * @return root object being randomized
-     */
-    Object getRootObject();
+  /**
+   * Return the root object being randomized (instance of {@link RandomizerContext#getTargetType()}.
+   *
+   * @return root object being randomized
+   */
+  Object getRootObject();
 
-    /**
-     * Return the currently randomized object in the object graph.
-     * @return currently randomized object
-     */
-    Object getCurrentObject();
+  /**
+   * Return the currently randomized object in the object graph.
+   *
+   * @return currently randomized object
+   */
+  Object getCurrentObject();
 
-    /**
-     * Return the full path to the current field being randomized (starting from the first field in the root type).
-     * @return full path to the current field being randomized
-     */
-    String getCurrentField();
+  /**
+   * Return the full path to the current field being randomized (starting from the first field in
+   * the root type).
+   *
+   * @return full path to the current field being randomized
+   */
+  String getCurrentField();
 
-    /**
-     * Get the current level in the hierarchy of the object graph.
-     * @return current level in the hierarchy of the object graph.
-     */
-    int getCurrentRandomizationDepth();
+  /**
+   * Get the current level in the hierarchy of the object graph.
+   *
+   * @return current level in the hierarchy of the object graph.
+   */
+  int getCurrentRandomizationDepth();
 
-    /**
-     * Return the currently used parameters by the enclosing {@link EasyRandom}.
-     * @return currently used parameters
-     */
-    EasyRandomParameters getParameters();
-
+  /**
+   * Return the currently used parameters by the enclosing {@link EasyRandom}.
+   *
+   * @return currently used parameters
+   */
+  EasyRandomParameters getParameters();
 }

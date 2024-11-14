@@ -27,28 +27,28 @@ import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
 
 /**
- * A {@link Randomizer} that generates a random nano-second value between
- * {@link NanoSecondRandomizer#MIN_NANO_SECOND} and {@link NanoSecondRandomizer#MAX_NANO_SECOND}.
- * 
+ * A {@link Randomizer} that generates a random nano-second value between {@link
+ * NanoSecondRandomizer#MIN_NANO_SECOND} and {@link NanoSecondRandomizer#MAX_NANO_SECOND}.
+ *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 public class NanoSecondRandomizer implements Randomizer<Integer> {
-    
-    public static final int MIN_NANO_SECOND = 0;
-    public static final int MAX_NANO_SECOND = 999_999_999;
 
-    private final IntegerRangeRandomizer nanoSecondRandomizer;
+  public static final int MIN_NANO_SECOND = 0;
+  public static final int MAX_NANO_SECOND = 999_999_999;
 
-    public NanoSecondRandomizer() {
-        nanoSecondRandomizer = new IntegerRangeRandomizer(MIN_NANO_SECOND, MAX_NANO_SECOND);
-    }
+  private final IntegerRangeRandomizer nanoSecondRandomizer;
 
-    public NanoSecondRandomizer(final long seed) {
-        nanoSecondRandomizer = new IntegerRangeRandomizer(MIN_NANO_SECOND, MAX_NANO_SECOND, seed);
-    }
+  public NanoSecondRandomizer() {
+    nanoSecondRandomizer = new IntegerRangeRandomizer(MIN_NANO_SECOND, MAX_NANO_SECOND);
+  }
 
-    @Override
-    public Integer getRandomValue() {
-        return nanoSecondRandomizer.getRandomValue();
-    }
+  public NanoSecondRandomizer(final long seed) {
+    nanoSecondRandomizer = new IntegerRangeRandomizer(MIN_NANO_SECOND, MAX_NANO_SECOND, seed);
+  }
+
+  @Override
+  public Integer getRandomValue() {
+    return nanoSecondRandomizer.getRandomValue();
+  }
 }

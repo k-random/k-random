@@ -27,15 +27,15 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
 
 public class CountryRandomizer extends AbstractRandomizer<Country> {
 
-    private String[] names;
+  private String[] names;
 
-    public CountryRandomizer(String... names) {
-        this.names = names;
-    }
+  public CountryRandomizer(String... names) {
+    this.names = names;
+  }
 
-    @Override
-    public Country getRandomValue() {
-        String country = names[random.nextInt(names.length)];
-        return new Country(country);
-    }
+  @Override
+  public Country getRandomValue() {
+    String country = names[random.nextInt(names.length)];
+    return new Country(country);
+  }
 }

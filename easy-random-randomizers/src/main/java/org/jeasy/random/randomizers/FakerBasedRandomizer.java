@@ -23,31 +23,31 @@
  */
 package org.jeasy.random.randomizers;
 
+import java.util.Locale;
 import net.datafaker.Faker;
 import org.jeasy.random.api.Randomizer;
 
-import java.util.Locale;
-
 /**
- * Abstract {@link Randomizer} based on <a href="https://github.com/datafaker-net/datafaker">Data Faker</a>.
+ * Abstract {@link Randomizer} based on <a href="https://github.com/datafaker-net/datafaker">Data
+ * Faker</a>.
  *
  * @param <T> the element type
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 public abstract class FakerBasedRandomizer<T> extends AbstractRandomizer<T> {
 
-    protected final Faker faker;
+  protected final Faker faker;
 
-    protected FakerBasedRandomizer() {
-        faker = new Faker(Locale.ENGLISH);
-    }
+  protected FakerBasedRandomizer() {
+    faker = new Faker(Locale.ENGLISH);
+  }
 
-    protected FakerBasedRandomizer(final long seed) {
-        this(seed, Locale.ENGLISH);
-    }
+  protected FakerBasedRandomizer(final long seed) {
+    this(seed, Locale.ENGLISH);
+  }
 
-    protected FakerBasedRandomizer(final long seed, final Locale locale) {
-        super(seed);
-        faker = new Faker(locale, random);
-    }
+  protected FakerBasedRandomizer(final long seed, final Locale locale) {
+    super(seed);
+    faker = new Faker(locale, random);
+  }
 }

@@ -23,13 +23,12 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.randomizers.AbstractRandomizer;
-
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.randomizers.AbstractRandomizer;
 
 /**
  * A {@link Randomizer} that generates random {@link ZoneId}.
@@ -38,25 +37,22 @@ import java.util.Map;
  */
 public class ZoneIdRandomizer extends AbstractRandomizer<ZoneId> {
 
-    /**
-     * Create a new {@link ZoneIdRandomizer}.
-     */
-    public ZoneIdRandomizer() {
-    }
+  /** Create a new {@link ZoneIdRandomizer}. */
+  public ZoneIdRandomizer() {}
 
-    /**
-     * Create a new {@link ZoneIdRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public ZoneIdRandomizer(long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link ZoneIdRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public ZoneIdRandomizer(long seed) {
+    super(seed);
+  }
 
-    @Override
-    public ZoneId getRandomValue() {
-        List<Map.Entry<String, String>> zoneIds = new ArrayList<>(ZoneId.SHORT_IDS.entrySet());
-        Map.Entry<String, String> randomZoneId = zoneIds.get(random.nextInt(zoneIds.size()));
-        return ZoneId.of(randomZoneId.getValue());
-    }
+  @Override
+  public ZoneId getRandomValue() {
+    List<Map.Entry<String, String>> zoneIds = new ArrayList<>(ZoneId.SHORT_IDS.entrySet());
+    Map.Entry<String, String> randomZoneId = zoneIds.get(random.nextInt(zoneIds.size()));
+    return ZoneId.of(randomZoneId.getValue());
+  }
 }

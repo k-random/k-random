@@ -30,46 +30,46 @@ package org.jeasy.random.randomizers.range;
  */
 public class IntegerRangeRandomizer extends AbstractRangeRandomizer<Integer> {
 
-    /**
-     * Create a new {@link IntegerRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public IntegerRangeRandomizer(final Integer min, final Integer max) {
-        super(min, max);
-    }
+  /**
+   * Create a new {@link IntegerRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public IntegerRangeRandomizer(final Integer min, final Integer max) {
+    super(min, max);
+  }
 
-    /**
-     * Create a new {@link IntegerRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public IntegerRangeRandomizer(final Integer min, final Integer max, final long seed) {
-        super(min, max, seed);
-    }
+  /**
+   * Create a new {@link IntegerRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public IntegerRangeRandomizer(final Integer min, final Integer max, final long seed) {
+    super(min, max, seed);
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min > max) {
-            throw new IllegalArgumentException("max must be greater than min");
-        }
+  @Override
+  protected void checkValues() {
+    if (min > max) {
+      throw new IllegalArgumentException("max must be greater than min");
     }
+  }
 
-    @Override
-    public Integer getRandomValue() {
-        return (int) nextDouble(min, max);
-    }
+  @Override
+  public Integer getRandomValue() {
+    return (int) nextDouble(min, max);
+  }
 
-    @Override
-    protected Integer getDefaultMaxValue() {
-        return Integer.MAX_VALUE;
-    }
+  @Override
+  protected Integer getDefaultMaxValue() {
+    return Integer.MAX_VALUE;
+  }
 
-    @Override
-    protected Integer getDefaultMinValue() {
-        return Integer.MIN_VALUE;
-    }
+  @Override
+  protected Integer getDefaultMinValue() {
+    return Integer.MIN_VALUE;
+  }
 }

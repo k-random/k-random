@@ -28,49 +28,47 @@ import java.net.URL;
 
 public class Website {
 
-    private String name;
+  private String name;
 
-    private URL url;
+  private URL url;
 
-    private URI uri;
+  private URI uri;
 
-    @Deprecated
-    private String provider;
+  @Deprecated private String provider;
 
-	public Website() {
-	}
+  public Website() {}
 
-	public String getName() {
-		return this.name;
-	}
+  public String getName() {
+    return this.name;
+  }
 
-	public URL getUrl() {
-		return this.url;
-	}
+  public URL getUrl() {
+    return this.url;
+  }
 
-	public URI getUri() {
-		return this.uri;
-	}
+  public URI getUri() {
+    return this.uri;
+  }
 
-	@Deprecated
-	public String getProvider() {
-		return this.provider;
-	}
+  @Deprecated
+  public String getProvider() {
+    return this.provider;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setUrl(URL url) {
-		this.url = url;
-	}
+  public void setUrl(URL url) {
+    this.url = url;
+  }
 
-	public void setUri(URI uri) {
-		this.uri = uri;
-	}
+  public void setUri(URI uri) {
+    this.uri = uri;
+  }
 
-	@Deprecated
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
+  @Deprecated
+  public void setProvider(String provider) {
+    this.provider = provider;
+  }
 }

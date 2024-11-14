@@ -23,91 +23,87 @@
  */
 package org.jeasy.random;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.jeasy.random.TypePredicates.*;
+
 import org.jeasy.random.beans.Address;
 import org.jeasy.random.beans.Website;
 import org.junit.jupiter.api.Test;
 
-import static org.jeasy.random.TypePredicates.*;
-import static org.assertj.core.api.Assertions.assertThat;
-
 class TypeExclusionTest {
 
-    @Test
-    void testTypeExclusion() {
-        // given
-        EasyRandomParameters parameters = new EasyRandomParameters()
-                .excludeType(
-                        inPackage("org.jeasy.random.beans")
-                                .or(isInterface())
-                                .or(isAbstract())
-                );
-        EasyRandom easyRandom = new EasyRandom(parameters);
+  @Test
+  void testTypeExclusion() {
+    // given
+    EasyRandomParameters parameters =
+        new EasyRandomParameters()
+            .excludeType(inPackage("org.jeasy.random.beans").or(isInterface()).or(isAbstract()));
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-        // when
-        Foo foo = easyRandom.nextObject(Foo.class);
+    // when
+    Foo foo = easyRandom.nextObject(Foo.class);
 
-        // then
-        assertThat(foo).isNotNull();
-        // types from "org.jeasy.random.beans" package should be excluded
-        assertThat(foo.getAddress()).isNull();
-        assertThat(foo.getWebsite()).isNull();
-        // abstract types should not be randomized
-        assertThat(foo.getBar()).isNull();
-        assertThat(foo.getBaz()).isNull();
+    // then
+    assertThat(foo).isNotNull();
+    // types from "org.jeasy.random.beans" package should be excluded
+    assertThat(foo.getAddress()).isNull();
+    assertThat(foo.getWebsite()).isNull();
+    // abstract types should not be randomized
+    assertThat(foo.getBar()).isNull();
+    assertThat(foo.getBaz()).isNull();
+  }
+
+  static class Foo {
+    private String name;
+    private Address address;
+    private Website website;
+    private Bar bar;
+    private Baz baz;
+
+    public Foo() {}
+
+    public String getName() {
+      return this.name;
     }
 
-    static class Foo {
-        private String name;
-        private Address address;
-        private Website website;
-        private Bar bar;
-        private Baz baz;
+    public Address getAddress() {
+      return this.address;
+    }
 
-		public Foo() {
-		}
+    public Website getWebsite() {
+      return this.website;
+    }
 
-		public String getName() {
-			return this.name;
-		}
+    public Bar getBar() {
+      return this.bar;
+    }
 
-		public Address getAddress() {
-			return this.address;
-		}
+    public Baz getBaz() {
+      return this.baz;
+    }
 
-		public Website getWebsite() {
-			return this.website;
-		}
+    public void setName(String name) {
+      this.name = name;
+    }
 
-		public Bar getBar() {
-			return this.bar;
-		}
+    public void setAddress(Address address) {
+      this.address = address;
+    }
 
-		public Baz getBaz() {
-			return this.baz;
-		}
+    public void setWebsite(Website website) {
+      this.website = website;
+    }
 
-		public void setName(String name) {
-			this.name = name;
-		}
+    public void setBar(Bar bar) {
+      this.bar = bar;
+    }
 
-		public void setAddress(Address address) {
-			this.address = address;
-		}
+    public void setBaz(Baz baz) {
+      this.baz = baz;
+    }
+  }
 
-		public void setWebsite(Website website) {
-			this.website = website;
-		}
+  interface Bar {}
 
-		public void setBar(Bar bar) {
-			this.bar = bar;
-		}
-
-		public void setBaz(Baz baz) {
-			this.baz = baz;
-		}
-	}
-
-    interface Bar { }
-
-    abstract class Baz { }
+  abstract class Baz {}
 }

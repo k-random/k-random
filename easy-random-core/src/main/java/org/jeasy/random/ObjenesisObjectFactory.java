@@ -23,6 +23,10 @@
  */
 package org.jeasy.random;
 
+import static org.jeasy.random.util.ReflectionUtils.getPublicConcreteSubTypesOf;
+import static org.jeasy.random.util.ReflectionUtils.isAbstract;
+
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Random;
 import org.jeasy.random.api.ObjectFactory;
@@ -30,53 +34,50 @@ import org.jeasy.random.api.RandomizerContext;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
-import java.lang.reflect.Constructor;
-
-import static org.jeasy.random.util.ReflectionUtils.getPublicConcreteSubTypesOf;
-import static org.jeasy.random.util.ReflectionUtils.isAbstract;
-
 /**
- * Objenesis based factory to create "fancy" objects: immutable java beans, generic types, abstract and interface types.
+ * Objenesis based factory to create "fancy" objects: immutable java beans, generic types, abstract
+ * and interface types.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 @SuppressWarnings({"unchecked"})
 public class ObjenesisObjectFactory implements ObjectFactory {
 
-    private final Objenesis objenesis = new ObjenesisStd();
+  private final Objenesis objenesis = new ObjenesisStd();
 
-    private Random random;
+  private Random random;
 
-    @Override
-    public <T> T createInstance(Class<T> type, RandomizerContext context) {
-        if (random == null) {
-            random = new Random(context.getParameters().getSeed());
-        }
-        if (context.getParameters().isScanClasspathForConcreteTypes() && isAbstract(type)) {
-            List<Class<?>> publicConcreteSubTypes = getPublicConcreteSubTypesOf(type);
-            if (publicConcreteSubTypes.isEmpty()) {
-                throw new InstantiationError("Unable to find a matching concrete subtype of type: " + type + " in the classpath");
-            } else {
-                Class<?> randomConcreteSubType = publicConcreteSubTypes.get(random.nextInt(publicConcreteSubTypes.size()));
-                return (T) createNewInstance(randomConcreteSubType);
-            }
-        } else {
-            try {
-                return createNewInstance(type);
-            } catch (Error e) {
-                throw new ObjectCreationException("Unable to create an instance of type: " + type, e);
-            }
-        }
+  @Override
+  public <T> T createInstance(Class<T> type, RandomizerContext context) {
+    if (random == null) {
+      random = new Random(context.getParameters().getSeed());
     }
-
-    private <T> T createNewInstance(final Class<T> type) {
-        try {
-            Constructor<T> noArgConstructor = type.getDeclaredConstructor();
-            noArgConstructor.trySetAccessible();
-            return noArgConstructor.newInstance();
-        } catch (Exception exception) {
-            return objenesis.newInstance(type);
-        }
+    if (context.getParameters().isScanClasspathForConcreteTypes() && isAbstract(type)) {
+      List<Class<?>> publicConcreteSubTypes = getPublicConcreteSubTypesOf(type);
+      if (publicConcreteSubTypes.isEmpty()) {
+        throw new InstantiationError(
+            "Unable to find a matching concrete subtype of type: " + type + " in the classpath");
+      } else {
+        Class<?> randomConcreteSubType =
+            publicConcreteSubTypes.get(random.nextInt(publicConcreteSubTypes.size()));
+        return (T) createNewInstance(randomConcreteSubType);
+      }
+    } else {
+      try {
+        return createNewInstance(type);
+      } catch (Error e) {
+        throw new ObjectCreationException("Unable to create an instance of type: " + type, e);
+      }
     }
+  }
 
+  private <T> T createNewInstance(final Class<T> type) {
+    try {
+      Constructor<T> noArgConstructor = type.getDeclaredConstructor();
+      noArgConstructor.trySetAccessible();
+      return noArgConstructor.newInstance();
+    } catch (Exception exception) {
+      return objenesis.newInstance(type);
+    }
+  }
 }

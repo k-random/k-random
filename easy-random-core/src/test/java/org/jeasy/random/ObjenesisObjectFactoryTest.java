@@ -23,6 +23,9 @@
  */
 package org.jeasy.random;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import org.jeasy.random.api.RandomizerContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,36 +35,32 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 @ExtendWith(MockitoExtension.class)
 class ObjenesisObjectFactoryTest {
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private RandomizerContext context;
+  @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+  private RandomizerContext context;
 
-    private ObjenesisObjectFactory objenesisObjectFactory;
+  private ObjenesisObjectFactory objenesisObjectFactory;
 
-    @BeforeEach
-    void setUp() {
-        objenesisObjectFactory = new ObjenesisObjectFactory();
-    }
+  @BeforeEach
+  void setUp() {
+    objenesisObjectFactory = new ObjenesisObjectFactory();
+  }
 
-    @Test
-    void concreteClassesShouldBeCreatedAsExpected() {
-        String string = objenesisObjectFactory.createInstance(String.class, context);
+  @Test
+  void concreteClassesShouldBeCreatedAsExpected() {
+    String string = objenesisObjectFactory.createInstance(String.class, context);
 
-        assertThat(string).isNotNull();
-    }
+    assertThat(string).isNotNull();
+  }
 
-    @Test
-    void whenNoConcreteTypeIsFound_thenShouldThrowAnInstantiationError() {
-        Mockito.when(context.getParameters().isScanClasspathForConcreteTypes()).thenReturn(true);
-        assertThatThrownBy(() -> objenesisObjectFactory.createInstance(AbstractFoo.class, context)).isInstanceOf(InstantiationError.class);
-    }
+  @Test
+  void whenNoConcreteTypeIsFound_thenShouldThrowAnInstantiationError() {
+    Mockito.when(context.getParameters().isScanClasspathForConcreteTypes()).thenReturn(true);
+    assertThatThrownBy(() -> objenesisObjectFactory.createInstance(AbstractFoo.class, context))
+        .isInstanceOf(InstantiationError.class);
+  }
 
-    private abstract class AbstractFoo {
-
-    }
+  private abstract class AbstractFoo {}
 }

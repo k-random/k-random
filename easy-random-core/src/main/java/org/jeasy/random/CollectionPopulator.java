@@ -23,14 +23,13 @@
  */
 package org.jeasy.random;
 
-import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
+import static org.jeasy.random.util.ReflectionUtils.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
-
-import static org.jeasy.random.util.ReflectionUtils.*;
+import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
 
 /**
  * Random collection populator.
@@ -39,42 +38,43 @@ import static org.jeasy.random.util.ReflectionUtils.*;
  */
 class CollectionPopulator {
 
-    private final EasyRandom easyRandom;
+  private final EasyRandom easyRandom;
 
-    CollectionPopulator(final EasyRandom easyRandom) {
-        this.easyRandom = easyRandom;
+  CollectionPopulator(final EasyRandom easyRandom) {
+    this.easyRandom = easyRandom;
+  }
+
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  Collection<?> getRandomCollection(final Field field, final RandomizationContext context) {
+    int randomSize = getRandomCollectionSize(context.getParameters());
+    Class<?> fieldType = field.getType();
+    Type fieldGenericType = field.getGenericType();
+    Collection collection;
+
+    if (isInterface(fieldType)) {
+      collection = getEmptyImplementationForCollectionInterface(fieldType);
+    } else {
+      collection = createEmptyCollectionForType(fieldType, randomSize);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    Collection<?> getRandomCollection(final Field field, final RandomizationContext context) {
-        int randomSize = getRandomCollectionSize(context.getParameters());
-        Class<?> fieldType = field.getType();
-        Type fieldGenericType = field.getGenericType();
-        Collection collection;
-
-        if (isInterface(fieldType)) {
-            collection = getEmptyImplementationForCollectionInterface(fieldType);
-        } else {
-            collection = createEmptyCollectionForType(fieldType, randomSize);
+    if (isParameterizedType(
+        fieldGenericType)) { // populate only parametrized types, raw types will be empty
+      ParameterizedType parameterizedType = (ParameterizedType) fieldGenericType;
+      Type type = parameterizedType.getActualTypeArguments()[0];
+      if (isPopulatable(type)) {
+        for (int i = 0; i < randomSize; i++) {
+          Object item = easyRandom.doPopulateBean((Class<?>) type, context);
+          collection.add(item);
         }
-
-        if (isParameterizedType(fieldGenericType)) { // populate only parametrized types, raw types will be empty
-            ParameterizedType parameterizedType = (ParameterizedType) fieldGenericType;
-            Type type = parameterizedType.getActualTypeArguments()[0];
-            if (isPopulatable(type)) {
-                for (int i = 0; i < randomSize; i++) {
-                    Object item = easyRandom.doPopulateBean((Class<?>) type, context);
-                    collection.add(item);
-                }
-
-            }
-        }
-        return collection;
-
+      }
     }
+    return collection;
+  }
 
-    private int getRandomCollectionSize(EasyRandomParameters parameters) {
-        EasyRandomParameters.Range<Integer> collectionSizeRange = parameters.getCollectionSizeRange();
-        return new IntegerRangeRandomizer(collectionSizeRange.getMin(), collectionSizeRange.getMax(), easyRandom.nextLong()).getRandomValue();
-    }
+  private int getRandomCollectionSize(EasyRandomParameters parameters) {
+    EasyRandomParameters.Range<Integer> collectionSizeRange = parameters.getCollectionSizeRange();
+    return new IntegerRangeRandomizer(
+            collectionSizeRange.getMin(), collectionSizeRange.getMax(), easyRandom.nextLong())
+        .getRandomValue();
+  }
 }

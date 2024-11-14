@@ -32,19 +32,19 @@ import org.jeasy.random.api.Randomizer;
  */
 public class ConstantRandomizer<T> implements Randomizer<T> {
 
-    private final T value;
+  private final T value;
 
-    /**
-     * Create a new {@link ConstantRandomizer}.
-     *
-     * @param value the constant value
-     */
-    public ConstantRandomizer(T value) {
-        this.value = value;
-    }
+  /**
+   * Create a new {@link ConstantRandomizer}.
+   *
+   * @param value the constant value
+   */
+  public ConstantRandomizer(T value) {
+    this.value = value;
+  }
 
-    @Override
-    public T getRandomValue() {
-        return value;
-    }
+  @Override
+  public T getRandomValue() {
+    return value;
+  }
 }

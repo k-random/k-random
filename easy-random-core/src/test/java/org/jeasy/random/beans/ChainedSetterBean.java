@@ -25,25 +25,24 @@ package org.jeasy.random.beans;
 
 public class ChainedSetterBean {
 
-    private String name;
-    private int index;
+  private String name;
+  private int index;
 
-    public ChainedSetterBean setName(String name) {
-        this.name = name;
-        return this;
-    }
+  public ChainedSetterBean setName(String name) {
+    this.name = name;
+    return this;
+  }
 
-    public ChainedSetterBean setIndex(int index) {
-        this.index = index;
-        return this;
-    }
+  public ChainedSetterBean setIndex(int index) {
+    this.index = index;
+    return this;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public int getIndex() {
-        return index;
-    }
-
+  public int getIndex() {
+    return index;
+  }
 }

@@ -26,32 +26,30 @@ package org.jeasy.random.randomizers.time;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.TimeZone;
-
+import org.jeasy.random.randomizers.AbstractRandomizerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.jeasy.random.randomizers.AbstractRandomizerTest;
-
 class TimeZoneRandomizerTest extends AbstractRandomizerTest<TimeZone> {
 
-    @BeforeEach
-    void setUp() {
-        randomizer = new TimeZoneRandomizer(SEED);
-    }
+  @BeforeEach
+  void setUp() {
+    randomizer = new TimeZoneRandomizer(SEED);
+  }
 
-    @Test
-    void generatedValueShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedValueShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void shouldGenerateTheSameValueForTheSameSeed() {
-        // we cannot use a canned value, because the available TimeZones differ between locales/jdks
-        TimeZone firstTimeZone = new TimeZoneRandomizer(SEED).getRandomValue();
-        TimeZone secondTimeZone = new TimeZoneRandomizer(SEED).getRandomValue();
-        
-        assertThat(firstTimeZone).isNotNull();
-        assertThat(secondTimeZone).isNotNull();
-        assertThat(firstTimeZone).isEqualTo(secondTimeZone);
-    }
+  @Test
+  void shouldGenerateTheSameValueForTheSameSeed() {
+    // we cannot use a canned value, because the available TimeZones differ between locales/jdks
+    TimeZone firstTimeZone = new TimeZoneRandomizer(SEED).getRandomValue();
+    TimeZone secondTimeZone = new TimeZoneRandomizer(SEED).getRandomValue();
+
+    assertThat(firstTimeZone).isNotNull();
+    assertThat(secondTimeZone).isNotNull();
+    assertThat(firstTimeZone).isEqualTo(secondTimeZone);
+  }
 }

@@ -25,57 +25,54 @@ package org.jeasy.random.randomizers.range;
 
 import java.time.Year;
 import java.time.temporal.ChronoField;
-
 import org.jeasy.random.EasyRandomParameters;
 
-/**
- * Generate a random {@link Year} in the given range.
- */
+/** Generate a random {@link Year} in the given range. */
 public class YearRangeRandomizer extends AbstractRangeRandomizer<Year> {
 
-    /**
-     * Create a new {@link YearRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public YearRangeRandomizer(final Year min, final Year max) {
-        super(min, max);
-    }
+  /**
+   * Create a new {@link YearRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public YearRangeRandomizer(final Year min, final Year max) {
+    super(min, max);
+  }
 
-    /**
-     * Create a new {@link YearRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public YearRangeRandomizer(final Year min, final Year max, final long seed) {
-        super(min, max, seed);
-    }
+  /**
+   * Create a new {@link YearRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public YearRangeRandomizer(final Year min, final Year max, final long seed) {
+    super(min, max, seed);
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min.isAfter(max)) {
-            throw new IllegalArgumentException("max must be after min");
-        }
+  @Override
+  protected void checkValues() {
+    if (min.isAfter(max)) {
+      throw new IllegalArgumentException("max must be after min");
     }
+  }
 
-    @Override
-    protected Year getDefaultMinValue() {
-        return Year.of(EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().getYear());
-    }
+  @Override
+  protected Year getDefaultMinValue() {
+    return Year.of(EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().getYear());
+  }
 
-    @Override
-    protected Year getDefaultMaxValue() {
-        return Year.of(EasyRandomParameters.DEFAULT_DATES_RANGE.getMax().getYear());
-    }
+  @Override
+  protected Year getDefaultMaxValue() {
+    return Year.of(EasyRandomParameters.DEFAULT_DATES_RANGE.getMax().getYear());
+  }
 
-    @Override
-    public Year getRandomValue() {
-        long minYear = min.getLong(ChronoField.YEAR);
-        long maxYear = max.getLong(ChronoField.YEAR);
-        long randomYear = (long) nextDouble(minYear, maxYear);
-        return Year.of(Math.toIntExact(randomYear));
-    }
+  @Override
+  public Year getRandomValue() {
+    long minYear = min.getLong(ChronoField.YEAR);
+    long maxYear = max.getLong(ChronoField.YEAR);
+    long randomYear = (long) nextDouble(minYear, maxYear);
+    return Year.of(Math.toIntExact(randomYear));
+  }
 }

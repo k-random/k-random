@@ -27,34 +27,31 @@ import static java.lang.String.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import org.jeasy.random.api.Randomizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import org.jeasy.random.api.Randomizer;
-
 @ExtendWith(MockitoExtension.class)
 class StringDelegatingRandomizerTest {
 
-    @Mock
-    private Randomizer<Object> delegate;
-    @Mock
-    private Object object;
+  @Mock private Randomizer<Object> delegate;
+  @Mock private Object object;
 
-    private StringDelegatingRandomizer stringDelegatingRandomizer;
+  private StringDelegatingRandomizer stringDelegatingRandomizer;
 
-    @BeforeEach
-    void setUp() {
-        stringDelegatingRandomizer = new StringDelegatingRandomizer(delegate);
-        when(delegate.getRandomValue()).thenReturn(object);
-    }
+  @BeforeEach
+  void setUp() {
+    stringDelegatingRandomizer = new StringDelegatingRandomizer(delegate);
+    when(delegate.getRandomValue()).thenReturn(object);
+  }
 
-    @Test
-    void generatedValueShouldTheSameAs() {
-        String actual = stringDelegatingRandomizer.getRandomValue();
+  @Test
+  void generatedValueShouldTheSameAs() {
+    String actual = stringDelegatingRandomizer.getRandomValue();
 
-        assertThat(actual).isEqualTo(valueOf(object));
-    }
+    assertThat(actual).isEqualTo(valueOf(object));
+  }
 }

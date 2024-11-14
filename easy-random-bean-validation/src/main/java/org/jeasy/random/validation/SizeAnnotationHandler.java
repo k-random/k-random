@@ -23,13 +23,7 @@
  */
 package org.jeasy.random.validation;
 
-import org.jeasy.random.EasyRandom;
-import org.jeasy.random.EasyRandomParameters;
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
-import org.jeasy.random.randomizers.text.StringRandomizer;
-import org.jeasy.random.util.ReflectionUtils;
-import org.objenesis.ObjenesisStd;
+import static org.jeasy.random.util.ReflectionUtils.*;
 
 import jakarta.validation.constraints.Size;
 import java.lang.reflect.Array;
@@ -40,116 +34,131 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
-
-import static org.jeasy.random.util.ReflectionUtils.*;
+import org.jeasy.random.EasyRandom;
+import org.jeasy.random.EasyRandomParameters;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
+import org.jeasy.random.randomizers.text.StringRandomizer;
+import org.jeasy.random.util.ReflectionUtils;
+import org.objenesis.ObjenesisStd;
 
 class SizeAnnotationHandler implements BeanValidationAnnotationHandler {
 
-    private EasyRandom easyRandom;
-    private EasyRandomParameters parameters;
+  private EasyRandom easyRandom;
+  private EasyRandomParameters parameters;
 
-    SizeAnnotationHandler(EasyRandomParameters parameters) {
-        this.parameters = parameters.copy();
+  SizeAnnotationHandler(EasyRandomParameters parameters) {
+    this.parameters = parameters.copy();
+  }
+
+  @Override
+  @SuppressWarnings({"unchecked"})
+  public Randomizer<?> getRandomizer(Field field) {
+    Class<?> fieldType = field.getType();
+    Size sizeAnnotation = ReflectionUtils.getAnnotation(field, Size.class);
+
+    final int min = sizeAnnotation.min();
+    final int max = sizeAnnotation.max() == Integer.MAX_VALUE ? 255 : sizeAnnotation.max();
+    if (easyRandom == null) {
+      easyRandom = new EasyRandom(parameters);
     }
 
-    @Override
-    @SuppressWarnings({"unchecked"})
-    public Randomizer<?> getRandomizer(Field field) {
-        Class<?> fieldType = field.getType();
-        Size sizeAnnotation = ReflectionUtils
-                .getAnnotation(field, Size.class);
+    if (fieldType.equals(String.class)) {
+      return new StringRandomizer(parameters.getCharset(), min, max, easyRandom.nextLong());
+    }
 
-        final int min = sizeAnnotation.min();
-        final int max = sizeAnnotation.max() == Integer.MAX_VALUE ? 255 : sizeAnnotation.max();
-        if (easyRandom == null) {
-            easyRandom = new EasyRandom(parameters);
-        }
+    // FIXME: There should be away to reuse code from
+    // ArrayPopulator/CollectionPopulator/MapPopulator *without* making them public
 
-        if (fieldType.equals(String.class)) {
-            return new StringRandomizer(parameters.getCharset(), min, max, easyRandom.nextLong());
-        }
+    if (isArrayType(fieldType)) {
+      return (Randomizer<Object>)
+          () -> {
+            int randomSize =
+                new IntegerRangeRandomizer(min, max, parameters.getSeed()).getRandomValue();
+            Object result = Array.newInstance(field.getType().getComponentType(), randomSize);
+            for (int i = 0; i < randomSize; i++) {
+              Object randomElement = easyRandom.nextObject(fieldType.getComponentType());
+              Array.set(result, i, randomElement);
+            }
+            return result;
+          };
+    }
 
-        // FIXME: There should be away to reuse code from ArrayPopulator/CollectionPopulator/MapPopulator *without* making them public
+    if (isCollectionType(fieldType)) {
+      return (Randomizer<Object>)
+          () -> {
+            int randomSize =
+                new IntegerRangeRandomizer(min, max, parameters.getSeed()).getRandomValue();
+            Type fieldGenericType = field.getGenericType();
+            Collection collection;
 
-        if (isArrayType(fieldType)) {
-            return (Randomizer<Object>) () -> {
-                int randomSize = new IntegerRangeRandomizer(min, max, parameters.getSeed()).getRandomValue();
-                Object result = Array.newInstance(field.getType().getComponentType(), randomSize);
+            if (isInterface(fieldType)) {
+              collection = getEmptyImplementationForCollectionInterface(fieldType);
+            } else {
+              collection = createEmptyCollectionForType(fieldType, randomSize);
+            }
+            if (isParameterizedType(
+                fieldGenericType)) { // populate only parameterized types, raw types will be empty
+              ParameterizedType parameterizedType = (ParameterizedType) fieldGenericType;
+              Type type = parameterizedType.getActualTypeArguments()[0];
+              if (isPopulatable(type)) {
                 for (int i = 0; i < randomSize; i++) {
-                    Object randomElement = easyRandom.nextObject(fieldType.getComponentType());
-                    Array.set(result, i, randomElement);
+                  Object item = easyRandom.nextObject((Class<?>) type);
+                  collection.add(item);
                 }
-                return result;
-            };
-        }
-
-        if (isCollectionType(fieldType)) {
-            return (Randomizer<Object>) () -> {
-                int randomSize = new IntegerRangeRandomizer(min, max, parameters.getSeed()).getRandomValue();
-                Type fieldGenericType = field.getGenericType();
-                Collection collection;
-
-                if (isInterface(fieldType)) {
-                    collection = getEmptyImplementationForCollectionInterface(fieldType);
-                } else {
-                    collection = createEmptyCollectionForType(fieldType, randomSize);
-                }
-                if (isParameterizedType(fieldGenericType)) { // populate only parameterized types, raw types will be empty
-                    ParameterizedType parameterizedType = (ParameterizedType) fieldGenericType;
-                    Type type = parameterizedType.getActualTypeArguments()[0];
-                    if (isPopulatable(type)) {
-                        for (int i = 0; i < randomSize; i++) {
-                            Object item = easyRandom.nextObject((Class<?>) type);
-                            collection.add(item);
-                        }
-
-                    }
-                }
-                return collection;
-            };
-        }
-        if (isMapType(fieldType)) {
-            return (Randomizer<Object>) () -> {
-                int randomSize = new IntegerRangeRandomizer(min, max, parameters.getSeed()).getRandomValue();
-                Type fieldGenericType = field.getGenericType();
-                Map<Object, Object> map;
-
-                if (isInterface(fieldType)) {
-                    map = (Map<Object, Object>) getEmptyImplementationForMapInterface(fieldType);
-                } else {
-                    try {
-                        map = (Map<Object, Object>) fieldType.getDeclaredConstructor().newInstance();
-                    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                        if (fieldType.isAssignableFrom(EnumMap.class)) {
-                            if (isParameterizedType(fieldGenericType)) {
-                                Type type = ((ParameterizedType) fieldGenericType).getActualTypeArguments()[0];
-                                map = new EnumMap((Class<?>)type);
-                            } else {
-                                return null;
-                            }
-                        } else {
-                            map = (Map<Object, Object>) new ObjenesisStd().newInstance(fieldType);
-                        }
-                    }
-                }
-
-                if (isParameterizedType(fieldGenericType)) { // populate only parameterized types, raw types will be empty
-                    ParameterizedType parameterizedType = (ParameterizedType) fieldGenericType;
-                    Type keyType = parameterizedType.getActualTypeArguments()[0];
-                    Type valueType = parameterizedType.getActualTypeArguments()[1];
-                    if (isPopulatable(keyType) && isPopulatable(valueType)) {
-                        for (int index = 0; index < randomSize; index++) {
-                            Object randomKey = easyRandom.nextObject((Class<?>) keyType);
-                            Object randomValue = easyRandom.nextObject((Class<?>) valueType);
-                            if(randomKey != null) {
-                                map.put(randomKey, randomValue);
-                            }
-                        }
-                    }
-                }
-                return map;
-            };
-        }
-        return null;
+              }
+            }
+            return collection;
+          };
     }
+    if (isMapType(fieldType)) {
+      return (Randomizer<Object>)
+          () -> {
+            int randomSize =
+                new IntegerRangeRandomizer(min, max, parameters.getSeed()).getRandomValue();
+            Type fieldGenericType = field.getGenericType();
+            Map<Object, Object> map;
+
+            if (isInterface(fieldType)) {
+              map = (Map<Object, Object>) getEmptyImplementationForMapInterface(fieldType);
+            } else {
+              try {
+                map = (Map<Object, Object>) fieldType.getDeclaredConstructor().newInstance();
+              } catch (InstantiationException
+                  | IllegalAccessException
+                  | NoSuchMethodException
+                  | InvocationTargetException e) {
+                if (fieldType.isAssignableFrom(EnumMap.class)) {
+                  if (isParameterizedType(fieldGenericType)) {
+                    Type type = ((ParameterizedType) fieldGenericType).getActualTypeArguments()[0];
+                    map = new EnumMap((Class<?>) type);
+                  } else {
+                    return null;
+                  }
+                } else {
+                  map = (Map<Object, Object>) new ObjenesisStd().newInstance(fieldType);
+                }
+              }
+            }
+
+            if (isParameterizedType(
+                fieldGenericType)) { // populate only parameterized types, raw types will be empty
+              ParameterizedType parameterizedType = (ParameterizedType) fieldGenericType;
+              Type keyType = parameterizedType.getActualTypeArguments()[0];
+              Type valueType = parameterizedType.getActualTypeArguments()[1];
+              if (isPopulatable(keyType) && isPopulatable(valueType)) {
+                for (int index = 0; index < randomSize; index++) {
+                  Object randomKey = easyRandom.nextObject((Class<?>) keyType);
+                  Object randomValue = easyRandom.nextObject((Class<?>) valueType);
+                  if (randomKey != null) {
+                    map.put(randomKey, randomValue);
+                  }
+                }
+              }
+            }
+            return map;
+          };
+    }
+    return null;
+  }
 }

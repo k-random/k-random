@@ -27,62 +27,61 @@ import java.time.Instant;
 
 public class InstantRangeRandomizer extends AbstractRangeRandomizer<Instant> {
 
-	/**
-	 * Create a new {@link InstantRangeRandomizer}.
-	 *
-	 * @param min min value (inclusive)
-	 * @param max max value (exclusive)
-	 */
-    public InstantRangeRandomizer(final Instant min, final Instant max) {
-        super(min, max);
+  /**
+   * Create a new {@link InstantRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public InstantRangeRandomizer(final Instant min, final Instant max) {
+    super(min, max);
+  }
+
+  /**
+   * Create a new {@link InstantRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public InstantRangeRandomizer(final Instant min, final Instant max, long seed) {
+    super(min, max, seed);
+  }
+
+  @Override
+  protected void checkValues() {
+    if (min.isAfter(max)) {
+      throw new IllegalArgumentException("max must be after min");
+    }
+  }
+
+  @Override
+  protected Instant getDefaultMinValue() {
+    return Instant.ofEpochMilli(Long.MIN_VALUE);
+  }
+
+  @Override
+  protected Instant getDefaultMaxValue() {
+    return Instant.ofEpochMilli(Long.MAX_VALUE);
+  }
+
+  @Override
+  public Instant getRandomValue() {
+    long minEpochMillis;
+    long maxEpochMillis;
+    try {
+      minEpochMillis = min.toEpochMilli();
+    } catch (ArithmeticException ex) {
+      minEpochMillis = Long.MIN_VALUE;
     }
 
-	/**
-	 * Create a new {@link InstantRangeRandomizer}.
-	 *
-	 * @param min min value (inclusive)
-	 * @param max max value (exclusive)
-	 * @param seed initial seed
-	 */
-    public InstantRangeRandomizer(final Instant min, final Instant max, long seed) {
-        super(min, max, seed);
+    try {
+      maxEpochMillis = max.toEpochMilli();
+    } catch (ArithmeticException ex) {
+      maxEpochMillis = Long.MAX_VALUE;
     }
 
-    @Override
-    protected void checkValues() {
-		if (min.isAfter(max)) {
-			throw new IllegalArgumentException("max must be after min");
-		}
-    }
-
-    @Override
-    protected Instant getDefaultMinValue() {
-        return Instant.ofEpochMilli(Long.MIN_VALUE);
-    }
-
-    @Override
-    protected Instant getDefaultMaxValue() {
-		return Instant.ofEpochMilli(Long.MAX_VALUE);
-    }
-
-	@Override
-	public Instant getRandomValue() {
-		long minEpochMillis;
-		long maxEpochMillis;
-		try {
-			minEpochMillis = min.toEpochMilli();
-		} catch (ArithmeticException ex) {
-			minEpochMillis = Long.MIN_VALUE;
-		}
-
-		try {
-			maxEpochMillis = max.toEpochMilli();
-		} catch (ArithmeticException ex) {
-			maxEpochMillis = Long.MAX_VALUE;
-		}
-
-		long randomEpochMillis = (long) nextDouble(minEpochMillis, maxEpochMillis);
-		return Instant.ofEpochMilli(randomEpochMillis);
-	}
-
+    long randomEpochMillis = (long) nextDouble(minEpochMillis, maxEpochMillis);
+    return Instant.ofEpochMilli(randomEpochMillis);
+  }
 }

@@ -23,119 +23,118 @@
  */
 package org.jeasy.random.beans;
 
-import org.jeasy.random.annotation.Exclude;
-
 import java.util.Date;
 import java.util.List;
+import org.jeasy.random.annotation.Exclude;
 
 public class Person extends Human implements Comparable<Person> {
 
-    protected transient String email;
+  protected transient String email;
 
-    protected Gender gender;
+  protected Gender gender;
 
-    protected Address address;
+  protected Address address;
 
-    protected Date birthDate;
+  protected Date birthDate;
 
-    protected String phoneNumber;
+  protected String phoneNumber;
 
-    protected List<String> nicknames;
+  protected List<String> nicknames;
 
-    protected Person parent;
+  protected Person parent;
 
-    @Exclude
-    protected String excluded;
+  @Exclude protected String excluded;
 
-    public String getEmail() {
-        return email;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public Gender getGender() {
-        return gender;
-    }
+  public Gender getGender() {
+    return gender;
+  }
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
+  public void setGender(Gender gender) {
+    this.gender = gender;
+  }
 
-    public Address getAddress() {
-        return address;
-    }
+  public Address getAddress() {
+    return address;
+  }
 
-    public void setAddress(Address address) {
-        this.address = address;
-    }
+  public void setAddress(Address address) {
+    this.address = address;
+  }
 
-    public List<String> getNicknames() {
-        return nicknames;
-    }
+  public List<String> getNicknames() {
+    return nicknames;
+  }
 
-    public void setNicknames(List<String> nicknames) {
-        this.nicknames = nicknames;
-    }
+  public void setNicknames(List<String> nicknames) {
+    this.nicknames = nicknames;
+  }
 
-    public Date getBirthDate() {
-        return birthDate;
-    }
+  public Date getBirthDate() {
+    return birthDate;
+  }
 
-    public void setBirthDate(Date birthdate) {
-        this.birthDate = birthdate;
-    }
+  public void setBirthDate(Date birthdate) {
+    this.birthDate = birthdate;
+  }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+  public String getPhoneNumber() {
+    return phoneNumber;
+  }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+  public void setPhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
+  }
 
-    public String getExcluded() {
-        return excluded;
-    }
+  public String getExcluded() {
+    return excluded;
+  }
 
-    public void setExcluded(String excluded) {
-        this.excluded = excluded;
-    }
+  public void setExcluded(String excluded) {
+    this.excluded = excluded;
+  }
 
-    public Person getParent() {
-        return parent;
-    }
+  public Person getParent() {
+    return parent;
+  }
 
-    public void setParent(Person parent) {
-        this.parent = parent;
-    }
+  public void setParent(Person parent) {
+    this.parent = parent;
+  }
 
-    @Override
-    public int compareTo(Person person) {
-        return name.compareTo(person.getName());
-    }
+  @Override
+  public int compareTo(Person person) {
+    return name.compareTo(person.getName());
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
 
-        Person person = (Person) o;
+    Person person = (Person) o;
 
-        if (email != null ? !email.equals(person.email) : person.email != null) return false;
-        if (gender != person.gender) return false;
-        if (address != null ? !address.equals(person.address) : person.address != null) return false;
-        return !(phoneNumber != null ? !phoneNumber.equals(person.phoneNumber) : person.phoneNumber != null);
+    if (email != null ? !email.equals(person.email) : person.email != null) return false;
+    if (gender != person.gender) return false;
+    if (address != null ? !address.equals(person.address) : person.address != null) return false;
+    return !(phoneNumber != null
+        ? !phoneNumber.equals(person.phoneNumber)
+        : person.phoneNumber != null);
+  }
 
-    }
-
-    @Override
-    public int hashCode() {
-        int result = email != null ? email.hashCode() : 0;
-        result = 31 * result + (gender != null ? gender.hashCode() : 0);
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + (phoneNumber != null ? phoneNumber.hashCode() : 0);
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    int result = email != null ? email.hashCode() : 0;
+    result = 31 * result + (gender != null ? gender.hashCode() : 0);
+    result = 31 * result + (address != null ? address.hashCode() : 0);
+    result = 31 * result + (phoneNumber != null ? phoneNumber.hashCode() : 0);
+    return result;
+  }
 }
