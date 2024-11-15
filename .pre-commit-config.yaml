@@ -5,4 +5,4 @@ repos:
       - id: pretty-format-java
         args: [ --autofix ]
       - id: pretty-format-kotlin
-        args: [ --ktfmt, --ktfmt-style=google ]
+        args: [ --autofix, --ktfmt, --ktfmt-style=google ]
