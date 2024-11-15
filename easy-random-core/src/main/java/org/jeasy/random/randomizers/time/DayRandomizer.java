@@ -35,8 +35,8 @@ import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
 public class DayRandomizer implements Randomizer<Integer> {
 
   public static final int MIN_DAY = 1;
-  public static final int MAX_DAY =
-      28; // 31 may break some LocalDateTime instances when the dayOfMonth is invalid
+  // 31 may break some LocalDateTime instances when the dayOfMonth is invalid
+  public static final int MAX_DAY = 28;
 
   private final IntegerRangeRandomizer dayRandomizer;
 
