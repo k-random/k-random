@@ -23,6 +23,17 @@
  */
 package org.jeasy.random;
 
+import static java.sql.Timestamp.valueOf;
+import static java.time.LocalDateTime.of;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.jeasy.random.FieldPredicates.*;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.stream.Stream;
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.beans.*;
 import org.jeasy.random.util.ReflectionUtils;
@@ -32,18 +43,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static java.sql.Timestamp.valueOf;
-import static java.time.LocalDateTime.of;
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.jeasy.random.FieldPredicates.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EasyRandomTest {
@@ -445,7 +444,8 @@ class EasyRandomTest {
         // then
         .isInstanceOf(ObjectCreationException.class)
         .hasMessage(
-            "Unable to create a random instance of type class org.jeasy.random.EasyRandomTest$7Concrete");
+            "Unable to create a random instance of type class"
+                + " org.jeasy.random.EasyRandomTest$7Concrete");
   }
 
   @Test

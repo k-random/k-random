@@ -30,11 +30,11 @@ import org.junit.jupiter.api.Test;
 
 class RangeTest {
 
-    @Test
-    void testRange() {
-        EasyRandomParameters.Range<Integer> range = new EasyRandomParameters.Range<>(1, 10);
+  @Test
+  void testRange() {
+    EasyRandomParameters.Range<Integer> range = new EasyRandomParameters.Range<>(1, 10);
 
-        assertThat(range.getMin()).isEqualTo(1);
-        assertThat(range.getMax()).isEqualTo(10);
-    }
+    assertThat(range.getMin()).isEqualTo(1);
+    assertThat(range.getMax()).isEqualTo(10);
+  }
 }

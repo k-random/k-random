@@ -28,12 +28,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import java.util.Date;
-
 import org.assertj.core.api.Assertions;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-import org.junit.jupiter.api.Test;
-
 import org.jeasy.random.ObjectCreationException;
 import org.jeasy.random.beans.Ape;
 import org.jeasy.random.beans.Bar;
@@ -45,106 +42,120 @@ import org.jeasy.random.beans.Human;
 import org.jeasy.random.beans.Mamals;
 import org.jeasy.random.beans.Person;
 import org.jeasy.random.beans.SocialPerson;
+import org.junit.jupiter.api.Test;
 
 class ScanClasspathForConcreteTypesParameterTests {
 
-    private EasyRandom easyRandom;
+  private EasyRandom easyRandom;
 
-    @Test
-    void whenScanClasspathForConcreteTypesIsDisabled_thenShouldFailToPopulateInterfacesAndAbstractClasses() {
-        EasyRandomParameters parameters = new EasyRandomParameters().scanClasspathForConcreteTypes(false);
-        easyRandom = new EasyRandom(parameters);
+  @Test
+  void
+      whenScanClasspathForConcreteTypesIsDisabled_thenShouldFailToPopulateInterfacesAndAbstractClasses() {
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().scanClasspathForConcreteTypes(false);
+    easyRandom = new EasyRandom(parameters);
 
-        assertThatThrownBy(() -> easyRandom.nextObject(Mamals.class)).isInstanceOf(ObjectCreationException.class);
+    assertThatThrownBy(() -> easyRandom.nextObject(Mamals.class))
+        .isInstanceOf(ObjectCreationException.class);
+  }
+
+  @Test
+  void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateInterfacesAndAbstractClasses() {
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().scanClasspathForConcreteTypes(true);
+    easyRandom = new EasyRandom(parameters);
+
+    Mamals mamals = easyRandom.nextObject(Mamals.class);
+
+    assertThat(mamals.getMamal())
+        .isOfAnyClassIn(Human.class, Ape.class, Person.class, SocialPerson.class);
+    assertThat(mamals.getMamalImpl())
+        .isOfAnyClassIn(Human.class, Ape.class, Person.class, SocialPerson.class);
+  }
+
+  @Test
+  void
+      whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateConcreteTypesForFieldsWithGenericParameters() {
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().scanClasspathForConcreteTypes(true);
+    easyRandom = new EasyRandom(parameters);
+
+    ComparableBean comparableBean = easyRandom.nextObject(ComparableBean.class);
+
+    assertThat(comparableBean.getDateComparable())
+        .isOfAnyClassIn(ComparableBean.AlwaysEqual.class, Date.class);
+  }
+
+  @Test
+  void
+      whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateAbstractTypesWithConcreteSubTypes() {
+    // Given
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().scanClasspathForConcreteTypes(true);
+    easyRandom = new EasyRandom(parameters);
+
+    // When
+    Bar bar = easyRandom.nextObject(Bar.class);
+
+    // Then
+    assertThat(bar).isNotNull();
+    assertThat(bar).isInstanceOf(ConcreteBar.class);
+    // https://github.com/j-easy/easy-random/issues/204
+    assertThat(bar.getI()).isNotNull();
+  }
+
+  @Test
+  void
+      whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateFieldsOfAbstractTypeWithConcreteSubTypes() {
+    // Given
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().scanClasspathForConcreteTypes(true);
+    easyRandom = new EasyRandom(parameters);
+
+    // When
+    Foo foo = easyRandom.nextObject(Foo.class);
+
+    // Then
+    assertThat(foo).isNotNull();
+    assertThat(foo.getBar()).isInstanceOf(ConcreteBar.class);
+    assertThat(foo.getBar().getName()).isNotEmpty();
+  }
+
+  @Test
+  void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateAbstractEnumeration() {
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().scanClasspathForConcreteTypes(true);
+    easyRandom = new EasyRandom(parameters);
+
+    ClassUsingAbstractEnum randomValue = easyRandom.nextObject(ClassUsingAbstractEnum.class);
+
+    then(randomValue.getTestEnum()).isNotNull();
+  }
+
+  // issue https://github.com/j-easy/easy-random/issues/353
+
+  @Test
+  void testScanClasspathForConcreteTypes_whenConcreteTypeIsAnInnerClass() {
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().scanClasspathForConcreteTypes(true);
+    EasyRandom easyRandom = new EasyRandom(parameters);
+
+    Foobar foobar = easyRandom.nextObject(Foobar.class);
+
+    Assertions.assertThat(foobar).isNotNull();
+    Assertions.assertThat(foobar.getToto()).isNotNull();
+  }
+
+  public class Foobar {
+
+    public abstract class Toto {}
+
+    public class TotoImpl extends Toto {}
+
+    private Toto toto;
+
+    public Toto getToto() {
+      return toto;
     }
-
-    @Test
-    void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateInterfacesAndAbstractClasses() {
-        EasyRandomParameters parameters = new EasyRandomParameters().scanClasspathForConcreteTypes(true);
-        easyRandom = new EasyRandom(parameters);
-
-        Mamals mamals = easyRandom.nextObject(Mamals.class);
-
-        assertThat(mamals.getMamal()).isOfAnyClassIn(Human.class, Ape.class, Person.class, SocialPerson.class);
-        assertThat(mamals.getMamalImpl()).isOfAnyClassIn(Human.class, Ape.class, Person.class, SocialPerson.class);
-    }
-
-    @Test
-    void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateConcreteTypesForFieldsWithGenericParameters() {
-        EasyRandomParameters parameters = new EasyRandomParameters().scanClasspathForConcreteTypes(true);
-        easyRandom = new EasyRandom(parameters);
-
-        ComparableBean comparableBean = easyRandom.nextObject(ComparableBean.class);
-
-        assertThat(comparableBean.getDateComparable()).isOfAnyClassIn(ComparableBean.AlwaysEqual.class, Date.class);
-    }
-
-    @Test
-    void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateAbstractTypesWithConcreteSubTypes() {
-        // Given
-        EasyRandomParameters parameters = new EasyRandomParameters().scanClasspathForConcreteTypes(true);
-        easyRandom = new EasyRandom(parameters);
-
-        // When
-        Bar bar = easyRandom.nextObject(Bar.class);
-
-        // Then
-        assertThat(bar).isNotNull();
-        assertThat(bar).isInstanceOf(ConcreteBar.class);
-        // https://github.com/j-easy/easy-random/issues/204
-        assertThat(bar.getI()).isNotNull();
-    }
-
-    @Test
-    void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateFieldsOfAbstractTypeWithConcreteSubTypes() {
-        // Given
-        EasyRandomParameters parameters = new EasyRandomParameters().scanClasspathForConcreteTypes(true);
-        easyRandom = new EasyRandom(parameters);
-
-        // When
-        Foo foo = easyRandom.nextObject(Foo.class);
-
-        // Then
-        assertThat(foo).isNotNull();
-        assertThat(foo.getBar()).isInstanceOf(ConcreteBar.class);
-        assertThat(foo.getBar().getName()).isNotEmpty();
-    }
-
-    @Test
-    void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateAbstractEnumeration() {
-        EasyRandomParameters parameters = new EasyRandomParameters().scanClasspathForConcreteTypes(true);
-        easyRandom = new EasyRandom(parameters);
-
-        ClassUsingAbstractEnum randomValue = easyRandom.nextObject(ClassUsingAbstractEnum.class);
-
-        then(randomValue.getTestEnum()).isNotNull();
-    }
-
-    // issue https://github.com/j-easy/easy-random/issues/353
-
-    @Test
-    void testScanClasspathForConcreteTypes_whenConcreteTypeIsAnInnerClass() {
-        EasyRandomParameters parameters =
-                new EasyRandomParameters().scanClasspathForConcreteTypes(true);
-        EasyRandom easyRandom = new EasyRandom(parameters);
-
-        Foobar foobar = easyRandom.nextObject(Foobar.class);
-
-        Assertions.assertThat(foobar).isNotNull();
-        Assertions.assertThat(foobar.getToto()).isNotNull();
-    }
-
-    public class Foobar {
-
-        public abstract class Toto {}
-
-        public class TotoImpl extends Toto {}
-
-        private Toto toto;
-
-        public Toto getToto() {
-            return toto;
-        }
-    }
-
+  }
 }

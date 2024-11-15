@@ -32,46 +32,47 @@ import org.junit.jupiter.api.Test;
 
 class ShortRangeRandomizerTest extends AbstractRangeRandomizerTest<Short> {
 
-    @BeforeEach
-    void setUp() {
-        min = (short) 1;
-        max = (short) 10;
-        randomizer = new ShortRangeRandomizer(min, max);
-    }
+  @BeforeEach
+  void setUp() {
+    min = (short) 1;
+    max = (short) 10;
+    randomizer = new ShortRangeRandomizer(min, max);
+  }
 
-    @Test
-    void generatedValueShouldBeWithinSpecifiedRange() {
-        Short randomValue = randomizer.getRandomValue();
-        assertThat(randomValue).isBetween(min, max);
-    }
+  @Test
+  void generatedValueShouldBeWithinSpecifiedRange() {
+    Short randomValue = randomizer.getRandomValue();
+    assertThat(randomValue).isBetween(min, max);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new ShortRangeRandomizer(max, min)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new ShortRangeRandomizer(max, min))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-        randomizer = new ShortRangeRandomizer(null, max);
-        Short randomShort = randomizer.getRandomValue();
-        assertThat(randomShort).isLessThanOrEqualTo(max);
-    }
+  @Test
+  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
+    randomizer = new ShortRangeRandomizer(null, max);
+    Short randomShort = randomizer.getRandomValue();
+    assertThat(randomShort).isLessThanOrEqualTo(max);
+  }
 
-    @Test
-    void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-        randomizer = new ShortRangeRandomizer(min, null);
-        Short randomShort = randomizer.getRandomValue();
-        assertThat(randomShort).isGreaterThanOrEqualTo(min);
-    }
+  @Test
+  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
+    randomizer = new ShortRangeRandomizer(min, null);
+    Short randomShort = randomizer.getRandomValue();
+    assertThat(randomShort).isGreaterThanOrEqualTo(min);
+  }
 
-    @Test
-    void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-        // given
-        ShortRangeRandomizer shortRangeRandomizer = new ShortRangeRandomizer(min, max, SEED);
-        
-        // when
-        Short s = shortRangeRandomizer.getRandomValue();
+  @Test
+  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
+    // given
+    ShortRangeRandomizer shortRangeRandomizer = new ShortRangeRandomizer(min, max, SEED);
 
-        then(s).isEqualTo((short) 7);
-    }
+    // when
+    Short s = shortRangeRandomizer.getRandomValue();
+
+    then(s).isEqualTo((short) 7);
+  }
 }

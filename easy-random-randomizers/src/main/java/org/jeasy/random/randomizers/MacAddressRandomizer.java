@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.util.Locale;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random mac addresses.
@@ -34,37 +33,30 @@ import java.util.Locale;
  */
 public class MacAddressRandomizer extends FakerBasedRandomizer<String> {
 
-    /**
-     * Create a new {@link MacAddressRandomizer}.
-     */
-    public MacAddressRandomizer() {
-    }
+  /** Create a new {@link MacAddressRandomizer}. */
+  public MacAddressRandomizer() {}
 
-    /**
-     * Create a new {@link MacAddressRandomizer}.
-     *
-     * @param seed
-     *          the initial seed
-     */
-    public MacAddressRandomizer(long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link MacAddressRandomizer}.
+   *
+   * @param seed the initial seed
+   */
+  public MacAddressRandomizer(long seed) {
+    super(seed);
+  }
 
-    /**
-     * Create a new {@link MacAddressRandomizer}.
-     *
-     * @param seed
-     *          the initial seed
-     * @param locale
-     *          the locale to use
-     */
-    public MacAddressRandomizer(final long seed, final Locale locale) {
-        super(seed, locale);
-    }
+  /**
+   * Create a new {@link MacAddressRandomizer}.
+   *
+   * @param seed the initial seed
+   * @param locale the locale to use
+   */
+  public MacAddressRandomizer(final long seed, final Locale locale) {
+    super(seed, locale);
+  }
 
-    @Override
-    public String getRandomValue() {
-        return faker.internet().macAddress();
-    }
-
+  @Override
+  public String getRandomValue() {
+    return faker.internet().macAddress();
+  }
 }

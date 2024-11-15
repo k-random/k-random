@@ -23,6 +23,10 @@
  */
 package org.jeasy.random.parameters;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.lang.reflect.Field;
+import java.util.Set;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.api.Randomizer;
@@ -31,84 +35,86 @@ import org.jeasy.random.api.RandomizerProvider;
 import org.jeasy.random.api.RandomizerRegistry;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 class RandomizerProviderTests {
 
-    @Test
-    void testCustomRandomizerProvider() {
-        // given
-        EasyRandomParameters parameters = new EasyRandomParameters()
-                .randomizerProvider(new RandomizerProvider() {
+  @Test
+  void testCustomRandomizerProvider() {
+    // given
+    EasyRandomParameters parameters =
+        new EasyRandomParameters()
+            .randomizerProvider(
+                new RandomizerProvider() {
 
-                    private Set<RandomizerRegistry> randomizerRegistries;
+                  private Set<RandomizerRegistry> randomizerRegistries;
 
-                    @Override
-                    public void setRandomizerRegistries(Set<RandomizerRegistry> randomizerRegistries) {
-                        this.randomizerRegistries = randomizerRegistries;
-                        // may sort registries with a custom sort algorithm (ie, not necessarily with `@Priority`)
+                  @Override
+                  public void setRandomizerRegistries(
+                      Set<RandomizerRegistry> randomizerRegistries) {
+                    this.randomizerRegistries = randomizerRegistries;
+                    // may sort registries with a custom sort algorithm (ie, not necessarily with
+                    // `@Priority`)
+                  }
+
+                  @Override
+                  public Randomizer<?> getRandomizerByField(
+                      Field field, RandomizerContext context) {
+                    // return custom randomizer based on the context
+                    if (field.getName().equals("name")
+                        && context.getCurrentRandomizationDepth() == 0) {
+                      return () -> "foo";
                     }
-
-                    @Override
-                    public Randomizer<?> getRandomizerByField(Field field, RandomizerContext context) {
-                        // return custom randomizer based on the context
-                        if (field.getName().equals("name") && context.getCurrentRandomizationDepth() == 0) {
-                            return () -> "foo";
-                        }
-                        if (field.getName().equals("name") && context.getCurrentField().equals("bestFriend")) {
-                            return () -> "bar";
-                        }
-                        return null;
+                    if (field.getName().equals("name")
+                        && context.getCurrentField().equals("bestFriend")) {
+                      return () -> "bar";
                     }
+                    return null;
+                  }
 
-                    @Override
-                    public <T> Randomizer<T> getRandomizerByType(Class<T> type, RandomizerContext context) {
-                        for (RandomizerRegistry randomizerRegistry : randomizerRegistries) {
-                            Randomizer<?> randomizer = randomizerRegistry.getRandomizer(type);
-                            if (randomizer != null) {
-                                return (Randomizer<T>) randomizer;
-                            }
-                        }
-                        return null;
+                  @Override
+                  public <T> Randomizer<T> getRandomizerByType(
+                      Class<T> type, RandomizerContext context) {
+                    for (RandomizerRegistry randomizerRegistry : randomizerRegistries) {
+                      Randomizer<?> randomizer = randomizerRegistry.getRandomizer(type);
+                      if (randomizer != null) {
+                        return (Randomizer<T>) randomizer;
+                      }
                     }
+                    return null;
+                  }
                 })
-                .randomizationDepth(2);
-        EasyRandom easyRandom = new EasyRandom(parameters);
+            .randomizationDepth(2);
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-        // when
-        Foo foo = easyRandom.nextObject(Foo.class);
+    // when
+    Foo foo = easyRandom.nextObject(Foo.class);
 
-        // then
-        assertThat(foo).isNotNull();
-        assertThat(foo.getName()).isEqualTo("foo");
-        assertThat(foo.getBestFriend().getName()).isEqualTo("bar");
-        assertThat(foo.getBestFriend().getBestFriend().getName()).isNull();
+    // then
+    assertThat(foo).isNotNull();
+    assertThat(foo.getName()).isEqualTo("foo");
+    assertThat(foo.getBestFriend().getName()).isEqualTo("bar");
+    assertThat(foo.getBestFriend().getBestFriend().getName()).isNull();
+  }
+
+  static class Foo {
+    private String name;
+    private Foo bestFriend;
+
+    public Foo() {}
+
+    public String getName() {
+      return this.name;
     }
 
-    static class Foo {
-        private String name;
-        private Foo bestFriend;
+    public Foo getBestFriend() {
+      return this.bestFriend;
+    }
 
-		public Foo() {
-		}
+    public void setName(String name) {
+      this.name = name;
+    }
 
-		public String getName() {
-			return this.name;
-		}
-
-		public Foo getBestFriend() {
-			return this.bestFriend;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public void setBestFriend(Foo bestFriend) {
-			this.bestFriend = bestFriend;
-		}
-	}
+    public void setBestFriend(Foo bestFriend) {
+      this.bestFriend = bestFriend;
+    }
+  }
 }

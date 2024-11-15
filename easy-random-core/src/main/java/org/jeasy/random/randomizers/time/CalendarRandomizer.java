@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.util.Calendar;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * Generate a random {@link Calendar}.
@@ -34,28 +33,26 @@ import java.util.Calendar;
  */
 public class CalendarRandomizer implements Randomizer<Calendar> {
 
-    private final DateRandomizer delegate;
+  private final DateRandomizer delegate;
 
-    /**
-     * Create a new {@link CalendarRandomizer}.
-     */
-    public CalendarRandomizer() {
-        delegate = new DateRandomizer();
-    }
+  /** Create a new {@link CalendarRandomizer}. */
+  public CalendarRandomizer() {
+    delegate = new DateRandomizer();
+  }
 
-    /**
-     * Create a new {@link CalendarRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public CalendarRandomizer(final long seed) {
-        delegate = new DateRandomizer(seed);
-    }
+  /**
+   * Create a new {@link CalendarRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public CalendarRandomizer(final long seed) {
+    delegate = new DateRandomizer(seed);
+  }
 
-    @Override
-    public Calendar getRandomValue() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(delegate.getRandomValue());
-        return calendar;
-    }
+  @Override
+  public Calendar getRandomValue() {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(delegate.getRandomValue());
+    return calendar;
+  }
 }

@@ -23,42 +23,42 @@
  */
 package org.jeasy.random.randomizers.time.internal;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.jeasy.random.randomizers.time.NanoSecondRandomizer.MAX_NANO_SECOND;
+import static org.jeasy.random.randomizers.time.NanoSecondRandomizer.MIN_NANO_SECOND;
+
 import org.jeasy.random.randomizers.AbstractRandomizerTest;
 import org.jeasy.random.randomizers.time.NanoSecondRandomizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.jeasy.random.randomizers.time.NanoSecondRandomizer.MAX_NANO_SECOND;
-import static org.jeasy.random.randomizers.time.NanoSecondRandomizer.MIN_NANO_SECOND;
-
 class NanoSecondRandomizerTest extends AbstractRandomizerTest<Integer> {
 
-    @BeforeEach
-    void setUp() {
-        randomizer = new NanoSecondRandomizer();
-    }
+  @BeforeEach
+  void setUp() {
+    randomizer = new NanoSecondRandomizer();
+  }
 
-    @Test
-    void generatedValueShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedValueShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedValueShouldBeWithinRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(MIN_NANO_SECOND, MAX_NANO_SECOND);
-    }
+  @Test
+  void generatedValueShouldBeWithinRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(MIN_NANO_SECOND, MAX_NANO_SECOND);
+  }
 
-    @Test
-    void shouldGenerateTheSameValueForTheSameSeed() {
-        // Given
-        randomizer = new NanoSecondRandomizer(SEED);
-        Integer expected = 723174202;
+  @Test
+  void shouldGenerateTheSameValueForTheSameSeed() {
+    // Given
+    randomizer = new NanoSecondRandomizer(SEED);
+    Integer expected = 723174202;
 
-        // When
-        Integer actual = randomizer.getRandomValue();
+    // When
+    Integer actual = randomizer.getRandomValue();
 
-        // Then
-        assertThat(actual).isEqualTo(expected);
-    }
+    // Then
+    assertThat(actual).isEqualTo(expected);
+  }
 }

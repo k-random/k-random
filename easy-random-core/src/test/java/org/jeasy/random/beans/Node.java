@@ -27,44 +27,43 @@ import java.util.List;
 
 public class Node {
 
-    private String value;
+  private String value;
 
-    private Node left, right;
+  private Node left, right;
 
-    private List<Node> parents;
+  private List<Node> parents;
 
-	public Node() {
-	}
+  public Node() {}
 
-	public String getValue() {
-		return this.value;
-	}
+  public String getValue() {
+    return this.value;
+  }
 
-	public Node getLeft() {
-		return this.left;
-	}
+  public Node getLeft() {
+    return this.left;
+  }
 
-	public Node getRight() {
-		return this.right;
-	}
+  public Node getRight() {
+    return this.right;
+  }
 
-	public List<Node> getParents() {
-		return this.parents;
-	}
+  public List<Node> getParents() {
+    return this.parents;
+  }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-	public void setLeft(Node left) {
-		this.left = left;
-	}
+  public void setLeft(Node left) {
+    this.left = left;
+  }
 
-	public void setRight(Node right) {
-		this.right = right;
-	}
+  public void setRight(Node right) {
+    this.right = right;
+  }
 
-	public void setParents(List<Node> parents) {
-		this.parents = parents;
-	}
+  public void setParents(List<Node> parents) {
+    this.parents = parents;
+  }
 }

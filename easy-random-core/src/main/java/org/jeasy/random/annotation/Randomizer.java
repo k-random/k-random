@@ -29,7 +29,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to mark a field to be populated with a random value using the given {@link org.jeasy.random.api.Randomizer}.
+ * Annotation to mark a field to be populated with a random value using the given {@link
+ * org.jeasy.random.api.Randomizer}.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
@@ -37,12 +38,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Randomizer {
 
-    /**
-     * The {@link org.jeasy.random.api.Randomizer} to use to generate the random value for this field.
-     *
-     * @return the randomizer's class
-     */
-    Class<? extends org.jeasy.random.api.Randomizer<?>> value();
+  /**
+   * The {@link org.jeasy.random.api.Randomizer} to use to generate the random value for this field.
+   *
+   * @return the randomizer's class
+   */
+  Class<? extends org.jeasy.random.api.Randomizer<?>> value();
 
-    @RandomizerArgument RandomizerArgument[] args() default {};
+  @RandomizerArgument
+  RandomizerArgument[] args() default {};
 }

@@ -27,54 +27,52 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-import org.junit.jupiter.api.Test;
-
 import org.jeasy.random.beans.TimeBean;
+import org.junit.jupiter.api.Test;
 
 class DateTimeRangeParameterTests {
 
-    @Test
-    void testDateRange() {
-        // Given
-        LocalDate minDate = LocalDate.of(2016, 1, 1);
-        LocalDate maxDate = LocalDate.of(2016, 1, 31);
-        EasyRandomParameters parameters = new EasyRandomParameters().dateRange(minDate, maxDate);
+  @Test
+  void testDateRange() {
+    // Given
+    LocalDate minDate = LocalDate.of(2016, 1, 1);
+    LocalDate maxDate = LocalDate.of(2016, 1, 31);
+    EasyRandomParameters parameters = new EasyRandomParameters().dateRange(minDate, maxDate);
 
-        // When
-        TimeBean timeBean = new EasyRandom(parameters).nextObject(TimeBean.class);
+    // When
+    TimeBean timeBean = new EasyRandom(parameters).nextObject(TimeBean.class);
 
-        // Then
-        assertThat(timeBean.getLocalDate()).isAfterOrEqualTo(minDate).isBeforeOrEqualTo(maxDate);
-    }
+    // Then
+    assertThat(timeBean.getLocalDate()).isAfterOrEqualTo(minDate).isBeforeOrEqualTo(maxDate);
+  }
 
-    @Test
-    void testDateMaxRange() {
-        // Given
-        LocalDate minDate = LocalDate.MIN;
-        LocalDate maxDate = LocalDate.MAX;
-        EasyRandomParameters parameters = new EasyRandomParameters().dateRange(minDate, maxDate);
+  @Test
+  void testDateMaxRange() {
+    // Given
+    LocalDate minDate = LocalDate.MIN;
+    LocalDate maxDate = LocalDate.MAX;
+    EasyRandomParameters parameters = new EasyRandomParameters().dateRange(minDate, maxDate);
 
-        // When
-        TimeBean timeBean = new EasyRandom(parameters).nextObject(TimeBean.class);
+    // When
+    TimeBean timeBean = new EasyRandom(parameters).nextObject(TimeBean.class);
 
-        // Then
-        assertThat(timeBean.getLocalDate()).isAfterOrEqualTo(minDate).isBeforeOrEqualTo(maxDate);
-    }
+    // Then
+    assertThat(timeBean.getLocalDate()).isAfterOrEqualTo(minDate).isBeforeOrEqualTo(maxDate);
+  }
 
-    @Test
-    void testTimeRange() {
-        // Given
-        LocalTime minTime = LocalTime.of(15, 0, 0);
-        LocalTime maxTime = LocalTime.of(18, 0, 0);
-        EasyRandomParameters parameters = new EasyRandomParameters().timeRange(minTime, maxTime);
+  @Test
+  void testTimeRange() {
+    // Given
+    LocalTime minTime = LocalTime.of(15, 0, 0);
+    LocalTime maxTime = LocalTime.of(18, 0, 0);
+    EasyRandomParameters parameters = new EasyRandomParameters().timeRange(minTime, maxTime);
 
-        // When
-        TimeBean timeBean = new EasyRandom(parameters).nextObject(TimeBean.class);
+    // When
+    TimeBean timeBean = new EasyRandom(parameters).nextObject(TimeBean.class);
 
-        // Then
-        assertThat(timeBean.getLocalTime()).isAfterOrEqualTo(minTime).isBeforeOrEqualTo(maxTime);
-    }
+    // Then
+    assertThat(timeBean.getLocalTime()).isAfterOrEqualTo(minTime).isBeforeOrEqualTo(maxTime);
+  }
 }

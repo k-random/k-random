@@ -28,54 +28,55 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import java.math.BigInteger;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class BigIntegerRangeRandomizerTest extends AbstractRangeRandomizerTest<BigInteger> {
 
-    private Integer min, max;
+  private Integer min, max;
 
-    @BeforeEach
-    void setUp() {
-        min = 1;
-        max = 10;
-        randomizer = new BigIntegerRangeRandomizer(min, max);
-    }
+  @BeforeEach
+  void setUp() {
+    min = 1;
+    max = 10;
+    randomizer = new BigIntegerRangeRandomizer(min, max);
+  }
 
-    @Test
-    void generatedValueShouldBeWithinSpecifiedRange() {
-        BigInteger randomValue = randomizer.getRandomValue();
-        assertThat(randomValue.intValue()).isBetween(min, max);
-    }
+  @Test
+  void generatedValueShouldBeWithinSpecifiedRange() {
+    BigInteger randomValue = randomizer.getRandomValue();
+    assertThat(randomValue.intValue()).isBetween(min, max);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new BigIntegerRangeRandomizer(max, min)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new BigIntegerRangeRandomizer(max, min))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-        randomizer = new BigIntegerRangeRandomizer(null, max);
-        BigInteger radomBigInteger = randomizer.getRandomValue();
-        assertThat(radomBigInteger.intValue()).isLessThanOrEqualTo(max);
-    }
+  @Test
+  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
+    randomizer = new BigIntegerRangeRandomizer(null, max);
+    BigInteger radomBigInteger = randomizer.getRandomValue();
+    assertThat(radomBigInteger.intValue()).isLessThanOrEqualTo(max);
+  }
 
-    @Test
-    void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-        randomizer = new BigIntegerRangeRandomizer(min, null);
-        BigInteger radomBigInteger = randomizer.getRandomValue();
-        assertThat(radomBigInteger.intValue()).isGreaterThanOrEqualTo(min);
-    }
+  @Test
+  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
+    randomizer = new BigIntegerRangeRandomizer(min, null);
+    BigInteger radomBigInteger = randomizer.getRandomValue();
+    assertThat(radomBigInteger.intValue()).isGreaterThanOrEqualTo(min);
+  }
 
-    @Test
-    void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-        // given
-        BigIntegerRangeRandomizer bigIntegerRangeRandomizer = new BigIntegerRangeRandomizer(min, max, SEED);
-        
-        // when
-        BigInteger bigInteger = bigIntegerRangeRandomizer.getRandomValue();
+  @Test
+  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
+    // given
+    BigIntegerRangeRandomizer bigIntegerRangeRandomizer =
+        new BigIntegerRangeRandomizer(min, max, SEED);
 
-        then(bigInteger).isEqualTo(new BigInteger("7"));
-    }
+    // when
+    BigInteger bigInteger = bigIntegerRangeRandomizer.getRandomValue();
+
+    then(bigInteger).isEqualTo(new BigInteger("7"));
+  }
 }

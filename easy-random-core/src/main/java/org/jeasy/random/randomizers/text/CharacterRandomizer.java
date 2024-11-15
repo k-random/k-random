@@ -23,14 +23,13 @@
  */
 package org.jeasy.random.randomizers.text;
 
-import org.jeasy.random.randomizers.AbstractRandomizer;
+import static org.jeasy.random.util.CharacterUtils.collectPrintableCharactersOf;
+import static org.jeasy.random.util.CharacterUtils.filterLetters;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import static org.jeasy.random.util.CharacterUtils.collectPrintableCharactersOf;
-import static org.jeasy.random.util.CharacterUtils.filterLetters;
+import org.jeasy.random.randomizers.AbstractRandomizer;
 
 /**
  * Generate a random {@link Character}.
@@ -39,53 +38,51 @@ import static org.jeasy.random.util.CharacterUtils.filterLetters;
  */
 public class CharacterRandomizer extends AbstractRandomizer<Character> {
 
-    private Charset charset = StandardCharsets.US_ASCII;
+  private Charset charset = StandardCharsets.US_ASCII;
 
-    private List<Character> characters = collectPrintableCharactersOf(charset);
+  private List<Character> characters = collectPrintableCharactersOf(charset);
 
-    /**
-     * Create a new {@link CharacterRandomizer}.
-     */
-    public CharacterRandomizer() {
-        super();
-        characters = filterLetters(characters);
-    }
+  /** Create a new {@link CharacterRandomizer}. */
+  public CharacterRandomizer() {
+    super();
+    characters = filterLetters(characters);
+  }
 
-    /**
-     * Create a new {@link CharacterRandomizer}.
-     *
-     * @param charset to use
-     */
-    public CharacterRandomizer(final Charset charset) {
-        super();
-        this.charset = charset;
-        characters = filterLetters(characters);
-    }
+  /**
+   * Create a new {@link CharacterRandomizer}.
+   *
+   * @param charset to use
+   */
+  public CharacterRandomizer(final Charset charset) {
+    super();
+    this.charset = charset;
+    characters = filterLetters(characters);
+  }
 
-    /**
-     * Create a new {@link CharacterRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public CharacterRandomizer(final long seed) {
-        super(seed);
-        characters = filterLetters(characters);
-    }
+  /**
+   * Create a new {@link CharacterRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public CharacterRandomizer(final long seed) {
+    super(seed);
+    characters = filterLetters(characters);
+  }
 
-    /**
-     * Create a new {@link CharacterRandomizer}.
-     *
-     * @param charset to use
-     * @param seed    initial seed
-     */
-    public CharacterRandomizer(final Charset charset, final long seed) {
-        super(seed);
-        this.charset = charset;
-        characters = filterLetters(characters);
-    }
+  /**
+   * Create a new {@link CharacterRandomizer}.
+   *
+   * @param charset to use
+   * @param seed initial seed
+   */
+  public CharacterRandomizer(final Charset charset, final long seed) {
+    super(seed);
+    this.charset = charset;
+    characters = filterLetters(characters);
+  }
 
-    @Override
-    public Character getRandomValue() {
-        return characters.get(random.nextInt(characters.size()));
-    }
+  @Override
+  public Character getRandomValue() {
+    return characters.get(random.nextInt(characters.size()));
+  }
 }

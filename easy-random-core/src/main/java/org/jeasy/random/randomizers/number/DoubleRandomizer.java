@@ -32,23 +32,20 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
  */
 public class DoubleRandomizer extends AbstractRandomizer<Double> {
 
-    /**
-     * Create a new {@link DoubleRandomizer}.
-     */
-    public DoubleRandomizer() {
-    }
+  /** Create a new {@link DoubleRandomizer}. */
+  public DoubleRandomizer() {}
 
-    /**
-     * Create a new {@link DoubleRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public DoubleRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link DoubleRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public DoubleRandomizer(final long seed) {
+    super(seed);
+  }
 
-    @Override
-    public Double getRandomValue() {
-        return random.nextDouble();
-    }
+  @Override
+  public Double getRandomValue() {
+    return random.nextDouble();
+  }
 }

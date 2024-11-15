@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.util.Locale;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random longitudes.
@@ -34,33 +33,30 @@ import java.util.Locale;
  */
 public class LongitudeRandomizer extends FakerBasedRandomizer<String> {
 
-    /**
-     * Create a new {@link LongitudeRandomizer}.
-     */
-    public LongitudeRandomizer() {
-    }
+  /** Create a new {@link LongitudeRandomizer}. */
+  public LongitudeRandomizer() {}
 
-    /**
-     * Create a new {@link LongitudeRandomizer}.
-     *
-     * @param seed the initial seed
-     */
-    public LongitudeRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link LongitudeRandomizer}.
+   *
+   * @param seed the initial seed
+   */
+  public LongitudeRandomizer(final long seed) {
+    super(seed);
+  }
 
-    /**
-     * Create a new {@link LongitudeRandomizer}.
-     *
-     * @param seed   the initial seed
-     * @param locale the locale to use
-     */
-    public LongitudeRandomizer(final long seed, final Locale locale) {
-        super(seed, locale);
-    }
+  /**
+   * Create a new {@link LongitudeRandomizer}.
+   *
+   * @param seed the initial seed
+   * @param locale the locale to use
+   */
+  public LongitudeRandomizer(final long seed, final Locale locale) {
+    super(seed, locale);
+  }
 
-    @Override
-    public String getRandomValue() {
-        return faker.address().longitude();
-    }
+  @Override
+  public String getRandomValue() {
+    return faker.address().longitude();
+  }
 }

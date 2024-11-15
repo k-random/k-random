@@ -21,7 +21,5 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-/**
- * This package contains randomizers for date and time types.
- */
+/** This package contains randomizers for date and time types. */
 package org.jeasy.random.randomizers.time;

@@ -32,61 +32,60 @@ import java.time.LocalTime;
  */
 public class LocalTimeRangeRandomizer extends AbstractRangeRandomizer<LocalTime> {
 
-    /**
-     * Create a new {@link LocalTimeRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public LocalTimeRangeRandomizer(final LocalTime min, final LocalTime max) {
-        super(min, max);
+  /**
+   * Create a new {@link LocalTimeRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public LocalTimeRangeRandomizer(final LocalTime min, final LocalTime max) {
+    super(min, max);
+  }
+
+  /**
+   * Create a new {@link LocalTimeRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public LocalTimeRangeRandomizer(final LocalTime min, final LocalTime max, final long seed) {
+    super(min, max, seed);
+  }
+
+  @Override
+  protected void checkValues() {
+    if (min.isAfter(max)) {
+      throw new IllegalArgumentException("max must be after min");
     }
+  }
 
-    /**
-     * Create a new {@link LocalTimeRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public LocalTimeRangeRandomizer(final LocalTime min, final LocalTime max, final long seed) {
-        super(min, max, seed);
-    }
+  @Override
+  protected LocalTime getDefaultMinValue() {
+    return LocalTime.MIN;
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min.isAfter(max)) {
-            throw new IllegalArgumentException("max must be after min");
-        }
-    }
+  @Override
+  protected LocalTime getDefaultMaxValue() {
+    return LocalTime.MAX;
+  }
 
-    @Override
-    protected LocalTime getDefaultMinValue() {
-        return LocalTime.MIN;
-    }
+  @Override
+  public LocalTime getRandomValue() {
+    int minNanoSecond = min.getNano();
+    int minSecond = min.getSecond();
+    int minMinute = min.getMinute();
+    int minHour = min.getHour();
 
-    @Override
-    protected LocalTime getDefaultMaxValue() {
-        return LocalTime.MAX;
-    }
+    int maxNanoSecond = max.getNano();
+    int maxSecond = max.getSecond();
+    int maxMinute = max.getMinute();
+    int maxHour = max.getHour();
 
-    @Override
-    public LocalTime getRandomValue() {
-        int minNanoSecond = min.getNano();
-        int minSecond = min.getSecond();
-        int minMinute = min.getMinute();
-        int minHour = min.getHour();
-        
-        int maxNanoSecond = max.getNano();
-        int maxSecond = max.getSecond();
-        int maxMinute = max.getMinute();
-        int maxHour = max.getHour();
-
-        int randomNanoSecond = (int) nextDouble(minNanoSecond, maxNanoSecond);
-        int randomSecond = (int) nextDouble(minSecond, maxSecond);
-        int randomMinute = (int) nextDouble(minMinute, maxMinute);
-        int randomHour = (int) nextDouble(minHour, maxHour);
-        return LocalTime.of(randomHour, randomMinute, randomSecond, randomNanoSecond);
-    }
-
+    int randomNanoSecond = (int) nextDouble(minNanoSecond, maxNanoSecond);
+    int randomSecond = (int) nextDouble(minSecond, maxSecond);
+    int randomMinute = (int) nextDouble(minMinute, maxMinute);
+    int randomHour = (int) nextDouble(minHour, maxHour);
+    return LocalTime.of(randomHour, randomMinute, randomSecond, randomNanoSecond);
+  }
 }

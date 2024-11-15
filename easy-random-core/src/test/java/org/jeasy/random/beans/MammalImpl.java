@@ -25,15 +25,15 @@ package org.jeasy.random.beans;
 
 public abstract class MammalImpl implements Mammal {
 
-    private String name;
-    
-    @Override
-    public String getName() {
-        return name;
-    }
+  private String name;
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public void setName(String name) {
+    this.name = name;
+  }
 }

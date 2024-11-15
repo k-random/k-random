@@ -23,26 +23,25 @@
  */
 package org.jeasy.random.visibility;
 
-import static org.jeasy.random.util.ReflectionUtils.asRandomizer;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.jeasy.random.util.ReflectionUtils.asRandomizer;
 
 import java.util.function.Supplier;
-
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.Test;
 
 class VisibilityTest {
 
-    @Test
-    void canPassSupplierLambdaFromOtherPackage() {
-        Supplier<String> supplier = () -> "test";
-        EasyRandomParameters parameters = new EasyRandomParameters()
-                .randomize(String.class, asRandomizer(supplier));
-        EasyRandom easyRandom = new EasyRandom(parameters);
+  @Test
+  void canPassSupplierLambdaFromOtherPackage() {
+    Supplier<String> supplier = () -> "test";
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().randomize(String.class, asRandomizer(supplier));
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-        String value = easyRandom.nextObject(String.class);
+    String value = easyRandom.nextObject(String.class);
 
-        assertThat(value).isEqualTo("test");
-    }
+    assertThat(value).isEqualTo("test");
+  }
 }

@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.util.Locale;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random full names.
@@ -34,33 +33,30 @@ import java.util.Locale;
  */
 public class FullNameRandomizer extends FakerBasedRandomizer<String> {
 
-    /**
-     * Create a new {@link FullNameRandomizer}.
-     */
-    public FullNameRandomizer() {
-    }
+  /** Create a new {@link FullNameRandomizer}. */
+  public FullNameRandomizer() {}
 
-    /**
-     * Create a new {@link FullNameRandomizer}.
-     *
-     * @param seed the initial seed
-     */
-    public FullNameRandomizer(long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link FullNameRandomizer}.
+   *
+   * @param seed the initial seed
+   */
+  public FullNameRandomizer(long seed) {
+    super(seed);
+  }
 
-    /**
-     * Create a new {@link FullNameRandomizer}.
-     *
-     * @param seed   the initial seed
-     * @param locale the locale to use
-     */
-    public FullNameRandomizer(final long seed, final Locale locale) {
-        super(seed, locale);
-    }
+  /**
+   * Create a new {@link FullNameRandomizer}.
+   *
+   * @param seed the initial seed
+   * @param locale the locale to use
+   */
+  public FullNameRandomizer(final long seed, final Locale locale) {
+    super(seed, locale);
+  }
 
-    @Override
-    public String getRandomValue() {
-        return faker.name().fullName();
-    }
+  @Override
+  public String getRandomValue() {
+    return faker.name().fullName();
+  }
 }

@@ -24,11 +24,11 @@
 package org.jeasy.random.beans;
 
 public class GenericBaseClass2<T, U> {
-    private final T x;
-    private final U y;
+  private final T x;
+  private final U y;
 
-    public GenericBaseClass2(T x, U y) {
-        this.x = x;
-        this.y = y;
-    }
+  public GenericBaseClass2(T x, U y) {
+    this.x = x;
+    this.y = y;
+  }
 }

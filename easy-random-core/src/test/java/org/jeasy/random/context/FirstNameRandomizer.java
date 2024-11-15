@@ -27,14 +27,14 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
 
 public class FirstNameRandomizer extends AbstractRandomizer<String> {
 
-    private String[] names;
+  private String[] names;
 
-    public FirstNameRandomizer(String... names) {
-        this.names = names;
-    }
+  public FirstNameRandomizer(String... names) {
+    this.names = names;
+  }
 
-    @Override
-    public String getRandomValue() {
-        return names[random.nextInt(names.length)];
-    }
+  @Override
+  public String getRandomValue() {
+    return names[random.nextInt(names.length)];
+  }
 }

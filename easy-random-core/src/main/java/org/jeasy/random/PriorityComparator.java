@@ -23,9 +23,8 @@
  */
 package org.jeasy.random;
 
-import org.jeasy.random.annotation.Priority;
-
 import java.util.Comparator;
+import org.jeasy.random.annotation.Priority;
 
 /**
  * Compare objects annotated with {@link Priority} annotation in the ascending order.
@@ -34,21 +33,21 @@ import java.util.Comparator;
  */
 class PriorityComparator implements Comparator<Object> {
 
-    @Override
-    public int compare(final Object o1, final Object o2) {
-        int o1Priority = getPriority(o1);
-        int o2Priority = getPriority(o2);
+  @Override
+  public int compare(final Object o1, final Object o2) {
+    int o1Priority = getPriority(o1);
+    int o2Priority = getPriority(o2);
 
-        return o2Priority - o1Priority;
-    }
+    return o2Priority - o1Priority;
+  }
 
-    private int getPriority(final Object object) {
-        if (object != null) {
-            Priority annotation = object.getClass().getAnnotation(Priority.class);
-            if (annotation != null) {
-                return annotation.value();
-            }
-        }
-        return 0;
+  private int getPriority(final Object object) {
+    if (object != null) {
+      Priority annotation = object.getClass().getAnnotation(Priority.class);
+      if (annotation != null) {
+        return annotation.value();
+      }
     }
+    return 0;
+  }
 }

@@ -25,61 +25,60 @@ package org.jeasy.random.randomizers.range;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-
 import org.jeasy.random.EasyRandomParameters;
 
-/**
- * Generate a random {@link OffsetDateTime} in the given range.
- */
+/** Generate a random {@link OffsetDateTime} in the given range. */
 public class OffsetDateTimeRangeRandomizer extends AbstractRangeRandomizer<OffsetDateTime> {
 
-    /**
-     * Create a new {@link OffsetDateTimeRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public OffsetDateTimeRangeRandomizer(final OffsetDateTime min, final OffsetDateTime max) {
-        super(min, max);
-    }
+  /**
+   * Create a new {@link OffsetDateTimeRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public OffsetDateTimeRangeRandomizer(final OffsetDateTime min, final OffsetDateTime max) {
+    super(min, max);
+  }
 
-    /**
-     * Create a new {@link OffsetDateTimeRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public OffsetDateTimeRangeRandomizer(final OffsetDateTime min, final OffsetDateTime max, final long seed) {
-        super(min, max, seed);
-    }
+  /**
+   * Create a new {@link OffsetDateTimeRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public OffsetDateTimeRangeRandomizer(
+      final OffsetDateTime min, final OffsetDateTime max, final long seed) {
+    super(min, max, seed);
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min.isAfter(max)) {
-            throw new IllegalArgumentException("max must be after min");
-        }
+  @Override
+  protected void checkValues() {
+    if (min.isAfter(max)) {
+      throw new IllegalArgumentException("max must be after min");
     }
+  }
 
-    @Override
-    protected OffsetDateTime getDefaultMinValue() {
-        return EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime();
-    }
+  @Override
+  protected OffsetDateTime getDefaultMinValue() {
+    return EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime();
+  }
 
-    @Override
-    protected OffsetDateTime getDefaultMaxValue() {
-        return EasyRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime();
-    }
+  @Override
+  protected OffsetDateTime getDefaultMaxValue() {
+    return EasyRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime();
+  }
 
-    @Override
-    public OffsetDateTime getRandomValue() {
-        long minSeconds = min.toEpochSecond();
-        long maxSeconds = max.toEpochSecond();
-        long seconds = (long) nextDouble(minSeconds, maxSeconds);
-        int minNanoSeconds = min.getNano();
-        int maxNanoSeconds = max.getNano();
-        long nanoSeconds = (long) nextDouble(minNanoSeconds, maxNanoSeconds);
-        return OffsetDateTime.ofInstant(Instant.ofEpochSecond(seconds, nanoSeconds),
-                EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().getZone());
-    }
+  @Override
+  public OffsetDateTime getRandomValue() {
+    long minSeconds = min.toEpochSecond();
+    long maxSeconds = max.toEpochSecond();
+    long seconds = (long) nextDouble(minSeconds, maxSeconds);
+    int minNanoSeconds = min.getNano();
+    int maxNanoSeconds = max.getNano();
+    long nanoSeconds = (long) nextDouble(minNanoSeconds, maxNanoSeconds);
+    return OffsetDateTime.ofInstant(
+        Instant.ofEpochSecond(seconds, nanoSeconds),
+        EasyRandomParameters.DEFAULT_DATES_RANGE.getMin().getZone());
+  }
 }

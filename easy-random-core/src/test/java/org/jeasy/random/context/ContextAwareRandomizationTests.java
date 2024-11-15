@@ -23,88 +23,93 @@
  */
 package org.jeasy.random.context;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.jeasy.random.FieldPredicates.*;
+
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.Test;
 
-import static org.jeasy.random.FieldPredicates.*;
-import static org.assertj.core.api.Assertions.assertThat;
-
 class ContextAwareRandomizationTests {
 
-    @Test
-    void testContextAwareRandomization() {
-        // given
-        String[] names = {"james", "daniel"};
-        EasyRandomParameters parameters = new EasyRandomParameters()
-                .randomize(named("firstName").and(ofType(String.class)).and(inClass(Person.class)), new FirstNameRandomizer(names))
-                .randomize(named("lastName").and(ofType(String.class)).and(inClass(Person.class)), new LastNameRandomizer())
-                .excludeField(named("nickname"));
-        EasyRandom easyRandom = new EasyRandom(parameters);
+  @Test
+  void testContextAwareRandomization() {
+    // given
+    String[] names = {"james", "daniel"};
+    EasyRandomParameters parameters =
+        new EasyRandomParameters()
+            .randomize(
+                named("firstName").and(ofType(String.class)).and(inClass(Person.class)),
+                new FirstNameRandomizer(names))
+            .randomize(
+                named("lastName").and(ofType(String.class)).and(inClass(Person.class)),
+                new LastNameRandomizer())
+            .excludeField(named("nickname"));
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-        // when
-        Person person = easyRandom.nextObject(Person.class);
+    // when
+    Person person = easyRandom.nextObject(Person.class);
 
-        // then
-        String firstName = person.getFirstName();
-        String lastName = person.getLastName();
-        assertThat(firstName).isIn(names);
-        assertThat(lastName).isNotNull();
-        if (firstName.equalsIgnoreCase("james")) {
-            assertThat(lastName.equalsIgnoreCase("bond"));
-        }
-        if (firstName.equalsIgnoreCase("daniel")) {
-            assertThat(lastName.equalsIgnoreCase("craig"));
-        }
-        assertThat(person.getNickname()).isNull();
+    // then
+    String firstName = person.getFirstName();
+    String lastName = person.getLastName();
+    assertThat(firstName).isIn(names);
+    assertThat(lastName).isNotNull();
+    if (firstName.equalsIgnoreCase("james")) {
+      assertThat(lastName.equalsIgnoreCase("bond"));
+    }
+    if (firstName.equalsIgnoreCase("daniel")) {
+      assertThat(lastName.equalsIgnoreCase("craig"));
+    }
+    assertThat(person.getNickname()).isNull();
+  }
+
+  @Test
+  void testContextAwareRandomizerWithMultipleTypes() {
+    // given
+    String[] names = {"james", "daniel"};
+    String[] countries = {"france", "germany", "belgium"};
+    EasyRandomParameters parameters =
+        new EasyRandomParameters()
+            .randomize(named("firstName").and(ofType(String.class)), new FirstNameRandomizer(names))
+            .randomize(named("lastName").and(ofType(String.class)), new LastNameRandomizer())
+            .randomize(ofType(Country.class), new CountryRandomizer(countries))
+            .randomize(ofType(City.class), new CityRandomizer())
+            .excludeField(named("nickname"));
+    EasyRandom easyRandom = new EasyRandom(parameters);
+
+    // when
+    Person person = easyRandom.nextObject(Person.class);
+
+    // then
+    if (person.getFirstName().equalsIgnoreCase("james")) {
+      assertThat(person.getLastName().equalsIgnoreCase("bond"));
+    }
+    if (person.getFirstName().equalsIgnoreCase("daniel")) {
+      assertThat(person.getLastName().equalsIgnoreCase("craig"));
+    }
+    assertThat(person.getNickname()).isNull();
+
+    Pet pet = person.getPet();
+    if (pet.getFirstName().equalsIgnoreCase("james")) {
+      assertThat(pet.getLastName().equalsIgnoreCase("bond"));
+    }
+    if (pet.getFirstName().equalsIgnoreCase("daniel")) {
+      assertThat(pet.getLastName().equalsIgnoreCase("craig"));
     }
 
-    @Test
-    void testContextAwareRandomizerWithMultipleTypes() {
-        // given
-        String[] names = {"james", "daniel"};
-        String[] countries = {"france", "germany", "belgium"};
-        EasyRandomParameters parameters = new EasyRandomParameters()
-                .randomize(named("firstName").and(ofType(String.class)), new FirstNameRandomizer(names))
-                .randomize(named("lastName").and(ofType(String.class)), new LastNameRandomizer())
-                .randomize(ofType(Country.class), new CountryRandomizer(countries))
-                .randomize(ofType(City.class), new CityRandomizer())
-                .excludeField(named("nickname"));
-        EasyRandom easyRandom = new EasyRandom(parameters);
+    Country country = person.getCountry();
+    City city = person.getCity();
 
-        // when
-        Person person = easyRandom.nextObject(Person.class);
-
-        // then
-        if (person.getFirstName().equalsIgnoreCase("james")) {
-            assertThat(person.getLastName().equalsIgnoreCase("bond"));
-        }
-        if (person.getFirstName().equalsIgnoreCase("daniel")) {
-            assertThat(person.getLastName().equalsIgnoreCase("craig"));
-        }
-        assertThat(person.getNickname()).isNull();
-
-        Pet pet = person.getPet();
-        if (pet.getFirstName().equalsIgnoreCase("james")) {
-            assertThat(pet.getLastName().equalsIgnoreCase("bond"));
-        }
-        if (pet.getFirstName().equalsIgnoreCase("daniel")) {
-            assertThat(pet.getLastName().equalsIgnoreCase("craig"));
-        }
-
-        Country country = person.getCountry();
-        City city = person.getCity();
-
-        assertThat(country).isNotNull();
-        if (country.getName().equalsIgnoreCase("france")) {
-            assertThat(city.getName().equalsIgnoreCase("paris"));
-        }
-        if (country.getName().equalsIgnoreCase("germany")) {
-            assertThat(city.getName().equalsIgnoreCase("berlin"));
-        }
-        if (country.getName().equalsIgnoreCase("belgium")) {
-            assertThat(city.getName().equalsIgnoreCase("brussels"));
-        }
-
+    assertThat(country).isNotNull();
+    if (country.getName().equalsIgnoreCase("france")) {
+      assertThat(city.getName().equalsIgnoreCase("paris"));
     }
+    if (country.getName().equalsIgnoreCase("germany")) {
+      assertThat(city.getName().equalsIgnoreCase("berlin"));
+    }
+    if (country.getName().equalsIgnoreCase("belgium")) {
+      assertThat(city.getName().equalsIgnoreCase("brussels"));
+    }
+  }
 }

@@ -29,86 +29,87 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
+import org.jeasy.random.beans.Street;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.jeasy.random.beans.Street;
-
 class IntegerRangeRandomizerTest extends AbstractRangeRandomizerTest<Integer> {
 
-    @BeforeEach
-    void setUp() {
-        min = 1;
-        max = 10;
-        randomizer = new IntegerRangeRandomizer(min, max);
-    }
+  @BeforeEach
+  void setUp() {
+    min = 1;
+    max = 10;
+    randomizer = new IntegerRangeRandomizer(min, max);
+  }
 
-    @Test
-    void generatedValueShouldBeWithinSpecifiedRange() {
-        Integer randomValue = randomizer.getRandomValue();
-        assertThat(randomValue).isBetween(min, max);
-    }
+  @Test
+  void generatedValueShouldBeWithinSpecifiedRange() {
+    Integer randomValue = randomizer.getRandomValue();
+    assertThat(randomValue).isBetween(min, max);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new IntegerRangeRandomizer(max, min)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new IntegerRangeRandomizer(max, min))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-        randomizer = new IntegerRangeRandomizer(null, max);
-        Integer randomInteger = randomizer.getRandomValue();
-        assertThat(randomInteger).isLessThanOrEqualTo(max);
-    }
+  @Test
+  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
+    randomizer = new IntegerRangeRandomizer(null, max);
+    Integer randomInteger = randomizer.getRandomValue();
+    assertThat(randomInteger).isLessThanOrEqualTo(max);
+  }
 
-    @Test
-    void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-        randomizer = new IntegerRangeRandomizer(min, null);
-        Integer randomInteger = randomizer.getRandomValue();
-        assertThat(randomInteger).isGreaterThanOrEqualTo(min);
-    }
+  @Test
+  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
+    randomizer = new IntegerRangeRandomizer(min, null);
+    Integer randomInteger = randomizer.getRandomValue();
+    assertThat(randomInteger).isGreaterThanOrEqualTo(min);
+  }
 
-    @Test
-    void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-        // given
-        IntegerRangeRandomizer integerRangeRandomizer = new IntegerRangeRandomizer(min, max, SEED);
-        
-        // when
-        Integer i = integerRangeRandomizer.getRandomValue();
+  @Test
+  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
+    // given
+    IntegerRangeRandomizer integerRangeRandomizer = new IntegerRangeRandomizer(min, max, SEED);
 
-        then(i).isEqualTo(7);
-    }
+    // when
+    Integer i = integerRangeRandomizer.getRandomValue();
 
-    /*
-     * Integration tests
-     */
+    then(i).isEqualTo(7);
+  }
 
-    @Test
-    void generatedValueShouldBeWithinSpecifiedRange_whenUsedToRandomizePrimitiveIntegerType() {
-        EasyRandomParameters parameters = new EasyRandomParameters()
-                .randomize(int.class, new IntegerRangeRandomizer(min, max));
-        EasyRandom easyRandom = new EasyRandom(parameters);
+  /*
+   * Integration tests
+   */
 
-        int integer = easyRandom.nextObject(int.class);
-        assertThat(integer).isBetween(min, max);
-    }
+  @Test
+  void generatedValueShouldBeWithinSpecifiedRange_whenUsedToRandomizePrimitiveIntegerType() {
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().randomize(int.class, new IntegerRangeRandomizer(min, max));
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-    @Test
-    void generatedValueShouldBeWithinSpecifiedRange_whenUsedToRandomizeWrapperIntegerType() {
-        EasyRandomParameters parameters = new EasyRandomParameters().randomize(Integer.class, new IntegerRangeRandomizer(min, max));
-        EasyRandom easyRandom = new EasyRandom(parameters);
+    int integer = easyRandom.nextObject(int.class);
+    assertThat(integer).isBetween(min, max);
+  }
 
-        Integer integer = easyRandom.nextObject(Integer.class);
-        assertThat(integer).isBetween(min, max);
-    }
+  @Test
+  void generatedValueShouldBeWithinSpecifiedRange_whenUsedToRandomizeWrapperIntegerType() {
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().randomize(Integer.class, new IntegerRangeRandomizer(min, max));
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-    @Test
-    void generatedValueShouldBeWithinSpecifiedRange_whenUsedToRandomizeNonIntegerType() {
-        EasyRandomParameters parameters = new EasyRandomParameters().randomize(Integer.class, new IntegerRangeRandomizer(min, max));
-        EasyRandom easyRandom = new EasyRandom(parameters);
+    Integer integer = easyRandom.nextObject(Integer.class);
+    assertThat(integer).isBetween(min, max);
+  }
 
-        Street street = easyRandom.nextObject(Street.class);
-        assertThat(street.getNumber()).isBetween(min, max);
-    }
+  @Test
+  void generatedValueShouldBeWithinSpecifiedRange_whenUsedToRandomizeNonIntegerType() {
+    EasyRandomParameters parameters =
+        new EasyRandomParameters().randomize(Integer.class, new IntegerRangeRandomizer(min, max));
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
+    Street street = easyRandom.nextObject(Street.class);
+    assertThat(street.getNumber()).isBetween(min, max);
+  }
 }

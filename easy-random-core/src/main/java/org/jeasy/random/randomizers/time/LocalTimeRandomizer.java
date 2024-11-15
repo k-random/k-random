@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.time.LocalTime;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random {@link LocalTime}.
@@ -34,36 +33,34 @@ import java.time.LocalTime;
  */
 public class LocalTimeRandomizer implements Randomizer<LocalTime> {
 
-    private final HourRandomizer hourRandomizer;
-    private final MinuteRandomizer minuteRandomizer;
-    private final NanoSecondRandomizer nanoSecondRandomizer;
+  private final HourRandomizer hourRandomizer;
+  private final MinuteRandomizer minuteRandomizer;
+  private final NanoSecondRandomizer nanoSecondRandomizer;
 
-    /**
-     * Create a new {@link LocalTimeRandomizer}.
-     */
-    public LocalTimeRandomizer() {
-        hourRandomizer = new HourRandomizer();
-        minuteRandomizer = new MinuteRandomizer();
-        nanoSecondRandomizer = new NanoSecondRandomizer();
-    }
+  /** Create a new {@link LocalTimeRandomizer}. */
+  public LocalTimeRandomizer() {
+    hourRandomizer = new HourRandomizer();
+    minuteRandomizer = new MinuteRandomizer();
+    nanoSecondRandomizer = new NanoSecondRandomizer();
+  }
 
-    /**
-     * Create a new {@link LocalTimeRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public LocalTimeRandomizer(final long seed) {
-        hourRandomizer = new HourRandomizer(seed);
-        minuteRandomizer = new MinuteRandomizer(seed);
-        nanoSecondRandomizer = new NanoSecondRandomizer(seed);
-    }
+  /**
+   * Create a new {@link LocalTimeRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public LocalTimeRandomizer(final long seed) {
+    hourRandomizer = new HourRandomizer(seed);
+    minuteRandomizer = new MinuteRandomizer(seed);
+    nanoSecondRandomizer = new NanoSecondRandomizer(seed);
+  }
 
-    @Override
-    public LocalTime getRandomValue() {
-        int randomHour = hourRandomizer.getRandomValue();
-        int randomMinute = minuteRandomizer.getRandomValue();
-        int randomSecond = minuteRandomizer.getRandomValue(); // seconds are also between 0 and 59
-        int randomNanoSecond = nanoSecondRandomizer.getRandomValue();
-        return LocalTime.of(randomHour, randomMinute, randomSecond, randomNanoSecond);
-    }
+  @Override
+  public LocalTime getRandomValue() {
+    int randomHour = hourRandomizer.getRandomValue();
+    int randomMinute = minuteRandomizer.getRandomValue();
+    int randomSecond = minuteRandomizer.getRandomValue(); // seconds are also between 0 and 59
+    int randomNanoSecond = nanoSecondRandomizer.getRandomValue();
+    return LocalTime.of(randomHour, randomMinute, randomSecond, randomNanoSecond);
+  }
 }

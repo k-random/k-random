@@ -25,18 +25,17 @@ package org.jeasy.random.beans;
 
 public abstract class Bar {
 
-    private Integer i;
+  private Integer i;
 
-	public Bar() {
-	}
+  public Bar() {}
 
-	public abstract String getName();
+  public abstract String getName();
 
-	public Integer getI() {
-		return this.i;
-	}
+  public Integer getI() {
+    return this.i;
+  }
 
-	public void setI(Integer i) {
-		this.i = i;
-	}
+  public void setI(Integer i) {
+    this.i = i;
+  }
 }

@@ -27,26 +27,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-import org.junit.jupiter.api.Test;
-
 import org.jeasy.random.beans.Person;
+import org.junit.jupiter.api.Test;
 
 class RandomizationDepthParameterTests {
 
-    @Test
-    void testRandomizationDepth() {
-        // Given
-        EasyRandomParameters parameters = new EasyRandomParameters().randomizationDepth(2);
-        EasyRandom easyRandom = new EasyRandom(parameters);
+  @Test
+  void testRandomizationDepth() {
+    // Given
+    EasyRandomParameters parameters = new EasyRandomParameters().randomizationDepth(2);
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-        // When
-        Person person = easyRandom.nextObject(Person.class);
+    // When
+    Person person = easyRandom.nextObject(Person.class);
 
-        // Then
-        assertThat(person).isNotNull();
-        assertThat(person.getParent()).isNotNull();
-        assertThat(person.getParent().getParent()).isNotNull();
-        assertThat(person.getParent().getParent().getParent()).isNull();
-    }
-
+    // Then
+    assertThat(person).isNotNull();
+    assertThat(person.getParent()).isNotNull();
+    assertThat(person.getParent().getParent()).isNotNull();
+    assertThat(person.getParent().getParent().getParent()).isNull();
+  }
 }

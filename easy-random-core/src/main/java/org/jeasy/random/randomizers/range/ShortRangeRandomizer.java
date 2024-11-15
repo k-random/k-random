@@ -30,46 +30,46 @@ package org.jeasy.random.randomizers.range;
  */
 public class ShortRangeRandomizer extends AbstractRangeRandomizer<Short> {
 
-    /**
-     * Create a new {@link ShortRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public ShortRangeRandomizer(final Short min, final Short max) {
-        super(min, max);
-    }
+  /**
+   * Create a new {@link ShortRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public ShortRangeRandomizer(final Short min, final Short max) {
+    super(min, max);
+  }
 
-    /**
-     * Create a new {@link ShortRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public ShortRangeRandomizer(final Short min, final Short max, final long seed) {
-        super(min, max, seed);
-    }
+  /**
+   * Create a new {@link ShortRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public ShortRangeRandomizer(final Short min, final Short max, final long seed) {
+    super(min, max, seed);
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min > max) {
-            throw new IllegalArgumentException("max must be greater than min");
-        }
+  @Override
+  protected void checkValues() {
+    if (min > max) {
+      throw new IllegalArgumentException("max must be greater than min");
     }
+  }
 
-    @Override
-    public Short getRandomValue() {
-        return (short) nextDouble(min, max);
-    }
+  @Override
+  public Short getRandomValue() {
+    return (short) nextDouble(min, max);
+  }
 
-    @Override
-    protected Short getDefaultMaxValue() {
-        return Short.MAX_VALUE;
-    }
+  @Override
+  protected Short getDefaultMaxValue() {
+    return Short.MAX_VALUE;
+  }
 
-    @Override
-    protected Short getDefaultMinValue() {
-        return Short.MIN_VALUE;
-    }
+  @Override
+  protected Short getDefaultMinValue() {
+    return Short.MIN_VALUE;
+  }
 }

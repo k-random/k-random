@@ -26,37 +26,35 @@ package org.jeasy.random.randomizers.time;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import java.time.ZonedDateTime;
-
-import org.junit.jupiter.api.Test;
-
 import org.jeasy.random.randomizers.AbstractRandomizerTest;
+import org.junit.jupiter.api.Test;
 
 class ZonedDateTimeRandomizerTest extends AbstractRandomizerTest<ZonedDateTime> {
 
-    @Test
-    void generatedValueShouldNotBeNull() {
-        // given
-        ZonedDateTimeRandomizer zonedDateTimeRandomizer = new ZonedDateTimeRandomizer();
+  @Test
+  void generatedValueShouldNotBeNull() {
+    // given
+    ZonedDateTimeRandomizer zonedDateTimeRandomizer = new ZonedDateTimeRandomizer();
 
-        // when
-        ZonedDateTime zonedDateTime = zonedDateTimeRandomizer.getRandomValue();
+    // when
+    ZonedDateTime zonedDateTime = zonedDateTimeRandomizer.getRandomValue();
 
-        then(zonedDateTime).isNotNull();
-    }
+    then(zonedDateTime).isNotNull();
+  }
 
-    @Test
-    void shouldGenerateTheSameValueForTheSameSeed() {
-        // given
-        ZonedDateTimeRandomizer firstSeededZonedDateTimeRandomizer = new ZonedDateTimeRandomizer(SEED);
-        ZonedDateTimeRandomizer secondSeededZonedDateTimeRandomizer = new ZonedDateTimeRandomizer(SEED);
+  @Test
+  void shouldGenerateTheSameValueForTheSameSeed() {
+    // given
+    ZonedDateTimeRandomizer firstSeededZonedDateTimeRandomizer = new ZonedDateTimeRandomizer(SEED);
+    ZonedDateTimeRandomizer secondSeededZonedDateTimeRandomizer = new ZonedDateTimeRandomizer(SEED);
 
-        // when
-        // we cannot use a canned value, because the available TimeZones differ between locales/jdks
-        ZonedDateTime firstZonedTimeDate = firstSeededZonedDateTimeRandomizer.getRandomValue();
-        ZonedDateTime secondZonedTimeDate = secondSeededZonedDateTimeRandomizer.getRandomValue();
+    // when
+    // we cannot use a canned value, because the available TimeZones differ between locales/jdks
+    ZonedDateTime firstZonedTimeDate = firstSeededZonedDateTimeRandomizer.getRandomValue();
+    ZonedDateTime secondZonedTimeDate = secondSeededZonedDateTimeRandomizer.getRandomValue();
 
-        then(firstZonedTimeDate).isNotNull();
-        then(secondZonedTimeDate).isNotNull();
-        then(firstZonedTimeDate).isEqualTo(secondZonedTimeDate);
-    }
+    then(firstZonedTimeDate).isNotNull();
+    then(secondZonedTimeDate).isNotNull();
+    then(firstZonedTimeDate).isEqualTo(secondZonedTimeDate);
+  }
 }

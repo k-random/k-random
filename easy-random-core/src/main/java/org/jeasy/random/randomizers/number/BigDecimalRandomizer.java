@@ -23,10 +23,9 @@
  */
 package org.jeasy.random.randomizers.number;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * Generate a random {@link BigDecimal}.
@@ -35,65 +34,65 @@ import java.math.RoundingMode;
  */
 public class BigDecimalRandomizer implements Randomizer<BigDecimal> {
 
-    private final DoubleRandomizer delegate;
-    private Integer scale;
-    private RoundingMode roundingMode = RoundingMode.HALF_UP;
+  private final DoubleRandomizer delegate;
+  private Integer scale;
+  private RoundingMode roundingMode = RoundingMode.HALF_UP;
 
-    /**
-     * Create a new {@link BigDecimalRandomizer}.
-     */
-    public BigDecimalRandomizer() {
-        delegate = new DoubleRandomizer();
-    }
+  /** Create a new {@link BigDecimalRandomizer}. */
+  public BigDecimalRandomizer() {
+    delegate = new DoubleRandomizer();
+  }
 
-    /**
-     * Create a new {@link BigDecimalRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public BigDecimalRandomizer(final long seed) {
-        delegate = new DoubleRandomizer(seed);
-    }
+  /**
+   * Create a new {@link BigDecimalRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public BigDecimalRandomizer(final long seed) {
+    delegate = new DoubleRandomizer(seed);
+  }
 
-    /**
-     * Create a new {@link BigDecimalRandomizer}. The default rounding mode is {@link RoundingMode#HALF_UP}.
-     *
-     * @param scale of the {@code BigDecimal} value to be returned.
-     */
-    public BigDecimalRandomizer(final Integer scale) {
-        delegate = new DoubleRandomizer();
-        this.scale = scale;
-    }
+  /**
+   * Create a new {@link BigDecimalRandomizer}. The default rounding mode is {@link
+   * RoundingMode#HALF_UP}.
+   *
+   * @param scale of the {@code BigDecimal} value to be returned.
+   */
+  public BigDecimalRandomizer(final Integer scale) {
+    delegate = new DoubleRandomizer();
+    this.scale = scale;
+  }
 
-    /**
-     * Create a new {@link BigDecimalRandomizer}.
-     *
-     * @param scale of the {@code BigDecimal} value to be returned.
-     * @param roundingMode of the {@code BigDecimal} value to be returned.
-     */
-    public BigDecimalRandomizer(final Integer scale, final RoundingMode roundingMode) {
-        this(scale);
-        this.roundingMode = roundingMode;
-    }
+  /**
+   * Create a new {@link BigDecimalRandomizer}.
+   *
+   * @param scale of the {@code BigDecimal} value to be returned.
+   * @param roundingMode of the {@code BigDecimal} value to be returned.
+   */
+  public BigDecimalRandomizer(final Integer scale, final RoundingMode roundingMode) {
+    this(scale);
+    this.roundingMode = roundingMode;
+  }
 
-    /**
-     * Create a new {@link BigDecimalRandomizer}.
-     *
-     * @param scale of the {@code BigDecimal} value to be returned.
-     * @param roundingMode of the {@code BigDecimal} value to be returned.
-     */
-    public BigDecimalRandomizer(final long seed, final Integer scale, final RoundingMode roundingMode) {
-        this(seed);
-        this.scale = scale;
-        this.roundingMode = roundingMode;
-    }
+  /**
+   * Create a new {@link BigDecimalRandomizer}.
+   *
+   * @param scale of the {@code BigDecimal} value to be returned.
+   * @param roundingMode of the {@code BigDecimal} value to be returned.
+   */
+  public BigDecimalRandomizer(
+      final long seed, final Integer scale, final RoundingMode roundingMode) {
+    this(seed);
+    this.scale = scale;
+    this.roundingMode = roundingMode;
+  }
 
-    @Override
-    public BigDecimal getRandomValue() {
-        BigDecimal randomValue = new BigDecimal(delegate.getRandomValue());
-        if (scale != null) {
-            randomValue = randomValue.setScale(this.scale, this.roundingMode);
-        }
-        return randomValue;
+  @Override
+  public BigDecimal getRandomValue() {
+    BigDecimal randomValue = new BigDecimal(delegate.getRandomValue());
+    if (scale != null) {
+      randomValue = randomValue.setScale(this.scale, this.roundingMode);
     }
+    return randomValue;
+  }
 }

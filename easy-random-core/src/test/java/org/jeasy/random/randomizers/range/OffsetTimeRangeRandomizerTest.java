@@ -28,71 +28,70 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class OffsetTimeRangeRandomizerTest extends AbstractRangeRandomizerTest<OffsetTime> {
 
-    private OffsetTime minTime, maxTime;
+  private OffsetTime minTime, maxTime;
 
-    @BeforeEach
-    void setUp() {
-        minTime = OffsetTime.MIN;
-        maxTime = OffsetTime.MAX;
-        randomizer = new OffsetTimeRangeRandomizer(minTime, maxTime);
-    }
+  @BeforeEach
+  void setUp() {
+    minTime = OffsetTime.MIN;
+    maxTime = OffsetTime.MAX;
+    randomizer = new OffsetTimeRangeRandomizer(minTime, maxTime);
+  }
 
-    @Test
-    void generatedOffsetTimeShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedOffsetTimeShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedOffsetTimeShouldBeWithinSpecifiedRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(minTime, maxTime);
-    }
+  @Test
+  void generatedOffsetTimeShouldBeWithinSpecifiedRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(minTime, maxTime);
+  }
 
-    @Test
-    void generatedOffsetTimeShouldBeAlwaysTheSameForTheSameSeed() {
-        // Given
-        randomizer = new OffsetTimeRangeRandomizer(minTime, maxTime, SEED);
-        OffsetTime expected = OffsetTime.of(17, 21, 21, 0, ZoneOffset.UTC);
+  @Test
+  void generatedOffsetTimeShouldBeAlwaysTheSameForTheSameSeed() {
+    // Given
+    randomizer = new OffsetTimeRangeRandomizer(minTime, maxTime, SEED);
+    OffsetTime expected = OffsetTime.of(17, 21, 21, 0, ZoneOffset.UTC);
 
-        // When
-        OffsetTime randomValue = randomizer.getRandomValue();
+    // When
+    OffsetTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isEqualTo(expected);
-    }
+    // Then
+    assertThat(randomValue).isEqualTo(expected);
+  }
 
-    @Test
-    void whenSpecifiedMinTimeIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new OffsetTimeRangeRandomizer(maxTime, minTime)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinTimeIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new OffsetTimeRangeRandomizer(maxTime, minTime))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinTimeIsNull_thenShouldUseDefaultMinValue() {
-        // Given
-        randomizer = new OffsetTimeRangeRandomizer(null, maxTime);
+  @Test
+  void whenSpecifiedMinTimeIsNull_thenShouldUseDefaultMinValue() {
+    // Given
+    randomizer = new OffsetTimeRangeRandomizer(null, maxTime);
 
-        // When
-        OffsetTime randomValue = randomizer.getRandomValue();
+    // When
+    OffsetTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isBeforeOrEqualTo(maxTime);
-    }
+    // Then
+    assertThat(randomValue).isBeforeOrEqualTo(maxTime);
+  }
 
-    @Test
-    void whenSpecifiedMaxTimeIsNull_thenShouldUseDefaultMaxValue() {
-        // Given
-        randomizer = new OffsetTimeRangeRandomizer(minTime, null);
+  @Test
+  void whenSpecifiedMaxTimeIsNull_thenShouldUseDefaultMaxValue() {
+    // Given
+    randomizer = new OffsetTimeRangeRandomizer(minTime, null);
 
-        // when
-        OffsetTime randomValue = randomizer.getRandomValue();
+    // when
+    OffsetTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isAfterOrEqualTo(minTime);
-    }
-
+    // Then
+    assertThat(randomValue).isAfterOrEqualTo(minTime);
+  }
 }

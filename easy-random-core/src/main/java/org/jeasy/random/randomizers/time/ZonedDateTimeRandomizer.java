@@ -23,9 +23,6 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.randomizers.AbstractRandomizer;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -33,6 +30,8 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.randomizers.AbstractRandomizer;
 
 /**
  * A {@link Randomizer} that generates random {@link ZonedDateTime}.
@@ -41,39 +40,37 @@ import java.util.Set;
  */
 public class ZonedDateTimeRandomizer extends AbstractRandomizer<ZonedDateTime> {
 
-    private LocalDateTimeRandomizer localDateTimeRandomizer;
+  private LocalDateTimeRandomizer localDateTimeRandomizer;
 
-    /**
-     * Create a new {@link ZonedDateTimeRandomizer}.
-     */
-    public ZonedDateTimeRandomizer() {
-        localDateTimeRandomizer = new LocalDateTimeRandomizer();
-    }
+  /** Create a new {@link ZonedDateTimeRandomizer}. */
+  public ZonedDateTimeRandomizer() {
+    localDateTimeRandomizer = new LocalDateTimeRandomizer();
+  }
 
-    /**
-     * Create a new {@link ZonedDateTimeRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public ZonedDateTimeRandomizer(final long seed) {
-        super(seed);
-        localDateTimeRandomizer = new LocalDateTimeRandomizer(seed);
-    }
+  /**
+   * Create a new {@link ZonedDateTimeRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public ZonedDateTimeRandomizer(final long seed) {
+    super(seed);
+    localDateTimeRandomizer = new LocalDateTimeRandomizer(seed);
+  }
 
-    @Override
-    public ZonedDateTime getRandomValue() {
-        LocalDateTime randomLocalDateTime = localDateTimeRandomizer.getRandomValue();
-        ZoneId randomZoneId = getRandomZoneId();
-        return ZonedDateTime.of(randomLocalDateTime, randomZoneId);
-    }
+  @Override
+  public ZonedDateTime getRandomValue() {
+    LocalDateTime randomLocalDateTime = localDateTimeRandomizer.getRandomValue();
+    ZoneId randomZoneId = getRandomZoneId();
+    return ZonedDateTime.of(randomLocalDateTime, randomZoneId);
+  }
 
-    private ZoneId getRandomZoneId() {
-        Set<String> availableZoneIds = ZoneOffset.getAvailableZoneIds();
-        List<String> ids = new ArrayList<>(availableZoneIds);
-        return ZoneId.of(ids.get(random.nextInt(ids.size())));
-    }
+  private ZoneId getRandomZoneId() {
+    Set<String> availableZoneIds = ZoneOffset.getAvailableZoneIds();
+    List<String> ids = new ArrayList<>(availableZoneIds);
+    return ZoneId.of(ids.get(random.nextInt(ids.size())));
+  }
 
-    public void setLocalDateTimeRandomizer(final LocalDateTimeRandomizer localDateTimeRandomizer) {
-        this.localDateTimeRandomizer = localDateTimeRandomizer;
-    }
+  public void setLocalDateTimeRandomizer(final LocalDateTimeRandomizer localDateTimeRandomizer) {
+    this.localDateTimeRandomizer = localDateTimeRandomizer;
+  }
 }

@@ -23,43 +23,42 @@
  */
 package org.jeasy.random.randomizers.time.internal;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.jeasy.random.randomizers.time.MinuteRandomizer.MAX_MINUTE;
 import static org.jeasy.random.randomizers.time.MinuteRandomizer.MIN_MINUTE;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import org.jeasy.random.randomizers.AbstractRandomizerTest;
 import org.jeasy.random.randomizers.time.MinuteRandomizer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class MinuteRandomizerTest extends AbstractRandomizerTest<Integer> {
 
-    @BeforeEach
-    void setUp() {
-        randomizer = new MinuteRandomizer();
-    }
+  @BeforeEach
+  void setUp() {
+    randomizer = new MinuteRandomizer();
+  }
 
-    @Test
-    void generatedValueShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedValueShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedValueShouldBeWithinRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(MIN_MINUTE, MAX_MINUTE);
-    }
+  @Test
+  void generatedValueShouldBeWithinRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(MIN_MINUTE, MAX_MINUTE);
+  }
 
-    @Test
-    void shouldGenerateTheSameValueForTheSameSeed() {
-        // Given
-        randomizer = new MinuteRandomizer(SEED);
-        Integer expected = 42;
+  @Test
+  void shouldGenerateTheSameValueForTheSameSeed() {
+    // Given
+    randomizer = new MinuteRandomizer(SEED);
+    Integer expected = 42;
 
-        // When
-        Integer actual = randomizer.getRandomValue();
+    // When
+    Integer actual = randomizer.getRandomValue();
 
-        // Then
-        assertThat(actual).isEqualTo(expected);
-    }
+    // Then
+    assertThat(actual).isEqualTo(expected);
+  }
 }

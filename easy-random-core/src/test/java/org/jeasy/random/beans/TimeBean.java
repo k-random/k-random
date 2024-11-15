@@ -27,156 +27,155 @@ import java.time.*;
 
 public class TimeBean {
 
-    private Duration duration;
+  private Duration duration;
 
-    private Instant instant;
+  private Instant instant;
 
-    private LocalTime localTime;
+  private LocalTime localTime;
 
-    private LocalDate localDate;
+  private LocalDate localDate;
 
-    private LocalDateTime localDateTime;
+  private LocalDateTime localDateTime;
 
-    private MonthDay monthDay;
+  private MonthDay monthDay;
 
-    private Month month;
+  private Month month;
 
-    private OffsetDateTime offsetDateTime;
+  private OffsetDateTime offsetDateTime;
 
-    private OffsetTime offsetTime;
+  private OffsetTime offsetTime;
 
-    private Period period;
+  private Period period;
 
-    private YearMonth yearMonth;
+  private YearMonth yearMonth;
 
-    private Year year;
+  private Year year;
 
-    private ZonedDateTime zonedDateTime;
+  private ZonedDateTime zonedDateTime;
 
-    private ZoneOffset zoneOffset;
+  private ZoneOffset zoneOffset;
 
-    private ZoneId zoneId;
+  private ZoneId zoneId;
 
-	public TimeBean() {
-	}
+  public TimeBean() {}
 
-	public Duration getDuration() {
-		return this.duration;
-	}
+  public Duration getDuration() {
+    return this.duration;
+  }
 
-	public Instant getInstant() {
-		return this.instant;
-	}
+  public Instant getInstant() {
+    return this.instant;
+  }
 
-	public LocalTime getLocalTime() {
-		return this.localTime;
-	}
+  public LocalTime getLocalTime() {
+    return this.localTime;
+  }
 
-	public LocalDate getLocalDate() {
-		return this.localDate;
-	}
+  public LocalDate getLocalDate() {
+    return this.localDate;
+  }
 
-	public LocalDateTime getLocalDateTime() {
-		return this.localDateTime;
-	}
+  public LocalDateTime getLocalDateTime() {
+    return this.localDateTime;
+  }
 
-	public MonthDay getMonthDay() {
-		return this.monthDay;
-	}
+  public MonthDay getMonthDay() {
+    return this.monthDay;
+  }
 
-	public Month getMonth() {
-		return this.month;
-	}
+  public Month getMonth() {
+    return this.month;
+  }
 
-	public OffsetDateTime getOffsetDateTime() {
-		return this.offsetDateTime;
-	}
+  public OffsetDateTime getOffsetDateTime() {
+    return this.offsetDateTime;
+  }
 
-	public OffsetTime getOffsetTime() {
-		return this.offsetTime;
-	}
+  public OffsetTime getOffsetTime() {
+    return this.offsetTime;
+  }
 
-	public Period getPeriod() {
-		return this.period;
-	}
+  public Period getPeriod() {
+    return this.period;
+  }
 
-	public YearMonth getYearMonth() {
-		return this.yearMonth;
-	}
+  public YearMonth getYearMonth() {
+    return this.yearMonth;
+  }
 
-	public Year getYear() {
-		return this.year;
-	}
+  public Year getYear() {
+    return this.year;
+  }
 
-	public ZonedDateTime getZonedDateTime() {
-		return this.zonedDateTime;
-	}
+  public ZonedDateTime getZonedDateTime() {
+    return this.zonedDateTime;
+  }
 
-	public ZoneOffset getZoneOffset() {
-		return this.zoneOffset;
-	}
+  public ZoneOffset getZoneOffset() {
+    return this.zoneOffset;
+  }
 
-	public ZoneId getZoneId() {
-		return this.zoneId;
-	}
+  public ZoneId getZoneId() {
+    return this.zoneId;
+  }
 
-	public void setDuration(Duration duration) {
-		this.duration = duration;
-	}
+  public void setDuration(Duration duration) {
+    this.duration = duration;
+  }
 
-	public void setInstant(Instant instant) {
-		this.instant = instant;
-	}
+  public void setInstant(Instant instant) {
+    this.instant = instant;
+  }
 
-	public void setLocalTime(LocalTime localTime) {
-		this.localTime = localTime;
-	}
+  public void setLocalTime(LocalTime localTime) {
+    this.localTime = localTime;
+  }
 
-	public void setLocalDate(LocalDate localDate) {
-		this.localDate = localDate;
-	}
+  public void setLocalDate(LocalDate localDate) {
+    this.localDate = localDate;
+  }
 
-	public void setLocalDateTime(LocalDateTime localDateTime) {
-		this.localDateTime = localDateTime;
-	}
+  public void setLocalDateTime(LocalDateTime localDateTime) {
+    this.localDateTime = localDateTime;
+  }
 
-	public void setMonthDay(MonthDay monthDay) {
-		this.monthDay = monthDay;
-	}
+  public void setMonthDay(MonthDay monthDay) {
+    this.monthDay = monthDay;
+  }
 
-	public void setMonth(Month month) {
-		this.month = month;
-	}
+  public void setMonth(Month month) {
+    this.month = month;
+  }
 
-	public void setOffsetDateTime(OffsetDateTime offsetDateTime) {
-		this.offsetDateTime = offsetDateTime;
-	}
+  public void setOffsetDateTime(OffsetDateTime offsetDateTime) {
+    this.offsetDateTime = offsetDateTime;
+  }
 
-	public void setOffsetTime(OffsetTime offsetTime) {
-		this.offsetTime = offsetTime;
-	}
+  public void setOffsetTime(OffsetTime offsetTime) {
+    this.offsetTime = offsetTime;
+  }
 
-	public void setPeriod(Period period) {
-		this.period = period;
-	}
+  public void setPeriod(Period period) {
+    this.period = period;
+  }
 
-	public void setYearMonth(YearMonth yearMonth) {
-		this.yearMonth = yearMonth;
-	}
+  public void setYearMonth(YearMonth yearMonth) {
+    this.yearMonth = yearMonth;
+  }
 
-	public void setYear(Year year) {
-		this.year = year;
-	}
+  public void setYear(Year year) {
+    this.year = year;
+  }
 
-	public void setZonedDateTime(ZonedDateTime zonedDateTime) {
-		this.zonedDateTime = zonedDateTime;
-	}
+  public void setZonedDateTime(ZonedDateTime zonedDateTime) {
+    this.zonedDateTime = zonedDateTime;
+  }
 
-	public void setZoneOffset(ZoneOffset zoneOffset) {
-		this.zoneOffset = zoneOffset;
-	}
+  public void setZoneOffset(ZoneOffset zoneOffset) {
+    this.zoneOffset = zoneOffset;
+  }
 
-	public void setZoneId(ZoneId zoneId) {
-		this.zoneId = zoneId;
-	}
+  public void setZoneId(ZoneId zoneId) {
+    this.zoneId = zoneId;
+  }
 }

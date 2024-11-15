@@ -30,15 +30,17 @@ package org.jeasy.random.annotation;
  */
 public @interface RandomizerArgument {
 
-    /**
-     * The value of the argument.
-     * @return value of the argument
-     */
-    String value() default "";
+  /**
+   * The value of the argument.
+   *
+   * @return value of the argument
+   */
+  String value() default "";
 
-    /**
-     * The type of the argument.
-     * @return type of the argument
-     */
-    Class<?> type() default Object.class;
+  /**
+   * The type of the argument.
+   *
+   * @return type of the argument
+   */
+  Class<?> type() default Object.class;
 }

@@ -27,48 +27,47 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
-import org.junit.jupiter.api.Test;
-
 import org.jeasy.random.randomizers.AbstractRandomizerTest;
+import org.junit.jupiter.api.Test;
 
 class BigDecimalRandomizerTest extends AbstractRandomizerTest<BigDecimal> {
 
-    @Test
-    void generatedValueShouldHaveProvidedPositiveScale() {
-        // given
-        Integer scale = 1;
-        BigDecimalRandomizer bigDecimalRandomizer = new BigDecimalRandomizer(scale);
+  @Test
+  void generatedValueShouldHaveProvidedPositiveScale() {
+    // given
+    Integer scale = 1;
+    BigDecimalRandomizer bigDecimalRandomizer = new BigDecimalRandomizer(scale);
 
-        // when
-        BigDecimal bigDecimal = bigDecimalRandomizer.getRandomValue();
+    // when
+    BigDecimal bigDecimal = bigDecimalRandomizer.getRandomValue();
 
-        then(bigDecimal.scale()).isEqualTo(scale);
-    }
+    then(bigDecimal.scale()).isEqualTo(scale);
+  }
 
-    @Test
-    void generatedValueShouldHaveProvidedNegativeScale() {
-        // given
-        Integer scale = -1;
-        BigDecimalRandomizer bigDecimalRangeRandomizer = new BigDecimalRandomizer(scale);
+  @Test
+  void generatedValueShouldHaveProvidedNegativeScale() {
+    // given
+    Integer scale = -1;
+    BigDecimalRandomizer bigDecimalRangeRandomizer = new BigDecimalRandomizer(scale);
 
-        // when
-        BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    // when
+    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
 
-        then(bigDecimal.scale()).isEqualTo(scale);
-    }
+    then(bigDecimal.scale()).isEqualTo(scale);
+  }
 
-    @Test
-    void testCustomRoundingMode() {
-        // given
-        long initialSeed = 123;
-        Integer scale = 1;
-        RoundingMode roundingMode = RoundingMode.DOWN;
-        BigDecimalRandomizer bigDecimalRandomizer = new BigDecimalRandomizer(initialSeed, scale, roundingMode);
+  @Test
+  void testCustomRoundingMode() {
+    // given
+    long initialSeed = 123;
+    Integer scale = 1;
+    RoundingMode roundingMode = RoundingMode.DOWN;
+    BigDecimalRandomizer bigDecimalRandomizer =
+        new BigDecimalRandomizer(initialSeed, scale, roundingMode);
 
-        // when
-        BigDecimal bigDecimal = bigDecimalRandomizer.getRandomValue();
+    // when
+    BigDecimal bigDecimal = bigDecimalRandomizer.getRandomValue();
 
-        then(bigDecimal).isEqualTo(new BigDecimal("0.7"));
-    }
+    then(bigDecimal).isEqualTo(new BigDecimal("0.7"));
+  }
 }

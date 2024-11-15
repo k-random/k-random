@@ -24,7 +24,6 @@
 package org.jeasy.random.randomizers.misc;
 
 import java.util.Locale;
-
 import org.jeasy.random.randomizers.AbstractRandomizer;
 
 /**
@@ -34,24 +33,21 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
  */
 public class LocaleRandomizer extends AbstractRandomizer<Locale> {
 
-    /**
-     * Create a new {@link LocaleRandomizer}.
-     */
-    public LocaleRandomizer() {
-    }
+  /** Create a new {@link LocaleRandomizer}. */
+  public LocaleRandomizer() {}
 
-    /**
-     * Create a new {@link LocaleRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public LocaleRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link LocaleRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public LocaleRandomizer(final long seed) {
+    super(seed);
+  }
 
-    @Override
-    public Locale getRandomValue() {
-        Locale[] availableLocales = Locale.getAvailableLocales();
-        return availableLocales[random.nextInt(availableLocales.length)];
-    }
+  @Override
+  public Locale getRandomValue() {
+    Locale[] availableLocales = Locale.getAvailableLocales();
+    return availableLocales[random.nextInt(availableLocales.length)];
+  }
 }

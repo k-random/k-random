@@ -32,23 +32,20 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
  */
 public class BooleanRandomizer extends AbstractRandomizer<Boolean> {
 
-    /**
-     * Create a new {@link BooleanRandomizer}.
-     */
-    public BooleanRandomizer() {
-    }
+  /** Create a new {@link BooleanRandomizer}. */
+  public BooleanRandomizer() {}
 
-    /**
-     * Create a new {@link BooleanRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public BooleanRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link BooleanRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public BooleanRandomizer(final long seed) {
+    super(seed);
+  }
 
-    @Override
-    public Boolean getRandomValue() {
-        return random.nextBoolean();
-    }
+  @Override
+  public Boolean getRandomValue() {
+    return random.nextBoolean();
+  }
 }

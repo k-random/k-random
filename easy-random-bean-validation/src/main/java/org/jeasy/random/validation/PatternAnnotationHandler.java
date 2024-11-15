@@ -23,32 +23,30 @@
  */
 package org.jeasy.random.validation;
 
+import jakarta.validation.constraints.Pattern;
+import java.lang.reflect.Field;
+import java.util.Random;
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.RegularExpressionRandomizer;
 import org.jeasy.random.util.ReflectionUtils;
 
-import jakarta.validation.constraints.Pattern;
-import java.lang.reflect.Field;
-import java.util.Random;
-
 class PatternAnnotationHandler implements BeanValidationAnnotationHandler {
 
-    private final Random random;
+  private final Random random;
 
-    PatternAnnotationHandler(long seed) {
-        random = new Random(seed);
+  PatternAnnotationHandler(long seed) {
+    random = new Random(seed);
+  }
+
+  @Override
+  public Randomizer<?> getRandomizer(Field field) {
+    Class<?> fieldType = field.getType();
+    Pattern patternAnnotation = ReflectionUtils.getAnnotation(field, Pattern.class);
+
+    final String regex = patternAnnotation.regexp();
+    if (fieldType.equals(String.class)) {
+      return new RegularExpressionRandomizer(regex, random.nextLong());
     }
-
-    @Override
-    public Randomizer<?> getRandomizer(Field field) {
-        Class<?> fieldType = field.getType();
-        Pattern patternAnnotation = ReflectionUtils
-                .getAnnotation(field, Pattern.class);
-
-        final String regex = patternAnnotation.regexp();
-        if (fieldType.equals(String.class)) {
-            return new RegularExpressionRandomizer(regex, random.nextLong());
-        }
-        return null;
-    }
+    return null;
+  }
 }

@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.util.Locale;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random sentences.
@@ -34,33 +33,30 @@ import java.util.Locale;
  */
 public class SentenceRandomizer extends FakerBasedRandomizer<String> {
 
-    /**
-     * Create a new {@link SentenceRandomizer}.
-     */
-    public SentenceRandomizer() {
-    }
+  /** Create a new {@link SentenceRandomizer}. */
+  public SentenceRandomizer() {}
 
-    /**
-     * Create a new {@link SentenceRandomizer}.
-     *
-     * @param seed the initial seed
-     */
-    public SentenceRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link SentenceRandomizer}.
+   *
+   * @param seed the initial seed
+   */
+  public SentenceRandomizer(final long seed) {
+    super(seed);
+  }
 
-    /**
-     * Create a new {@link SentenceRandomizer}.
-     *
-     * @param seed   the initial seed
-     * @param locale the locale to use
-     */
-    public SentenceRandomizer(final long seed, final Locale locale) {
-        super(seed, locale);
-    }
+  /**
+   * Create a new {@link SentenceRandomizer}.
+   *
+   * @param seed the initial seed
+   * @param locale the locale to use
+   */
+  public SentenceRandomizer(final long seed, final Locale locale) {
+    super(seed, locale);
+  }
 
-    @Override
-    public String getRandomValue() {
-        return faker.lorem().sentence();
-    }
+  @Override
+  public String getRandomValue() {
+    return faker.lorem().sentence();
+  }
 }

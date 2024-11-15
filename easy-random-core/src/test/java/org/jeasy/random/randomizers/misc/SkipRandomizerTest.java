@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 
 class SkipRandomizerTest {
 
-    @Test
-    void generatedValueShouldBeNull() {
-        assertThat(new SkipRandomizer().getRandomValue()).isNull();
-    }
+  @Test
+  void generatedValueShouldBeNull() {
+    assertThat(new SkipRandomizer().getRandomValue()).isNull();
+  }
 }

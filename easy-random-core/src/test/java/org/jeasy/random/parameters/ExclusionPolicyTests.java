@@ -23,6 +23,9 @@
  */
 package org.jeasy.random.parameters;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.lang.reflect.Field;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.api.ExclusionPolicy;
@@ -31,39 +34,37 @@ import org.jeasy.random.beans.Address;
 import org.jeasy.random.beans.Person;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 class ExclusionPolicyTests {
 
-    @Test
-    void testCustomExclusionPolicy() {
-        // given
-        EasyRandomParameters parameters = new EasyRandomParameters()
-                .exclusionPolicy(new ExclusionPolicy() {
-                    @Override
-                    public boolean shouldBeExcluded(Field field, RandomizerContext context) {
-                        return field.getName().equals("birthDate");
-                    }
+  @Test
+  void testCustomExclusionPolicy() {
+    // given
+    EasyRandomParameters parameters =
+        new EasyRandomParameters()
+            .exclusionPolicy(
+                new ExclusionPolicy() {
+                  @Override
+                  public boolean shouldBeExcluded(Field field, RandomizerContext context) {
+                    return field.getName().equals("birthDate");
+                  }
 
-                    @Override
-                    public boolean shouldBeExcluded(Class<?> type, RandomizerContext context) {
-                        return type.isAssignableFrom(Address.class);
-                    }
+                  @Override
+                  public boolean shouldBeExcluded(Class<?> type, RandomizerContext context) {
+                    return type.isAssignableFrom(Address.class);
+                  }
                 });
-        EasyRandom easyRandom = new EasyRandom(parameters);
+    EasyRandom easyRandom = new EasyRandom(parameters);
 
-        // when
-        Person person = easyRandom.nextObject(Person.class);
+    // when
+    Person person = easyRandom.nextObject(Person.class);
 
-        // then
-        assertThat(person).isNotNull();
-        assertThat(person.getName()).isNotNull();
-        assertThat(person.getEmail()).isNotNull();
-        assertThat(person.getPhoneNumber()).isNotNull();
+    // then
+    assertThat(person).isNotNull();
+    assertThat(person.getName()).isNotNull();
+    assertThat(person.getEmail()).isNotNull();
+    assertThat(person.getPhoneNumber()).isNotNull();
 
-        assertThat(person.getBirthDate()).isNull();
-        assertThat(person.getAddress()).isNull();
-    }
+    assertThat(person.getBirthDate()).isNull();
+    assertThat(person.getAddress()).isNull();
+  }
 }

@@ -30,13 +30,13 @@ package org.jeasy.random;
  */
 public class ObjectCreationException extends RuntimeException {
 
-    private static final long serialVersionUID = -9049778508557432869L;
+  private static final long serialVersionUID = -9049778508557432869L;
 
-    public ObjectCreationException(String message) {
-        super(message);
-    }
+  public ObjectCreationException(String message) {
+    super(message);
+  }
 
-    public ObjectCreationException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public ObjectCreationException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

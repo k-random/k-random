@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.util.Locale;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random credit card numbers.
@@ -34,33 +33,30 @@ import java.util.Locale;
  */
 public class CreditCardNumberRandomizer extends FakerBasedRandomizer<String> {
 
-    /**
-     * Create a new {@link CreditCardNumberRandomizer}.
-     */
-    public CreditCardNumberRandomizer() {
-    }
+  /** Create a new {@link CreditCardNumberRandomizer}. */
+  public CreditCardNumberRandomizer() {}
 
-    /**
-     * Create a new {@link CreditCardNumberRandomizer}.
-     *
-     * @param seed the initial seed
-     */
-    public CreditCardNumberRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link CreditCardNumberRandomizer}.
+   *
+   * @param seed the initial seed
+   */
+  public CreditCardNumberRandomizer(final long seed) {
+    super(seed);
+  }
 
-    /**
-     * Create a new {@link CreditCardNumberRandomizer}.
-     *
-     * @param seed   the initial seed
-     * @param locale the locale to use
-     */
-    public CreditCardNumberRandomizer(final long seed, final Locale locale) {
-        super(seed, locale);
-    }
+  /**
+   * Create a new {@link CreditCardNumberRandomizer}.
+   *
+   * @param seed the initial seed
+   * @param locale the locale to use
+   */
+  public CreditCardNumberRandomizer(final long seed, final Locale locale) {
+    super(seed, locale);
+  }
 
-    @Override
-    public String getRandomValue() {
-        return faker.business().creditCardNumber();
-    }
+  @Override
+  public String getRandomValue() {
+    return faker.business().creditCardNumber();
+  }
 }

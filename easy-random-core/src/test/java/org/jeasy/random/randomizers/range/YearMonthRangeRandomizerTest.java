@@ -27,70 +27,70 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.YearMonth;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class YearMonthRangeRandomizerTest extends AbstractRangeRandomizerTest<YearMonth> {
 
-    private YearMonth minYearMonth, maxYearMonth;
+  private YearMonth minYearMonth, maxYearMonth;
 
-    @BeforeEach
-    void setUp() {
-        minYearMonth = YearMonth.of(1000, 1);
-        maxYearMonth = YearMonth.of(3000, 12);
-        randomizer = new YearMonthRangeRandomizer(minYearMonth, maxYearMonth);
-    }
+  @BeforeEach
+  void setUp() {
+    minYearMonth = YearMonth.of(1000, 1);
+    maxYearMonth = YearMonth.of(3000, 12);
+    randomizer = new YearMonthRangeRandomizer(minYearMonth, maxYearMonth);
+  }
 
-    @Test
-    void generatedYearMonthShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedYearMonthShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedYearMonthShouldBeWithinSpecifiedRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(minYearMonth, maxYearMonth);
-    }
+  @Test
+  void generatedYearMonthShouldBeWithinSpecifiedRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(minYearMonth, maxYearMonth);
+  }
 
-    @Test
-    void generatedYearMonthShouldBeAlwaysTheSameForTheSameSeed() {
-        // Given
-        randomizer = new YearMonthRangeRandomizer(minYearMonth, maxYearMonth, SEED);
-        YearMonth expected = YearMonth.of(2446, 11);
+  @Test
+  void generatedYearMonthShouldBeAlwaysTheSameForTheSameSeed() {
+    // Given
+    randomizer = new YearMonthRangeRandomizer(minYearMonth, maxYearMonth, SEED);
+    YearMonth expected = YearMonth.of(2446, 11);
 
-        // When
-        YearMonth randomValue = randomizer.getRandomValue();
+    // When
+    YearMonth randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isEqualTo(expected);
-    }
+    // Then
+    assertThat(randomValue).isEqualTo(expected);
+  }
 
-    @Test
-    void whenSpecifiedMinYearMonthIsAfterMaxYearMonth_thenShouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new YearMonthRangeRandomizer(maxYearMonth, minYearMonth)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinYearMonthIsAfterMaxYearMonth_thenShouldThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new YearMonthRangeRandomizer(maxYearMonth, minYearMonth))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinYearMonthIsNull_thenShouldUseDefaultMinValue() {
-        // Given
-        randomizer = new YearMonthRangeRandomizer(null, maxYearMonth);
+  @Test
+  void whenSpecifiedMinYearMonthIsNull_thenShouldUseDefaultMinValue() {
+    // Given
+    randomizer = new YearMonthRangeRandomizer(null, maxYearMonth);
 
-        // When
-        YearMonth randomValue = randomizer.getRandomValue();
+    // When
+    YearMonth randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isLessThanOrEqualTo(maxYearMonth);
-    }
+    // Then
+    assertThat(randomValue).isLessThanOrEqualTo(maxYearMonth);
+  }
 
-    @Test
-    void whenSpecifiedMaxYearMonthIsNull_thenShouldUseDefaultMaxValue() {
-        // Given
-        randomizer = new YearMonthRangeRandomizer(minYearMonth, null);
+  @Test
+  void whenSpecifiedMaxYearMonthIsNull_thenShouldUseDefaultMaxValue() {
+    // Given
+    randomizer = new YearMonthRangeRandomizer(minYearMonth, null);
 
-        // when
-        YearMonth randomValue = randomizer.getRandomValue();
+    // when
+    YearMonth randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isGreaterThanOrEqualTo(minYearMonth);
-    }
+    // Then
+    assertThat(randomValue).isGreaterThanOrEqualTo(minYearMonth);
+  }
 }

@@ -27,55 +27,50 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import java.net.URI;
 import java.net.URL;
-
 import org.jeasy.random.EasyRandom;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.beans.Website;
+import org.jeasy.random.randomizers.AbstractRandomizerTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.beans.Website;
-import org.jeasy.random.randomizers.AbstractRandomizerTest;
-
 class NetRandomizersTest extends AbstractRandomizerTest<Randomizer<?>> {
 
-    static Object[] generateRandomizers() {
-        return new Object[] { 
-                new UriRandomizer(),
-                new UrlRandomizer()
-        };
-    }
+  static Object[] generateRandomizers() {
+    return new Object[] {new UriRandomizer(), new UrlRandomizer()};
+  }
 
-    @ParameterizedTest
-    @MethodSource("generateRandomizers")
-    void generatedValueShouldNotBeNull(Randomizer<?> randomizer) {
-        // when
-        Object value = randomizer.getRandomValue();
+  @ParameterizedTest
+  @MethodSource("generateRandomizers")
+  void generatedValueShouldNotBeNull(Randomizer<?> randomizer) {
+    // when
+    Object value = randomizer.getRandomValue();
 
-        then(value).isNotNull();
-    }
+    then(value).isNotNull();
+  }
 
-    static Object[][] generateSeededRandomizersAndTheirExpectedValues() throws Exception {
-        return new Object[][] { 
-                { new UriRandomizer(SEED), new URI("telnet://192.0.2.16:80/") },
-                { new UrlRandomizer(SEED), new URL("http://www.google.com") }
-        };
-    }
+  static Object[][] generateSeededRandomizersAndTheirExpectedValues() throws Exception {
+    return new Object[][] {
+      {new UriRandomizer(SEED), new URI("telnet://192.0.2.16:80/")},
+      {new UrlRandomizer(SEED), new URL("http://www.google.com")}
+    };
+  }
 
-    @ParameterizedTest
-    @MethodSource("generateSeededRandomizersAndTheirExpectedValues")
-    void shouldGenerateTheSameValueForTheSameSeed(Randomizer<?> randomizer, Object expected) {
-        //when
-        Object actual = randomizer.getRandomValue();
+  @ParameterizedTest
+  @MethodSource("generateSeededRandomizersAndTheirExpectedValues")
+  void shouldGenerateTheSameValueForTheSameSeed(Randomizer<?> randomizer, Object expected) {
+    // when
+    Object actual = randomizer.getRandomValue();
 
-        then(actual).isEqualTo(expected);
-    }
+    then(actual).isEqualTo(expected);
+  }
 
-    @Test
-    void javaNetTypesShouldBePopulated() {
-        // when
-        Website website = new EasyRandom().nextObject(Website.class);
+  @Test
+  void javaNetTypesShouldBePopulated() {
+    // when
+    Website website = new EasyRandom().nextObject(Website.class);
 
-        then(website).hasNoNullFieldsOrProperties();
-    }
+    then(website).hasNoNullFieldsOrProperties();
+  }
 }

@@ -32,46 +32,47 @@ import org.junit.jupiter.api.Test;
 
 class FloatRangeRandomizerTest extends AbstractRangeRandomizerTest<Float> {
 
-    @BeforeEach
-    void setUp() {
-        min = 0.001f;
-        max = 0.002f;
-        randomizer = new FloatRangeRandomizer(min, max);
-    }
+  @BeforeEach
+  void setUp() {
+    min = 0.001f;
+    max = 0.002f;
+    randomizer = new FloatRangeRandomizer(min, max);
+  }
 
-    @Test
-    void generatedValueShouldBeWithinSpecifiedRange() {
-        Float randomValue = randomizer.getRandomValue();
-        assertThat(randomValue).isBetween(min, max);
-    }
+  @Test
+  void generatedValueShouldBeWithinSpecifiedRange() {
+    Float randomValue = randomizer.getRandomValue();
+    assertThat(randomValue).isBetween(min, max);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new FloatRangeRandomizer(max, min)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new FloatRangeRandomizer(max, min))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-        randomizer = new FloatRangeRandomizer(null, max);
-        Float randomFloat = randomizer.getRandomValue();
-        assertThat(randomFloat).isLessThanOrEqualTo(max);
-    }
+  @Test
+  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
+    randomizer = new FloatRangeRandomizer(null, max);
+    Float randomFloat = randomizer.getRandomValue();
+    assertThat(randomFloat).isLessThanOrEqualTo(max);
+  }
 
-    @Test
-    void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-        randomizer = new FloatRangeRandomizer(min, null);
-        Float randomFloat = randomizer.getRandomValue();
-        assertThat(randomFloat).isGreaterThanOrEqualTo(min);
-    }
+  @Test
+  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
+    randomizer = new FloatRangeRandomizer(min, null);
+    Float randomFloat = randomizer.getRandomValue();
+    assertThat(randomFloat).isGreaterThanOrEqualTo(min);
+  }
 
-    @Test
-    void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-        // given
-        FloatRangeRandomizer floatRangeRandomizer = new FloatRangeRandomizer(min, max, SEED);
-        
-        // when
-        Float f = floatRangeRandomizer.getRandomValue();
+  @Test
+  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
+    // given
+    FloatRangeRandomizer floatRangeRandomizer = new FloatRangeRandomizer(min, max, SEED);
 
-        then(f).isEqualTo(0.0017231742f);
-    }
+    // when
+    Float f = floatRangeRandomizer.getRandomValue();
+
+    then(f).isEqualTo(0.0017231742f);
+  }
 }

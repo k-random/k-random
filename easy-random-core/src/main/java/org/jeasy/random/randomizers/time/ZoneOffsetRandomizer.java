@@ -23,10 +23,9 @@
  */
 package org.jeasy.random.randomizers.time;
 
+import java.time.ZoneOffset;
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
-
-import java.time.ZoneOffset;
 
 /**
  * A {@link Randomizer} that generates random {@link ZoneOffset}.
@@ -35,35 +34,32 @@ import java.time.ZoneOffset;
  */
 public class ZoneOffsetRandomizer implements Randomizer<ZoneOffset> {
 
-    /**
-     * Upper bound for ZoneOffset seconds
-     *
-     * @see java.time.ZoneOffset#ofTotalSeconds
-     */
-    private static final int MAX_SECONDS = 64800;
+  /**
+   * Upper bound for ZoneOffset seconds
+   *
+   * @see java.time.ZoneOffset#ofTotalSeconds
+   */
+  private static final int MAX_SECONDS = 64800;
 
-    private final IntegerRangeRandomizer integerRangeRandomizer;
+  private final IntegerRangeRandomizer integerRangeRandomizer;
 
-    /**
-     * Create a new {@link ZoneOffsetRandomizer}.
-     */
-    public ZoneOffsetRandomizer() {
-        integerRangeRandomizer = new IntegerRangeRandomizer(-MAX_SECONDS, MAX_SECONDS);
-    }
+  /** Create a new {@link ZoneOffsetRandomizer}. */
+  public ZoneOffsetRandomizer() {
+    integerRangeRandomizer = new IntegerRangeRandomizer(-MAX_SECONDS, MAX_SECONDS);
+  }
 
-    /**
-     * Create a new {@link ZoneOffsetRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public ZoneOffsetRandomizer(final long seed) {
-        integerRangeRandomizer = new IntegerRangeRandomizer(-MAX_SECONDS, MAX_SECONDS, seed);
-    }
+  /**
+   * Create a new {@link ZoneOffsetRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public ZoneOffsetRandomizer(final long seed) {
+    integerRangeRandomizer = new IntegerRangeRandomizer(-MAX_SECONDS, MAX_SECONDS, seed);
+  }
 
-    @Override
-    public ZoneOffset getRandomValue() {
-        Integer randomValue = integerRangeRandomizer.getRandomValue();
-        return ZoneOffset.ofTotalSeconds(randomValue);
-    }
-    
+  @Override
+  public ZoneOffset getRandomValue() {
+    Integer randomValue = integerRangeRandomizer.getRandomValue();
+    return ZoneOffset.ofTotalSeconds(randomValue);
+  }
 }

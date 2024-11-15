@@ -33,27 +33,26 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
  */
 public abstract class AbstractRangeRandomizer<T> extends AbstractRandomizer<T> {
 
-    final T min;
-    final T max;
+  final T min;
+  final T max;
 
-    protected AbstractRangeRandomizer(final T min, final T max) {
-        super();
-        this.min = min != null ? min : getDefaultMinValue();
-        this.max = max != null ? max : getDefaultMaxValue();
-        checkValues();
-    }
+  protected AbstractRangeRandomizer(final T min, final T max) {
+    super();
+    this.min = min != null ? min : getDefaultMinValue();
+    this.max = max != null ? max : getDefaultMaxValue();
+    checkValues();
+  }
 
-    protected AbstractRangeRandomizer(final T min, final T max, final long seed) {
-        super(seed);
-        this.min = min != null ? min : getDefaultMinValue();
-        this.max = max != null ? max : getDefaultMaxValue();
-        checkValues();
-    }
+  protected AbstractRangeRandomizer(final T min, final T max, final long seed) {
+    super(seed);
+    this.min = min != null ? min : getDefaultMinValue();
+    this.max = max != null ? max : getDefaultMaxValue();
+    checkValues();
+  }
 
-    protected abstract void checkValues();
+  protected abstract void checkValues();
 
-    protected abstract T getDefaultMinValue();
+  protected abstract T getDefaultMinValue();
 
-    protected abstract T getDefaultMaxValue();
-
+  protected abstract T getDefaultMaxValue();
 }

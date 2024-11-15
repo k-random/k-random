@@ -27,12 +27,11 @@ import org.jeasy.random.randomizers.AbstractRandomizer;
 
 public abstract class CharSequenceRandomizer<T extends CharSequence> extends AbstractRandomizer<T> {
 
-    protected CharSequenceRandomizer() {
-        super();
-    }
+  protected CharSequenceRandomizer() {
+    super();
+  }
 
-    protected CharSequenceRandomizer(long seed) {
-        super(seed);
-    }
-
+  protected CharSequenceRandomizer(long seed) {
+    super(seed);
+  }
 }

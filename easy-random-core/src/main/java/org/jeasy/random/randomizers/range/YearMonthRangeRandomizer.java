@@ -26,62 +26,59 @@ package org.jeasy.random.randomizers.range;
 import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
-
 import org.jeasy.random.EasyRandomParameters;
 
-/**
- * Generate a random {@link YearMonth} in the given range.
- */
+/** Generate a random {@link YearMonth} in the given range. */
 public class YearMonthRangeRandomizer extends AbstractRangeRandomizer<YearMonth> {
 
-    /**
-     * Create a new {@link YearMonthRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public YearMonthRangeRandomizer(final YearMonth min, final YearMonth max) {
-        super(min, max);
-    }
+  /**
+   * Create a new {@link YearMonthRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public YearMonthRangeRandomizer(final YearMonth min, final YearMonth max) {
+    super(min, max);
+  }
 
-    /**
-     * Create a new {@link YearMonthRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public YearMonthRangeRandomizer(final YearMonth min, final YearMonth max, final long seed) {
-        super(min, max, seed);
-    }
+  /**
+   * Create a new {@link YearMonthRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public YearMonthRangeRandomizer(final YearMonth min, final YearMonth max, final long seed) {
+    super(min, max, seed);
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min.isAfter(max)) {
-            throw new IllegalArgumentException("max must be after min");
-        }
+  @Override
+  protected void checkValues() {
+    if (min.isAfter(max)) {
+      throw new IllegalArgumentException("max must be after min");
     }
+  }
 
-    @Override
-    protected YearMonth getDefaultMinValue() {
-        ZonedDateTime defaultDateMin = EasyRandomParameters.DEFAULT_DATES_RANGE.getMin();
-        return YearMonth.of(defaultDateMin.getYear(), defaultDateMin.getMonth());
-    }
+  @Override
+  protected YearMonth getDefaultMinValue() {
+    ZonedDateTime defaultDateMin = EasyRandomParameters.DEFAULT_DATES_RANGE.getMin();
+    return YearMonth.of(defaultDateMin.getYear(), defaultDateMin.getMonth());
+  }
 
-    @Override
-    protected YearMonth getDefaultMaxValue() {
-        ZonedDateTime defaultDateMax = EasyRandomParameters.DEFAULT_DATES_RANGE.getMax();
-        return YearMonth.of(defaultDateMax.getYear(), defaultDateMax.getMonth());
-    }
+  @Override
+  protected YearMonth getDefaultMaxValue() {
+    ZonedDateTime defaultDateMax = EasyRandomParameters.DEFAULT_DATES_RANGE.getMax();
+    return YearMonth.of(defaultDateMax.getYear(), defaultDateMax.getMonth());
+  }
 
-    @Override
-    public YearMonth getRandomValue() {
-        long minYear = min.getLong(ChronoField.YEAR);
-        long maxYear = max.getLong(ChronoField.YEAR);
-        long randomYear = (long) nextDouble(minYear, maxYear);
-        long minMonth = min.getLong(ChronoField.MONTH_OF_YEAR);
-        long maxMonth = max.getLong(ChronoField.MONTH_OF_YEAR);
-        long randomMonth = (long) nextDouble(minMonth, maxMonth);
-        return YearMonth.of(Math.toIntExact(randomYear), Math.toIntExact(randomMonth));
-    }
+  @Override
+  public YearMonth getRandomValue() {
+    long minYear = min.getLong(ChronoField.YEAR);
+    long maxYear = max.getLong(ChronoField.YEAR);
+    long randomYear = (long) nextDouble(minYear, maxYear);
+    long minMonth = min.getLong(ChronoField.MONTH_OF_YEAR);
+    long maxMonth = max.getLong(ChronoField.MONTH_OF_YEAR);
+    long randomMonth = (long) nextDouble(minMonth, maxMonth);
+    return YearMonth.of(Math.toIntExact(randomYear), Math.toIntExact(randomMonth));
+  }
 }

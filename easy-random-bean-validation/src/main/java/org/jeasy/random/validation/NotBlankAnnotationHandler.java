@@ -23,22 +23,21 @@
  */
 package org.jeasy.random.validation;
 
+import java.lang.reflect.Field;
+import java.util.Random;
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 
-import java.lang.reflect.Field;
-import java.util.Random;
-
 class NotBlankAnnotationHandler implements BeanValidationAnnotationHandler {
 
-    private final Random random;
+  private final Random random;
 
-    NotBlankAnnotationHandler(final long seed) {
-        random = new Random(seed);
-    }
+  NotBlankAnnotationHandler(final long seed) {
+    random = new Random(seed);
+  }
 
-    @Override
-    public Randomizer<?> getRandomizer(Field field) {
-        return new StringRandomizer(random.nextLong());
-    }
+  @Override
+  public Randomizer<?> getRandomizer(Field field) {
+    return new StringRandomizer(random.nextLong());
+  }
 }

@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.util.Locale;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random zip codes.
@@ -34,33 +33,30 @@ import java.util.Locale;
  */
 public class ZipCodeRandomizer extends FakerBasedRandomizer<String> {
 
-    /**
-     * Create a new {@link ZipCodeRandomizer}.
-     */
-    public ZipCodeRandomizer() {
-    }
+  /** Create a new {@link ZipCodeRandomizer}. */
+  public ZipCodeRandomizer() {}
 
-    /**
-     * Create a new {@link ZipCodeRandomizer}.
-     *
-     * @param seed the initial seed
-     */
-    public ZipCodeRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link ZipCodeRandomizer}.
+   *
+   * @param seed the initial seed
+   */
+  public ZipCodeRandomizer(final long seed) {
+    super(seed);
+  }
 
-    /**
-     * Create a new {@link ZipCodeRandomizer}.
-     *
-     * @param seed   the initial seed
-     * @param locale the locale to use
-     */
-    public ZipCodeRandomizer(final long seed, final Locale locale) {
-        super(seed, locale);
-    }
+  /**
+   * Create a new {@link ZipCodeRandomizer}.
+   *
+   * @param seed the initial seed
+   * @param locale the locale to use
+   */
+  public ZipCodeRandomizer(final long seed, final Locale locale) {
+    super(seed, locale);
+  }
 
-    @Override
-    public String getRandomValue() {
-        return faker.address().zipCode();
-    }
+  @Override
+  public String getRandomValue() {
+    return faker.address().zipCode();
+  }
 }

@@ -23,91 +23,90 @@
  */
 package org.jeasy.random.randomizers.range;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 class LocalDateTimeRangeRandomizerTest extends AbstractRangeRandomizerTest<LocalDateTime> {
 
-    private LocalDateTime minDateTime, maxDateTime;
+  private LocalDateTime minDateTime, maxDateTime;
 
-    @BeforeEach
-    void setUp() {
-        minDateTime = LocalDateTime.MIN;
-        maxDateTime = LocalDateTime.MAX;
-        randomizer = new LocalDateTimeRangeRandomizer(minDateTime, maxDateTime);
-    }
+  @BeforeEach
+  void setUp() {
+    minDateTime = LocalDateTime.MIN;
+    maxDateTime = LocalDateTime.MAX;
+    randomizer = new LocalDateTimeRangeRandomizer(minDateTime, maxDateTime);
+  }
 
-    @Test
-    void generatedLocalDateTimeShouldNotBeNull() {
-        assertThat(randomizer.getRandomValue()).isNotNull();
-    }
+  @Test
+  void generatedLocalDateTimeShouldNotBeNull() {
+    assertThat(randomizer.getRandomValue()).isNotNull();
+  }
 
-    @Test
-    void generatedLocalDateTimeShouldBeWithinSpecifiedRange() {
-        assertThat(randomizer.getRandomValue()).isBetween(minDateTime, maxDateTime);
-    }
+  @Test
+  void generatedLocalDateTimeShouldBeWithinSpecifiedRange() {
+    assertThat(randomizer.getRandomValue()).isBetween(minDateTime, maxDateTime);
+  }
 
-    @Test
-    void generatedLocalDateTimeShouldBeAlwaysTheSameForTheSameSeed() {
+  @Test
+  void generatedLocalDateTimeShouldBeAlwaysTheSameForTheSameSeed() {
 
-        // Given
-        randomizer = new LocalDateTimeRangeRandomizer(minDateTime, maxDateTime, SEED);
-        LocalDateTime expected = LocalDateTime.parse("+446348406-04-09T16:32:16.990898895");
+    // Given
+    randomizer = new LocalDateTimeRangeRandomizer(minDateTime, maxDateTime, SEED);
+    LocalDateTime expected = LocalDateTime.parse("+446348406-04-09T16:32:16.990898895");
 
-        // When
-        LocalDateTime randomValue = randomizer.getRandomValue();
+    // When
+    LocalDateTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isEqualTo(expected);
-    }
+    // Then
+    assertThat(randomValue).isEqualTo(expected);
+  }
 
-    @Test
-    void whenSpecifiedMinDateTimeIsAfterMaxDateTime_thenShouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> new LocalDateTimeRangeRandomizer(maxDateTime, minDateTime)).isInstanceOf(IllegalArgumentException.class);
-    }
+  @Test
+  void whenSpecifiedMinDateTimeIsAfterMaxDateTime_thenShouldThrowIllegalArgumentException() {
+    assertThatThrownBy(() -> new LocalDateTimeRangeRandomizer(maxDateTime, minDateTime))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @Test
-    void whenSpecifiedMinDateTimeIsNull_thenShouldUseDefaultMinValue() {
-        // Given
-        randomizer = new LocalDateTimeRangeRandomizer(null, maxDateTime);
+  @Test
+  void whenSpecifiedMinDateTimeIsNull_thenShouldUseDefaultMinValue() {
+    // Given
+    randomizer = new LocalDateTimeRangeRandomizer(null, maxDateTime);
 
-        // When
-        LocalDateTime randomValue = randomizer.getRandomValue();
+    // When
+    LocalDateTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isBeforeOrEqualTo(maxDateTime);
-    }
+    // Then
+    assertThat(randomValue).isBeforeOrEqualTo(maxDateTime);
+  }
 
-    @Test
-    void whenSpecifiedMaxDateTimeIsNull_thenShouldUseDefaultMaxValue() {
-        // Given
-        randomizer = new LocalDateTimeRangeRandomizer(minDateTime, null);
+  @Test
+  void whenSpecifiedMaxDateTimeIsNull_thenShouldUseDefaultMaxValue() {
+    // Given
+    randomizer = new LocalDateTimeRangeRandomizer(minDateTime, null);
 
-        // when
-        LocalDateTime randomValue = randomizer.getRandomValue();
+    // when
+    LocalDateTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isAfterOrEqualTo(minDateTime);
-    }
+    // Then
+    assertThat(randomValue).isAfterOrEqualTo(minDateTime);
+  }
 
-    @Test
-    void whenMaxDateIsAfterMidnight_thenShouldNotThrowException() {
-        minDateTime = LocalDateTime.parse("2019-10-21T23:33:44");
-        maxDateTime = LocalDateTime.parse("2019-10-22T00:33:22");
+  @Test
+  void whenMaxDateIsAfterMidnight_thenShouldNotThrowException() {
+    minDateTime = LocalDateTime.parse("2019-10-21T23:33:44");
+    maxDateTime = LocalDateTime.parse("2019-10-22T00:33:22");
 
-        // Given
-        randomizer = new LocalDateTimeRangeRandomizer(minDateTime, maxDateTime);
+    // Given
+    randomizer = new LocalDateTimeRangeRandomizer(minDateTime, maxDateTime);
 
-        // when
-        LocalDateTime randomValue = randomizer.getRandomValue();
+    // when
+    LocalDateTime randomValue = randomizer.getRandomValue();
 
-        // Then
-        assertThat(randomValue).isBetween(minDateTime, maxDateTime);
-    }
-
+    // Then
+    assertThat(randomValue).isBetween(minDateTime, maxDateTime);
+  }
 }

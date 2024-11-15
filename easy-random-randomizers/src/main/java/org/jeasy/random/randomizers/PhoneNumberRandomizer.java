@@ -23,9 +23,8 @@
  */
 package org.jeasy.random.randomizers;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.util.Locale;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random phone numbers.
@@ -34,33 +33,30 @@ import java.util.Locale;
  */
 public class PhoneNumberRandomizer extends FakerBasedRandomizer<String> {
 
-    /**
-     * Create a new {@link PhoneNumberRandomizer}.
-     */
-    public PhoneNumberRandomizer() {
-    }
+  /** Create a new {@link PhoneNumberRandomizer}. */
+  public PhoneNumberRandomizer() {}
 
-    /**
-     * Create a new {@link PhoneNumberRandomizer}.
-     *
-     * @param seed the initial seed
-     */
-    public PhoneNumberRandomizer(final long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link PhoneNumberRandomizer}.
+   *
+   * @param seed the initial seed
+   */
+  public PhoneNumberRandomizer(final long seed) {
+    super(seed);
+  }
 
-    /**
-     * Create a new {@link PhoneNumberRandomizer}.
-     *
-     * @param seed   the initial seed
-     * @param locale the locale to use
-     */
-    public PhoneNumberRandomizer(final long seed, final Locale locale) {
-        super(seed, locale);
-    }
+  /**
+   * Create a new {@link PhoneNumberRandomizer}.
+   *
+   * @param seed the initial seed
+   * @param locale the locale to use
+   */
+  public PhoneNumberRandomizer(final long seed, final Locale locale) {
+    super(seed, locale);
+  }
 
-    @Override
-    public String getRandomValue() {
-        return faker.phoneNumber().phoneNumber();
-    }
+  @Override
+  public String getRandomValue() {
+    return faker.phoneNumber().phoneNumber();
+  }
 }

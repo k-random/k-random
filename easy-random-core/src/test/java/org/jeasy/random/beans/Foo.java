@@ -25,16 +25,15 @@ package org.jeasy.random.beans;
 
 public class Foo {
 
-    private Bar bar;
+  private Bar bar;
 
-    public Foo() {
-    }
+  public Foo() {}
 
-    public Bar getBar() {
-        return this.bar;
-    }
+  public Bar getBar() {
+    return this.bar;
+  }
 
-    public void setBar(Bar bar) {
-        this.bar = bar;
-    }
+  public void setBar(Bar bar) {
+    this.bar = bar;
+  }
 }

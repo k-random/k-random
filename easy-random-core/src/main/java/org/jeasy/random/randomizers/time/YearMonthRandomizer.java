@@ -23,12 +23,11 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.randomizers.misc.EnumRandomizer;
-
 import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
+import org.jeasy.random.api.Randomizer;
+import org.jeasy.random.randomizers.misc.EnumRandomizer;
 
 /**
  * A {@link Randomizer} that generates random {@link YearMonth}.
@@ -37,31 +36,29 @@ import java.time.YearMonth;
  */
 public class YearMonthRandomizer implements Randomizer<YearMonth> {
 
-    private final YearRandomizer yearRandomizer;
-    private final EnumRandomizer<Month> monthRandomizer;
+  private final YearRandomizer yearRandomizer;
+  private final EnumRandomizer<Month> monthRandomizer;
 
-    /**
-     * Create a new {@link YearMonthRandomizer}.
-     */
-    public YearMonthRandomizer() {
-        yearRandomizer = new YearRandomizer();
-        monthRandomizer = new EnumRandomizer<>(Month.class);
-    }
+  /** Create a new {@link YearMonthRandomizer}. */
+  public YearMonthRandomizer() {
+    yearRandomizer = new YearRandomizer();
+    monthRandomizer = new EnumRandomizer<>(Month.class);
+  }
 
-    /**
-     * Create a new {@link YearMonthRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public YearMonthRandomizer(final long seed) {
-        yearRandomizer = new YearRandomizer(seed);
-        monthRandomizer = new EnumRandomizer<>(Month.class, seed);
-    }
+  /**
+   * Create a new {@link YearMonthRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public YearMonthRandomizer(final long seed) {
+    yearRandomizer = new YearRandomizer(seed);
+    monthRandomizer = new EnumRandomizer<>(Month.class, seed);
+  }
 
-    @Override
-    public YearMonth getRandomValue() {
-        Year randomYear = yearRandomizer.getRandomValue();
-        Month randomMonth = monthRandomizer.getRandomValue();
-        return YearMonth.of(randomYear.getValue(), randomMonth.getValue());
-    }
+  @Override
+  public YearMonth getRandomValue() {
+    Year randomYear = yearRandomizer.getRandomValue();
+    Month randomMonth = monthRandomizer.getRandomValue();
+    return YearMonth.of(randomYear.getValue(), randomMonth.getValue());
+  }
 }

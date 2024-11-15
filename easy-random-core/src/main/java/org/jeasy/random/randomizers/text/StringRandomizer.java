@@ -23,10 +23,8 @@
  */
 package org.jeasy.random.randomizers.text;
 
-import org.jeasy.random.EasyRandomParameters;
-import org.jeasy.random.randomizers.AbstractRandomizer;
-
 import java.nio.charset.Charset;
+import org.jeasy.random.EasyRandomParameters;
 
 /**
  * Generate a random {@link String}.
@@ -35,124 +33,123 @@ import java.nio.charset.Charset;
  */
 public class StringRandomizer extends CharSequenceRandomizer<String> {
 
-    private final CharacterRandomizer characterRandomizer;
+  private final CharacterRandomizer characterRandomizer;
 
-    private int maxLength = EasyRandomParameters.DEFAULT_STRING_LENGTH_RANGE.getMax();
-    private int minLength = EasyRandomParameters.DEFAULT_STRING_LENGTH_RANGE.getMin();
+  private int maxLength = EasyRandomParameters.DEFAULT_STRING_LENGTH_RANGE.getMax();
+  private int minLength = EasyRandomParameters.DEFAULT_STRING_LENGTH_RANGE.getMin();
 
-    /**
-     * Create a new {@link StringRandomizer}.
-     */
-    public StringRandomizer() {
-        super();
-        characterRandomizer = new CharacterRandomizer();
+  /** Create a new {@link StringRandomizer}. */
+  public StringRandomizer() {
+    super();
+    characterRandomizer = new CharacterRandomizer();
+  }
+
+  /**
+   * Create a new {@link StringRandomizer}.
+   *
+   * @param charset to use
+   */
+  public StringRandomizer(final Charset charset) {
+    characterRandomizer = new CharacterRandomizer(charset);
+  }
+
+  /**
+   * Create a new {@link StringRandomizer}.
+   *
+   * @param maxLength of the String to generate
+   */
+  public StringRandomizer(int maxLength) {
+    super();
+    this.maxLength = maxLength;
+    characterRandomizer = new CharacterRandomizer();
+  }
+
+  /**
+   * Create a new {@link StringRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public StringRandomizer(long seed) {
+    super(seed);
+    characterRandomizer = new CharacterRandomizer(seed);
+  }
+
+  /**
+   * Create a new {@link StringRandomizer}.
+   *
+   * @param charset to use
+   * @param seed initial seed
+   */
+  public StringRandomizer(final Charset charset, final long seed) {
+    super(seed);
+    characterRandomizer = new CharacterRandomizer(charset, seed);
+  }
+
+  /**
+   * Create a new {@link StringRandomizer}.
+   *
+   * @param maxLength of the String to generate
+   * @param seed initial seed
+   */
+  public StringRandomizer(final int maxLength, final long seed) {
+    super(seed);
+    this.maxLength = maxLength;
+    characterRandomizer = new CharacterRandomizer(seed);
+  }
+
+  /**
+   * Create a new {@link StringRandomizer}.
+   *
+   * @param maxLength of the String to generate
+   * @param minLength of the String to generate
+   * @param seed initial seed
+   */
+  public StringRandomizer(final int minLength, final int maxLength, final long seed) {
+    super(seed);
+    this.maxLength = maxLength;
+    this.minLength = minLength;
+    characterRandomizer = new CharacterRandomizer(seed);
+  }
+
+  /**
+   * Create a new {@link StringRandomizer}.
+   *
+   * @param charset to use
+   * @param maxLength of the String to generate
+   * @param seed initial seed
+   */
+  public StringRandomizer(final Charset charset, final int maxLength, final long seed) {
+    super(seed);
+    this.maxLength = maxLength;
+    characterRandomizer = new CharacterRandomizer(charset, seed);
+  }
+
+  /**
+   * Create a new {@link StringRandomizer}.
+   *
+   * @param charset to use
+   * @param maxLength of the String to generate
+   * @param minLength of the String to generate
+   * @param seed initial seed
+   */
+  public StringRandomizer(
+      final Charset charset, final int minLength, final int maxLength, final long seed) {
+    super(seed);
+    if (minLength > maxLength) {
+      throw new IllegalArgumentException("minLength should be less than or equal to maxLength");
     }
+    this.maxLength = maxLength;
+    this.minLength = minLength;
+    characterRandomizer = new CharacterRandomizer(charset, seed);
+  }
 
-    /**
-     * Create a new {@link StringRandomizer}.
-     *
-     * @param charset to use
-     */
-    public StringRandomizer(final Charset charset) {
-        characterRandomizer = new CharacterRandomizer(charset);
+  @Override
+  public String getRandomValue() {
+    int length = (int) nextDouble(minLength, maxLength);
+    char[] chars = new char[length];
+    for (int i = 0; i < length; i++) {
+      chars[i] = characterRandomizer.getRandomValue();
     }
-
-    /**
-     * Create a new {@link StringRandomizer}.
-     *
-     * @param maxLength of the String to generate
-     */
-    public StringRandomizer(int maxLength) {
-        super();
-        this.maxLength = maxLength;
-        characterRandomizer = new CharacterRandomizer();
-    }
-
-    /**
-     * Create a new {@link StringRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public StringRandomizer(long seed) {
-        super(seed);
-        characterRandomizer = new CharacterRandomizer(seed);
-    }
-
-    /**
-     * Create a new {@link StringRandomizer}.
-     *
-     * @param charset to use
-     * @param seed    initial seed
-     */
-    public StringRandomizer(final Charset charset, final long seed) {
-        super(seed);
-        characterRandomizer = new CharacterRandomizer(charset, seed);
-    }
-
-    /**
-     * Create a new {@link StringRandomizer}.
-     *
-     * @param maxLength of the String to generate
-     * @param seed      initial seed
-     */
-    public StringRandomizer(final int maxLength, final long seed) {
-        super(seed);
-        this.maxLength = maxLength;
-        characterRandomizer = new CharacterRandomizer(seed);
-    }
-
-    /**
-     * Create a new {@link StringRandomizer}.
-     *
-     * @param maxLength of the String to generate
-     * @param minLength of the String to generate
-     * @param seed      initial seed
-     */
-    public StringRandomizer(final int minLength, final int maxLength, final long seed) {
-        super(seed);
-        this.maxLength = maxLength;
-        this.minLength = minLength;
-        characterRandomizer = new CharacterRandomizer(seed);
-    }
-
-    /**
-     * Create a new {@link StringRandomizer}.
-     *
-     * @param charset   to use
-     * @param maxLength of the String to generate
-     * @param seed      initial seed
-     */
-    public StringRandomizer(final Charset charset, final int maxLength, final long seed) {
-        super(seed);
-        this.maxLength = maxLength;
-        characterRandomizer = new CharacterRandomizer(charset, seed);
-    }
-
-    /**
-     * Create a new {@link StringRandomizer}.
-     *
-     * @param charset   to use
-     * @param maxLength of the String to generate
-     * @param minLength of the String to generate
-     * @param seed      initial seed
-     */
-    public StringRandomizer(final Charset charset, final int minLength, final int maxLength, final long seed) {
-        super(seed);
-        if (minLength > maxLength) {
-            throw new IllegalArgumentException("minLength should be less than or equal to maxLength");
-        }
-        this.maxLength = maxLength;
-        this.minLength = minLength;
-        characterRandomizer = new CharacterRandomizer(charset, seed);
-    }
-
-    @Override
-    public String getRandomValue() {
-        int length = (int) nextDouble(minLength, maxLength);
-        char[] chars = new char[length];
-        for (int i = 0; i < length; i++) {
-            chars[i] = characterRandomizer.getRandomValue();
-        }
-        return new String(chars);
-    }
+    return new String(chars);
+  }
 }

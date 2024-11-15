@@ -33,50 +33,49 @@ import java.time.temporal.ChronoField;
  */
 public class LocalDateRangeRandomizer extends AbstractRangeRandomizer<LocalDate> {
 
-    /**
-     * Create a new {@link LocalDateRangeRandomizer}.
-     *
-     * @param min min value (inclusive)
-     * @param max max value (exclusive)
-     */
-    public LocalDateRangeRandomizer(final LocalDate min, final LocalDate max) {
-        super(min, max);
-    }
+  /**
+   * Create a new {@link LocalDateRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   */
+  public LocalDateRangeRandomizer(final LocalDate min, final LocalDate max) {
+    super(min, max);
+  }
 
-    /**
-     * Create a new {@link LocalDateRangeRandomizer}.
-     *
-     * @param min  min value (inclusive)
-     * @param max  max value (exclusive)
-     * @param seed initial seed
-     */
-    public LocalDateRangeRandomizer(final LocalDate min, final LocalDate max, final long seed) {
-        super(min, max, seed);
-    }
+  /**
+   * Create a new {@link LocalDateRangeRandomizer}.
+   *
+   * @param min min value (inclusive)
+   * @param max max value (exclusive)
+   * @param seed initial seed
+   */
+  public LocalDateRangeRandomizer(final LocalDate min, final LocalDate max, final long seed) {
+    super(min, max, seed);
+  }
 
-    @Override
-    protected void checkValues() {
-        if (min.isAfter(max)) {
-            throw new IllegalArgumentException("max must be after min");
-        }
+  @Override
+  protected void checkValues() {
+    if (min.isAfter(max)) {
+      throw new IllegalArgumentException("max must be after min");
     }
+  }
 
-    @Override
-    protected LocalDate getDefaultMinValue() {
-        return LocalDate.MIN;
-    }
+  @Override
+  protected LocalDate getDefaultMinValue() {
+    return LocalDate.MIN;
+  }
 
-    @Override
-    protected LocalDate getDefaultMaxValue() {
-        return LocalDate.MAX;
-    }
+  @Override
+  protected LocalDate getDefaultMaxValue() {
+    return LocalDate.MAX;
+  }
 
-    @Override
-    public LocalDate getRandomValue() {
-        long minEpochDay = min.getLong(ChronoField.EPOCH_DAY);
-        long maxEpochDay = max.getLong(ChronoField.EPOCH_DAY);
-        long randomEpochDay = (long) nextDouble(minEpochDay, maxEpochDay);
-        return LocalDate.ofEpochDay(randomEpochDay);
-    }
-
+  @Override
+  public LocalDate getRandomValue() {
+    long minEpochDay = min.getLong(ChronoField.EPOCH_DAY);
+    long maxEpochDay = max.getLong(ChronoField.EPOCH_DAY);
+    long randomEpochDay = (long) nextDouble(minEpochDay, maxEpochDay);
+    return LocalDate.ofEpochDay(randomEpochDay);
+  }
 }

@@ -23,10 +23,9 @@
  */
 package org.jeasy.random.randomizers.net;
 
-import org.jeasy.random.randomizers.AbstractRandomizer;
-
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.jeasy.random.randomizers.AbstractRandomizer;
 
 /**
  * Generate a random {@link URL}.
@@ -35,31 +34,28 @@ import java.net.URL;
  */
 public class UrlRandomizer extends AbstractRandomizer<URL> {
 
-    private final String[] urls = getPredefinedValuesOf("urls");
+  private final String[] urls = getPredefinedValuesOf("urls");
 
-    /**
-     * Create a new {@link UrlRandomizer}.
-     */
-    public UrlRandomizer() {
-    }
+  /** Create a new {@link UrlRandomizer}. */
+  public UrlRandomizer() {}
 
-    /**
-     * Create a new {@link UrlRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public UrlRandomizer(long seed) {
-        super(seed);
-    }
+  /**
+   * Create a new {@link UrlRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public UrlRandomizer(long seed) {
+    super(seed);
+  }
 
-    @Override
-    public URL getRandomValue() {
-        try {
-            int randomIndex = random.nextInt(urls.length);
-            return new URL(urls[randomIndex]);
-        } catch (MalformedURLException e) {
-            // predefined URLs are valid
-            return null;
-        }
+  @Override
+  public URL getRandomValue() {
+    try {
+      int randomIndex = random.nextInt(urls.length);
+      return new URL(urls[randomIndex]);
+    } catch (MalformedURLException e) {
+      // predefined URLs are valid
+      return null;
     }
+  }
 }

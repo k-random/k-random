@@ -28,35 +28,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
 
 class EmailRandomizerTest {
 
-    @Test
-    void whenSafeModeIsEnabled_thenDomainNameShouldBeInvalid() {
-        // given
-        EmailRandomizer emailRandomizer = new EmailRandomizer(123L, Locale.ENGLISH, true);
+  @Test
+  void whenSafeModeIsEnabled_thenDomainNameShouldBeInvalid() {
+    // given
+    EmailRandomizer emailRandomizer = new EmailRandomizer(123L, Locale.ENGLISH, true);
 
-        // when
-        String randomValue = emailRandomizer.getRandomValue();
+    // when
+    String randomValue = emailRandomizer.getRandomValue();
 
-        // then
-        assertThat(randomValue).contains("@example.com"); // example.com is the only domain in faker's data file with 'en' locale (see en:faker:internet:safe_email: in en.yml)
-    }
+    // then
+    assertThat(randomValue)
+        .contains(
+            "@example.com"); // example.com is the only domain in faker's data file with 'en' locale
+    // (see en:faker:internet:safe_email: in en.yml)
+  }
 
-    @Test
-    void whenSafeModeIsDisabled_thenDomainNameShouldBeValid() {
-        // given
-        List<String> expectedDomains = Arrays.asList("gmail.com", "yahoo.com", "hotmail.com"); // see en:faker:internet:free_email: in faker's en.yml
-        EmailRandomizer emailRandomizer = new EmailRandomizer(123L, Locale.ENGLISH, false);
+  @Test
+  void whenSafeModeIsDisabled_thenDomainNameShouldBeValid() {
+    // given
+    List<String> expectedDomains =
+        Arrays.asList(
+            "gmail.com",
+            "yahoo.com",
+            "hotmail.com"); // see en:faker:internet:free_email: in faker's en.yml
+    EmailRandomizer emailRandomizer = new EmailRandomizer(123L, Locale.ENGLISH, false);
 
-        // when
-        String randomValue = emailRandomizer.getRandomValue();
-        String actualDomain = randomValue.substring(randomValue.lastIndexOf("@") + 1);
+    // when
+    String randomValue = emailRandomizer.getRandomValue();
+    String actualDomain = randomValue.substring(randomValue.lastIndexOf("@") + 1);
 
-        // then
-        assertThat(expectedDomains).contains(actualDomain);
-    }
-
+    // then
+    assertThat(expectedDomains).contains(actualDomain);
+  }
 }

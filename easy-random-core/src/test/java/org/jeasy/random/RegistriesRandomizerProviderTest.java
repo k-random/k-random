@@ -28,60 +28,56 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
-
+import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.api.RandomizerContext;
+import org.jeasy.random.api.RandomizerRegistry;
+import org.jeasy.random.beans.Foo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import org.jeasy.random.api.Randomizer;
-import org.jeasy.random.api.RandomizerRegistry;
-import org.jeasy.random.beans.Foo;
-
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("unchecked")
 class RegistriesRandomizerProviderTest {
 
-    @Mock
-    private RandomizerRegistry randomizerRegistry;
-    @Mock
-    private Randomizer randomizer;
-    @Mock
-    private RandomizerContext context;
+  @Mock private RandomizerRegistry randomizerRegistry;
+  @Mock private Randomizer randomizer;
+  @Mock private RandomizerContext context;
 
-    private RegistriesRandomizerProvider randomizerProvider;
+  private RegistriesRandomizerProvider randomizerProvider;
 
-    @BeforeEach
-    void setUp() {
-        randomizerProvider = new RegistriesRandomizerProvider();
-        randomizerProvider.setRandomizerRegistries(singleton(randomizerRegistry));
-    }
+  @BeforeEach
+  void setUp() {
+    randomizerProvider = new RegistriesRandomizerProvider();
+    randomizerProvider.setRandomizerRegistries(singleton(randomizerRegistry));
+  }
 
-    @Test
-    void theProviderShouldReturnTheSameRandomizerRegisteredForTheGivenField() throws NoSuchFieldException {
-        // Given
-        Field field = Foo.class.getDeclaredField("bar");
-        when(randomizerRegistry.getRandomizer(field)).thenReturn(randomizer);
+  @Test
+  void theProviderShouldReturnTheSameRandomizerRegisteredForTheGivenField()
+      throws NoSuchFieldException {
+    // Given
+    Field field = Foo.class.getDeclaredField("bar");
+    when(randomizerRegistry.getRandomizer(field)).thenReturn(randomizer);
 
-        // When
-        Randomizer<?> actual = randomizerProvider.getRandomizerByField(field, context);
+    // When
+    Randomizer<?> actual = randomizerProvider.getRandomizerByField(field, context);
 
-        // Then
-        assertThat(actual).isEqualTo(randomizer);
-    }
+    // Then
+    assertThat(actual).isEqualTo(randomizer);
+  }
 
-    @Test
-    void theProviderShouldReturnTheSameRandomizerRegisteredForTheGivenType() {
-        // Given
-        Class<String> type = String.class;
-        when(randomizerRegistry.getRandomizer(type)).thenReturn(randomizer);
+  @Test
+  void theProviderShouldReturnTheSameRandomizerRegisteredForTheGivenType() {
+    // Given
+    Class<String> type = String.class;
+    when(randomizerRegistry.getRandomizer(type)).thenReturn(randomizer);
 
-        // When
-        Randomizer<?> actual = randomizerProvider.getRandomizerByType(type, context);
+    // When
+    Randomizer<?> actual = randomizerProvider.getRandomizerByType(type, context);
 
-        // Then
-        assertThat(actual).isEqualTo(randomizer);
-    }
+    // Then
+    assertThat(actual).isEqualTo(randomizer);
+  }
 }

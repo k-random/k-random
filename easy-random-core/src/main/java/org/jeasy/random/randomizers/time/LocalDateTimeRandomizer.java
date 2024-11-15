@@ -23,11 +23,10 @@
  */
 package org.jeasy.random.randomizers.time;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import org.jeasy.random.api.Randomizer;
 
 /**
  * A {@link Randomizer} that generates random {@link LocalDateTime}.
@@ -36,39 +35,37 @@ import java.time.LocalTime;
  */
 public class LocalDateTimeRandomizer implements Randomizer<LocalDateTime> {
 
-    private LocalDateRandomizer localDateRandomizer;
-    private LocalTimeRandomizer localTimeRandomizer;
+  private LocalDateRandomizer localDateRandomizer;
+  private LocalTimeRandomizer localTimeRandomizer;
 
-    /**
-     * Create a new {@link LocalDateTimeRandomizer}.
-     */
-    public LocalDateTimeRandomizer() {
-        localDateRandomizer = new LocalDateRandomizer();
-        localTimeRandomizer = new LocalTimeRandomizer();
-    }
+  /** Create a new {@link LocalDateTimeRandomizer}. */
+  public LocalDateTimeRandomizer() {
+    localDateRandomizer = new LocalDateRandomizer();
+    localTimeRandomizer = new LocalTimeRandomizer();
+  }
 
-    /**
-     * Create a new {@link LocalDateTimeRandomizer}.
-     *
-     * @param seed initial seed
-     */
-    public LocalDateTimeRandomizer(final long seed) {
-        localDateRandomizer = new LocalDateRandomizer(seed);
-        localTimeRandomizer = new LocalTimeRandomizer(seed);
-    }
+  /**
+   * Create a new {@link LocalDateTimeRandomizer}.
+   *
+   * @param seed initial seed
+   */
+  public LocalDateTimeRandomizer(final long seed) {
+    localDateRandomizer = new LocalDateRandomizer(seed);
+    localTimeRandomizer = new LocalTimeRandomizer(seed);
+  }
 
-    @Override
-    public LocalDateTime getRandomValue() {
-        LocalDate localDate = localDateRandomizer.getRandomValue();
-        LocalTime localTime = localTimeRandomizer.getRandomValue();
-        return LocalDateTime.of(localDate, localTime);
-    }
+  @Override
+  public LocalDateTime getRandomValue() {
+    LocalDate localDate = localDateRandomizer.getRandomValue();
+    LocalTime localTime = localTimeRandomizer.getRandomValue();
+    return LocalDateTime.of(localDate, localTime);
+  }
 
-    public void setLocalDateRandomizer(final LocalDateRandomizer localDateRandomizer) {
-        this.localDateRandomizer = localDateRandomizer;
-    }
+  public void setLocalDateRandomizer(final LocalDateRandomizer localDateRandomizer) {
+    this.localDateRandomizer = localDateRandomizer;
+  }
 
-    public void setLocalTimeRandomizer(final LocalTimeRandomizer localTimeRandomizer) {
-        this.localTimeRandomizer = localTimeRandomizer;
-    }
+  public void setLocalTimeRandomizer(final LocalTimeRandomizer localTimeRandomizer) {
+    this.localTimeRandomizer = localTimeRandomizer;
+  }
 }

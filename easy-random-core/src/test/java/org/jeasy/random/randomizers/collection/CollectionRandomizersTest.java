@@ -30,89 +30,92 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.jeasy.random.api.Randomizer;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import org.jeasy.random.api.Randomizer;
-
 class CollectionRandomizersTest {
 
-    private static final int collectionSize = 3;
+  private static final int collectionSize = 3;
 
-    static Object[] generateCollectionRandomizers() {
-        Randomizer<String> elementRandomizer = elementRandomizer();
-        return new Object[] {
-                new ListRandomizer(elementRandomizer),
-                new QueueRandomizer(elementRandomizer),
-                new SetRandomizer(elementRandomizer) };
-    }
+  static Object[] generateCollectionRandomizers() {
+    Randomizer<String> elementRandomizer = elementRandomizer();
+    return new Object[] {
+      new ListRandomizer(elementRandomizer),
+      new QueueRandomizer(elementRandomizer),
+      new SetRandomizer(elementRandomizer)
+    };
+  }
 
-    @ParameterizedTest
-    @MethodSource("generateCollectionRandomizers")
-    <T> void generatedCollectionShouldNotBeNull(Randomizer<Collection<T>> collectionRandomizer) {
-        // when
-        Collection<T> randomCollection = collectionRandomizer.getRandomValue();
+  @ParameterizedTest
+  @MethodSource("generateCollectionRandomizers")
+  <T> void generatedCollectionShouldNotBeNull(Randomizer<Collection<T>> collectionRandomizer) {
+    // when
+    Collection<T> randomCollection = collectionRandomizer.getRandomValue();
 
-        then(randomCollection).isNotNull();
-    }
+    then(randomCollection).isNotNull();
+  }
 
-    static Object[] generateCollectionRandomizersWithSpecificSize() {
-        return new Object[] {
-                new ListRandomizer(elementRandomizer(), collectionSize),
-                new QueueRandomizer(elementRandomizer(), collectionSize),
-                new SetRandomizer(elementRandomizer(), collectionSize) };
-    }
+  static Object[] generateCollectionRandomizersWithSpecificSize() {
+    return new Object[] {
+      new ListRandomizer(elementRandomizer(), collectionSize),
+      new QueueRandomizer(elementRandomizer(), collectionSize),
+      new SetRandomizer(elementRandomizer(), collectionSize)
+    };
+  }
 
-    @ParameterizedTest
-    @MethodSource("generateCollectionRandomizersWithSpecificSize")
-    <T> void generatedCollectionSizeShouldBeEqualToTheSpecifiedSize(Randomizer<Collection<T>> collectionRandomizer) {
-        // when
-        Collection<T> randomCollection = collectionRandomizer.getRandomValue();
+  @ParameterizedTest
+  @MethodSource("generateCollectionRandomizersWithSpecificSize")
+  <T> void generatedCollectionSizeShouldBeEqualToTheSpecifiedSize(
+      Randomizer<Collection<T>> collectionRandomizer) {
+    // when
+    Collection<T> randomCollection = collectionRandomizer.getRandomValue();
 
-        then(randomCollection).hasSize(collectionSize);
-    }
+    then(randomCollection).hasSize(collectionSize);
+  }
 
-    static Object[] generateCollectionRandomizersForEmptyCollections() {
-        return new Object[] {
-                new ListRandomizer(elementRandomizer(), 0),
-                new QueueRandomizer(elementRandomizer(), 0),
-                new SetRandomizer(elementRandomizer(), 0) };
-    }
+  static Object[] generateCollectionRandomizersForEmptyCollections() {
+    return new Object[] {
+      new ListRandomizer(elementRandomizer(), 0),
+      new QueueRandomizer(elementRandomizer(), 0),
+      new SetRandomizer(elementRandomizer(), 0)
+    };
+  }
 
-    @ParameterizedTest
-    @MethodSource("generateCollectionRandomizersForEmptyCollections")
-    <T> void shouldAllowGeneratingEmptyCollections(Randomizer<Collection<T>> collectionRandomizer) {
-        // when
-        Collection<T> randomCollection = collectionRandomizer.getRandomValue();
+  @ParameterizedTest
+  @MethodSource("generateCollectionRandomizersForEmptyCollections")
+  <T> void shouldAllowGeneratingEmptyCollections(Randomizer<Collection<T>> collectionRandomizer) {
+    // when
+    Collection<T> randomCollection = collectionRandomizer.getRandomValue();
 
-        then(randomCollection).isEmpty();
-    }
+    then(randomCollection).isEmpty();
+  }
 
-    static Object[] generateCollectionRandomizersWithIllegalSize() {
-        Randomizer<String> elementRandomizer = elementRandomizer();
-        int illegalSize = -1;
-        return new Object[] { 
-                (ThrowingCallable) () -> new ListRandomizer(elementRandomizer, illegalSize),
-                (ThrowingCallable) () -> new QueueRandomizer(elementRandomizer, illegalSize),
-                (ThrowingCallable) () -> new SetRandomizer(elementRandomizer, illegalSize) };
-    }
+  static Object[] generateCollectionRandomizersWithIllegalSize() {
+    Randomizer<String> elementRandomizer = elementRandomizer();
+    int illegalSize = -1;
+    return new Object[] {
+      (ThrowingCallable) () -> new ListRandomizer(elementRandomizer, illegalSize),
+      (ThrowingCallable) () -> new QueueRandomizer(elementRandomizer, illegalSize),
+      (ThrowingCallable) () -> new SetRandomizer(elementRandomizer, illegalSize)
+    };
+  }
 
-    @ParameterizedTest
-    @MethodSource("generateCollectionRandomizersWithIllegalSize")
-    void specifiedSizeShouldBePositive(ThrowingCallable callable) {
-        // when
-        Throwable expectedException = catchThrowable(callable);
+  @ParameterizedTest
+  @MethodSource("generateCollectionRandomizersWithIllegalSize")
+  void specifiedSizeShouldBePositive(ThrowingCallable callable) {
+    // when
+    Throwable expectedException = catchThrowable(callable);
 
-        // then
-        assertThat(expectedException).isInstanceOf(IllegalArgumentException.class);
-    }
+    // then
+    assertThat(expectedException).isInstanceOf(IllegalArgumentException.class);
+  }
 
-    @SuppressWarnings("unchecked")
-    static Randomizer<String> elementRandomizer() {
-        Randomizer<String> elementRandomizer = mock(Randomizer.class);
-        when(elementRandomizer.getRandomValue()).thenReturn("a", "b", "c");
-        return elementRandomizer;
-    }
+  @SuppressWarnings("unchecked")
+  static Randomizer<String> elementRandomizer() {
+    Randomizer<String> elementRandomizer = mock(Randomizer.class);
+    when(elementRandomizer.getRandomValue()).thenReturn("a", "b", "c");
+    return elementRandomizer;
+  }
 }

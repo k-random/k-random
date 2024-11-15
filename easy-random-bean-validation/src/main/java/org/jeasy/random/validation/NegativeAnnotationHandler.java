@@ -23,19 +23,18 @@
  */
 package org.jeasy.random.validation;
 
-import org.jeasy.random.api.Randomizer;
-
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import org.jeasy.random.api.Randomizer;
 
 class NegativeAnnotationHandler extends AbstractNumberBaseAnnotationHandler {
 
-    NegativeAnnotationHandler(final long seed) {
-        super(seed);
-    }
+  NegativeAnnotationHandler(final long seed) {
+    super(seed);
+  }
 
-    @Override
-    public Randomizer<?> getRandomizer(Field field) {
-        return getRandomizer(field.getType(), null, BigDecimal.ZERO);
-    }
+  @Override
+  public Randomizer<?> getRandomizer(Field field) {
+    return getRandomizer(field.getType(), null, BigDecimal.ZERO);
+  }
 }
