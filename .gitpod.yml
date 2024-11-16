@@ -6,7 +6,7 @@
 image:
   file: .gitpod.dockerfile
 tasks:
-  - init: pre-commit install; ./mvnw install -DskipTests=false
+  - init: pre-commit install --hook-type commit-msg; ./mvnw install -DskipTests=false
 jetbrains:
   intellij:
     plugins:
