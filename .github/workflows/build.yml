@@ -1,9 +1,12 @@
 name: Java CI
 
-on: [push]
+on:
+  push:
+    branches: [ "master" ]
 
 jobs:
   build:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
@@ -16,4 +19,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - name: Build with Maven
-        run: mvn clean package --batch-mode
+        run: ./mvnw clean package --batch-mode
+      - name: Publish Test Report
+        if: success() || failure()
+        uses: scacap/action-surefire-report@v1
