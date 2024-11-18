@@ -1,0 +1,64 @@
+/*
+ * The MIT License
+ *
+ *   Copyright (c) 2023, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *
+ *   Permission is hereby granted, free of charge, to any person obtaining a copy
+ *   of this software and associated documentation files (the "Software"), to deal
+ *   in the Software without restriction, including without limitation the rights
+ *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *   copies of the Software, and to permit persons to whom the Software is
+ *   furnished to do so, subject to the following conditions:
+ *
+ *   The above copyright notice and this permission notice shall be included in
+ *   all copies or substantial portions of the Software.
+ *
+ *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *   THE SOFTWARE.
+ */
+package io.github.krandom.randomizers.time;
+
+import static io.github.krandom.FieldPredicates.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.github.krandom.KRandom;
+import io.github.krandom.KRandomParameters;
+import io.github.krandom.beans.TimeBean;
+import java.time.Instant;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class TimeSupportTest {
+
+  private KRandom kRandom;
+
+  @BeforeEach
+  void setUp() {
+    kRandom = new KRandom();
+  }
+
+  @Test
+  void threeTenTypesShouldBePopulated() {
+    TimeBean timeBean = kRandom.nextObject(TimeBean.class);
+
+    assertThat(timeBean).hasNoNullFieldsOrProperties();
+  }
+
+  @Test
+  // https://github.com/k-random/k-random/issues/135
+  void threeTenRandomizersCanBeOverriddenByCustomRandomizers() {
+    KRandomParameters parameters =
+        new KRandomParameters()
+            .excludeField(named("instant").and(ofType(Instant.class)).and(inClass(TimeBean.class)));
+    kRandom = new KRandom(parameters);
+
+    TimeBean timeBean = kRandom.nextObject(TimeBean.class);
+
+    assertThat(timeBean.getInstant()).isNull();
+  }
+}

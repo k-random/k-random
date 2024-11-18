@@ -1,16 +1,16 @@
 ***
 
 <div align="center">
-    <b><em>Easy Random</em></b><br>
-    The simple, stupid random Java&trade; objects generator
+    <b><em>K Random</em></b><br>
+    The simple, stupid random Kotlin&trade; and Java&trade; objects generator
 </div>
 
 <div align="center">
 
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT)
-[![Build Status](https://github.com/j-easy/easy-random/workflows/Java%20CI/badge.svg)](https://github.com/j-easy/easy-random/actions)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jeasy/easy-random-core/badge.svg?style=flat)](https://repo1.maven.org/maven2/org/jeasy/easy-random-core/5.0.0/)
-[![Javadocs](http://www.javadoc.io/badge/org.jeasy/easy-random-core.svg)](http://www.javadoc.io/doc/org.jeasy/easy-random-core)
+[![Build Status](https://github.com/k-random/k-random/workflows/Java%20CI/badge.svg)](https://github.com/k-random/k-random/actions)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.krandom/k-random-core/badge.svg?style=flat)](https://repo1.maven.org/maven2/org/jeasy/k-random-core/5.0.0/)
+[![Javadocs](http://www.javadoc.io/badge/io.github.krandom/k-random-core.svg)](http://www.javadoc.io/doc/io.github.krandom/k-random-core)
 [![Project status](https://img.shields.io/badge/Project%20status-Maintenance-orange.svg)](https://img.shields.io/badge/Project%20status-Maintenance-orange.svg)
 
 </div>
@@ -19,39 +19,39 @@
 
 ## Project status
 
-As of November 15, 2020, Easy Random is in maintenance mode. This means only bug fixes will be addressed from now on (except
-for [records support](https://github.com/j-easy/easy-random/issues/397) which will be released when Java 16 is out).
+As of November 15, 2020, K-Random is in maintenance mode. This means only bug fixes will be addressed from now on (except
+for [records support](https://github.com/k-random/k-random/issues/397) which will be released when Java 16 is out).
 Version 5.0.x (based on Java 11) and version 4.3.x (based on Java 8) are the only supported versions
 for now. Please consider upgrading to one of these versions at your earliest convenience.
 
 ## Latest news
 
-* 15/11/2020: Easy Random v5.0.0 is out and is now based on Java 11. Feature wise, this release is the same as v4.3.0. Please check the [release notes](https://github.com/j-easy/easy-random/releases/tag/easy-random-5.0.0) for more details.
-* 07/11/2020: Easy Random v4.3.0 is now released with support for generic types and fluent setters! You can find all details in the [change log](https://github.com/j-easy/easy-random/releases/tag/easy-random-4.3.0).
+* 15/11/2020: K-Random v5.0.0 is out and is now based on Java 11. Feature wise, this release is the same as v4.3.0. Please check the [release notes](https://github.com/k-random/k-random/releases/tag/k-random-5.0.0) for more details.
+* 07/11/2020: K-Random v4.3.0 is now released with support for generic types and fluent setters! You can find all details in the [change log](https://github.com/k-random/k-random/releases/tag/k-random-4.3.0).
 
-# What is Easy Random ?
+# What is K-Random ?
 
-Easy Random is a library that generates random Java objects. You can think of it as an [ObjectMother](https://martinfowler.com/bliki/ObjectMother.html) for the JVM. Let's say you have a class `Person` and you want to generate a random instance of it, here we go:
+K-Random is a library that generates random Java objects. You can think of it as an [ObjectMother](https://martinfowler.com/bliki/ObjectMother.html) for the JVM. Let's say you have a class `Person` and you want to generate a random instance of it, here we go:
 
 ```java
-EasyRandom easyRandom = new EasyRandom();
-Person person = easyRandom.nextObject(Person.class);
+KRandom kRandom = new KRandom();
+Person person = kRandom.nextObject(Person.class);
 ```
 
-The method `EasyRandom#nextObject` is able to generate random instances of any given type.
+The method `KRandom#nextObject` is able to generate random instances of any given type.
 
-# What is this EasyRandom API ?
+# What is this KRandom API ?
 
 The `java.util.Random` API provides 7 methods to generate random data: `nextInt()`, `nextLong()`, `nextDouble()`, `nextFloat()`, `nextBytes()`, `nextBoolean()` and `nextGaussian()`.
 What if you need to generate a random `String`? Or say a random instance of your domain object?
-Easy Random provides the `EasyRandom` API that extends `java.util.Random` with a method called `nextObject(Class type)`.
+K-Random provides the `KRandom` API that extends `java.util.Random` with a method called `nextObject(Class type)`.
 This method is able to generate a random instance of any arbitrary Java bean.
 
-The `EasyRandomParameters` class is the main entry point to configure `EasyRandom` instances. It allows you to set all
+The `KRandomParameters` class is the main entry point to configure `KRandom` instances. It allows you to set all
 parameters to control how random data is generated:
 
 ```java
-EasyRandomParameters parameters = new EasyRandomParameters()
+KRandomParameters parameters = new KRandomParameters()
    .seed(123L)
    .objectPoolSize(100)
    .randomizationDepth(3)
@@ -64,43 +64,43 @@ EasyRandomParameters parameters = new EasyRandomParameters()
    .overrideDefaultInitialization(false)
    .ignoreRandomizationErrors(true);
 
-EasyRandom easyRandom = new EasyRandom(parameters);
+KRandom kRandom = new KRandom(parameters);
 ```
 
-For more details about these parameters, please refer to the [configuration parameters](https://github.com/j-easy/easy-random/wiki/Randomization-parameters) section.
+For more details about these parameters, please refer to the [configuration parameters](https://github.com/k-random/k-random/wiki/Randomization-parameters) section.
 
-In most cases, default options are enough and you can use the default constructor of `EasyRandom`.
+In most cases, default options are enough and you can use the default constructor of `KRandom`.
 
-Easy Random allows you to control how to generate random data through the [`org.jeasy.random.api.Randomizer`](https://github.com/j-easy/easy-random/blob/master/easy-random-core/src/main/java/org/jeasy/random/api/Randomizer.java) interface and makes it easy to exclude some fields from the object graph using a `java.util.function.Predicate`:
+K-Random allows you to control how to generate random data through the [`api.io.github.krandomizer`](https://github.com/k-random/k-random/blob/master/k-random-core/src/main/java/org/jeasy/random/api/Randomizer.java) interface and makes it easy to exclude some fields from the object graph using a `java.util.function.Predicate`:
 
 ```java
-EasyRandomParameters parameters = new EasyRandomParameters()
+KRandomParameters parameters = new KRandomParameters()
    .randomize(String.class, () -> "foo")
    .excludeField(named("age").and(ofType(Integer.class)).and(inClass(Person.class)));
 
-EasyRandom easyRandom = new EasyRandom(parameters);
-Person person = easyRandom.nextObject(Person.class);
+KRandom kRandom = new KRandom(parameters);
+Person person = kRandom.nextObject(Person.class);
 ```
 
-In the previous example, Easy Random will:
+In the previous example, K-Random will:
 
 * Set all fields of type `String` to `foo` (using the `Randomizer` defined as a lambda expression)
 * Exclude the field named `age` of type `Integer` in class `Person`.
 
-The static methods `named`, `ofType` and `inClass` are defined in [`org.jeasy.random.FieldPredicates`](https://github.com/j-easy/easy-random/blob/master/easy-random-core/src/main/java/org/jeasy/random/FieldPredicates.java) 
+The static methods `named`, `ofType` and `inClass` are defined in [`random.k.io.github.FieldPredicates`](https://github.com/k-random/k-random/blob/master/k-random-core/src/main/java/org/jeasy/random/FieldPredicates.java) 
 which provides common predicates you can use in combination to define exactly which fields to exclude.
-A similar class called [`TypePredicates`](https://github.com/j-easy/easy-random/blob/master/easy-random-core/src/main/java/org/jeasy/random/TypePredicates.java) can be used to define which types to exclude from the object graph.
+A similar class called [`TypePredicates`](https://github.com/k-random/k-random/blob/master/k-random-core/src/main/java/org/jeasy/random/TypePredicates.java) can be used to define which types to exclude from the object graph.
 You can of course use your own `java.util.function.Predicate` in combination with those predefined predicates. 
 
-# Why Easy Random ?
+# Why K-Random ?
 
 Populating a Java object with random data can look easy at first glance, unless your domain model involves many related classes. In the previous example, let's suppose the `Person` type is defined as follows:
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/wiki/j-easy/easy-random/images/person.png">
+    <img src="https://raw.githubusercontent.com/wiki/k-random/k-random/images/person.png">
 </p>
 
-**Without** Easy Random, you would write the following code in order to create an instance of the `Person` class:
+**Without** K-Random, you would write the following code in order to create an instance of the `Person` class:
 
 ```java
 Street street = new Street(12, (byte) 1, "Oxford street");
@@ -130,7 +130,7 @@ person.setGender(Gender.MALE);
 person.setAddress(address);
 ```
 
-**With** Easy Random, generating a random `Person` object is done with `new EasyRandom().nextObject(Person.class)`.
+**With** K-Random, generating a random `Person` object is done with `new KRandom().nextObject(Person.class)`.
 The library will **recursively** populate all the object graph. That's a big difference!
 
 ## How can this be useful ?
@@ -142,7 +142,7 @@ Sometimes, the test fixture does not really matter to the test logic. For exampl
 public void testSortAlgorithm() {
 
    // Given
-   int[] ints = easyRandom.nextObject(int[].class);
+   int[] ints = kRandom.nextObject(int[].class);
 
    // When
    int[] sortedInts = myAwesomeSortAlgo.sort(ints);
@@ -159,7 +159,7 @@ Another example is testing the persistence of a domain object, we can generate a
 @org.junit.Test
 public void testPersistPerson() throws Exception {
    // Given
-   Person person = easyRandom.nextObject(Person.class);
+   Person person = kRandom.nextObject(Person.class);
 
    // When
    personDao.persist(person);
@@ -169,25 +169,25 @@ public void testPersistPerson() throws Exception {
 }
 ```
 
-There are many other uses cases where Easy Random can be useful, you can find a non exhaustive list in the [wiki](https://github.com/j-easy/easy-random/wiki/use-cases).
+There are many other uses cases where K-Random can be useful, you can find a non exhaustive list in the [wiki](https://github.com/k-random/k-random/wiki/use-cases).
 
 ## Extensions
 
-* [JUnit extension](https://glytching.github.io/junit-extensions/randomBeans): Use Easy Random to generate random data in JUnit tests (courtesy of [glytching](https://github.com/glytching))
-* [Vavr extension](https://github.com/xShadov/easy-random-vavr-extension): This extension adds support to randomize [Vavr](https://github.com/vavr-io/vavr) types (courtesy of [xShadov](https://github.com/xShadov))
-* [Protocol Buffers extension](https://github.com/murdos/easy-random-protobuf): This extension adds support to randomize [Protocol Buffers](https://developers.google.com/protocol-buffers) generated types (courtesy of [murdos](https://github.com/murdos))
+* [JUnit extension](https://glytching.github.io/junit-extensions/randomBeans): Use K-Random to generate random data in JUnit tests (courtesy of [glytching](https://github.com/glytching))
+* [Vavr extension](https://github.com/xShadov/k-random-vavr-extension): This extension adds support to randomize [Vavr](https://github.com/vavr-io/vavr) types (courtesy of [xShadov](https://github.com/xShadov))
+* [Protocol Buffers extension](https://github.com/murdos/k-random-protobuf): This extension adds support to randomize [Protocol Buffers](https://developers.google.com/protocol-buffers) generated types (courtesy of [murdos](https://github.com/murdos))
 
 ## Articles and blog posts
 
-* [Easy testing with ObjectMothers and EasyRandom](https://www.jworks.io/easy-testing-with-objectmothers-and-easyrandom/)
-* [Quick Guide to EasyRandom in Java](https://www.baeldung.com/java-easy-random)
+* [Easy testing with ObjectMothers and KRandom](https://www.jworks.io/easy-testing-with-objectmothers-and-KRandom/)
+* [Quick Guide to KRandom in Java](https://www.baeldung.com/java-k-random)
 * [Top secrets of the efficient test data preparation](https://waverleysoftware.com/blog/test-data-preparation/)
 * [Random Data Generators for API Testing in Java](https://techblog.dotdash.com/random-data-generators-for-api-testing-in-java-369c99075208)
-* [EasyRandom 4.0 Released](https://www.jworks.io/easyrandom-4-0-released/)
+* [KRandom 4.0 Released](https://www.jworks.io/KRandom-4-0-released/)
 * [Type Erasure Revisited](https://www.beyondjava.net/type-erasure-revisited)
 * [Generate Random Test Data With jPopulator](https://www.beyondjava.net/newsflash-generate-random-test-data-jpopulator)
 
-## Who is using Easy Random ?
+## Who is using K-Random ?
 
 * [Netflix](https://github.com/Netflix/AWSObjectMapper/blob/v1.11.723/build.gradle#L71)
 * [JetBrains](https://github.com/JetBrains/intellij-community/blob/201.6073/plugins/gradle/tooling-extension-impl/testSources/org/jetbrains/plugins/gradle/tooling/serialization/ToolingSerializerTest.kt#L8)
@@ -198,10 +198,10 @@ There are many other uses cases where Easy Random can be useful, you can find a 
 ## Contribution
 
 You are welcome to contribute to the project with pull requests on GitHub.
-Please note that Easy Random is in [maintenance mode](https://github.com/j-easy/easy-random#project-status),
+Please note that K-Random is in [maintenance mode](https://github.com/k-random/k-random#project-status),
 which means only pull requests for bug fixes will be considered.
 
-If you believe you found a bug or have any question, please use the [issue tracker](https://github.com/j-easy/easy-random/issues).
+If you believe you found a bug or have any question, please use the [issue tracker](https://github.com/k-random/k-random/issues).
 
 ## Core team and contributors
 
@@ -253,4 +253,4 @@ Thank you all for your contributions!
 
 ## License
 
-The [MIT License](http://opensource.org/licenses/MIT). See [LICENSE.txt](https://github.com/j-easy/easy-random/blob/master/LICENSE.txt).
+The [MIT License](http://opensource.org/licenses/MIT). See [LICENSE.txt](https://github.com/k-random/k-random/blob/master/LICENSE.txt).
