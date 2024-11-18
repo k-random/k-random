@@ -6,3 +6,11 @@ repos:
         args: [ --autofix ]
       - id: pretty-format-kotlin
         args: [ --autofix, --ktfmt, --ktfmt-style=google ]
+  - repo: local
+    hooks:
+      - id: commit-msg
+        name: conventional commit messages
+        language: pygrep
+        entry: '^(chore|test|feat|fix|build|docs|refactor)!?\(#\d+\): (?![A-Z])(?![a-z]+(ed|ing)\s).*$'
+        args: [ --multiline, --negate ] # fails if the entry is NOT matched
+        stages: [ commit-msg ]
