@@ -9,14 +9,14 @@
         <version>9</version>
     </parent>
 
-    <groupId>org.jeasy</groupId>
-    <artifactId>easy-random</artifactId>
-    <version>6.0.0-SNAPSHOT</version>
+    <groupId>io.github.k-random</groupId>
+    <artifactId>k-random</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Easy Random</name>
-    <description>Easy Random is a library to generate random Java objects</description>
-    <url>https://github.com/j-easy/easy-random</url>
+    <name>k-random</name>
+    <description>k-random is a library to generate random Kotlin and Java objects</description>
+    <url>https://github.com/k-random/k-random</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,42 +37,43 @@
     </properties>
 
     <modules>
-        <module>easy-random-core</module>
-        <module>easy-random-bean-validation</module>
-        <module>easy-random-randomizers</module>
+        <module>k-random-core</module>
+        <module>k-random-bean-validation</module>
+        <module>k-random-randomizers</module>
     </modules>
 
     <scm>
-        <url>git@github.com:j-easy/easy-random.git</url>
-        <connection>scm:git:git@github.com:j-easy/easy-random.git</connection>
-        <developerConnection>scm:git:git@github.com:j-easy/easy-random.git</developerConnection>
+        <url>git@github.com:k-random/k-random.git</url>
+        <connection>scm:git:git@github.com:k-random/k-random.git</connection>
+        <developerConnection>scm:git:git@github.com:k-random/k-random.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
     <ciManagement>
         <system>Github Actions</system>
-        <url>https://github.com/j-easy/easy-random/actions</url>
+        <url>https://github.com/k-random/k-random/actions</url>
     </ciManagement>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/j-easy/easy-random/issues</url>
+        <url>https://github.com/k-random/k-random/issues</url>
     </issueManagement>
 
     <developers>
         <developer>
-            <id>fmbenhassine</id>
-            <name>Mahmoud Ben Hassine</name>
-            <url>http://fmbenhassine.github.io</url>
-            <email>mahmoud.benhassine@icloud.com</email>
+            <id>Alex-Schiff</id>
+            <name>Alex Schiff</name>
+            <url>https://github.com/Alex-Schiff</url>
+            <email>alex.schiff@protonmail.com</email>
             <roles>
                 <role>Lead developer</role>
             </roles>
         </developer>
         <developer>
-            <id>PascalSchumacher</id>
-            <name>Pascal Schumacher</name>
-            <url>https://github.com/PascalSchumacher</url>
+            <id>jamalkhaffaf</id>
+            <name>Jamal Khaffaf</name>
+            <url>https://github.com/jamalkhaffaf</url>
+            <email>jamalkhaffaf@proton.me</email>
             <roles>
                 <role>Core developer</role>
             </roles>
@@ -82,13 +83,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.jeasy</groupId>
-                <artifactId>easy-random-core</artifactId>
+                <groupId>io.github.k-random</groupId>
+                <artifactId>k-random-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jeasy</groupId>
-                <artifactId>easy-random-randomizers</artifactId>
+                <groupId>io.github.k-random</groupId>
+                <artifactId>k-random-randomizers</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
