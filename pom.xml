@@ -69,15 +69,6 @@
                 <role>Lead developer</role>
             </roles>
         </developer>
-        <developer>
-            <id>jamalkhaffaf</id>
-            <name>Jamal Khaffaf</name>
-            <url>https://github.com/jamalkhaffaf</url>
-            <email>jamalkhaffaf@proton.me</email>
-            <roles>
-                <role>Core developer</role>
-            </roles>
-        </developer>
     </developers>
 
     <dependencyManagement>

@@ -12,6 +12,9 @@ import java.time.chrono.ThaiBuddhistDate;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * @author Alex Schiff
+ */
 public abstract class AbstractTemporalBaseAnnotationHandler
     implements BeanValidationAnnotationHandler {
   protected final Date minDate;

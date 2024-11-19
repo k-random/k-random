@@ -29,7 +29,6 @@ import java.lang.reflect.Field;
  * Strategy interface for field/type exclusion.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
- * @since 4.0
  */
 public interface ExclusionPolicy {
 

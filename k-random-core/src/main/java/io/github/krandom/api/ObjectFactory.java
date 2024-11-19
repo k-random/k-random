@@ -29,7 +29,6 @@ import io.github.krandom.ObjectCreationException;
  * Strategy interface for object creation.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
- * @since 4.0
  */
 public interface ObjectFactory {
 

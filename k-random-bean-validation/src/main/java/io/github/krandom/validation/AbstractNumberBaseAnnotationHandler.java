@@ -32,7 +32,6 @@ import java.util.Random;
 
 /**
  * @author dadiyang
- * @since 4.3
  */
 public abstract class AbstractNumberBaseAnnotationHandler
     implements BeanValidationAnnotationHandler {
