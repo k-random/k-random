@@ -1,11 +1,11 @@
-name: Bump version and tag
+name: Bump version and release
 on:
   workflow_run:
     workflows: ['CI-master']                     # runs after CI workflow
     types:
       - completed
 jobs:
-  bump-version:
+  bump-version-and-release:
     name: Bump Version
     runs-on: ubuntu-latest
     # Only run one job a time to avoid conflicts
