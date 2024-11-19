@@ -47,14 +47,6 @@
                 <role>Lead developer</role>
             </roles>
         </developer>
-        <developer>
-            <id>jamalkhaffaf</id>
-            <name>Jamal Khaffaf</name>
-            <url>https://github.com/jamalkhaffaf</url>
-            <roles>
-                <role>Core developer</role>
-            </roles>
-        </developer>
     </developers>
 
     <dependencies>
