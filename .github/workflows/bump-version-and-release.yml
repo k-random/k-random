@@ -45,12 +45,3 @@ jobs:
           draft: false
           prerelease: false
           tag_name: v${{ steps.increment-version.outputs.new-version }}
-
-      - name: Release Maven package
-        uses: WasiqB/maven-publish-action@v1
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}
-          server_id: central
-          nexus_username: ${{ secrets.CENTRAL_USERNAME }}
-          nexus_password: ${{ secrets.CENTRAL_TOKEN }}]
