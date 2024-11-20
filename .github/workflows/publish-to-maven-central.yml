@@ -31,7 +31,7 @@ jobs:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
       - name: Publish to Maven Central
-        run: echo 'default-key:0:"588E8F3A0BA04D07ED59D385DFD88A9A648AE76B' | gpgconf --change-options gpg; ./mvnw -B deploy -DskipTests=true
+        run: echo 'default-key:0:"DFD88A9A648AE76B' | gpgconf --change-options gpg; ./mvnw -B deploy -DskipTests=true
         env:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
