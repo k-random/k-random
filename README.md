@@ -71,7 +71,7 @@ For more details about these parameters, please refer to the [configuration para
 
 In most cases, default options are enough and you can use the default constructor of `KRandom`.
 
-K-Random allows you to control how to generate random data through the [`api.io.github.krandomizer`](https://github.com/k-random/k-random/blob/master/k-random-core/src/main/java/org/jeasy/random/api/Randomizer.java) interface and makes it easy to exclude some fields from the object graph using a `java.util.function.Predicate`:
+K-Random allows you to control how to generate random data through the [`api.io.github.krandomizer`](https://github.com/k-random/k-random/blob/main/k-random-core/src/main/java/org/jeasy/random/api/Randomizer.java) interface and makes it easy to exclude some fields from the object graph using a `java.util.function.Predicate`:
 
 ```java
 KRandomParameters parameters = new KRandomParameters()
@@ -87,9 +87,9 @@ In the previous example, K-Random will:
 * Set all fields of type `String` to `foo` (using the `Randomizer` defined as a lambda expression)
 * Exclude the field named `age` of type `Integer` in class `Person`.
 
-The static methods `named`, `ofType` and `inClass` are defined in [`random.k.io.github.FieldPredicates`](https://github.com/k-random/k-random/blob/master/k-random-core/src/main/java/org/jeasy/random/FieldPredicates.java) 
+The static methods `named`, `ofType` and `inClass` are defined in [`random.k.io.github.FieldPredicates`](https://github.com/k-random/k-random/blob/main/k-random-core/src/main/java/org/jeasy/random/FieldPredicates.java) 
 which provides common predicates you can use in combination to define exactly which fields to exclude.
-A similar class called [`TypePredicates`](https://github.com/k-random/k-random/blob/master/k-random-core/src/main/java/org/jeasy/random/TypePredicates.java) can be used to define which types to exclude from the object graph.
+A similar class called [`TypePredicates`](https://github.com/k-random/k-random/blob/main/k-random-core/src/main/java/org/jeasy/random/TypePredicates.java) can be used to define which types to exclude from the object graph.
 You can of course use your own `java.util.function.Predicate` in combination with those predefined predicates. 
 
 # Why K-Random ?
@@ -253,4 +253,4 @@ Thank you all for your contributions!
 
 ## License
 
-The [MIT License](http://opensource.org/licenses/MIT). See [LICENSE.txt](https://github.com/k-random/k-random/blob/master/LICENSE.txt).
+The [MIT License](http://opensource.org/licenses/MIT). See [LICENSE.txt](https://github.com/k-random/k-random/blob/main/LICENSE.txt).
