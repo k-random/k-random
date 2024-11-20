@@ -25,9 +25,6 @@ jobs:
           cache: maven
           server-id: central
 
-      - name: Build with Maven
-        run: ./mvnw package
-
       - name: Increment version
         id: increment-version
         uses: RichardInnocent/semantic-versioning-maven@v0.1.0
