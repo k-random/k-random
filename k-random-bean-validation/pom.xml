@@ -3,7 +3,7 @@
     <parent>
         <artifactId>k-random</artifactId>
         <groupId>io.github.k-random</groupId>
-        <version>1.11.4</version>
+        <version>1.11.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

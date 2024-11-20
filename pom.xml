@@ -11,7 +11,7 @@
 
     <groupId>io.github.k-random</groupId>
     <artifactId>k-random</artifactId>
-    <version>1.11.4</version>
+    <version>1.11.5</version>
     <packaging>pom</packaging>
 
     <name>k-random</name>
