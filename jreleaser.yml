@@ -1,0 +1,33 @@
+# Generated with JReleaser 1.15.0 at 2024-11-22T21:30:06.954859047Z
+project:
+  name: k-random
+  description: k-random is a fork of easy-random and is used to generate random Kotlin and Java beans.
+  longDescription: k-random is a fork of easy-random and is used to generate random Kotlin and Java beans.
+  authors:
+    - Alex Schiff
+  license: MIT
+  links:
+    homepage: https://github.com/k-random/k-random
+  java:
+    groupId: io.github.k-random
+    version: "17"
+  inceptionYear: "2024"
+
+release:
+  github:
+    owner: Alex-Schiff
+
+signing:
+  active: ALWAYS
+  armored: true
+
+deploy:
+  maven:
+    mavenCentral:
+      sonatype:
+        active: ALWAYS
+        url: https://central.sonatype.com/api/v1/publisher
+        stagingRepositories:
+          - bean-validation/build/staging-deploy
+          - core/build/staging-deploy
+          - randomizers/build/staging-deploy
