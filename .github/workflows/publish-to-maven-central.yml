@@ -43,7 +43,7 @@ jobs:
           ./gradlew clean publish -x test
       - name: Write release version
         run: |
-          TAG = git describe --tags --abbrev=0
+          TAG=$(git describe --tags --abbrev=0)
           VERSION=${TAG#v}
           echo Version: $VERSION
           echo "JRELEASER_PROJECT_VERSION=$VERSION" >> $GITHUB_ENV
