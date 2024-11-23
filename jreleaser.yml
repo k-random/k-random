@@ -20,6 +20,8 @@ signing:
 release:
   github:
     enabled: false
+  maven:
+    enabled: true
 
 deploy:
   maven:
