@@ -31,3 +31,4 @@ deploy:
           - bean-validation/build/staging-deploy
           - core/build/staging-deploy
           - randomizers/build/staging-deploy
+        maxRetries: 200
