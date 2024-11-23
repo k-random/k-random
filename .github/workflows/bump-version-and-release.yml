@@ -30,7 +30,7 @@ jobs:
 
       - name: Increment version
         id: increment-version
-        uses: paulhatch/semantic-version@latest
+        uses: PaulHatch/semantic-version@v5.4.0
 
       - name: Create Release
         id: create_release
