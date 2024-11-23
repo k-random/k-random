@@ -1,8 +1,9 @@
 name: Publish to Maven Central
 on:
-  release:
+  workflow_run:
+    workflows: ['Bump version and release']
     types:
-      - released
+      - completed
 jobs:
   publish-to-maven-central:
     name: Publish to maven central
@@ -41,9 +42,8 @@ jobs:
           git config user.email "${{ github.event.head_commit.committer.email }}"
           ./gradlew clean publish -x test
       - name: Write release version
-        env:
-          TAG: ${{ github.event.release.tag_name }}
         run: |
+          TAG = git describe --tags --abbrev=0
           VERSION=${TAG#v}
           echo Version: $VERSION
           echo "JRELEASER_PROJECT_VERSION=$VERSION" >> $GITHUB_ENV
