@@ -43,7 +43,7 @@ subprojects {
         from(components["java"])
         pom {
           name = "${rootProject.name}-${project.name}"
-          description = project.description
+          description = "${rootProject.name}-${project.name}"
           url = "https://github.com/k-random/k-random"
           inceptionYear = "2024"
           licenses {
