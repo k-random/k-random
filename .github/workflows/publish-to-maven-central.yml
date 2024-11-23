@@ -1,7 +1,7 @@
 name: Publish to Maven Central
 on:
   workflow_run:
-    workflows: ['Bump version and release']
+    workflows: ['Bump version']
     types:
       - completed
 jobs:
