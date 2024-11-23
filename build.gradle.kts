@@ -43,7 +43,7 @@ subprojects {
         from(components["java"])
         pom {
           name = "${rootProject.name}-${project.name}"
-          description = "${rootProject.name}-${project.name}"
+          description = "k-random is a fork of easy-random and is used to generate random Kotlin and Java beans."
           url = "https://github.com/k-random/k-random"
           inceptionYear = "2024"
           licenses {

@@ -13,10 +13,6 @@ project:
     version: "17"
   inceptionYear: "2024"
 
-release:
-  github:
-    owner: Alex-Schiff
-
 signing:
   active: ALWAYS
   armored: true
