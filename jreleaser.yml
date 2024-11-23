@@ -19,9 +19,10 @@ signing:
 
 release:
   github:
-    enabled: false
-  maven:
-    enabled: true
+    owner: k-random
+    host: github.com
+    apiEndpoint: https://api.github.com
+    skipTag: true
 
 deploy:
   maven:
