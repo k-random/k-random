@@ -5,7 +5,8 @@ import org.jetbrains.dokka.gradle.DokkaTask
 plugins {
   id("com.diffplug.spotless") version "6.25.0"
   id("com.palantir.git-version") version "3.1.0"
-  id("org.jetbrains.dokka") version "1.9.20"
+  id("org.jetbrains.dokka") version "1.9.20" apply false
+  id("io.gitlab.arturbosch.detekt") version "1.23.7" apply false
   java
   kotlin("jvm")
   `maven-publish`
@@ -28,6 +29,7 @@ subprojects {
   apply(plugin = "java-library")
   apply(plugin = "maven-publish")
   apply(plugin = "org.jetbrains.dokka")
+  apply(plugin = "io.gitlab.arturbosch.detekt")
   java {
     withJavadocJar()
     withSourcesJar()
@@ -59,7 +61,7 @@ subprojects {
         pom {
           name = "${rootProject.name}-${project.name}"
           description =
-            "k-random is a fork of easy-random and is used to generate random Kotlin and Java beans."
+              "k-random is a fork of easy-random and is used to generate random Kotlin and Java beans."
           url = "https://github.com/k-random/k-random"
           inceptionYear = "2024"
           licenses {
