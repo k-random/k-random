@@ -1,22 +1,24 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
+import groovy.lang.Closure
+import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
   id("com.diffplug.spotless") version "6.25.0"
   id("com.palantir.git-version") version "3.1.0"
+  id("org.jetbrains.dokka") version "1.9.20"
   java
+  kotlin("jvm")
   `maven-publish`
   signing
 }
 
-val gitVersion: groovy.lang.Closure<String> by extra
+val gitVersion: Closure<String> by extra
 
 group = "io.github.k-random"
 
 version = gitVersion().replace("^v".toRegex(), "")
 
 println("Build Version = $version")
-
-java.sourceCompatibility = JavaVersion.VERSION_17
 
 subprojects {
   group = rootProject.group
@@ -25,13 +27,26 @@ subprojects {
   apply(plugin = "com.diffplug.spotless")
   apply(plugin = "java-library")
   apply(plugin = "maven-publish")
+  apply(plugin = "org.jetbrains.dokka")
   java {
     withJavadocJar()
     withSourcesJar()
   }
-  configure<SpotlessExtension> { java { googleJavaFormat() } }
+  tasks.withType<DokkaTask>().configureEach {
+    dokkaSourceSets {
+      configureEach {
+        sourceRoots.from(file("src/main/java"))
+        jdkVersion.set(17)
+      }
+    }
+  }
+  tasks.named<Javadoc>("javadoc").configure { enabled = false }
+  tasks.named<Jar>("javadocJar") { from(tasks.named("dokkaJavadoc")) }
+  configure<SpotlessExtension> {
+    java { googleJavaFormat() }
+    kotlin { ktfmt().googleStyle() }
+  }
   tasks.withType<JavaCompile> { options.encoding = "UTF-8" }
-  tasks.withType<Javadoc> { options.encoding = "UTF-8" }
   tasks.named("compileJava") { dependsOn("spotlessApply") }
   tasks.withType<Test> { useJUnitPlatform() }
   repositories { mavenCentral() }
@@ -43,7 +58,8 @@ subprojects {
         from(components["java"])
         pom {
           name = "${rootProject.name}-${project.name}"
-          description = "k-random is a fork of easy-random and is used to generate random Kotlin and Java beans."
+          description =
+            "k-random is a fork of easy-random and is used to generate random Kotlin and Java beans."
           url = "https://github.com/k-random/k-random"
           inceptionYear = "2024"
           licenses {
@@ -90,3 +106,9 @@ allprojects {
   }
   tasks.named("build") { dependsOn("spotlessApply") }
 }
+
+dependencies { implementation(kotlin("stdlib")) }
+
+repositories { mavenCentral() }
+
+kotlin { jvmToolchain(17) }
