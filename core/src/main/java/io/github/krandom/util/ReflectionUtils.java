@@ -27,7 +27,6 @@ import static io.github.krandom.util.ConversionUtils.convertArguments;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Locale.ENGLISH;
-import static java.util.stream.Collectors.toList;
 
 import io.github.krandom.ObjectCreationException;
 import io.github.krandom.annotation.RandomizerArgument;
@@ -179,7 +178,7 @@ public final class ReflectionUtils {
    * @return the wrapper type of the given primitive type
    */
   public static Class<?> getWrapperType(Class<?> primitiveType) {
-    for (PrimitiveEnum p : PrimitiveEnum.values()) {
+    for (PrimitiveEnum p : PrimitiveEnum.getEntries()) {
       if (p.getType().equals(primitiveType)) {
         return p.getClazz();
       }
@@ -206,7 +205,7 @@ public final class ReflectionUtils {
     if (fieldValue == null) {
       return false;
     }
-    if (fieldType.equals(boolean.class) && (boolean) fieldValue == false) {
+    if (fieldType.equals(boolean.class) && !((boolean) fieldValue)) {
       return true;
     }
     if (fieldType.equals(byte.class) && (byte) fieldValue == (byte) 0) {
@@ -227,10 +226,7 @@ public final class ReflectionUtils {
     if (fieldType.equals(double.class) && (double) fieldValue == 0.0D) {
       return true;
     }
-    if (fieldType.equals(char.class) && (char) fieldValue == '\u0000') {
-      return true;
-    }
-    return false;
+    return fieldType.equals(char.class) && (char) fieldValue == '\u0000';
   }
 
   /**
@@ -379,8 +375,7 @@ public final class ReflectionUtils {
    * @return true if the type is parameterized, false otherwise
    */
   public static boolean isParameterizedType(final Type type) {
-    return type != null
-        && type instanceof ParameterizedType
+    return type instanceof ParameterizedType
         && ((ParameterizedType) type).getActualTypeArguments().length > 0;
   }
 
@@ -437,7 +432,7 @@ public final class ReflectionUtils {
                 .filter(
                     currentTypeArguments -> Arrays.equals(fieldArugmentTypes, currentTypeArguments))
                 .map(currentTypeArguments -> currentConcreteType)
-                .collect(toList()));
+                .toList());
       }
       return typesWithSameParameterizedTypes;
     }
