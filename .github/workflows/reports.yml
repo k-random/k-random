@@ -15,18 +15,13 @@ jobs:
       - name: Test report
         uses: dorny/test-reporter@v1
         with:
-          artifact: test-results            # artifact name
+          artifact: reports                 # artifact name
           name: JUnit Tests                 # Name of the check run which will be created
-          path: '**/*.xml'                  # Path to test results (inside artifact .zip)
+          path: '**/TEST-*.xml'             # Path to test results (inside artifact .zip)
           reporter: java-junit              # Format of test results
 
       - name: Detekt report
         uses: natiginfo/action-detekt-all@1.23.7
-
-      - name: Download a kover report
-        uses: actions/download-artifact@v4
-        with:
-          name: kover-report
 
       - name: Add coverage report to PR
         id: kover
