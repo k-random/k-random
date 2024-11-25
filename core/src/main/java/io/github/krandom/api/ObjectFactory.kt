@@ -21,9 +21,25 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
+package io.github.krandom.api
+
+import io.github.krandom.ObjectCreationException
+
 /**
- * Public API.
+ * Strategy interface for object creation.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-package io.github.krandom.api;
+interface ObjectFactory {
+  /**
+   * Create a new instance of `type` in the given randomization context.
+   *
+   * @param type to create
+   * @param context current randomization context
+   * @param T generic type
+   * @return new instance of the given type
+   * @throws ObjectCreationException when unable to create an instance of the given type </T>
+   */
+  @Throws(ObjectCreationException::class)
+  fun <T> createInstance(type: Class<T>, context: RandomizerContext): T
+}

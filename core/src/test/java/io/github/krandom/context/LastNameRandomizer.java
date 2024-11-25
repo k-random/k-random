@@ -25,6 +25,7 @@ package io.github.krandom.context;
 
 import io.github.krandom.api.ContextAwareRandomizer;
 import io.github.krandom.api.RandomizerContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A last name randomizer that depends on the first name of the currently randomized object. The
@@ -35,19 +36,17 @@ public class LastNameRandomizer implements ContextAwareRandomizer<String> {
   private RandomizerContext context;
 
   @Override
-  public void setRandomizerContext(RandomizerContext context) {
+  public void setRandomizerContext(@NotNull RandomizerContext context) {
     this.context = context;
   }
 
   @Override
   public String getRandomValue() {
     String firstName = null;
-    if (context.getCurrentObject() instanceof Person) {
-      Person randomizedObject = (Person) context.getCurrentObject();
+    if (context.getCurrentObject() instanceof Person randomizedObject) {
       firstName = randomizedObject.getFirstName();
     }
-    if (context.getCurrentObject() instanceof Pet) {
-      Pet randomizedObject = (Pet) context.getCurrentObject();
+    if (context.getCurrentObject() instanceof Pet randomizedObject) {
       firstName = randomizedObject.getFirstName();
     }
     if (firstName != null && firstName.equalsIgnoreCase("james")) {

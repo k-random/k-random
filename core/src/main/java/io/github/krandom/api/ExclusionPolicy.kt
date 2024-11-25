@@ -21,39 +21,31 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.api;
+package io.github.krandom.api
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import java.lang.reflect.Field;
+import java.lang.reflect.Field
 
 /**
- * Interface for a registry of {@link Randomizer}s.
+ * Strategy interface for field/type exclusion.
  *
- * @author Rémi Alvergnat (toilal.dev@gmail.com)
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public interface RandomizerRegistry {
+interface ExclusionPolicy {
+  /**
+   * Given the current randomization context, should the field be excluded from being randomized?
+   *
+   * @param field the field to check
+   * @param context the current randomization context
+   * @return true if the field should be excluded, false otherwise
+   */
+  fun shouldBeExcluded(field: Field, context: RandomizerContext): Boolean
 
   /**
-   * Initialize the registry.
+   * Given the current randomization context, should the type be excluded from being randomized?
    *
-   * @param parameters of the {@link KRandom} instance being configured
+   * @param type the type to check
+   * @param context the current randomization context
+   * @return true if the type should be excluded, false otherwise
    */
-  void init(KRandomParameters parameters);
-
-  /**
-   * Retrieves a randomizer for the given field.
-   *
-   * @param field the field for which a randomizer was registered
-   * @return the randomizer registered for the given field
-   */
-  Randomizer<?> getRandomizer(final Field field);
-
-  /**
-   * Retrieves a randomizer for a given type.
-   *
-   * @param type the type for which a randomizer was registered
-   * @return the randomizer registered for the given type.
-   */
-  Randomizer<?> getRandomizer(final Class<?> type);
+  fun shouldBeExcluded(type: Class<*>, context: RandomizerContext): Boolean
 }

@@ -30,6 +30,7 @@ import io.github.krandom.api.RandomizerRegistry;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Central class to get registered randomizers by Field or by Type.
@@ -43,17 +44,21 @@ class RegistriesRandomizerProvider implements RandomizerProvider {
   private final Comparator<Object> priorityComparator = new PriorityComparator();
 
   @Override
-  public Randomizer<?> getRandomizerByField(Field field, RandomizerContext context) {
+  public Randomizer<?> getRandomizerByField(
+      @NotNull Field field, @NotNull RandomizerContext context) {
     return getRandomizer(new ByFieldProvider(field));
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public <T> Randomizer<T> getRandomizerByType(Class<T> type, RandomizerContext context) {
+  public <T> Randomizer<T> getRandomizerByType(
+      @NotNull Class<T> type, @NotNull RandomizerContext context) {
     return (Randomizer<T>) getRandomizer(new ByTypeProvider(type));
   }
 
   @Override
-  public void setRandomizerRegistries(Set<RandomizerRegistry> randomizerRegistries) {
+  public void setRandomizerRegistries(
+      @NotNull Set<? extends RandomizerRegistry> randomizerRegistries) {
     this.registries.addAll(randomizerRegistries);
     this.registries.sort(priorityComparator);
   }

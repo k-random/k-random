@@ -33,6 +33,7 @@ import io.github.krandom.api.RandomizerProvider;
 import io.github.krandom.api.RandomizerRegistry;
 import java.lang.reflect.Field;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 class RandomizerProviderTests {
@@ -45,11 +46,11 @@ class RandomizerProviderTests {
             .randomizerProvider(
                 new RandomizerProvider() {
 
-                  private Set<RandomizerRegistry> randomizerRegistries;
+                  private Set<? extends RandomizerRegistry> randomizerRegistries;
 
                   @Override
                   public void setRandomizerRegistries(
-                      Set<RandomizerRegistry> randomizerRegistries) {
+                      @NotNull Set<? extends RandomizerRegistry> randomizerRegistries) {
                     this.randomizerRegistries = randomizerRegistries;
                     // may sort registries with a custom sort algorithm (ie, not necessarily with
                     // `@Priority`)
@@ -57,7 +58,7 @@ class RandomizerProviderTests {
 
                   @Override
                   public Randomizer<?> getRandomizerByField(
-                      Field field, RandomizerContext context) {
+                      @NotNull Field field, @NotNull RandomizerContext context) {
                     // return custom randomizer based on the context
                     if (field.getName().equals("name")
                         && context.getCurrentRandomizationDepth() == 0) {
@@ -70,14 +71,13 @@ class RandomizerProviderTests {
                     return null;
                   }
 
+                  @SuppressWarnings("unchecked")
                   @Override
                   public <T> Randomizer<T> getRandomizerByType(
-                      Class<T> type, RandomizerContext context) {
+                      @NotNull Class<T> type, @NotNull RandomizerContext context) {
                     for (RandomizerRegistry randomizerRegistry : randomizerRegistries) {
                       Randomizer<?> randomizer = randomizerRegistry.getRandomizer(type);
-                      if (randomizer != null) {
-                        return (Randomizer<T>) randomizer;
-                      }
+                      return (Randomizer<T>) randomizer;
                     }
                     return null;
                   }
@@ -95,6 +95,7 @@ class RandomizerProviderTests {
     assertThat(foo.getBestFriend().getBestFriend().getName()).isNull();
   }
 
+  @SuppressWarnings("unused")
   static class Foo {
     private String name;
     private Foo bestFriend;

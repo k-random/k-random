@@ -21,23 +21,20 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.api;
+package io.github.krandom.api
 
-import java.lang.reflect.Field;
-import java.util.Set;
+import java.lang.reflect.Field
 
 /**
  * Strategy interface to provide randomizers for field/type based on the current context.
  * Implementations may (or may not) use registries to provide randomizers.
  *
- * <p>The added value of this interface compared to a simple {@link RandomizerRegistry} is that it
- * gives access to the current context and allows fine grained randomizer selection based on that
- * context.
+ * The added value of this interface compared to a simple [RandomizerRegistry] is that it gives
+ * access to the current context and allows fine grained randomizer selection based on that context.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public interface RandomizerProvider {
-
+interface RandomizerProvider {
   /**
    * Return a randomizer for the given field in the current context.
    *
@@ -45,8 +42,8 @@ public interface RandomizerProvider {
    * @param context current randomization context
    * @return a randomizer for the given field in the current context.
    */
-  default Randomizer<?> getRandomizerByField(final Field field, final RandomizerContext context) {
-    return null;
+  fun getRandomizerByField(field: Field, context: RandomizerContext): Randomizer<*>? {
+    return null
   }
 
   /**
@@ -55,11 +52,10 @@ public interface RandomizerProvider {
    * @param type for which a randomizer should be returned
    * @param context current randomization context
    * @param <T> generic type
-   * @return a randomizer for the given type in the current context.
+   * @return a randomizer for the given type in the current context. </T>
    */
-  default <T> Randomizer<T> getRandomizerByType(
-      final Class<T> type, final RandomizerContext context) {
-    return null;
+  fun <T> getRandomizerByType(type: Class<T>, context: RandomizerContext): Randomizer<T>? {
+    return null
   }
 
   /**
@@ -67,5 +63,5 @@ public interface RandomizerProvider {
    *
    * @param randomizerRegistries to set
    */
-  default void setRandomizerRegistries(Set<RandomizerRegistry> randomizerRegistries) {}
+  fun setRandomizerRegistries(randomizerRegistries: Set<RandomizerRegistry>)
 }
