@@ -21,26 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.annotation;
+package io.github.krandom.annotation
+
+import kotlin.reflect.KClass
 
 /**
- * Argument of a {@link Randomizer}.
+ * Argument of a [Randomizer].
  *
- * @author Dovid Kopel (https://github.com/dovidkopel)
+ * @author [David Kopel](https://github.com/dovidkopel)
  */
-public @interface RandomizerArgument {
-
+annotation class RandomizerArgument(
   /**
    * The value of the argument.
    *
    * @return value of the argument
    */
-  String value() default "";
-
+  val value: String = "",
   /**
    * The type of the argument.
    *
    * @return type of the argument
    */
-  Class<?> type() default Object.class;
-}
+  val type: KClass<*> = Any::class,
+)

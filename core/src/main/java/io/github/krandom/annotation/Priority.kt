@@ -21,28 +21,22 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.annotation;
+package io.github.krandom.annotation
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.api.RandomizerRegistry;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.github.krandom.api.RandomizerRegistry
 
 /**
- * Define the priority of a {@link Randomizer} or a {@link RandomizerRegistry}.
+ * Define the priority of a [Randomizer] or a [RandomizerRegistry].
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Priority {
-
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class Priority(
   /**
    * The priority of the object.
    *
    * @return the priority of the object
    */
-  int value();
-}
+  val value: Int
+)
