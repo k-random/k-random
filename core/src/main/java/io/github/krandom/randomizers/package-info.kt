@@ -21,9 +21,10 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
+
 /**
- * Built-in {@link io.github.krandom.api.Randomizer}s.
+ * Built-in [io.github.krandom.api.Randomizer]s.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-package io.github.krandom.randomizers;
+package io.github.krandom.randomizers
