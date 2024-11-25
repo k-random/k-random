@@ -21,36 +21,20 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.util;
+package io.github.krandom.util
 
 /**
  * Wrapper for primitive TYPE values and their classes.
  *
  * @author Sam Van Overmeire
  */
-enum PrimitiveEnum {
-  BYTE(Byte.TYPE, Byte.class),
-  SHORT(Short.TYPE, Short.class),
-  INTEGER(Integer.TYPE, Integer.class),
-  LONG(Long.TYPE, Long.class),
-  FLOAT(Float.TYPE, Float.class),
-  DOUBLE(Double.TYPE, Double.class),
-  BOOLEAN(Boolean.TYPE, Boolean.class),
-  CHARACTER(Character.TYPE, Character.class);
-
-  private Class<?> type;
-  private Class<?> clazz;
-
-  PrimitiveEnum(Class<?> type, Class<?> clazz) {
-    this.type = type;
-    this.clazz = clazz;
-  }
-
-  public Class<?> getType() {
-    return type;
-  }
-
-  public Class<?> getClazz() {
-    return clazz;
-  }
+internal enum class PrimitiveEnum(@JvmField val type: Class<*>, @JvmField val clazz: Class<*>) {
+  BYTE(java.lang.Byte.TYPE, Byte::class.java),
+  SHORT(java.lang.Short.TYPE, Short::class.java),
+  INTEGER(Integer.TYPE, Int::class.java),
+  LONG(java.lang.Long.TYPE, Long::class.java),
+  FLOAT(java.lang.Float.TYPE, Float::class.java),
+  DOUBLE(java.lang.Double.TYPE, Double::class.java),
+  BOOLEAN(java.lang.Boolean.TYPE, Boolean::class.java),
+  CHARACTER(Character.TYPE, Char::class.java),
 }
