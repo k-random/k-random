@@ -21,38 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers;
+package io.github.krandom.randomizers
 
-import static java.util.ResourceBundle.getBundle;
-
-import io.github.krandom.api.Randomizer;
-import java.util.Random;
+import io.github.krandom.api.Randomizer
+import java.util.*
 
 /**
- * Base class for {@link Randomizer} implementations.
+ * Base class for [Randomizer] implementations.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public abstract class AbstractRandomizer<T> implements Randomizer<T> {
+abstract class AbstractRandomizer<T> : Randomizer<T> {
+  @JvmField protected val random: Random
 
-  protected final Random random;
-
-  protected AbstractRandomizer() {
-    random = new Random();
+  protected constructor() {
+    random = Random()
   }
 
-  protected AbstractRandomizer(final long seed) {
-    random = new Random(seed);
+  protected constructor(seed: Long) {
+    random = Random(seed)
   }
 
-  protected String[] getPredefinedValuesOf(final String key) {
-    return getBundle("krandom-data").getString(key).split(",");
+  protected fun getPredefinedValuesOf(key: String): Array<String> {
+    return ResourceBundle.getBundle("krandom-data")
+      .getString(key)
+      .split(",".toRegex())
+      .dropLastWhile { it.isEmpty() }
+      .toTypedArray()
   }
 
-  @Override
-  public String toString() {
-    return this.getClass().getSimpleName();
-  }
+  override fun toString(): String = javaClass.simpleName
 
   /**
    * Return a random double in the given range.
@@ -61,16 +59,8 @@ public abstract class AbstractRandomizer<T> implements Randomizer<T> {
    * @param max value (exclusive)
    * @return random double in the given range
    */
-  protected double nextDouble(final double min, final double max) {
-    double value = min + (random.nextDouble() * (max - min));
-    if (value < min) {
-      return min;
-    } else if (value > max) {
-      return max;
-    } else {
-      return value;
-    }
-    // NB: ThreadLocalRandom.current().nextDouble(min, max)) cannot be used
-    // because the seed is not configurable and is created per thread (see Javadoc)
-  }
+  protected fun nextDouble(min: Double, max: Double): Double =
+    (min + (random.nextDouble() * (max - min))).coerceIn(min, max)
+  // NB: ThreadLocalRandom.current().nextDouble(min, max)) cannot be used
+  // because the seed is not configurable and is created per thread (see Javadoc)
 }
