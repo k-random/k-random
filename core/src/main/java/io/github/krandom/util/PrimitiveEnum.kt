@@ -28,7 +28,7 @@ package io.github.krandom.util
  *
  * @author Sam Van Overmeire
  */
-internal enum class PrimitiveEnum(@JvmField val type: Class<*>, @JvmField val clazz: Class<*>) {
+internal enum class PrimitiveEnum(val type: Class<*>, val clazz: Class<*>) {
   BYTE(java.lang.Byte.TYPE, Byte::class.java),
   SHORT(java.lang.Short.TYPE, Short::class.java),
   INTEGER(Integer.TYPE, Int::class.java),
