@@ -10,6 +10,7 @@ tasks:
 jetbrains:
   intellij:
     plugins:
+      - Error-prone plugin
       - google-java-format
       - com.facebook.ktfmt_idea_plugin
       - detekt

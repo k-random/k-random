@@ -26,4 +26,4 @@
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-package io.github.krandom.util;
+package io.github.krandom.util
