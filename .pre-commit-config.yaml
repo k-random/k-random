@@ -11,6 +11,6 @@ repos:
       - id: commit-msg
         name: conventional commit messages
         language: pygrep
-        entry: '^(chore|test|feat|fix|build|docs|refactor)!?\(#\d+\): (?![A-Z])(?![a-z]+(ed|ing)\s).*$'
+        entry: '^((chore|test|feat|fix|build|docs|refactor)!?\(#\d+\): (?![A-Z])(?![a-z]+(ed|ing)\s).*)|(Rename .java to .kt)$'
         args: [ --multiline, --negate ] # fails if the entry is NOT matched
         stages: [ commit-msg ]
