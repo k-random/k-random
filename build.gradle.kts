@@ -7,6 +7,7 @@ plugins {
   id("com.palantir.git-version") version "3.1.0"
   id("org.jetbrains.dokka") version "1.9.20" apply false
   id("io.gitlab.arturbosch.detekt") version "1.23.7" apply false
+  id("org.jetbrains.kotlinx.kover") version "0.9.0-RC" apply false
   java
   kotlin("jvm")
   `maven-publish`
@@ -30,6 +31,7 @@ subprojects {
   apply(plugin = "maven-publish")
   apply(plugin = "org.jetbrains.dokka")
   apply(plugin = "io.gitlab.arturbosch.detekt")
+  apply(plugin = "org.jetbrains.kotlinx.kover")
   java {
     withJavadocJar()
     withSourcesJar()
@@ -50,7 +52,10 @@ subprojects {
   }
   tasks.withType<JavaCompile> { options.encoding = "UTF-8" }
   tasks.named("compileJava") { dependsOn("spotlessApply") }
-  tasks.withType<Test> { useJUnitPlatform() }
+  tasks.withType<Test> {
+    useJUnitPlatform()
+    finalizedBy("koverXmlReport", "koverHtmlReport")
+  }
   repositories { mavenCentral() }
   publishing {
     publications {

@@ -19,5 +19,25 @@ jobs:
           name: JUnit Tests                 # Name of the check run which will be created
           path: '**/*.xml'                  # Path to test results (inside artifact .zip)
           reporter: java-junit              # Format of test results
+
       - name: Detekt report
         uses: natiginfo/action-detekt-all@1.23.7
+
+      - name: Download a kover report
+        uses: actions/download-artifact@v4
+        with:
+          name: kover-report
+
+      - name: Add coverage report to PR
+        id: kover
+        uses: mi-kas/kover-report@v1
+        with:
+          path: |
+            ${{ github.workspace }}/bean-validation/build/reports/kover/report.xml
+            ${{ github.workspace }}/core/build/reports/kover/report.xml
+            ${{ github.workspace }}/randomizers/build/reports/kover/report.xml
+          title: Code Coverage
+          update-comment: true
+          min-coverage-overall: 80
+          min-coverage-changed-files: 80
+          coverage-counter-type: LINE
