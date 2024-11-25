@@ -21,26 +21,22 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.annotation;
+package io.github.krandom.annotation
+
+import io.github.krandom.api.RandomizerRegistry
 
 /**
- * Argument of a {@link Randomizer}.
+ * Define the priority of a [Randomizer] or a [RandomizerRegistry].
  *
- * @author Dovid Kopel (https://github.com/dovidkopel)
+ * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-public @interface RandomizerArgument {
-
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class Priority(
   /**
-   * The value of the argument.
+   * The priority of the object.
    *
-   * @return value of the argument
+   * @return the priority of the object
    */
-  String value() default "";
-
-  /**
-   * The type of the argument.
-   *
-   * @return type of the argument
-   */
-  Class<?> type() default Object.class;
-}
+  val value: Int
+)

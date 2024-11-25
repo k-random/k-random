@@ -21,28 +21,11 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.annotation;
-
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.api.RandomizerRegistry;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package io.github.krandom.annotation
 
 /**
- * Define the priority of a {@link Randomizer} or a {@link RandomizerRegistry}.
+ * Annotation to exclude a field from being populated.
  *
- * @author Rémi Alvergnat (toilal.dev@gmail.com)
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Priority {
-
-  /**
-   * The priority of the object.
-   *
-   * @return the priority of the object
-   */
-  int value();
-}
+@Retention(AnnotationRetention.RUNTIME) @Target(AnnotationTarget.FIELD) annotation class Exclude

@@ -21,31 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.annotation;
+package io.github.krandom.annotation
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import kotlin.reflect.KClass
 
 /**
- * Annotation to mark a field to be populated with a random value using the given {@link
- * io.github.krandom.api.Randomizer}.
+ * Argument of a [Randomizer].
  *
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ * @author [David Kopel](https://github.com/dovidkopel)
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Randomizer {
-
+annotation class RandomizerArgument(
   /**
-   * The {@link io.github.krandom.api.Randomizer} to use to generate the random value for this
-   * field.
+   * The value of the argument.
    *
-   * @return the randomizer's class
+   * @return value of the argument
    */
-  Class<? extends io.github.krandom.api.Randomizer<?>> value();
-
-  @RandomizerArgument
-  RandomizerArgument[] args() default {};
-}
+  val value: String = "",
+  /**
+   * The type of the argument.
+   *
+   * @return type of the argument
+   */
+  val type: KClass<*> = Any::class,
+)

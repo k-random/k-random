@@ -21,18 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.annotation;
+package io.github.krandom.annotation
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.github.krandom.api.Randomizer
+import kotlin.reflect.KClass
 
 /**
- * Annotation to exclude a field from being populated.
+ * Annotation to mark a field to be populated with a random value using the given [ ].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Exclude {}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FIELD)
+annotation class Randomizer(
+  /**
+   * The [io.github.krandom.api.Randomizer] to use to generate the random value for this field.
+   *
+   * @return the randomizer's class
+   */
+  val value: KClass<out Randomizer<*>>,
+  @get:RandomizerArgument val args: Array<RandomizerArgument> = [],
+)
