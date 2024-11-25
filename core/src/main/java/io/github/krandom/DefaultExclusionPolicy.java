@@ -30,6 +30,7 @@ import io.github.krandom.api.RandomizerContext;
 import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Component that encapsulates the logic of field/type exclusion in a given randomization context.
@@ -46,7 +47,8 @@ public class DefaultExclusionPolicy implements ExclusionPolicy {
    * @param context the current randomization context
    * @return true if the field should be excluded, false otherwise
    */
-  public boolean shouldBeExcluded(final Field field, final RandomizerContext context) {
+  public boolean shouldBeExcluded(
+      @NotNull final Field field, @NotNull final RandomizerContext context) {
     if (isStatic(field)) {
       return true;
     }
@@ -67,7 +69,7 @@ public class DefaultExclusionPolicy implements ExclusionPolicy {
    * @param context the current randomization context
    * @return true if the type should be excluded, false otherwise
    */
-  public boolean shouldBeExcluded(final Class<?> type, final RandomizerContext context) {
+  public boolean shouldBeExcluded(@NotNull final Class<?> type, final RandomizerContext context) {
     Set<Predicate<Class<?>>> typeExclusionPredicates =
         context.getParameters().getTypeExclusionPredicates();
     for (Predicate<Class<?>> typeExclusionPredicate : typeExclusionPredicates) {

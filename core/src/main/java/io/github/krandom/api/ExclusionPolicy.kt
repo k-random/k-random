@@ -21,17 +21,16 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.api;
+package io.github.krandom.api
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Field
 
 /**
  * Strategy interface for field/type exclusion.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public interface ExclusionPolicy {
-
+interface ExclusionPolicy {
   /**
    * Given the current randomization context, should the field be excluded from being randomized?
    *
@@ -39,7 +38,7 @@ public interface ExclusionPolicy {
    * @param context the current randomization context
    * @return true if the field should be excluded, false otherwise
    */
-  boolean shouldBeExcluded(final Field field, final RandomizerContext context);
+  fun shouldBeExcluded(field: Field, context: RandomizerContext): Boolean
 
   /**
    * Given the current randomization context, should the type be excluded from being randomized?
@@ -48,5 +47,5 @@ public interface ExclusionPolicy {
    * @param context the current randomization context
    * @return true if the type should be excluded, false otherwise
    */
-  boolean shouldBeExcluded(final Class<?> type, final RandomizerContext context);
+  fun shouldBeExcluded(type: Class<*>, context: RandomizerContext): Boolean
 }

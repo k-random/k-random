@@ -31,6 +31,7 @@ import io.github.krandom.api.RandomizerContext;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Random;
+import org.jetbrains.annotations.NotNull;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
@@ -48,7 +49,7 @@ public class ObjenesisObjectFactory implements ObjectFactory {
   private Random random;
 
   @Override
-  public <T> T createInstance(Class<T> type, RandomizerContext context) {
+  public <T> T createInstance(@NotNull Class<T> type, @NotNull RandomizerContext context) {
     if (random == null) {
       random = new Random(context.getParameters().getSeed());
     }

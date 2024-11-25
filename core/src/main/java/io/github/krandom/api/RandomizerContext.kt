@@ -21,39 +21,38 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.api;
+package io.github.krandom.api
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
 
 /**
- * A context object for a {@link Randomizer}. This interface provides information about the
- * randomization context.
+ * A context object for a [Randomizer]. This interface provides information about the randomization
+ * context.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public interface RandomizerContext {
-
+interface RandomizerContext {
   /**
-   * Return the target type (parameter of {@link KRandom#nextObject(Class)}).
+   * Return the target type (parameter of [KRandom.nextObject]).
    *
    * @return target type
    */
-  Class<?> getTargetType();
+  val targetType: Class<*>
 
   /**
-   * Return the root object being randomized (instance of {@link RandomizerContext#getTargetType()}.
+   * Return the root object being randomized (instance of [RandomizerContext.targetType].
    *
    * @return root object being randomized
    */
-  Object getRootObject();
+  val rootObject: Any
 
   /**
    * Return the currently randomized object in the object graph.
    *
    * @return currently randomized object
    */
-  Object getCurrentObject();
+  val currentObject: Any
 
   /**
    * Return the full path to the current field being randomized (starting from the first field in
@@ -61,19 +60,19 @@ public interface RandomizerContext {
    *
    * @return full path to the current field being randomized
    */
-  String getCurrentField();
+  val currentField: String
 
   /**
    * Get the current level in the hierarchy of the object graph.
    *
    * @return current level in the hierarchy of the object graph.
    */
-  int getCurrentRandomizationDepth();
+  val currentRandomizationDepth: Int
 
   /**
-   * Return the currently used parameters by the enclosing {@link KRandom}.
+   * Return the currently used parameters by the enclosing [KRandom].
    *
    * @return currently used parameters
    */
-  KRandomParameters getParameters();
+  val parameters: KRandomParameters
 }

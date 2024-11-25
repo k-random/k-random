@@ -21,25 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.api;
+package io.github.krandom.api
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import java.lang.reflect.Field;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import java.lang.reflect.Field
 
 /**
- * Interface for a registry of {@link Randomizer}s.
+ * Interface for a registry of [Randomizer]s.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-public interface RandomizerRegistry {
-
+interface RandomizerRegistry {
   /**
    * Initialize the registry.
    *
-   * @param parameters of the {@link KRandom} instance being configured
+   * @param parameters of the [KRandom] instance being configured
    */
-  void init(KRandomParameters parameters);
+  fun init(parameters: KRandomParameters)
 
   /**
    * Retrieves a randomizer for the given field.
@@ -47,7 +46,7 @@ public interface RandomizerRegistry {
    * @param field the field for which a randomizer was registered
    * @return the randomizer registered for the given field
    */
-  Randomizer<?> getRandomizer(final Field field);
+  fun getRandomizer(field: Field): Randomizer<*>
 
   /**
    * Retrieves a randomizer for a given type.
@@ -55,5 +54,5 @@ public interface RandomizerRegistry {
    * @param type the type for which a randomizer was registered
    * @return the randomizer registered for the given type.
    */
-  Randomizer<?> getRandomizer(final Class<?> type);
+  fun getRandomizer(type: Class<*>): Randomizer<*>
 }
