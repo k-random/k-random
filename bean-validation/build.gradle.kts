@@ -4,17 +4,18 @@ plugins { kotlin("jvm") }
  */
 
 dependencies {
-  implementation(project(":randomizers"))
+  implementation(kotlin("stdlib"))
   implementation(libs.jakarta.validation.jakarta.validation.api)
   implementation(project(":core"))
-  testImplementation(libs.org.hibernate.validator.hibernate.validator)
+  implementation(project(":randomizers"))
+  testImplementation(libs.io.kotest.kotest.assertions.core)
+  testImplementation(libs.org.assertj.assertj.core)
   testImplementation(libs.org.glassfish.jakarta.el)
+  testImplementation(libs.org.hibernate.validator.hibernate.validator)
   testImplementation(libs.org.junit.jupiter.junit.jupiter)
   testImplementation(libs.org.junit.jupiter.junit.jupiter.params)
-  testImplementation(libs.org.assertj.assertj.core)
   testImplementation(libs.org.mockito.mockito.core)
   testImplementation(libs.org.mockito.mockito.junit.jupiter)
-  implementation(kotlin("stdlib"))
 }
 
 description = "k-random Bean Validation"

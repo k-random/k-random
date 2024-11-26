@@ -8,11 +8,12 @@ plugins {
 }
 
 dependencies {
-  implementation(project(":core"))
   api(libs.net.datafaker.datafaker)
-  testImplementation(libs.org.junit.jupiter.junit.jupiter)
-  testImplementation(libs.org.assertj.assertj.core)
   implementation(kotlin("stdlib"))
+  implementation(project(":core"))
+  testImplementation(libs.org.assertj.assertj.core)
+  testImplementation(libs.org.junit.jupiter.junit.jupiter)
+  testImplementation(libs.io.kotest.kotest.assertions.core)
 }
 
 description = "k-random Randomizers"

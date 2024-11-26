@@ -21,44 +21,49 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers;
+package io.github.krandom.randomizers
 
-import static org.assertj.core.api.BDDAssertions.then;
+import io.kotest.matchers.string.shouldMatch
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Test;
-
-class RegularExpressionRandomizerTest {
-
+internal class RegularExpressionRandomizerTest {
   @Test
-  void leadingBoundaryMatcherIsRemoved() {
-    // given
-    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("^A");
+  fun `leading boundary matcher is removed`() {
+    val regex = "^A"
+    val randomizer = RegularExpressionRandomizer(regex)
 
-    // when
-    String actual = randomizer.getRandomValue();
+    val actual = randomizer.getRandomValue()
 
-    then(actual).isEqualTo("A");
+    actual shouldMatch regex.toRegex()
   }
 
   @Test
-  void tailingBoundaryMatcherIsRemoved() {
-    // given
-    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("A$");
+  fun `tailing boundary matcher is removed`() {
+    val regex = "A$"
+    val randomizer = RegularExpressionRandomizer(regex)
 
-    // when
-    String actual = randomizer.getRandomValue();
+    val actual = randomizer.getRandomValue()
 
-    then(actual).isEqualTo("A");
+    actual shouldMatch regex.toRegex()
   }
 
   @Test
-  void leadingAndTailingBoundaryMatcherIsRemoved() {
-    // given
-    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("^A$");
+  fun `leading and tailing boundary matcher is removed`() {
+    val regex = "^A$"
+    val randomizer = RegularExpressionRandomizer(regex)
 
-    // when
-    String actual = randomizer.getRandomValue();
+    val actual = randomizer.getRandomValue()
 
-    then(actual).isEqualTo("A");
+    actual shouldMatch regex.toRegex()
+  }
+
+  @Test
+  fun `more complicated regular expression works`() {
+    val regex = "^[A-Z]{1,2}\\d[A-Z\\d]? ?\\d[A-Z]{2}$"
+    val randomizer = RegularExpressionRandomizer(regex)
+
+    val actual = randomizer.getRandomValue()
+
+    actual shouldMatch regex.toRegex()
   }
 }

@@ -1,51 +1,48 @@
-package io.github.krandom.validation;
+package io.github.krandom.validation
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldMatch
+import jakarta.validation.Validation
+import jakarta.validation.Validator
+import jakarta.validation.constraints.Pattern
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-import jakarta.validation.constraints.Pattern;
-import java.util.Set;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+const val UK_POST_CODE_REGEX = """^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$"""
+const val YEAR_REGEX = """\d{4}"""
 
-class PatternAnnotationHandlerTest {
-  private KRandom kRandom;
+internal class PatternAnnotationHandlerTest {
+  private lateinit var kRandom: KRandom
 
   @BeforeEach
-  void setUp() {
-    kRandom = new KRandom();
+  fun setUp() {
+    kRandom = KRandom()
   }
 
   @Test
-  void generatedBeanShouldBeValidAccordingToValidationConstraints() {
-    TestBean testBean = kRandom.nextObject(TestBean.class);
+  fun generatedBeanShouldBeValidAccordingToValidationConstraints() {
+    val testBean = kRandom.nextObject(TestBean::class.java)
 
-    assertThat(testBean.getTestString()).matches("^A$");
+    testBean.postCode shouldMatch UK_POST_CODE_REGEX.toRegex()
+    testBean.year shouldMatch YEAR_REGEX.toRegex()
   }
 
   @Test
-  void generatedBeanShouldBeValidUsingBeanValidationApi() {
-    TestBean testBean = kRandom.nextObject(TestBean.class);
+  fun generatedBeanShouldBeValidUsingBeanValidationApi() {
+    val testBean = kRandom.nextObject(TestBean::class.java)
 
-    Validator validator;
-    try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
-      validator = validatorFactory.getValidator();
+    val validator: Validator
+    Validation.buildDefaultValidatorFactory().use { validatorFactory ->
+      validator = validatorFactory.validator
     }
-    Set<ConstraintViolation<TestBean>> violations = validator.validate(testBean);
+    val violations = validator.validate(testBean)
 
-    assertThat(violations).isEmpty();
+    violations.size shouldBe 0
   }
 
-  static class TestBean {
-    @Pattern(regexp = "^A$")
-    private String testString;
-
-    public String getTestString() {
-      return testString;
-    }
-  }
+  data class TestBean(
+    @field:Pattern(regexp = UK_POST_CODE_REGEX) val postCode: String,
+    @field:Pattern(regexp = YEAR_REGEX) val year: String,
+  )
 }
