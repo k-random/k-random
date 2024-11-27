@@ -3,7 +3,7 @@
 
 [versions]
 # keep-sorted start
-io-github-classgraph-classgraph = "4.8.160"
+io-github-classgraph-classgraph = "4.8.179"
 io-kotest-kotest-assertions-core = "5.9.1"
 jakarta-validation-jakarta-validation-api = "3.0.2"
 net-datafaker-datafaker = "2.0.1"
