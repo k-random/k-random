@@ -10,6 +10,7 @@ dependencies {
   implementation(libs.jakarta.validation.jakarta.validation.api)
   implementation(project(":core"))
   implementation(project(":randomizers"))
+  testImplementation(libs.io.kotest.kotest.assertions.core)
   testImplementation(libs.org.assertj.assertj.core)
   testImplementation(libs.org.glassfish.jakarta.el)
   testImplementation(libs.org.hibernate.validator.hibernate.validator)

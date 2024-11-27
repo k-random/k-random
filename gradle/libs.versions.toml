@@ -4,6 +4,7 @@
 [versions]
 # keep-sorted start
 io-github-classgraph-classgraph = "4.8.160"
+io-kotest-kotest-assertions-core = "5.9.1"
 jakarta-validation-jakarta-validation-api = "3.0.2"
 net-datafaker-datafaker = "2.0.1"
 org-assertj-assertj-core = "3.24.2"
@@ -19,6 +20,7 @@ org-objenesis-objenesis = "3.3"
 [libraries]
 # keep-sorted start
 io-github-classgraph-classgraph = { module = "io.github.classgraph:classgraph", version.ref = "io-github-classgraph-classgraph" }
+io-kotest-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest-kotest-assertions-core" }
 jakarta-validation-jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation-jakarta-validation-api" }
 net-datafaker-datafaker = { module = "net.datafaker:datafaker", version.ref = "net-datafaker-datafaker" }
 org-assertj-assertj-core = { module = "org.assertj:assertj-core", version.ref = "org-assertj-assertj-core" }
