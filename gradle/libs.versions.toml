@@ -2,7 +2,9 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
+# keep-sorted start
 io-github-classgraph-classgraph = "4.8.160"
+io-kotest-kotest-assertions-core = "5.9.1"
 jakarta-validation-jakarta-validation-api = "3.0.2"
 net-datafaker-datafaker = "2.0.1"
 org-assertj-assertj-core = "3.24.2"
@@ -13,9 +15,12 @@ org-junit-jupiter-junit-jupiter-params = "5.9.3"
 org-mockito-mockito-core = "5.4.0"
 org-mockito-mockito-junit-jupiter = "5.4.0"
 org-objenesis-objenesis = "3.3"
+# keep-sorted end
 
 [libraries]
+# keep-sorted start
 io-github-classgraph-classgraph = { module = "io.github.classgraph:classgraph", version.ref = "io-github-classgraph-classgraph" }
+io-kotest-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest-kotest-assertions-core" }
 jakarta-validation-jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation-jakarta-validation-api" }
 net-datafaker-datafaker = { module = "net.datafaker:datafaker", version.ref = "net-datafaker-datafaker" }
 org-assertj-assertj-core = { module = "org.assertj:assertj-core", version.ref = "org-assertj-assertj-core" }
@@ -26,3 +31,4 @@ org-junit-jupiter-junit-jupiter-params = { module = "org.junit.jupiter:junit-jup
 org-mockito-mockito-core = { module = "org.mockito:mockito-core", version.ref = "org-mockito-mockito-core" }
 org-mockito-mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "org-mockito-mockito-junit-jupiter" }
 org-objenesis-objenesis = { module = "org.objenesis:objenesis", version.ref = "org-objenesis-objenesis" }
+# keep-sorted end

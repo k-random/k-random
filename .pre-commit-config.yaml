@@ -1,4 +1,8 @@
 repos:
+  - repo: https://github.com/google/keep-sorted
+    rev: v0.5.1
+    hooks:
+      - id: keep-sorted
   - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
     rev: v2.14.0
     hooks:
