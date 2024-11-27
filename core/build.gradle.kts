@@ -8,7 +8,9 @@ dependencies {
   // keep-sorted start
   api(libs.io.github.classgraph.classgraph)
   api(libs.org.objenesis.objenesis)
+  implementation(kotlin("reflect"))
   implementation(kotlin("stdlib"))
+  testImplementation(libs.io.kotest.kotest.assertions.core)
   testImplementation(libs.org.assertj.assertj.core)
   testImplementation(libs.org.junit.jupiter.junit.jupiter)
   testImplementation(libs.org.mockito.mockito.core)

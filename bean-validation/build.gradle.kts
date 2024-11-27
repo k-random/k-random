@@ -6,6 +6,7 @@ plugins { kotlin("jvm") }
 
 dependencies {
   // keep-sorted start
+  implementation(kotlin("reflect"))
   implementation(kotlin("stdlib"))
   implementation(libs.jakarta.validation.jakarta.validation.api)
   implementation(project(":core"))

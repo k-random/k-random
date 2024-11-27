@@ -5,9 +5,10 @@ on:
     types:
       - completed
 jobs:
-  publish-to-maven-central:
+  publish-to-maven-central-on-success:
     name: Publish to maven central
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     # Only run one job a time to avoid conflicts
     concurrency: ci-${{ github.ref }}
     # This permission may be required to grant access for the Action to push tags

@@ -21,44 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.PriorityComparator.compare
+import io.github.krandom.annotation.Priority
+import io.kotest.matchers.collections.shouldContainInOrder
+import io.kotest.matchers.ints.shouldBeGreaterThan
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.annotation.Priority;
-import java.util.Arrays;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class PriorityComparatorTest {
-
-  private PriorityComparator priorityComparator;
-
-  private Foo foo;
-
-  private Bar bar;
+internal class PriorityComparatorTest {
+  private lateinit var foo: Foo
+  private lateinit var bar: Bar
 
   @BeforeEach
-  void setUp() {
-    priorityComparator = new PriorityComparator();
-    foo = new Foo();
-    bar = new Bar();
+  fun setUp() {
+    foo = Foo()
+    bar = Bar()
   }
 
   @Test
-  void testCompare() {
-    assertThat(priorityComparator.compare(foo, bar)).isGreaterThan(0);
+  fun testCompare() {
+    compare(foo, bar) shouldBeGreaterThan 0
 
-    List<Object> objects = Arrays.asList(foo, bar);
-    objects.sort(priorityComparator);
+    val objects = mutableListOf(foo, bar)
+    objects.sortWith(PriorityComparator)
     // objects must be sorted in decreasing priority order: 2 > 1
-    assertThat(objects).containsExactly(bar, foo);
+    objects shouldContainInOrder listOf(bar, foo)
   }
 
-  @Priority(1)
-  private class Foo {}
+  @Priority(1) private inner class Foo
 
-  @Priority(2)
-  private class Bar {}
+  @Priority(2) private inner class Bar
 }

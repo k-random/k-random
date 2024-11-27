@@ -7,6 +7,7 @@ plugins { kotlin("jvm") }
 dependencies {
   // keep-sorted start
   api(libs.net.datafaker.datafaker)
+  implementation(kotlin("reflect"))
   implementation(kotlin("stdlib"))
   implementation(project(":core"))
   testImplementation(libs.org.assertj.assertj.core)

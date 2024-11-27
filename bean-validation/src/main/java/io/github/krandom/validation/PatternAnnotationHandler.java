@@ -23,6 +23,7 @@
  */
 package io.github.krandom.validation;
 
+import io.github.krandom.annotation.Priority;
 import io.github.krandom.api.Randomizer;
 import io.github.krandom.randomizers.RegularExpressionRandomizer;
 import io.github.krandom.util.ReflectionUtils;
@@ -30,6 +31,7 @@ import jakarta.validation.constraints.Pattern;
 import java.lang.reflect.Field;
 import java.util.Random;
 
+@Priority(-5)
 class PatternAnnotationHandler implements BeanValidationAnnotationHandler {
 
   private final Random random;

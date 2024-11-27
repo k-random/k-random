@@ -21,33 +21,18 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import io.github.krandom.annotation.Priority;
-import java.util.Comparator;
+import io.github.krandom.annotation.Priority
+import kotlin.reflect.full.findAnnotation
 
 /**
- * Compare objects annotated with {@link Priority} annotation in the ascending order.
+ * Compare objects annotated with [Priority] annotation in the ascending order.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-class PriorityComparator implements Comparator<Object> {
-
-  @Override
-  public int compare(final Object o1, final Object o2) {
-    int o1Priority = getPriority(o1);
-    int o2Priority = getPriority(o2);
-
-    return o2Priority - o1Priority;
-  }
-
-  private int getPriority(final Object object) {
-    if (object != null) {
-      Priority annotation = object.getClass().getAnnotation(Priority.class);
-      if (annotation != null) {
-        return annotation.value();
-      }
-    }
-    return 0;
-  }
+internal object PriorityComparator : Comparator<Any> {
+  override fun compare(o1: Any, o2: Any): Int = o2.getPriority().compareTo(o1.getPriority())
 }
+
+private fun Any.getPriority(): Int = this::class.findAnnotation<Priority>()?.value ?: 0

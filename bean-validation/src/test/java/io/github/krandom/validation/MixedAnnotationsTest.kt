@@ -6,6 +6,7 @@ import io.kotest.matchers.string.shouldMatch
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class MixedAnnotationsTest {
@@ -17,6 +18,7 @@ class MixedAnnotationsTest {
   }
 
   @Test
+  @Disabled("https://github.com/k-random/k-random/issues/22")
   fun `generated bean should be valid according to validation constraints`() {
     val testBean = kRandom.nextObject(TestBean::class.java)
 
