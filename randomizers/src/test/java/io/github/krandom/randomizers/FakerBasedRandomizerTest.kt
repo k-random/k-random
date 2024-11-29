@@ -29,7 +29,7 @@ import java.io.File
 import java.util.*
 import org.junit.jupiter.api.extension.RegisterExtension
 
-internal open class AbstractRandomizerTest<T> {
+internal open class FakerBasedRandomizerTest<T> {
   lateinit var randomizer: Randomizer<T>
 
   @field:RegisterExtension val approvals: ApprovalsExtension = ApprovalsExtension(File(PATH))

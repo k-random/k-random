@@ -5,24 +5,24 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import org.junit.jupiter.api.Test
 
 @Suppress("JUnitMalformedDeclaration")
-internal class CountryRandomizerTest : AbstractRandomizerTest<CountryRandomizer>() {
+internal class CountryRandomizerTest : FakerBasedRandomizerTest<String>() {
   @Test
   fun `generated number should not be null`() {
-    val randomizer = CountryRandomizer()
+    randomizer = CountryRandomizer()
 
     randomizer.getRandomValue().shouldNotBeNull()
   }
 
   @Test
   fun `should generate the same value for the same seed`(approver: Approver) {
-    val randomizer = CountryRandomizer(SEED)
+    randomizer = CountryRandomizer(SEED)
 
     approver.assertApproved(randomizer.getRandomValue())
   }
 
   @Test
   fun `should generate the same value for the same seed for same locale`(approver: Approver) {
-    val randomizer = CountryRandomizer(SEED, LOCALE)
+    randomizer = CountryRandomizer(SEED, LOCALE)
 
     approver.assertApproved(randomizer.getRandomValue())
   }

@@ -5,25 +5,24 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import org.junit.jupiter.api.Test
 
 @Suppress("JUnitMalformedDeclaration")
-internal class CreditCardNumberRandomizerTest :
-  AbstractRandomizerTest<CreditCardNumberRandomizer>() {
+internal class CreditCardNumberRandomizerTest : FakerBasedRandomizerTest<String>() {
   @Test
   fun `generated number should not be null`() {
-    val randomizer = CreditCardNumberRandomizer()
+    randomizer = CreditCardNumberRandomizer()
 
     randomizer.getRandomValue().shouldNotBeNull()
   }
 
   @Test
   fun `should generate the same value for the same seed`(approver: Approver) {
-    val randomizer = CreditCardNumberRandomizer(SEED)
+    randomizer = CreditCardNumberRandomizer(SEED)
 
     approver.assertApproved(randomizer.getRandomValue())
   }
 
   @Test
   fun `should generate the same value for the same seed for same locale`(approver: Approver) {
-    val randomizer = CreditCardNumberRandomizer(SEED, LOCALE)
+    randomizer = CreditCardNumberRandomizer(SEED, LOCALE)
 
     approver.assertApproved(randomizer.getRandomValue())
   }

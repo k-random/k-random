@@ -21,42 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers;
+package io.github.krandom.randomizers
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.BDDAssertions.then;
+import com.oneeyedmen.okeydoke.Approver
+import io.kotest.matchers.collections.shouldContain
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class GenericStringRandomizerTest extends AbstractRandomizerTest<String> {
-
-  private String[] words;
+internal class GenericStringRandomizerTest : FakerBasedRandomizerTest<String>() {
+  private lateinit var words: Array<String>
 
   @BeforeEach
-  void setUp() {
-    words = new String[] {"foo", "bar"};
+  fun setUp() {
+    words = arrayOf("foo", "bar")
   }
 
   @Test
-  void randomValueShouldBeGeneratedFromTheGivenWords() {
-    // given
-    randomizer = new GenericStringRandomizer(words);
+  fun `random value should be generated from the given words`() {
+    randomizer = GenericStringRandomizer(words)
 
-    // when
-    String randomWord = randomizer.getRandomValue();
+    val randomWord = randomizer.getRandomValue()
 
-    then(randomWord).isIn(asList(words));
+    words shouldContain randomWord
   }
 
   @Test
-  void randomValueShouldBeAlwaysTheSameForTheSameSeed() {
-    // given
-    randomizer = new GenericStringRandomizer(words, SEED);
+  fun `random value should be always the same for the same seed`(approver: Approver) {
+    randomizer = GenericStringRandomizer(words, SEED)
 
-    // when
-    String randomWord = randomizer.getRandomValue();
+    val randomWord = randomizer.getRandomValue()
 
-    then(randomWord).isEqualTo("bar");
+    approver.assertApproved(randomWord)
   }
 }
