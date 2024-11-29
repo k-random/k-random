@@ -21,15 +21,22 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers;
+package io.github.krandom.randomizers
 
-import io.github.krandom.api.Randomizer;
-import java.util.Locale;
+import com.oneeyedmen.okeydoke.junit5.ApprovalsExtension
+import io.github.krandom.api.Randomizer
+import java.io.File
+import java.util.*
+import org.junit.jupiter.api.extension.RegisterExtension
 
-class AbstractRandomizerTest<T> {
+internal open class AbstractRandomizerTest<T> {
+  lateinit var randomizer: Randomizer<T>
 
-  static final long SEED = 123L;
-  static final Locale LOCALE = Locale.FRANCE;
+  @field:RegisterExtension val approvals: ApprovalsExtension = ApprovalsExtension(File(PATH))
 
-  Randomizer<T> randomizer;
+  companion object {
+    const val PATH = "src/test/resources/approval"
+    const val SEED: Long = 123L
+    val LOCALE: Locale = Locale.FRANCE
+  }
 }

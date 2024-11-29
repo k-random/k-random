@@ -3,10 +3,11 @@
 
 [versions]
 # keep-sorted start
+com-oneeyedmen-okeydoke = "2.0.3"
 io-github-classgraph-classgraph = "4.8.179"
 io-kotest-kotest-assertions-core = "5.9.1"
 jakarta-validation-jakarta-validation-api = "3.1.0"
-net-datafaker-datafaker = "2.0.1"
+net-datafaker-datafaker = "2.4.2"
 org-assertj-assertj-core = "3.24.2"
 org-glassfish-jakarta-el = "4.0.2"
 org-hibernate-validator-hibernate-validator = "8.0.1.Final"
@@ -19,6 +20,7 @@ org-objenesis-objenesis = "3.3"
 
 [libraries]
 # keep-sorted start
+com-oneeyedmen-okeydoke = { module = "com.oneeyedmen:okeydoke", version.ref = "com-oneeyedmen-okeydoke" }
 io-github-classgraph-classgraph = { module = "io.github.classgraph:classgraph", version.ref = "io-github-classgraph-classgraph" }
 io-kotest-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest-kotest-assertions-core" }
 jakarta-validation-jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation-jakarta-validation-api" }
