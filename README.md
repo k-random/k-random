@@ -9,7 +9,9 @@
 
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/k-random/k-random/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/k-random/k-random/actions/workflows/build-and-test.yml)
-[![Reports](https://github.com/k-random/k-random/actions/workflows/reports.yml/badge.svg)](https://github.com/k-random/k-random/actions/workflows/reports.yml)
+[![Detekt Report](https://github.com/k-random/k-random/actions/workflows/detekt-report.yml/badge.svg)](https://github.com/k-random/k-random/actions/workflows/detekt-report.yml)
+[![Kover Report](https://github.com/k-random/k-random/actions/workflows/kover-report.yml/badge.svg)](https://github.com/k-random/k-random/actions/workflows/kover-report.yml)
+[![Test Report](https://github.com/k-random/k-random/actions/workflows/test-report.yml/badge.svg)](https://github.com/k-random/k-random/actions/workflows/test-report.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.k-random/k-random-core
 )](https://central.sonatype.com/artifact/io.github.k-random/k-random-core)
 [![javadoc](https://javadoc.io/badge2/io.github.k-random/k-random-core/javadoc.svg)](https://javadoc.io/doc/io.github.k-random/k-random-core)
