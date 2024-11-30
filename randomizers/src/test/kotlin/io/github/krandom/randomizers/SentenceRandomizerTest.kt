@@ -21,42 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers;
+package io.github.krandom.randomizers
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.BDDAssertions.then;
+import com.oneeyedmen.okeydoke.Approver
+import io.kotest.matchers.nulls.shouldNotBeNull
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+@Suppress("JUnitMalformedDeclaration")
+internal class SentenceRandomizerTest : FakerBasedRandomizerTest<String>() {
+  @Test
+  fun `generated number should not be null`() {
+    randomizer = SentenceRandomizer()
 
-class GenericStringRandomizerTest extends AbstractRandomizerTest<String> {
-
-  private String[] words;
-
-  @BeforeEach
-  void setUp() {
-    words = new String[] {"foo", "bar"};
+    randomizer.getRandomValue().shouldNotBeNull()
   }
 
   @Test
-  void randomValueShouldBeGeneratedFromTheGivenWords() {
-    // given
-    randomizer = new GenericStringRandomizer(words);
+  fun `should generate the same value for the same seed`(approver: Approver) {
+    randomizer = SentenceRandomizer(SEED)
 
-    // when
-    String randomWord = randomizer.getRandomValue();
-
-    then(randomWord).isIn(asList(words));
+    approver.assertApproved(randomizer.getRandomValue())
   }
 
   @Test
-  void randomValueShouldBeAlwaysTheSameForTheSameSeed() {
-    // given
-    randomizer = new GenericStringRandomizer(words, SEED);
+  fun `should generate the same value for the same seed for same locale`(approver: Approver) {
+    randomizer = SentenceRandomizer(SEED, LOCALE)
 
-    // when
-    String randomWord = randomizer.getRandomValue();
-
-    then(randomWord).isEqualTo("bar");
+    approver.assertApproved(randomizer.getRandomValue())
   }
 }

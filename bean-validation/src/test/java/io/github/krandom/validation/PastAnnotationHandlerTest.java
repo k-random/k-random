@@ -42,7 +42,7 @@ class PastAnnotationHandlerTest {
     assertThat(testBean.getTestOffsetDateTime()).isBefore(OffsetDateTime.now());
     assertThat(testBean.getTestOffsetTime()).isBefore(OffsetTime.now());
     assertThat(testBean.getTestYear()).isLessThan(Year.now());
-    assertThat(testBean.getTestYearMonth()).isLessThan(YearMonth.now());
+    assertThat(testBean.getTestYearMonth()).isBefore(YearMonth.now());
     assertThat(testBean.getTestZonedDateTime()).isBefore(ZonedDateTime.now());
     assertThat(testBean.getTestHijrahDate()).isLessThan(HijrahDate.now());
     assertThat(testBean.getTestJapaneseDate()).isLessThan(JapaneseDate.now());

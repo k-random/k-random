@@ -10,6 +10,8 @@ dependencies {
   implementation(kotlin("reflect"))
   implementation(kotlin("stdlib"))
   implementation(project(":core"))
+  testImplementation(libs.com.oneeyedmen.okeydoke)
+  testImplementation(libs.io.kotest.kotest.assertions.core)
   testImplementation(libs.org.assertj.assertj.core)
   testImplementation(libs.org.junit.jupiter.junit.jupiter)
   // keep-sorted end

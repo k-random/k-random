@@ -3,22 +3,22 @@
 
 [versions]
 # keep-sorted start
-io-github-classgraph-classgraph = "4.8.160"
+com-oneeyedmen-okeydoke = "2.0.3"
+io-github-classgraph-classgraph = "4.8.179"
 io-kotest-kotest-assertions-core = "5.9.1"
-jakarta-validation-jakarta-validation-api = "3.0.2"
-net-datafaker-datafaker = "2.0.1"
-org-assertj-assertj-core = "3.24.2"
+jakarta-validation-jakarta-validation-api = "3.1.0"
+net-datafaker-datafaker = "2.4.2"
+org-assertj-assertj-core = "3.26.3"
 org-glassfish-jakarta-el = "4.0.2"
 org-hibernate-validator-hibernate-validator = "8.0.1.Final"
-org-junit-jupiter-junit-jupiter = "5.9.3"
-org-junit-jupiter-junit-jupiter-params = "5.9.3"
-org-mockito-mockito-core = "5.4.0"
-org-mockito-mockito-junit-jupiter = "5.4.0"
-org-objenesis-objenesis = "3.3"
+org-junit-jupiter-junit-jupiter = "5.11.3"
+org-mockito-mockito = "5.14.2"
+org-objenesis-objenesis = "3.4"
 # keep-sorted end
 
 [libraries]
 # keep-sorted start
+com-oneeyedmen-okeydoke = { module = "com.oneeyedmen:okeydoke", version.ref = "com-oneeyedmen-okeydoke" }
 io-github-classgraph-classgraph = { module = "io.github.classgraph:classgraph", version.ref = "io-github-classgraph-classgraph" }
 io-kotest-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest-kotest-assertions-core" }
 jakarta-validation-jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation-jakarta-validation-api" }
@@ -27,8 +27,8 @@ org-assertj-assertj-core = { module = "org.assertj:assertj-core", version.ref = 
 org-glassfish-jakarta-el = { module = "org.glassfish:jakarta.el", version.ref = "org-glassfish-jakarta-el" }
 org-hibernate-validator-hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "org-hibernate-validator-hibernate-validator" }
 org-junit-jupiter-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "org-junit-jupiter-junit-jupiter" }
-org-junit-jupiter-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "org-junit-jupiter-junit-jupiter-params" }
-org-mockito-mockito-core = { module = "org.mockito:mockito-core", version.ref = "org-mockito-mockito-core" }
-org-mockito-mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "org-mockito-mockito-junit-jupiter" }
+org-junit-jupiter-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "org-junit-jupiter-junit-jupiter" }
+org-mockito-mockito-core = { module = "org.mockito:mockito-core", version.ref = "org-mockito-mockito" }
+org-mockito-mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "org-mockito-mockito" }
 org-objenesis-objenesis = { module = "org.objenesis:objenesis", version.ref = "org-objenesis-objenesis" }
 # keep-sorted end

@@ -21,44 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers;
+package io.github.krandom.randomizers
 
-import static org.assertj.core.api.BDDAssertions.then;
+import com.oneeyedmen.okeydoke.Approver
+import io.kotest.matchers.collections.shouldContain
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Test;
+internal class GenericStringRandomizerTest : FakerBasedRandomizerTest<String>() {
+  private lateinit var words: Array<String>
 
-class RegularExpressionRandomizerTest {
-
-  @Test
-  void leadingBoundaryMatcherIsRemoved() {
-    // given
-    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("^A");
-
-    // when
-    String actual = randomizer.getRandomValue();
-
-    then(actual).isEqualTo("A");
+  @BeforeEach
+  fun setUp() {
+    words = arrayOf("foo", "bar")
   }
 
   @Test
-  void tailingBoundaryMatcherIsRemoved() {
-    // given
-    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("A$");
+  fun `random value should be generated from the given words`() {
+    randomizer = GenericStringRandomizer(words)
 
-    // when
-    String actual = randomizer.getRandomValue();
+    val randomWord = randomizer.getRandomValue()
 
-    then(actual).isEqualTo("A");
+    words shouldContain randomWord
   }
 
   @Test
-  void leadingAndTailingBoundaryMatcherIsRemoved() {
-    // given
-    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("^A$");
+  fun `random value should be always the same for the same seed`(approver: Approver) {
+    randomizer = GenericStringRandomizer(words, SEED)
 
-    // when
-    String actual = randomizer.getRandomValue();
+    val randomWord = randomizer.getRandomValue()
 
-    then(actual).isEqualTo("A");
+    approver.assertApproved(randomWord)
   }
 }
