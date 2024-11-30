@@ -21,44 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers;
+package io.github.krandom.randomizers
 
-import static org.assertj.core.api.BDDAssertions.then;
+import com.oneeyedmen.okeydoke.Approver
+import io.kotest.matchers.nulls.shouldNotBeNull
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Test;
-
-class RegularExpressionRandomizerTest {
-
+@Suppress("JUnitMalformedDeclaration")
+internal class SentenceRandomizerTest : FakerBasedRandomizerTest<String>() {
   @Test
-  void leadingBoundaryMatcherIsRemoved() {
-    // given
-    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("^A");
+  fun `generated number should not be null`() {
+    randomizer = SentenceRandomizer()
 
-    // when
-    String actual = randomizer.getRandomValue();
-
-    then(actual).isEqualTo("A");
+    randomizer.getRandomValue().shouldNotBeNull()
   }
 
   @Test
-  void tailingBoundaryMatcherIsRemoved() {
-    // given
-    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("A$");
+  fun `should generate the same value for the same seed`(approver: Approver) {
+    randomizer = SentenceRandomizer(SEED)
 
-    // when
-    String actual = randomizer.getRandomValue();
-
-    then(actual).isEqualTo("A");
+    approver.assertApproved(randomizer.getRandomValue())
   }
 
   @Test
-  void leadingAndTailingBoundaryMatcherIsRemoved() {
-    // given
-    RegularExpressionRandomizer randomizer = new RegularExpressionRandomizer("^A$");
+  fun `should generate the same value for the same seed for same locale`(approver: Approver) {
+    randomizer = SentenceRandomizer(SEED, LOCALE)
 
-    // when
-    String actual = randomizer.getRandomValue();
-
-    then(actual).isEqualTo("A");
+    approver.assertApproved(randomizer.getRandomValue())
   }
 }
