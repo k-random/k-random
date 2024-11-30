@@ -21,45 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.util;
+package io.github.krandom.util
 
-import static java.util.stream.Collectors.toList;
-
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.charset.Charset
 
 /**
  * Character utility methods.
  *
- * <p><strong>This class is intended for internal use only.</strong>
+ * **This class is intended for internal use only.**
  *
- * @author Pascal Schumacher (https://github.com/PascalSchumacher)
+ * @author [Pascal Schumacher](https://github.com/PascalSchumacher)
  */
-public final class CharacterUtils {
-
-  private CharacterUtils() {}
-
+object CharacterUtils {
   /**
    * Returns a list of all printable charaters of the given charset.
    *
    * @param charset Charset to use
    * @return list of printable characters
    */
-  public static List<Character> collectPrintableCharactersOf(Charset charset) {
-    List<Character> chars = new ArrayList<>();
-    for (int i = Character.MIN_VALUE; i < Character.MAX_VALUE; i++) {
-      char character = (char) i;
+  @JvmStatic
+  fun collectPrintableCharactersOf(charset: Charset): List<Char> = buildList {
+    for (character in Character.MIN_VALUE..Character.MAX_VALUE) {
       if (isPrintable(character)) {
-        String characterAsString = Character.toString(character);
-        byte[] encoded = characterAsString.getBytes(charset);
-        String decoded = new String(encoded, charset);
-        if (characterAsString.equals(decoded)) {
-          chars.add(character);
+        val characterAsString = character.toString()
+        val encoded = characterAsString.toByteArray(charset)
+        val decoded = String(encoded, charset)
+        if (characterAsString == decoded) {
+          add(character)
         }
       }
     }
-    return chars;
   }
 
   /**
@@ -68,14 +59,12 @@ public final class CharacterUtils {
    * @param characters to filter
    * @return only letters
    */
-  public static List<Character> filterLetters(List<Character> characters) {
-    return characters.stream().filter(Character::isLetter).collect(toList());
-  }
+  @JvmStatic
+  fun filterLetters(characters: List<Char>): List<Char> =
+    characters.filter { ch: Char -> Character.isLetter(ch) }
 
-  private static boolean isPrintable(char character) {
-    Character.UnicodeBlock block = Character.UnicodeBlock.of(character);
-    return (!Character.isISOControl(character))
-        && block != null
-        && block != Character.UnicodeBlock.SPECIALS;
+  private fun isPrintable(character: Char): Boolean {
+    val block = Character.UnicodeBlock.of(character)
+    return (!character.isISOControl()) && block !== Character.UnicodeBlock.SPECIALS
   }
 }
