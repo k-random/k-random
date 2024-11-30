@@ -1,9 +1,11 @@
 name: 'Kover Report'
 on:
-  workflow_run:
-    workflows: ['CI-PR', 'CI-main']                     # runs after CI workflow
-    types:
-      - completed
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 permissions:
   contents: read
   actions: read
@@ -12,6 +14,14 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Generate kover coverage report
+        run: ./gradlew koverXmlReport
       - name: Add coverage report to PR
         id: kover
         uses: mi-kas/kover-report@v1
@@ -21,7 +31,7 @@ jobs:
             ${{ github.workspace }}/core/build/reports/kover/report.xml
             ${{ github.workspace }}/randomizers/build/reports/kover/report.xml
           title: Code Coverage
-          update-comment: true
+          update-comment: github.event_name == 'pull_request'
           min-coverage-overall: 80
           min-coverage-changed-files: 80
           coverage-counter-type: LINE
