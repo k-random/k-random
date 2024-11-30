@@ -42,7 +42,7 @@ class FutureAnnotationHandlerTest {
     assertThat(testBean.getTestOffsetDateTime()).isAfter(OffsetDateTime.now());
     assertThat(testBean.getTestOffsetTime()).isAfter(OffsetTime.now());
     assertThat(testBean.getTestYear()).isGreaterThan(Year.now());
-    assertThat(testBean.getTestYearMonth()).isGreaterThan(YearMonth.now());
+    assertThat(testBean.getTestYearMonth()).isAfter(YearMonth.now());
     assertThat(testBean.getTestZonedDateTime()).isAfter(ZonedDateTime.now());
     assertThat(testBean.getTestHijrahDate()).isGreaterThan(HijrahDate.now());
     assertThat(testBean.getTestJapaneseDate()).isGreaterThan(JapaneseDate.now());
