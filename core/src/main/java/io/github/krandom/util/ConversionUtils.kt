@@ -43,7 +43,6 @@ import kotlin.Float
 import kotlin.Int
 import kotlin.Long
 import kotlin.Short
-import kotlin.reflect.KClass
 
 /**
  * Type conversion utility methods.
@@ -60,10 +59,10 @@ object ConversionUtils {
     val numberOfArguments = declaredArguments.size
     val arguments = arrayOfNulls<Any>(numberOfArguments)
     for (i in 0 until numberOfArguments) {
-      val type: KClass<*> = declaredArguments[i].type
+      val type: Class<*> = declaredArguments[i].type.java
       val value = declaredArguments[i].value
       // issue 299: if argument type is array, split values before conversion
-      if (type.java.isArray) {
+      if (type.isArray) {
         val values = value.split(",".toRegex()).dropLastWhile { it.isEmpty() }.map { it.trim() }
         arguments[i] = convertArray(values, type)
       } else {
@@ -77,7 +76,7 @@ object ConversionUtils {
   fun convertDateToLocalDate(date: UtilDate): LocalDate =
     date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
 
-  private fun convertArray(list: List<Any>, type: KClass<*>): Array<Any?> {
+  private fun convertArray(list: List<Any>, type: Class<*>): Array<Any?> {
     return Array(list.size) { i ->
       val value = list[i] as? String
       value?.let { convertValue(it, type) }
@@ -85,7 +84,7 @@ object ConversionUtils {
   }
 
   @Suppress("CyclomaticComplexMethod")
-  private fun convertValue(value: String, clazz: KClass<*>): Any =
+  private fun convertValue(value: String, clazz: Class<*>): Any =
     when (clazz::class) {
       Boolean::class -> value.toBoolean()
       Byte::class -> value.toByte()
