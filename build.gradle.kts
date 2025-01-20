@@ -3,7 +3,7 @@ import groovy.lang.Closure
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
-  id("com.diffplug.spotless") version "6.25.0"
+  id("com.diffplug.spotless") version "7.0.2"
   id("com.palantir.git-version") version "3.1.0"
   id("org.jetbrains.dokka") version "1.9.20" apply false
   id("io.gitlab.arturbosch.detekt") version "1.23.7" apply false
