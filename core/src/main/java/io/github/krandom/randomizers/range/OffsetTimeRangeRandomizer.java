@@ -74,8 +74,6 @@ public class OffsetTimeRangeRandomizer extends AbstractRangeRandomizer<OffsetTim
     long minSecondOfDay = min.getLong(ChronoField.SECOND_OF_DAY);
     long maxSecondOfDay = max.getLong(ChronoField.SECOND_OF_DAY);
     long randomSecondOfDay = (long) nextDouble(minSecondOfDay, maxSecondOfDay);
-    return OffsetTime.of(
-        LocalTime.ofSecondOfDay(randomSecondOfDay),
-        KRandomParameters.DEFAULT_DATES_RANGE.getMin().getOffset());
+    return OffsetTime.of(LocalTime.ofSecondOfDay(randomSecondOfDay), min.getOffset());
   }
 }

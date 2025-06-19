@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.OffsetTime;
-import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +55,7 @@ class OffsetTimeRangeRandomizerTest extends AbstractRangeRandomizerTest<OffsetTi
   void generatedOffsetTimeShouldBeAlwaysTheSameForTheSameSeed() {
     // Given
     randomizer = new OffsetTimeRangeRandomizer(minTime, maxTime, SEED);
-    OffsetTime expected = OffsetTime.of(17, 21, 21, 0, ZoneOffset.UTC);
+    OffsetTime expected = OffsetTime.of(17, 21, 21, 0, minTime.getOffset());
 
     // When
     OffsetTime randomValue = randomizer.getRandomValue();
