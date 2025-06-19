@@ -49,7 +49,7 @@ class FutureAnnotationHandler extends AbstractTemporalBaseAnnotationHandler {
         MonthDay.of(12, 31),
         OffsetDateTime.now().plusDays(1L),
         OffsetDateTime.now().plusDays(1L).plusYears(DEFAULT_DATE_RANGE),
-        OffsetTime.now().plusSeconds(10L),
+        OffsetTime.now().plusMinutes(10L),
         OffsetTime.MAX,
         Year.now().plusYears(1L),
         Year.now().plusYears(DEFAULT_DATE_RANGE + 1),

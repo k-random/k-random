@@ -21,72 +21,76 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.util;
+package io.github.krandom.util
 
-import static io.github.krandom.util.ConversionUtils.convertArguments;
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
-import static java.util.Locale.ENGLISH;
-
-import io.github.krandom.ObjectCreationException;
-import io.github.krandom.annotation.RandomizerArgument;
-import io.github.krandom.api.Randomizer;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-import org.objenesis.ObjenesisStd;
+import io.github.krandom.ObjectCreationException
+import io.github.krandom.annotation.RandomizerArgument
+import io.github.krandom.api.Randomizer
+import io.github.krandom.util.ConversionUtils.convertArguments
+import java.lang.reflect.Constructor
+import java.lang.reflect.Field
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Proxy
+import java.lang.reflect.Type
+import java.lang.reflect.TypeVariable
+import java.lang.reflect.WildcardType
+import java.util.*
+import java.util.concurrent.*
+import java.util.function.Supplier
+import org.objenesis.ObjenesisStd
 
 /**
  * Reflection utility methods.
  *
- * <p><strong>This class is intended for internal use only. All public methods (except {@link
- * ReflectionUtils#asRandomizer(java.util.function.Supplier)} might change between minor versions
- * without notice.</strong>
+ * **This class is intended for internal use only. All public methods (except
+ * [ ][ReflectionUtils.asRandomizer] might change between minor versions without notice.**
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public final class ReflectionUtils {
-
-  private ReflectionUtils() {}
+@Suppress("TooManyFunctions", "UNCHECKED_CAST")
+object ReflectionUtils {
+  private val PRIMITIVE_DEFAULT_VALUES: Map<Class<*>, Any> =
+    mapOf(
+      Boolean::class.javaPrimitiveType!! to false,
+      Byte::class.javaPrimitiveType!! to 0.toByte(),
+      Short::class.javaPrimitiveType!! to 0.toShort(),
+      Int::class.javaPrimitiveType!! to 0,
+      Long::class.javaPrimitiveType!! to 0L,
+      Float::class.javaPrimitiveType!! to 0.0f,
+      Double::class.javaPrimitiveType!! to 0.0,
+      Char::class.javaPrimitiveType!! to '\u0000'
+    )
 
   /**
-   * Create a dynamic proxy that adapts the given {@link Supplier} to a {@link Randomizer}.
+   * Create a dynamic proxy that adapts the given [Supplier] to a [Randomizer].
    *
    * @param supplier to adapt
    * @param <T> target type
-   * @return the proxy randomizer
+   * @return the proxy randomizer </T>
    */
-  @SuppressWarnings("unchecked")
-  public static <T> Randomizer<T> asRandomizer(final Supplier<T> supplier) {
-
-    class RandomizerProxy implements InvocationHandler {
-
-      private final Supplier<?> target;
-
-      private RandomizerProxy(final Supplier<?> target) {
-        this.target = target;
-      }
-
-      @Override
-      public Object invoke(final Object proxy, final Method method, final Object[] args)
-          throws Throwable {
-        if ("getRandomValue".equals(method.getName())) {
-          Method getMethod = target.getClass().getMethod("get");
-          getMethod.setAccessible(true);
-          return getMethod.invoke(target);
+  @JvmStatic
+  fun <T> asRandomizer(supplier: Supplier<T?>): Randomizer<T?> {
+    class RandomizerProxy(private val target: Supplier<*>) : InvocationHandler {
+      @Throws(Throwable::class)
+      override fun invoke(proxy: Any?, method: Method, args: Array<Any?>?): Any? {
+        if ("getRandomValue" == method.name) {
+          val getMethod = target.javaClass.getMethod("get")
+          getMethod.setAccessible(true)
+          return getMethod.invoke(target)
         }
-        return null;
+        return null
       }
     }
 
-    return (Randomizer<T>)
-        Proxy.newProxyInstance(
-            Randomizer.class.getClassLoader(),
-            new Class[] {Randomizer.class},
-            new RandomizerProxy(supplier));
+    return Proxy.newProxyInstance(
+      Randomizer::class.java.getClassLoader(),
+      arrayOf<Class<*>>(Randomizer::class.java),
+      RandomizerProxy(supplier)
+    ) as Randomizer<T?>
   }
 
   /**
@@ -94,11 +98,11 @@ public final class ReflectionUtils {
    *
    * @param type the type to introspect
    * @param <T> the actual type to introspect
-   * @return list of declared fields
+   * @return list of declared fields </T>
    */
-  public static <T> List<Field> getDeclaredFields(T type) {
-    return new ArrayList<>(asList(type.getClass().getDeclaredFields()));
-  }
+  @JvmStatic
+  fun <T> getDeclaredFields(type: T): MutableList<Field>? =
+    type?.javaClass?.getDeclaredFields()?.toMutableList()
 
   /**
    * Get inherited fields of a given type.
@@ -106,69 +110,74 @@ public final class ReflectionUtils {
    * @param type the type to introspect
    * @return list of inherited fields
    */
-  public static List<Field> getInheritedFields(Class<?> type) {
-    List<Field> inheritedFields = new ArrayList<>();
+  @JvmStatic
+  fun getInheritedFields(type: Class<*>): List<Field> {
+    var type = type
+    val inheritedFields = mutableListOf<Field>()
     while (type.getSuperclass() != null) {
-      Class<?> superclass = type.getSuperclass();
-      inheritedFields.addAll(asList(superclass.getDeclaredFields()));
-      type = superclass;
+      val superclass: Class<*> = type.getSuperclass()
+      inheritedFields.addAll(superclass.getDeclaredFields())
+      type = superclass
     }
-    return inheritedFields;
+    return inheritedFields
   }
 
   /**
    * Set a value in a field of a target object. If the target object provides a setter for the
    * field, this setter will be used. Otherwise, the field will be set using reflection.
    *
-   * @param object instance to set the property on
+   * @param any instance to set the property on
    * @param field field to set the property on
    * @param value value to set
    * @throws IllegalAccessException if the property cannot be set
    */
-  public static void setProperty(final Object object, final Field field, final Object value)
-      throws IllegalAccessException, InvocationTargetException {
+  @JvmStatic
+  @Throws(IllegalAccessException::class, InvocationTargetException::class)
+  fun setProperty(any: Any?, field: Field, value: Any?) {
     try {
-      Optional<Method> setter = getWriteMethod(field);
-      if (setter.isPresent()) {
-        setter.get().invoke(object, value);
+      val setter = getWriteMethod(field)
+      if (setter.isPresent) {
+        setter.get().invoke(any, value)
       } else {
-        setFieldValue(object, field, value);
+        setFieldValue(any, field, value)
       }
-    } catch (IllegalAccessException e) {
+    } catch (_: IllegalAccessException) {
       // otherwise, set field using reflection
-      setFieldValue(object, field, value);
+      setFieldValue(any, field, value)
     }
   }
 
   /**
    * Set a value (accessible or not accessible) in a field of a target object.
    *
-   * @param object instance to set the property on
+   * @param any instance to set the property on
    * @param field field to set the property on
    * @param value value to set
    * @throws IllegalAccessException if the property cannot be set
    */
-  public static void setFieldValue(final Object object, final Field field, final Object value)
-      throws IllegalAccessException {
-    boolean access = field.trySetAccessible();
-    field.set(object, value);
-    field.setAccessible(access);
+  @JvmStatic
+  @Throws(IllegalAccessException::class)
+  fun setFieldValue(any: Any?, field: Field, value: Any?) {
+    val access = field.trySetAccessible()
+    field.set(any, value)
+    field.setAccessible(access)
   }
 
   /**
    * Get the value (accessible or not accessible) of a field of a target object.
    *
-   * @param object instance to get the field of
+   * @param any instance to get the field of
    * @param field field to get the value of
    * @return the value of the field
    * @throws IllegalAccessException if field cannot be accessed
    */
-  public static Object getFieldValue(final Object object, final Field field)
-      throws IllegalAccessException {
-    boolean access = field.trySetAccessible();
-    Object value = field.get(object);
-    field.setAccessible(access);
-    return value;
+  @JvmStatic
+  @Throws(IllegalAccessException::class)
+  fun getFieldValue(any: Any?, field: Field): Any? {
+    val access = field.trySetAccessible()
+    val value = field.get(any)
+    field.setAccessible(access)
+    return value
   }
 
   /**
@@ -177,56 +186,26 @@ public final class ReflectionUtils {
    * @param primitiveType to get its wrapper type
    * @return the wrapper type of the given primitive type
    */
-  public static Class<?> getWrapperType(Class<?> primitiveType) {
-    for (PrimitiveEnum p : PrimitiveEnum.getEntries()) {
-      if (p.getType().equals(primitiveType)) {
-        return p.getClazz();
-      }
-    }
-
-    return primitiveType; // if not primitive, return it as is
-  }
+  @JvmStatic
+  fun getWrapperType(primitiveType: Class<*>?): Class<out Any>? =
+    PrimitiveEnum.entries.firstOrNull { it.type == primitiveType }?.clazz ?: primitiveType
 
   /**
    * Check if a field has a primitive type and matching default value which is set by the compiler.
    *
-   * @param object instance to get the field value of
+   * @param any instance to get the field value of
    * @param field field to check
    * @return true if the field is primitive and is set to the default value, false otherwise
    * @throws IllegalAccessException if field cannot be accessed
    */
-  public static boolean isPrimitiveFieldWithDefaultValue(final Object object, final Field field)
-      throws IllegalAccessException {
-    Class<?> fieldType = field.getType();
-    if (!fieldType.isPrimitive()) {
-      return false;
+  @JvmStatic
+  @Throws(IllegalAccessException::class)
+  fun isPrimitiveFieldWithDefaultValue(any: Any?, field: Field): Boolean {
+    if (!field.type.isPrimitive) {
+      return false
     }
-    Object fieldValue = getFieldValue(object, field);
-    if (fieldValue == null) {
-      return false;
-    }
-    if (fieldType.equals(boolean.class) && !((boolean) fieldValue)) {
-      return true;
-    }
-    if (fieldType.equals(byte.class) && (byte) fieldValue == (byte) 0) {
-      return true;
-    }
-    if (fieldType.equals(short.class) && (short) fieldValue == (short) 0) {
-      return true;
-    }
-    if (fieldType.equals(int.class) && (int) fieldValue == 0) {
-      return true;
-    }
-    if (fieldType.equals(long.class) && (long) fieldValue == 0L) {
-      return true;
-    }
-    if (fieldType.equals(float.class) && (float) fieldValue == 0.0F) {
-      return true;
-    }
-    if (fieldType.equals(double.class) && (double) fieldValue == 0.0D) {
-      return true;
-    }
-    return fieldType.equals(char.class) && (char) fieldValue == '\u0000';
+    val fieldValue = getFieldValue(any, field)
+    return fieldValue == PRIMITIVE_DEFAULT_VALUES[field.type]
   }
 
   /**
@@ -235,9 +214,7 @@ public final class ReflectionUtils {
    * @param field the field to check
    * @return true if the field is static, false otherwise
    */
-  public static boolean isStatic(final Field field) {
-    return Modifier.isStatic(field.getModifiers());
-  }
+  @JvmStatic fun isStatic(field: Field): Boolean = Modifier.isStatic(field.modifiers)
 
   /**
    * Check if a type is an interface.
@@ -245,31 +222,25 @@ public final class ReflectionUtils {
    * @param type the type to check
    * @return true if the type is an interface, false otherwise
    */
-  public static boolean isInterface(final Class<?> type) {
-    return type.isInterface();
-  }
+  @JvmStatic fun isInterface(type: Class<*>): Boolean = type.isInterface
 
   /**
    * Check if the type is abstract (either an interface or an abstract class).
    *
    * @param type the type to check
    * @param <T> the actual type to check
-   * @return true if the type is abstract, false otherwise
+   * @return true if the type is abstract, false otherwise </T>
    */
-  public static <T> boolean isAbstract(final Class<T> type) {
-    return Modifier.isAbstract(type.getModifiers());
-  }
+  @JvmStatic fun <T> isAbstract(type: Class<T?>): Boolean = Modifier.isAbstract(type.modifiers)
 
   /**
    * Check if the type is public.
    *
    * @param type the type to check
    * @param <T> the actual type to check
-   * @return true if the type is public, false otherwise
+   * @return true if the type is public, false otherwise </T>
    */
-  public static <T> boolean isPublic(final Class<T> type) {
-    return Modifier.isPublic(type.getModifiers());
-  }
+  @JvmStatic fun <T> isPublic(type: Class<T?>): Boolean = Modifier.isPublic(type.modifiers)
 
   /**
    * Check if a type is an array type.
@@ -277,9 +248,7 @@ public final class ReflectionUtils {
    * @param type the type to check.
    * @return true if the type is an array type, false otherwise.
    */
-  public static boolean isArrayType(final Class<?> type) {
-    return type.isArray();
-  }
+  @JvmStatic fun isArrayType(type: Class<*>): Boolean = type.isArray
 
   /**
    * Check if a type is an enum type.
@@ -287,9 +256,7 @@ public final class ReflectionUtils {
    * @param type the type to check.
    * @return true if the type is an enum type, false otherwise.
    */
-  public static boolean isEnumType(final Class<?> type) {
-    return type.isEnum();
-  }
+  @JvmStatic fun isEnumType(type: Class<*>): Boolean = type.isEnum
 
   /**
    * Check if a type is a collection type.
@@ -297,9 +264,9 @@ public final class ReflectionUtils {
    * @param type the type to check.
    * @return true if the type is a collection type, false otherwise
    */
-  public static boolean isCollectionType(final Class<?> type) {
-    return Collection.class.isAssignableFrom(type);
-  }
+  @JvmStatic
+  fun isCollectionType(type: Class<*>): Boolean =
+    MutableCollection::class.java.isAssignableFrom(type)
 
   /**
    * Check if a type is a collection type.
@@ -307,10 +274,10 @@ public final class ReflectionUtils {
    * @param type the type to check.
    * @return true if the type is a collection type, false otherwise
    */
-  public static boolean isCollectionType(final Type type) {
-    return isParameterizedType(type)
-        && isCollectionType((Class<?>) ((ParameterizedType) type).getRawType());
-  }
+  @JvmStatic
+  fun isCollectionType(type: Type?): Boolean =
+    isParameterizedType(type) &&
+      ReflectionUtils.isCollectionType((type as ParameterizedType).rawType as Class<*>)
 
   /**
    * Check if a type is populatable.
@@ -318,12 +285,12 @@ public final class ReflectionUtils {
    * @param type the type to check
    * @return true if the type is populatable, false otherwise
    */
-  public static boolean isPopulatable(final Type type) {
-    return !isWildcardType(type)
-        && !isTypeVariable(type)
-        && !isCollectionType(type)
-        && !isParameterizedType(type);
-  }
+  @JvmStatic
+  fun isPopulatable(type: Type?): Boolean =
+    !isWildcardType(type) &&
+      !isTypeVariable(type) &&
+      !isCollectionType(type) &&
+      !isParameterizedType(type)
 
   /**
    * Check if a type should be introspected for internal fields.
@@ -331,12 +298,12 @@ public final class ReflectionUtils {
    * @param type the type to check
    * @return true if the type should be introspected, false otherwise
    */
-  public static boolean isIntrospectable(final Class<?> type) {
-    return !isEnumType(type)
-        && !isArrayType(type)
-        && !(isCollectionType(type) && isJdkBuiltIn(type))
-        && !(isMapType(type) && isJdkBuiltIn(type));
-  }
+  @JvmStatic
+  fun isIntrospectable(type: Class<*>): Boolean =
+    !isEnumType(type) &&
+      !isArrayType(type) &&
+      !(ReflectionUtils.isCollectionType(type) && isJdkBuiltIn(type)) &&
+      !(isMapType(type) && isJdkBuiltIn(type))
 
   /**
    * Check if a type is a map type.
@@ -344,19 +311,16 @@ public final class ReflectionUtils {
    * @param type the type to check
    * @return true if the type is a map type, false otherwise.
    */
-  public static boolean isMapType(final Class<?> type) {
-    return Map.class.isAssignableFrom(type);
-  }
+  @JvmStatic fun isMapType(type: Class<*>): Boolean = MutableMap::class.java.isAssignableFrom(type)
 
   /**
-   * Check if a type is {@link Optional}.
+   * Check if a type is [Optional].
    *
    * @param type the type to check
-   * @return true if the type is {@link Optional}, false otherwise.
+   * @return true if the type is [Optional], false otherwise.
    */
-  public static boolean isOptionalType(final Class<?> type) {
-    return Optional.class.isAssignableFrom(type);
-  }
+  @JvmStatic
+  fun isOptionalType(type: Class<*>): Boolean = Optional::class.java.isAssignableFrom(type)
 
   /**
    * Check if a type is a JDK built-in collection/map.
@@ -364,9 +328,7 @@ public final class ReflectionUtils {
    * @param type the type to check
    * @return true if the type is a built-in collection/map type, false otherwise.
    */
-  public static boolean isJdkBuiltIn(final Class<?> type) {
-    return type.getName().startsWith("java.util");
-  }
+  @JvmStatic fun isJdkBuiltIn(type: Class<*>): Boolean = type.name.startsWith("java.util")
 
   /**
    * Check if a type is a parameterized type
@@ -374,9 +336,9 @@ public final class ReflectionUtils {
    * @param type the type to check
    * @return true if the type is parameterized, false otherwise
    */
-  public static boolean isParameterizedType(final Type type) {
-    return type instanceof ParameterizedType
-        && ((ParameterizedType) type).getActualTypeArguments().length > 0;
+  @JvmStatic
+  fun isParameterizedType(type: Type?): Boolean {
+    return type is ParameterizedType && type.actualTypeArguments.size > 0
   }
 
   /**
@@ -385,8 +347,9 @@ public final class ReflectionUtils {
    * @param type the type to check
    * @return true if the type is a wildcard type, false otherwise
    */
-  public static boolean isWildcardType(final Type type) {
-    return type instanceof WildcardType;
+  @JvmStatic
+  fun isWildcardType(type: Type?): Boolean {
+    return type is WildcardType
   }
 
   /**
@@ -395,8 +358,9 @@ public final class ReflectionUtils {
    * @param type the type to check
    * @return true if the type is a type variable, false otherwise
    */
-  public static boolean isTypeVariable(final Type type) {
-    return type instanceof TypeVariable<?>;
+  @JvmStatic
+  fun isTypeVariable(type: Type?): Boolean {
+    return type is TypeVariable<*>
   }
 
   /**
@@ -405,10 +369,11 @@ public final class ReflectionUtils {
    *
    * @param type to search concrete subtypes of
    * @param <T> the actual type to introspect
-   * @return a list of all concrete subtypes found
+   * @return a list of all concrete subtypes found </T>
    */
-  public static <T> List<Class<?>> getPublicConcreteSubTypesOf(final Class<T> type) {
-    return ClassGraphFacade.getPublicConcreteSubTypesOf(type);
+  @JvmStatic
+  fun <T> getPublicConcreteSubTypesOf(type: Class<T?>): List<Class<*>?> {
+    return ClassGraphFacade.getPublicConcreteSubTypesOf(type)
   }
 
   /**
@@ -419,24 +384,25 @@ public final class ReflectionUtils {
    * @param types a list of types to filter
    * @return a list of types having the same parameterized types as the given type
    */
-  public static List<Class<?>> filterSameParameterizedTypes(
-      final List<Class<?>> types, final Type type) {
-    if (type instanceof ParameterizedType) {
-      Type[] fieldArugmentTypes = ((ParameterizedType) type).getActualTypeArguments();
-      List<Class<?>> typesWithSameParameterizedTypes = new ArrayList<>();
-      for (Class<?> currentConcreteType : types) {
-        List<Type[]> actualTypeArguments =
-            getActualTypeArgumentsOfGenericInterfaces(currentConcreteType);
+  @JvmStatic
+  fun filterSameParameterizedTypes(types: List<Class<*>>, type: Type): List<Class<*>> {
+    if (type is ParameterizedType) {
+      val fieldArugmentTypes = type.getActualTypeArguments()
+      val typesWithSameParameterizedTypes: MutableList<Class<*>> = ArrayList<Class<*>>()
+      for (currentConcreteType in types) {
+        val actualTypeArguments = getActualTypeArgumentsOfGenericInterfaces(currentConcreteType)
         typesWithSameParameterizedTypes.addAll(
-            actualTypeArguments.stream()
-                .filter(
-                    currentTypeArguments -> Arrays.equals(fieldArugmentTypes, currentTypeArguments))
-                .map(currentTypeArguments -> currentConcreteType)
-                .toList());
+          actualTypeArguments
+            .filter { currentTypeArguments: Array<Type> ->
+              fieldArugmentTypes.contentEquals(currentTypeArguments)
+            }
+            .map { currentTypeArguments: Array<Type> -> currentConcreteType }
+            .toList()
+        )
       }
-      return typesWithSameParameterizedTypes;
+      return typesWithSameParameterizedTypes
     }
-    return types;
+    return types
   }
 
   /**
@@ -445,12 +411,13 @@ public final class ReflectionUtils {
    * @param field field to check
    * @param annotationType Type of annotation you're looking for.
    * @param <T> the actual type of annotation
-   * @return given annotation if field or read method has this annotation or null.
+   * @return given annotation if field or read method has this annotation or null. </T>
    */
-  public static <T extends Annotation> T getAnnotation(Field field, Class<T> annotationType) {
-    return field.getAnnotation(annotationType) == null
-        ? getAnnotationFromReadMethod(getReadMethod(field).orElse(null), annotationType)
-        : field.getAnnotation(annotationType);
+  @JvmStatic
+  fun <T : Annotation?> getAnnotation(field: Field, annotationType: Class<T?>): T? {
+    return if (field.getAnnotation<T?>(annotationType) == null)
+      getAnnotationFromReadMethod<T?>(getReadMethod(field).orElse(null), annotationType)
+    else field.getAnnotation<T?>(annotationType)
   }
 
   /**
@@ -460,42 +427,44 @@ public final class ReflectionUtils {
    * @param annotationType Annotation you're looking for.
    * @return true if field or read method it annotated with given annotationType or false.
    */
-  public static boolean isAnnotationPresent(
-      Field field, Class<? extends Annotation> annotationType) {
-    final Optional<Method> readMethod = getReadMethod(field);
-    return field.isAnnotationPresent(annotationType)
-        || readMethod.isPresent() && readMethod.get().isAnnotationPresent(annotationType);
+  @JvmStatic
+  fun isAnnotationPresent(field: Field, annotationType: Class<out Annotation?>): Boolean {
+    val readMethod = getReadMethod(field)
+    return field.isAnnotationPresent(annotationType) ||
+      readMethod.isPresent && readMethod.get().isAnnotationPresent(annotationType)
   }
 
   /**
-   * Return an empty implementation for a {@link Collection} type.
+   * Return an empty implementation for a [Collection] type.
    *
    * @param collectionInterface for which an empty implementation should be returned
    * @return empty implementation for the collection interface
    */
-  public static Collection<?> getEmptyImplementationForCollectionInterface(
-      final Class<?> collectionInterface) {
-    Collection<?> collection = new ArrayList<>();
-    if (List.class.isAssignableFrom(collectionInterface)) {
-      collection = new ArrayList<>();
-    } else if (NavigableSet.class.isAssignableFrom(collectionInterface)) {
-      collection = new TreeSet<>();
-    } else if (SortedSet.class.isAssignableFrom(collectionInterface)) {
-      collection = new TreeSet<>();
-    } else if (Set.class.isAssignableFrom(collectionInterface)) {
-      collection = new HashSet<>();
-    } else if (BlockingDeque.class.isAssignableFrom(collectionInterface)) {
-      collection = new LinkedBlockingDeque<>();
-    } else if (Deque.class.isAssignableFrom(collectionInterface)) {
-      collection = new ArrayDeque<>();
-    } else if (TransferQueue.class.isAssignableFrom(collectionInterface)) {
-      collection = new LinkedTransferQueue<>();
-    } else if (BlockingQueue.class.isAssignableFrom(collectionInterface)) {
-      collection = new LinkedBlockingQueue<>();
-    } else if (Queue.class.isAssignableFrom(collectionInterface)) {
-      collection = new LinkedList<>();
+  @JvmStatic
+  fun getEmptyImplementationForCollectionInterface(
+    collectionInterface: Class<*>
+  ): MutableCollection<*> {
+    var collection: MutableCollection<*> = ArrayList<Any?>()
+    if (MutableList::class.java.isAssignableFrom(collectionInterface)) {
+      collection = ArrayList<Any?>()
+    } else if (NavigableSet::class.java.isAssignableFrom(collectionInterface)) {
+      collection = TreeSet<Any?>()
+    } else if (SortedSet::class.java.isAssignableFrom(collectionInterface)) {
+      collection = TreeSet<Any?>()
+    } else if (MutableSet::class.java.isAssignableFrom(collectionInterface)) {
+      collection = HashSet<Any?>()
+    } else if (BlockingDeque::class.java.isAssignableFrom(collectionInterface)) {
+      collection = LinkedBlockingDeque<Any?>()
+    } else if (Deque::class.java.isAssignableFrom(collectionInterface)) {
+      collection = ArrayDeque<Any?>()
+    } else if (TransferQueue::class.java.isAssignableFrom(collectionInterface)) {
+      collection = LinkedTransferQueue<Any?>()
+    } else if (BlockingQueue::class.java.isAssignableFrom(collectionInterface)) {
+      collection = LinkedBlockingQueue<Any?>()
+    } else if (Queue::class.java.isAssignableFrom(collectionInterface)) {
+      collection = LinkedList<Any?>()
     }
-    return collection;
+    return collection
   }
 
   /**
@@ -505,54 +474,48 @@ public final class ReflectionUtils {
    * @param initialSize initial size of the collection
    * @return empty collection
    */
-  public static Collection<?> createEmptyCollectionForType(Class<?> fieldType, int initialSize) {
-    rejectUnsupportedTypes(fieldType);
-    Collection<?> collection;
-    try {
-      collection = (Collection<?>) fieldType.getDeclaredConstructor().newInstance();
-    } catch (InstantiationException
-        | IllegalAccessException
-        | NoSuchMethodException
-        | InvocationTargetException e) {
-      if (fieldType.equals(ArrayBlockingQueue.class)) {
-        collection = new ArrayBlockingQueue<>(initialSize);
+  @JvmStatic
+  fun createEmptyCollectionForType(fieldType: Class<*>, initialSize: Int): MutableCollection<*>? {
+    rejectUnsupportedTypes(fieldType)
+    return try {
+      fieldType.getDeclaredConstructor().newInstance() as MutableCollection<*>
+    } catch (_: ReflectiveOperationException) {
+      if (fieldType == ArrayBlockingQueue::class.java) {
+        ArrayBlockingQueue<Any?>(initialSize)
       } else {
-        collection = (Collection<?>) new ObjenesisStd().newInstance(fieldType);
+        ObjenesisStd().newInstance(fieldType) as MutableCollection<*>?
       }
     }
-    return collection;
   }
 
   /**
-   * Return an empty implementation for the given {@link Map} interface.
+   * Returns an empty, mutable map implementation for the given map interface.
    *
-   * @param mapInterface for which an empty implementation should be returned
-   * @return empty implementation for the given {@link Map} interface.
+   * @param mapInterface The class of the map interface for which to create an empty implementation.
+   * @return A new empty [MutableMap] instance compatible with the given interface.
    */
-  public static Map<?, ?> getEmptyImplementationForMapInterface(final Class<?> mapInterface) {
-    Map<?, ?> map = new HashMap<>();
-    if (ConcurrentNavigableMap.class.isAssignableFrom(mapInterface)) {
-      map = new ConcurrentSkipListMap<>();
-    } else if (ConcurrentMap.class.isAssignableFrom(mapInterface)) {
-      map = new ConcurrentHashMap<>();
-    } else if (NavigableMap.class.isAssignableFrom(mapInterface)) {
-      map = new TreeMap<>();
-    } else if (SortedMap.class.isAssignableFrom(mapInterface)) {
-      map = new TreeMap<>();
+  @JvmStatic
+  fun getEmptyImplementationForMapInterface(mapInterface: Class<*>): MutableMap<*, *> =
+    when {
+      ConcurrentNavigableMap::class.java.isAssignableFrom(mapInterface) ->
+        ConcurrentSkipListMap<Any?, Any?>()
+      ConcurrentMap::class.java.isAssignableFrom(mapInterface) -> ConcurrentHashMap<Any?, Any?>()
+      SortedMap::class.java.isAssignableFrom(mapInterface) -> TreeMap<Any?, Any?>()
+      else -> HashMap<Any?, Any?>()
     }
-    return map;
-  }
 
-  private static void rejectUnsupportedTypes(Class<?> type) {
-    if (type.equals(SynchronousQueue.class)) {
+  private fun rejectUnsupportedTypes(type: Class<*>) {
+    if (type == SynchronousQueue::class.java) {
       // SynchronousQueue is not supported since it requires a consuming thread at insertion time
-      throw new UnsupportedOperationException(
-          SynchronousQueue.class.getName() + " type is not supported");
+      throw UnsupportedOperationException(
+        SynchronousQueue::class.java.getName() + " type is not supported"
+      )
     }
-    if (type.equals(DelayQueue.class)) {
+    if (type == DelayQueue::class.java) {
       // DelayQueue is not supported since it requires creating dummy delayed objects
-      throw new UnsupportedOperationException(
-          DelayQueue.class.getName() + " type is not supported");
+      throw UnsupportedOperationException(
+        DelayQueue::class.java.getName() + " type is not supported"
+      )
     }
   }
 
@@ -562,9 +525,9 @@ public final class ReflectionUtils {
    * @param field field to get the write method for
    * @return Optional of write method or empty if field has no write method
    */
-  public static Optional<Method> getWriteMethod(Field field) {
-    return getPublicMethod(
-        "set" + capitalize(field.getName()), field.getDeclaringClass(), field.getType());
+  @JvmStatic
+  fun getWriteMethod(field: Field): Optional<Method> {
+    return getPublicMethod("set" + capitalize(field.name), field.declaringClass, field.type)
   }
 
   /**
@@ -573,122 +536,125 @@ public final class ReflectionUtils {
    * @param field field to get the read method for.
    * @return Optional of read method or empty if field has no read method
    */
-  public static Optional<Method> getReadMethod(Field field) {
-    String fieldName = field.getName();
-    Class<?> fieldClass = field.getDeclaringClass();
-    String capitalizedFieldName = capitalize(fieldName);
+  @JvmStatic
+  fun getReadMethod(field: Field): Optional<Method> {
+    val fieldName = field.name
+    val fieldClass = field.declaringClass
+    val capitalizedFieldName = capitalize(fieldName)
     // try to find getProperty
-    Optional<Method> getter = getPublicMethod("get" + capitalizedFieldName, fieldClass);
-    if (getter.isPresent()) {
-      return getter;
+    val getter = getPublicMethod("get$capitalizedFieldName", fieldClass)
+    if (getter.isPresent) {
+      return getter
     }
     // try to find isProperty for boolean properties
-    return getPublicMethod("is" + capitalizedFieldName, fieldClass);
+    return getPublicMethod("is$capitalizedFieldName", fieldClass)
   }
 
   /**
-   * Get the canonical constructor of a record
+   * Gets the canonical constructor of a record.
    *
-   * @param recordType the type of the record
-   * @return the canonical constructor of the record
-   * @param <T> the generic type of the record
+   * @param T the generic type of the record.
+   * @param recordType the class of the record.
+   * @return the canonical constructor of the record.
+   * @throws IllegalArgumentException if the given type is not a record class.
    */
-  public static <T> Constructor<T> getCanonicalConstructor(Class<T> recordType) {
-    RecordComponent[] recordComponents = recordType.getRecordComponents();
-    Class<?>[] componentTypes = new Class<?>[recordComponents.length];
-    for (int i = 0; i < recordComponents.length; i++) {
-      // recordComponents are ordered, see javadoc:
-      // "The components are returned in the same order that they are declared in the record header"
-      componentTypes[i] = recordComponents[i].getType();
-    }
-    try {
-      return recordType.getDeclaredConstructor(componentTypes);
-    } catch (NoSuchMethodException e) {
+  @Suppress("SpreadOperator")
+  @JvmStatic
+  fun <T> getCanonicalConstructor(recordType: Class<T>): Constructor<T> {
+    val recordComponents =
+      recordType.recordComponents
+        ?: throw IllegalArgumentException("Class ${recordType.name} is not a record type")
+
+    // recordComponents are ordered, see javadoc:
+    // "The components are returned in the same order that they are declared in the record header"
+    val componentTypes = recordComponents.map { it.type }.toTypedArray()
+    return try {
+      recordType.getDeclaredConstructor(*componentTypes)
+    } catch (e: NoSuchMethodException) {
       // should not happen, from Record javadoc:
-      // "A record class has the following mandated members: a public canonical constructor ,
+      // "A record class has the following mandated members: a public canonical constructor,
       // whose descriptor is the same as the record descriptor;"
-      throw new RuntimeException("Invalid record definition", e);
+      throw ObjectCreationException("Invalid record definition for ${recordType.name}", e)
     }
   }
 
-  private static String capitalize(String propertyName) {
-    return propertyName.substring(0, 1).toUpperCase(ENGLISH) + propertyName.substring(1);
+  private fun capitalize(propertyName: String): String {
+    return propertyName.substring(0, 1).uppercase(Locale.ENGLISH) + propertyName.substring(1)
   }
 
-  private static Optional<Method> getPublicMethod(
-      String name, Class<?> target, Class<?>... parameterTypes) {
+  private fun getPublicMethod(
+    name: String,
+    target: Class<*>,
+    vararg parameterTypes: Class<*>?
+  ): Optional<Method> {
+    return try {
+      Optional.of(target.getMethod(name, *parameterTypes))
+    } catch (_: Exception) {
+      Optional.empty<Method>()
+    }
+  }
+
+  private fun <T : Annotation?> getAnnotationFromReadMethod(
+    readMethod: Method?,
+    clazz: Class<T?>
+  ): T? = readMethod?.getAnnotation<T?>(clazz)
+
+  private fun getActualTypeArgumentsOfGenericInterfaces(type: Class<*>): List<Array<Type>> =
+    type.genericInterfaces.filterIsInstance<ParameterizedType>().map { it.actualTypeArguments }
+
+  /**
+   * Creates a new instance of the specified type using the provided constructor arguments, if any.
+   * If no arguments are provided or if no matching constructor is found, the default constructor of
+   * the type is used to create the instance.
+   *
+   * @param T the type of the instance to be created
+   * @param type the class of the type to instantiate
+   * @param randomizerArguments an array of arguments to pass to the constructor of the specified
+   *   type
+   * @return a new instance of the specified type wrapped in a [Randomizer]
+   * @throws ObjectCreationException if the instance could not be created due to any
+   *   reflection-related issues
+   */
+  @Suppress("SpreadOperator")
+  @JvmStatic
+  fun <T> newInstance(
+    type: Class<T>,
+    randomizerArguments: Array<RandomizerArgument>
+  ): Randomizer<T> {
     try {
-      return Optional.of(target.getMethod(name, parameterTypes));
-    } catch (NoSuchMethodException | SecurityException e) {
-      return Optional.empty();
-    }
-  }
-
-  private static <T extends Annotation> T getAnnotationFromReadMethod(
-      Method readMethod, Class<T> clazz) {
-    return readMethod == null ? null : readMethod.getAnnotation(clazz);
-  }
-
-  private static List<Type[]> getActualTypeArgumentsOfGenericInterfaces(final Class<?> type) {
-    List<Type[]> actualTypeArguments = new ArrayList<>();
-    Type[] genericInterfaceTypes = type.getGenericInterfaces();
-    for (Type currentGenericInterfaceType : genericInterfaceTypes) {
-      if (currentGenericInterfaceType instanceof ParameterizedType) {
-        actualTypeArguments.add(
-            ((ParameterizedType) currentGenericInterfaceType).getActualTypeArguments());
+      if (randomizerArguments.isNotEmpty()) {
+        type.constructors
+          .firstOrNull { constructor ->
+            hasSameArgumentNumber(constructor, randomizerArguments) &&
+              hasSameArgumentTypes(constructor, randomizerArguments)
+          }
+          ?.let { matchingConstructor ->
+            val initArgs = convertArguments(randomizerArguments)
+            return matchingConstructor.newInstance(*initArgs) as Randomizer<T>
+          }
       }
-    }
-    return actualTypeArguments;
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <T> Randomizer<T> newInstance(
-      final Class<T> type, final RandomizerArgument[] randomizerArguments) {
-    try {
-      if (notEmpty(randomizerArguments)) {
-        Optional<Constructor<?>> matchingConstructor =
-            Stream.of(type.getConstructors())
-                .filter(
-                    constructor ->
-                        hasSameArgumentNumber(constructor, randomizerArguments)
-                            && hasSameArgumentTypes(constructor, randomizerArguments))
-                .findFirst();
-        if (matchingConstructor.isPresent()) {
-          return (Randomizer<T>)
-              matchingConstructor.get().newInstance(convertArguments(randomizerArguments));
-        }
-      }
-      return (Randomizer<T>) type.getDeclaredConstructor().newInstance();
-    } catch (IllegalAccessException
-        | InvocationTargetException
-        | InstantiationException
-        | NoSuchMethodException e) {
-      throw new ObjectCreationException(
-          format(
-              "Could not create Randomizer of type: %s with constructor arguments: %s",
-              type, Arrays.toString(randomizerArguments)),
-          e);
+      return type.getDeclaredConstructor().newInstance() as Randomizer<T>
+    } catch (e: ReflectiveOperationException) {
+      val contentToString = randomizerArguments.contentToString()
+      throw ObjectCreationException(
+        "Could not create Randomizer of type: $type with constructor arguments: $contentToString",
+        e
+      )
     }
   }
 
-  private static boolean notEmpty(final RandomizerArgument[] randomizerArguments) {
-    return randomizerArguments != null && randomizerArguments.length > 0;
+  private fun hasSameArgumentNumber(
+    constructor: Constructor<*>,
+    randomizerArguments: Array<RandomizerArgument>
+  ): Boolean {
+    return constructor.parameterCount == randomizerArguments.size
   }
 
-  private static boolean hasSameArgumentNumber(
-      final Constructor<?> constructor, final RandomizerArgument[] randomizerArguments) {
-    return constructor.getParameterCount() == randomizerArguments.length;
-  }
-
-  private static boolean hasSameArgumentTypes(
-      final Constructor<?> constructor, final RandomizerArgument[] randomizerArguments) {
-    Class<?>[] constructorParameterTypes = constructor.getParameterTypes();
-    for (int i = 0; i < randomizerArguments.length; i++) {
-      if (!constructorParameterTypes[i].isAssignableFrom(randomizerArguments[i].type())) {
-        // Argument types does not match
-        return false;
-      }
+  private fun hasSameArgumentTypes(
+    constructor: Constructor<*>,
+    randomizerArguments: Array<RandomizerArgument>
+  ): Boolean =
+    constructor.parameterTypes.zip(randomizerArguments).all { (paramType, randomizerArg) ->
+      paramType.isAssignableFrom(randomizerArg.type.java)
     }
-    return true;
-  }
 }

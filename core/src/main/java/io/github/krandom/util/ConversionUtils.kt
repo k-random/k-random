@@ -24,6 +24,7 @@
 package io.github.krandom.util
 
 import io.github.krandom.annotation.RandomizerArgument
+import java.lang.reflect.Array as ReflectArray
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.sql.Date
@@ -52,23 +53,42 @@ import kotlin.Short
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 object ConversionUtils {
+  private const val COMMA_SEPARATOR = ","
   private const val DATE_PATTERN = "yyyy-MM-dd HH:mm:ss"
+  private val CONVERTERS: Map<Class<*>, (String) -> Any> =
+    mapOf(
+      Boolean::class.java to { it.toBoolean() },
+      Byte::class.java to { it.toByte() },
+      Short::class.java to { it.toShort() },
+      Int::class.java to { it.toInt() },
+      Long::class.java to { it.toLong() },
+      Float::class.java to { it.toFloat() },
+      Double::class.java to { it.toDouble() },
+      BigInteger::class.java to { BigInteger(it) },
+      BigDecimal::class.java to { BigDecimal(it) },
+      UtilDate::class.java to { UtilDate.from(parseDate(it).toInstant(ZoneOffset.UTC)) },
+      Date::class.java to { Date.valueOf(it) },
+      Time::class.java to { Time.valueOf(it) },
+      Timestamp::class.java to { Timestamp.valueOf(it) },
+      LocalDate::class.java to { LocalDate.parse(it) },
+      LocalTime::class.java to { LocalTime.parse(it) },
+      LocalDateTime::class.java to { LocalDateTime.parse(it) }
+    )
 
   @JvmStatic
   fun convertArguments(declaredArguments: Array<RandomizerArgument>): Array<Any?> {
-    val numberOfArguments = declaredArguments.size
-    val arguments = arrayOfNulls<Any>(numberOfArguments)
-    for (i in 0 until numberOfArguments) {
-      val type: Class<*> = declaredArguments[i].type.java
-      val value = declaredArguments[i].value
-      // issue 299: if argument type is array, split values before conversion
-      if (type.isArray) {
-        val values = value.split(",".toRegex()).dropLastWhile { it.isEmpty() }.map { it.trim() }
-        arguments[i] = convertArray(values, type)
-      } else {
-        arguments[i] = convertValue(value, type)
-      }
+
+    val arguments = arrayOfNulls<Any>(declaredArguments.size)
+
+    declaredArguments.forEachIndexed { index, randomizerArgument ->
+      arguments[index] =
+        if (randomizerArgument.type.java.isArray) {
+          handleArrayType(randomizerArgument.value, randomizerArgument.type.java)
+        } else {
+          convertValue(randomizerArgument.value, randomizerArgument.type.java)
+        }
     }
+
     return arguments
   }
 
@@ -76,34 +96,35 @@ object ConversionUtils {
   fun convertDateToLocalDate(date: UtilDate): LocalDate =
     date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
 
-  private fun convertArray(list: List<Any>, type: Class<*>): Array<Any?> {
-    return Array(list.size) { i ->
-      val value = list[i] as? String
-      value?.let { convertValue(it, type) }
-    }
+  private fun handleArrayType(value: String, type: Class<*>): Any? {
+    val values =
+      value.split(COMMA_SEPARATOR.toRegex()).dropLastWhile { it.isEmpty() }.map { it.trim() }
+    return convertArray(values, type)
   }
 
-  @Suppress("CyclomaticComplexMethod")
-  private fun convertValue(value: String, clazz: Class<*>): Any =
-    when (clazz::class) {
-      Boolean::class -> value.toBoolean()
-      Byte::class -> value.toByte()
-      Short::class -> value.toShort()
-      Int::class -> value.toInt()
-      Long::class -> value.toLong()
-      Float::class -> value.toFloat()
-      Double::class -> value.toDouble()
-      BigInteger::class -> BigInteger(value)
-      BigDecimal::class -> BigDecimal(value)
-      UtilDate::class -> UtilDate.from(parseDate(value).toInstant(ZoneOffset.UTC))
-      Date::class -> Date.valueOf(value)
-      Time::class -> Time.valueOf(value)
-      Timestamp::class -> Timestamp.valueOf(value)
-      LocalDate::class -> LocalDate.parse(value)
-      LocalTime::class -> LocalTime.parse(value)
-      LocalDateTime::class -> LocalDateTime.parse(value)
-      else -> value
+  private fun convertArray(list: List<Any>, type: Class<*>): Any {
+    val componentType = type.componentType
+    val array = ReflectArray.newInstance(componentType, list.size)
+
+    list.forEachIndexed { i, item ->
+      val value = item as? String
+      value?.let {
+        val convertedValue = convertValue(it, componentType)
+        ReflectArray.set(array, i, convertedValue)
+      }
     }
+
+    return array
+  }
+
+  private fun convertValue(value: String, clazz: Class<*>): Any {
+    // Special handling for Integer class
+    if (clazz == Integer::class.java) {
+      return Integer.valueOf(value)
+    }
+
+    return CONVERTERS[clazz]?.invoke(value) ?: value
+  }
 
   private fun parseDate(value: String) =
     LocalDateTime.parse(value, DateTimeFormatter.ofPattern(DATE_PATTERN))

@@ -29,12 +29,12 @@ package io.github.krandom.util
  * @author Sam Van Overmeire
  */
 internal enum class PrimitiveEnum(val type: Class<*>, val clazz: Class<*>) {
-  BYTE(java.lang.Byte.TYPE, Byte::class.java),
-  SHORT(java.lang.Short.TYPE, Short::class.java),
-  INTEGER(Integer.TYPE, Int::class.java),
-  LONG(java.lang.Long.TYPE, Long::class.java),
-  FLOAT(java.lang.Float.TYPE, Float::class.java),
-  DOUBLE(java.lang.Double.TYPE, Double::class.java),
-  BOOLEAN(java.lang.Boolean.TYPE, Boolean::class.java),
-  CHARACTER(Character.TYPE, Char::class.java),
+  BYTE(java.lang.Byte.TYPE, java.lang.Byte::class.java),
+  SHORT(java.lang.Short.TYPE, java.lang.Short::class.java),
+  INTEGER(Integer.TYPE, Integer::class.java),
+  LONG(java.lang.Long.TYPE, java.lang.Long::class.java),
+  FLOAT(java.lang.Float.TYPE, java.lang.Float::class.java),
+  DOUBLE(java.lang.Double.TYPE, java.lang.Double::class.java),
+  BOOLEAN(java.lang.Boolean.TYPE, java.lang.Boolean::class.java),
+  CHARACTER(Character.TYPE, Character::class.java),
 }

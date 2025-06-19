@@ -54,7 +54,11 @@ internal object ClassGraphFacade {
 
   private fun <T> searchForPublicConcreteSubTypesOf(type: Class<T>): List<Class<*>> {
     return if (type.isInterface)
-      scanResult.getClassesImplementing(type.name).loadClasses(true).toList()
+      scanResult
+        .getClassesImplementing(type.name)
+        .filter { subType: ClassInfo -> subType.isPublic && !subType.isAbstract }
+        .loadClasses(true)
+        .toList()
     else
       scanResult
         .getSubclasses(type.name)
