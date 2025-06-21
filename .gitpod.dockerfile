@@ -1,4 +1,4 @@
-FROM gitpod/workspace-java-17
+FROM gitpod/workspace-java-21
 
 RUN sudo add-apt-repository ppa:longsleep/golang-backports -y \
     && sudo apt-get update \
