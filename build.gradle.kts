@@ -40,7 +40,7 @@ subprojects {
     dokkaSourceSets {
       configureEach {
         sourceRoots.from(file("src/main/java"))
-        jdkVersion.set(17)
+        jdkVersion.set(21)
       }
     }
   }
@@ -118,4 +118,4 @@ dependencies { implementation(kotlin("stdlib")) }
 
 repositories { mavenCentral() }
 
-kotlin { jvmToolchain(17) }
+kotlin { jvmToolchain(21) }
