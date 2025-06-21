@@ -6,6 +6,7 @@
 com-oneeyedmen-okeydoke = "2.0.3"
 io-github-classgraph-classgraph = "4.8.179"
 io-kotest-kotest-assertions-core = "5.9.1"
+io-mockk-mockk = "1.14.2"
 jakarta-validation-jakarta-validation-api = "3.1.0"
 net-datafaker-datafaker = "2.4.2"
 org-assertj-assertj-core = "3.26.3"
@@ -21,6 +22,7 @@ org-objenesis-objenesis = "3.4"
 com-oneeyedmen-okeydoke = { module = "com.oneeyedmen:okeydoke", version.ref = "com-oneeyedmen-okeydoke" }
 io-github-classgraph-classgraph = { module = "io.github.classgraph:classgraph", version.ref = "io-github-classgraph-classgraph" }
 io-kotest-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest-kotest-assertions-core" }
+io-mockk-mockk = { module = "io.mockk:mockk", version.ref = "io-mockk-mockk" }
 jakarta-validation-jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation-jakarta-validation-api" }
 net-datafaker-datafaker = { module = "net.datafaker:datafaker", version.ref = "net-datafaker-datafaker" }
 org-assertj-assertj-core = { module = "org.assertj:assertj-core", version.ref = "org-assertj-assertj-core" }

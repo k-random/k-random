@@ -21,360 +21,384 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.util;
+package io.github.krandom.util
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import io.github.krandom.beans.Bar
+import io.github.krandom.beans.ChainedSetterBean
+import io.github.krandom.beans.CustomList
+import io.github.krandom.beans.CustomMap
+import io.github.krandom.beans.Foo
+import io.github.krandom.beans.Gender
+import io.github.krandom.beans.Human
+import io.github.krandom.beans.Mammal
+import io.github.krandom.beans.SocialPerson
+import io.github.krandom.beans.Street
+import io.github.krandom.util.ReflectionUtils.createEmptyCollectionForType
+import io.github.krandom.util.ReflectionUtils.getAnnotation
+import io.github.krandom.util.ReflectionUtils.getDeclaredFields
+import io.github.krandom.util.ReflectionUtils.getEmptyImplementationForCollectionInterface
+import io.github.krandom.util.ReflectionUtils.getEmptyImplementationForMapInterface
+import io.github.krandom.util.ReflectionUtils.getInheritedFields
+import io.github.krandom.util.ReflectionUtils.getReadMethod
+import io.github.krandom.util.ReflectionUtils.getWrapperType
+import io.github.krandom.util.ReflectionUtils.isAbstract
+import io.github.krandom.util.ReflectionUtils.isAnnotationPresent
+import io.github.krandom.util.ReflectionUtils.isArrayType
+import io.github.krandom.util.ReflectionUtils.isCollectionType
+import io.github.krandom.util.ReflectionUtils.isEnumType
+import io.github.krandom.util.ReflectionUtils.isInterface
+import io.github.krandom.util.ReflectionUtils.isJdkBuiltIn
+import io.github.krandom.util.ReflectionUtils.isMapType
+import io.github.krandom.util.ReflectionUtils.isPrimitiveFieldWithDefaultValue
+import io.github.krandom.util.ReflectionUtils.isPublic
+import io.github.krandom.util.ReflectionUtils.isStatic
+import io.github.krandom.util.ReflectionUtils.setProperty
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.mockk.spyk
+import io.mockk.verify
+import java.lang.Boolean
+import java.lang.Byte
+import java.lang.Double
+import java.lang.Float
+import java.lang.Long
+import java.lang.Short
+import java.lang.reflect.Method
+import java.math.BigDecimal
+import java.util.*
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.DelayQueue
+import java.util.concurrent.SynchronousQueue
+import kotlin.Char
+import kotlin.Exception
+import kotlin.Int
+import kotlin.IntArray
+import kotlin.String
+import kotlin.Suppress
+import kotlin.Throws
+import kotlin.UnsupportedOperationException
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
-import io.github.krandom.beans.*;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.DelayQueue;
-import java.util.concurrent.SynchronousQueue;
-import org.junit.jupiter.api.Test;
-
-class ReflectionUtilsTest {
-
-  private static final int INITIAL_CAPACITY = 10;
+@Suppress("UNCHECKED_CAST")
+internal class ReflectionUtilsTest {
+  @Test
+  fun `test get declared fields`() {
+    val javaVersion = BigDecimal(System.getProperty("java.specification.version"))
+    val expectedSize =
+      when {
+        javaVersion >= BigDecimal("12") -> 21
+        javaVersion >= BigDecimal("9") -> 22
+        else -> 20
+      }
+    getDeclaredFields(Street::class.java)?.size shouldBe expectedSize
+  }
 
   @Test
-  void testGetDeclaredFields() {
-    BigDecimal javaVersion = new BigDecimal(System.getProperty("java.specification.version"));
-    if (javaVersion.compareTo(new BigDecimal("12")) >= 0) {
-      assertThat(ReflectionUtils.getDeclaredFields(Street.class)).hasSize(21);
-    } else if (javaVersion.compareTo(new BigDecimal("9")) >= 0) {
-      assertThat(ReflectionUtils.getDeclaredFields(Street.class)).hasSize(22);
-    } else {
-      assertThat(ReflectionUtils.getDeclaredFields(Street.class)).hasSize(20);
+  fun `test get inherited fields`() {
+    getInheritedFields(SocialPerson::class.java) shouldHaveSize 11
+  }
+
+  @Test
+  @Throws(Exception::class)
+  fun `test is static`() {
+    isStatic(Human::class.java.getField("SERIAL_VERSION_UID")) shouldBe true
+  }
+
+  @Test
+  fun `test is interface`() {
+    isInterface(List::class.java) shouldBe true
+    isInterface(Mammal::class.java) shouldBe true
+    isInterface(Human::class.java) shouldBe false
+    isInterface(ArrayList::class.java) shouldBe false
+  }
+
+  @Test
+  fun `test is abstract`() {
+    isAbstract(Foo::class.java as Class<Foo?>) shouldBe false
+    isAbstract(Bar::class.java as Class<Bar?>) shouldBe true
+  }
+
+  @Test
+  fun `test is public`() {
+    isPublic<Foo?>(Foo::class.java as Class<Foo?>) shouldBe true
+    isPublic<Dummy?>(Dummy::class.java as Class<Dummy?>) shouldBe false
+  }
+
+  @Test
+  fun `test is array type`() {
+    isArrayType(IntArray::class.java) shouldBe true
+    isArrayType(Foo::class.java) shouldBe false
+  }
+
+  @Test
+  fun `test is enum type`() {
+    isEnumType(Gender::class.java) shouldBe true
+    isEnumType(Foo::class.java) shouldBe false
+  }
+
+  @Test
+  fun `test is collection type`() {
+    isCollectionType(CustomList::class.java) shouldBe true
+    isCollectionType(Foo::class.java) shouldBe false
+  }
+
+  @Test
+  fun `test is map type`() {
+    isMapType(CustomMap::class.java) shouldBe true
+    isMapType(Foo::class.java) shouldBe false
+  }
+
+  @Test
+  fun `test is jdk built in`() {
+    isJdkBuiltIn(ArrayList::class.java) shouldBe true
+    isJdkBuiltIn(CustomList::class.java) shouldBe false
+  }
+
+  @Test
+  fun `get wrapper type test`() {
+    getWrapperType(Byte.TYPE) shouldBe Byte::class.java
+    getWrapperType(Short.TYPE) shouldBe Short::class.java
+    getWrapperType(Integer.TYPE) shouldBe Integer::class.java
+    getWrapperType(Long.TYPE) shouldBe Long::class.java
+    getWrapperType(Double.TYPE) shouldBe Double::class.java
+    getWrapperType(Float.TYPE) shouldBe Float::class.java
+    getWrapperType(Boolean.TYPE) shouldBe Boolean::class.java
+    getWrapperType(Character.TYPE) shouldBe Character::class.java
+    getWrapperType(String::class.java) shouldBe String::class.java
+  }
+
+  @Test
+  @Throws(Exception::class)
+  fun `test is primitive field with default value`() {
+    val defaultValueClass = PrimitiveFieldsWithDefaultValuesBean::class
+    val defaultValueBean = PrimitiveFieldsWithDefaultValuesBean()
+    val boolField =
+      defaultValueClass.java.getDeclaredField(PrimitiveFieldsWithDefaultValuesBean::bool.name)
+    val bField =
+      defaultValueClass.java.getDeclaredField(PrimitiveFieldsWithDefaultValuesBean::b.name)
+    val sField =
+      defaultValueClass.java.getDeclaredField(PrimitiveFieldsWithDefaultValuesBean::s.name)
+    val iField =
+      defaultValueClass.java.getDeclaredField(PrimitiveFieldsWithDefaultValuesBean::i.name)
+    val lField =
+      defaultValueClass.java.getDeclaredField(PrimitiveFieldsWithDefaultValuesBean::l.name)
+    val fField =
+      defaultValueClass.java.getDeclaredField(PrimitiveFieldsWithDefaultValuesBean::f.name)
+    val dField =
+      defaultValueClass.java.getDeclaredField(PrimitiveFieldsWithDefaultValuesBean::d.name)
+    val cField =
+      defaultValueClass.java.getDeclaredField(PrimitiveFieldsWithDefaultValuesBean::c.name)
+
+    isPrimitiveFieldWithDefaultValue(defaultValueBean, boolField) shouldBe true
+    isPrimitiveFieldWithDefaultValue(defaultValueBean, bField) shouldBe true
+    isPrimitiveFieldWithDefaultValue(defaultValueBean, sField) shouldBe true
+    isPrimitiveFieldWithDefaultValue(defaultValueBean, iField) shouldBe true
+    isPrimitiveFieldWithDefaultValue(defaultValueBean, lField) shouldBe true
+    isPrimitiveFieldWithDefaultValue(defaultValueBean, fField) shouldBe true
+    isPrimitiveFieldWithDefaultValue(defaultValueBean, dField) shouldBe true
+    isPrimitiveFieldWithDefaultValue(defaultValueBean, cField) shouldBe true
+  }
+
+  @Test
+  fun `test is primitive field with non default value`() {
+    val nonDefaultValueClass = PrimitiveFieldsWithNonDefaultValuesBean::class
+    val nonDefaultValueBean = PrimitiveFieldsWithNonDefaultValuesBean()
+    val nonDefaultBoolField =
+      nonDefaultValueClass.java.getDeclaredField(PrimitiveFieldsWithNonDefaultValuesBean::bool.name)
+    val nonDefaultBField =
+      nonDefaultValueClass.java.getDeclaredField(PrimitiveFieldsWithNonDefaultValuesBean::b.name)
+    val nonDefaultSField =
+      nonDefaultValueClass.java.getDeclaredField(PrimitiveFieldsWithNonDefaultValuesBean::s.name)
+    val nonDefaultIField =
+      nonDefaultValueClass.java.getDeclaredField(PrimitiveFieldsWithNonDefaultValuesBean::i.name)
+    val nonDefaultLField =
+      nonDefaultValueClass.java.getDeclaredField(PrimitiveFieldsWithNonDefaultValuesBean::l.name)
+    val nonDefaultFField =
+      nonDefaultValueClass.java.getDeclaredField(PrimitiveFieldsWithNonDefaultValuesBean::f.name)
+    val nonDefaultDField =
+      nonDefaultValueClass.java.getDeclaredField(PrimitiveFieldsWithNonDefaultValuesBean::d.name)
+    val nonDefaultCField =
+      nonDefaultValueClass.java.getDeclaredField(PrimitiveFieldsWithNonDefaultValuesBean::c.name)
+
+    isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultBoolField) shouldBe false
+    isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultBField) shouldBe false
+    isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultSField) shouldBe false
+    isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultIField) shouldBe false
+    isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultLField) shouldBe false
+    isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultFField) shouldBe false
+    isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultDField) shouldBe false
+    isPrimitiveFieldWithDefaultValue(nonDefaultValueBean, nonDefaultCField) shouldBe false
+  }
+
+  @Test
+  @Throws(NoSuchFieldException::class)
+  fun `test get read method`() {
+    getReadMethod(PrimitiveFieldsWithDefaultValuesBean::class.java.getDeclaredField("b"))
+      .isEmpty() shouldBe true
+    val readMethod: Optional<Method> = getReadMethod(Foo::class.java.getDeclaredField("bar"))
+    readMethod.isPresent shouldBe true
+    readMethod.get().name shouldBe "getBar"
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideFieldNames")
+  @Throws(NoSuchFieldException::class)
+  fun `test get annotation with annotation`(fieldName: String) {
+    val field = AnnotatedBean::class.java.getDeclaredField(fieldName)
+    getAnnotation<NotNull?>(field, NotNull::class.java as Class<NotNull?>)
+      .shouldBeInstanceOf<NotNull>()
+  }
+
+  @Test
+  @Throws(NoSuchFieldException::class)
+  fun `test get annotation without annotation`() {
+    val field = AnnotatedBean::class.java.getDeclaredField("noAnnotation")
+    getAnnotation(field, NotNull::class.java as Class<NotNull?>).shouldBeNull()
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideFieldNames")
+  @Throws(NoSuchFieldException::class)
+  fun `test is annotation present true`(fieldName: String) {
+    val field = AnnotatedBean::class.java.getDeclaredField(fieldName)
+    isAnnotationPresent(field, NotNull::class.java) shouldBe true
+  }
+
+  @Test
+  @Throws(NoSuchFieldException::class)
+  fun `test is annotation present false`() {
+    val field = AnnotatedBean::class.java.getDeclaredField("noAnnotation")
+    isAnnotationPresent(field, NotNull::class.java) shouldBe false
+  }
+
+  @Test
+  fun `test get empty implementation for collection interface`() {
+    val collection = getEmptyImplementationForCollectionInterface(MutableList::class.java)
+
+    collection.shouldBeInstanceOf<ArrayList<*>>()
+    collection.shouldBeEmpty()
+  }
+
+  @Test
+  fun `create empty collection for array blocking queue`() {
+    val collection = createEmptyCollectionForType(ArrayBlockingQueue::class.java, INITIAL_CAPACITY)
+
+    collection.shouldBeInstanceOf<ArrayBlockingQueue<*>>()
+    collection.shouldBeEmpty()
+    collection.remainingCapacity() shouldBe INITIAL_CAPACITY
+  }
+
+  @Test
+  fun `synchronous queue should be rejected`() {
+    shouldThrow<UnsupportedOperationException> {
+      createEmptyCollectionForType(SynchronousQueue::class.java, INITIAL_CAPACITY)
     }
   }
 
   @Test
-  void testGetInheritedFields() {
-    assertThat(ReflectionUtils.getInheritedFields(SocialPerson.class)).hasSize(11);
+  fun `delay queue should be rejected`() {
+    shouldThrow<UnsupportedOperationException> {
+      createEmptyCollectionForType(DelayQueue::class.java, INITIAL_CAPACITY)
+    }
   }
 
   @Test
-  void testIsStatic() throws Exception {
-    assertThat(ReflectionUtils.isStatic(Human.class.getField("SERIAL_VERSION_UID"))).isTrue();
+  fun `get empty implementation for map interface`() {
+    val map = getEmptyImplementationForMapInterface(SortedMap::class.java)
+
+    map.shouldBeInstanceOf<TreeMap<*, *>>()
+    map.isEmpty() shouldBe true
   }
 
   @Test
-  void testIsInterface() {
-    assertThat(ReflectionUtils.isInterface(List.class)).isTrue();
-    assertThat(ReflectionUtils.isInterface(Mammal.class)).isTrue();
-
-    assertThat(ReflectionUtils.isInterface(MammalImpl.class)).isFalse();
-    assertThat(ReflectionUtils.isInterface(ArrayList.class)).isFalse();
-  }
-
-  @Test
-  void testIsAbstract() {
-    assertThat(ReflectionUtils.isAbstract(Foo.class)).isFalse();
-
-    assertThat(ReflectionUtils.isAbstract(Bar.class)).isTrue();
-  }
-
-  @Test
-  void testIsPublic() {
-    assertThat(ReflectionUtils.isPublic(Foo.class)).isTrue();
-    assertThat(ReflectionUtils.isPublic(Dummy.class)).isFalse();
-  }
-
-  @Test
-  void testIsArrayType() {
-    assertThat(ReflectionUtils.isArrayType(int[].class)).isTrue();
-    assertThat(ReflectionUtils.isArrayType(Foo.class)).isFalse();
-  }
-
-  @Test
-  void testIsEnumType() {
-    assertThat(ReflectionUtils.isEnumType(Gender.class)).isTrue();
-    assertThat(ReflectionUtils.isEnumType(Foo.class)).isFalse();
-  }
-
-  @Test
-  void testIsCollectionType() {
-    assertThat(ReflectionUtils.isCollectionType(CustomList.class)).isTrue();
-    assertThat(ReflectionUtils.isCollectionType(Foo.class)).isFalse();
-  }
-
-  @Test
-  void testIsMapType() {
-    assertThat(ReflectionUtils.isMapType(CustomMap.class)).isTrue();
-    assertThat(ReflectionUtils.isMapType(Foo.class)).isFalse();
-  }
-
-  @Test
-  void testIsJdkBuiltIn() {
-    assertThat(ReflectionUtils.isJdkBuiltIn(ArrayList.class)).isTrue();
-    assertThat(ReflectionUtils.isJdkBuiltIn(CustomList.class)).isFalse();
-  }
-
-  @Test
-  void getWrapperTypeTest() {
-    assertThat(ReflectionUtils.getWrapperType(Byte.TYPE)).isEqualTo(Byte.class);
-    assertThat(ReflectionUtils.getWrapperType(Short.TYPE)).isEqualTo(Short.class);
-    assertThat(ReflectionUtils.getWrapperType(Integer.TYPE)).isEqualTo(Integer.class);
-    assertThat(ReflectionUtils.getWrapperType(Long.TYPE)).isEqualTo(Long.class);
-    assertThat(ReflectionUtils.getWrapperType(Double.TYPE)).isEqualTo(Double.class);
-    assertThat(ReflectionUtils.getWrapperType(Float.TYPE)).isEqualTo(Float.class);
-    assertThat(ReflectionUtils.getWrapperType(Boolean.TYPE)).isEqualTo(Boolean.class);
-    assertThat(ReflectionUtils.getWrapperType(Character.TYPE)).isEqualTo(Character.class);
-    assertThat(ReflectionUtils.getWrapperType(String.class)).isEqualTo(String.class);
-  }
-
-  @Test
-  void testIsPrimitiveFieldWithDefaultValue() throws Exception {
-    Class<PrimitiveFieldsWithDefaultValuesBean> defaultValueClass =
-        PrimitiveFieldsWithDefaultValuesBean.class;
-    PrimitiveFieldsWithDefaultValuesBean defaultValueBean =
-        new PrimitiveFieldsWithDefaultValuesBean();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                defaultValueBean, defaultValueClass.getField("bool")))
-        .isTrue();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                defaultValueBean, defaultValueClass.getField("b")))
-        .isTrue();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                defaultValueBean, defaultValueClass.getField("s")))
-        .isTrue();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                defaultValueBean, defaultValueClass.getField("i")))
-        .isTrue();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                defaultValueBean, defaultValueClass.getField("l")))
-        .isTrue();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                defaultValueBean, defaultValueClass.getField("f")))
-        .isTrue();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                defaultValueBean, defaultValueClass.getField("d")))
-        .isTrue();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                defaultValueBean, defaultValueClass.getField("c")))
-        .isTrue();
-
-    Class<PrimitiveFieldsWithNonDefaultValuesBean> nonDefaultValueClass =
-        PrimitiveFieldsWithNonDefaultValuesBean.class;
-    PrimitiveFieldsWithNonDefaultValuesBean nonDefaultValueBean =
-        new PrimitiveFieldsWithNonDefaultValuesBean();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                nonDefaultValueBean, nonDefaultValueClass.getField("bool")))
-        .isFalse();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                nonDefaultValueBean, nonDefaultValueClass.getField("b")))
-        .isFalse();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                nonDefaultValueBean, nonDefaultValueClass.getField("s")))
-        .isFalse();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                nonDefaultValueBean, nonDefaultValueClass.getField("i")))
-        .isFalse();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                nonDefaultValueBean, nonDefaultValueClass.getField("l")))
-        .isFalse();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                nonDefaultValueBean, nonDefaultValueClass.getField("f")))
-        .isFalse();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                nonDefaultValueBean, nonDefaultValueClass.getField("d")))
-        .isFalse();
-    assertThat(
-            ReflectionUtils.isPrimitiveFieldWithDefaultValue(
-                nonDefaultValueBean, nonDefaultValueClass.getField("c")))
-        .isFalse();
-  }
-
-  @Test
-  void testGetReadMethod() throws NoSuchFieldException {
-    assertThat(
-            ReflectionUtils.getReadMethod(
-                PrimitiveFieldsWithDefaultValuesBean.class.getDeclaredField("b")))
-        .isEmpty();
-    final Optional<Method> readMethod =
-        ReflectionUtils.getReadMethod(Foo.class.getDeclaredField("bar"));
-    assertThat(readMethod).isNotNull();
-    assertThat(readMethod.get().getName()).isEqualTo("getBar");
-  }
-
-  @Test
-  void testGetAnnotation() throws NoSuchFieldException {
-    Field field = AnnotatedBean.class.getDeclaredField("fieldAnnotation");
-    assertThat(ReflectionUtils.getAnnotation(field, NotNull.class)).isInstanceOf(NotNull.class);
-
-    field = AnnotatedBean.class.getDeclaredField("methodAnnotation");
-    assertThat(ReflectionUtils.getAnnotation(field, NotNull.class)).isInstanceOf(NotNull.class);
-
-    field = AnnotatedBean.class.getDeclaredField("noAnnotation");
-    assertThat(ReflectionUtils.getAnnotation(field, NotNull.class)).isNull();
-  }
-
-  @Test
-  void testIsAnnotationPresent() throws NoSuchFieldException {
-    Field field = AnnotatedBean.class.getDeclaredField("fieldAnnotation");
-    assertThat(ReflectionUtils.isAnnotationPresent(field, NotNull.class)).isTrue();
-
-    field = AnnotatedBean.class.getDeclaredField("methodAnnotation");
-    assertThat(ReflectionUtils.isAnnotationPresent(field, NotNull.class)).isTrue();
-
-    field = AnnotatedBean.class.getDeclaredField("noAnnotation");
-    assertThat(ReflectionUtils.isAnnotationPresent(field, NotNull.class)).isFalse();
-  }
-
-  @Test
-  void testGetEmptyImplementationForCollectionInterface() {
-    Collection<?> collection =
-        ReflectionUtils.getEmptyImplementationForCollectionInterface(List.class);
-
-    assertThat(collection).isInstanceOf(ArrayList.class).isEmpty();
-  }
-
-  @Test
-  void createEmptyCollectionForArrayBlockingQueue() {
-    Collection<?> collection =
-        ReflectionUtils.createEmptyCollectionForType(ArrayBlockingQueue.class, INITIAL_CAPACITY);
-
-    assertThat(collection).isInstanceOf(ArrayBlockingQueue.class).isEmpty();
-    assertThat(((ArrayBlockingQueue<?>) collection).remainingCapacity())
-        .isEqualTo(INITIAL_CAPACITY);
-  }
-
-  @Test
-  void synchronousQueueShouldBeRejected() {
-    assertThatThrownBy(
-            () ->
-                ReflectionUtils.createEmptyCollectionForType(
-                    SynchronousQueue.class, INITIAL_CAPACITY))
-        .isInstanceOf(UnsupportedOperationException.class);
-  }
-
-  @Test
-  void delayQueueShouldBeRejected() {
-    assertThatThrownBy(
-            () -> ReflectionUtils.createEmptyCollectionForType(DelayQueue.class, INITIAL_CAPACITY))
-        .isInstanceOf(UnsupportedOperationException.class);
-  }
-
-  @Test
-  void getEmptyImplementationForMapInterface() {
-    Map<?, ?> map = ReflectionUtils.getEmptyImplementationForMapInterface(SortedMap.class);
-
-    assertThat(map).isInstanceOf(TreeMap.class).isEmpty();
-  }
-
-  @Test
-  void setPropertyFluentBean() throws Exception {
+  @Throws(Exception::class)
+  fun `set property fluent bean`() {
     // given
-    ChainedSetterBean chainedSetterBean = spy(ChainedSetterBean.class);
-    Field nameField = ChainedSetterBean.class.getDeclaredField("name");
+    val chainedSetterBean = spyk<ChainedSetterBean>()
+    val nameField = ChainedSetterBean::class.java.getDeclaredField("name")
 
     // when
-    ReflectionUtils.setProperty(chainedSetterBean, nameField, "myName");
+    setProperty(chainedSetterBean, nameField, "myName")
 
     // then
-    verify(chainedSetterBean).setName("myName");
-    assertThat(chainedSetterBean.getName()).isEqualTo("myName");
+    verify { chainedSetterBean.setName("myName") }
+    chainedSetterBean.name shouldBe "myName"
   }
 
   @Test
-  void setPropertyFluentBeanPrimitiveType() throws Exception {
+  @Throws(Exception::class)
+  fun `set property fluent bean primitive type`() {
     // given
-    ChainedSetterBean chainedSetterBean = spy(ChainedSetterBean.class);
-    Field indexField = ChainedSetterBean.class.getDeclaredField("index");
+    val chainedSetterBean = spyk<ChainedSetterBean>()
+    val indexField = ChainedSetterBean::class.java.getDeclaredField("index")
 
     // when
-    ReflectionUtils.setProperty(chainedSetterBean, indexField, 100);
+    setProperty(chainedSetterBean, indexField, 100)
 
     // then
-    verify(chainedSetterBean).setIndex(100);
-    assertThat(chainedSetterBean.getIndex()).isEqualTo(100);
+    verify { chainedSetterBean.setIndex(100) }
+    chainedSetterBean.index shouldBe 100
   }
 
-  @SuppressWarnings("unused")
+  @Suppress("unused")
   private class PrimitiveFieldsWithDefaultValuesBean {
-    public boolean bool;
-    public byte b;
-    public short s;
-    public int i;
-    public long l;
-    public float f;
-    public double d;
-    public char c;
+    var bool: kotlin.Boolean = false
+    @JvmField var b: kotlin.Byte = 0
+    var s: kotlin.Short = 0
+    var i: Int = 0
+    var l: kotlin.Long = 0
+    var f: kotlin.Float = 0f
+    var d: kotlin.Double = 0.0
+    var c: Char = 0.toChar()
   }
 
-  @SuppressWarnings("unused")
+  @Suppress("unused")
   private class PrimitiveFieldsWithNonDefaultValuesBean {
-    public boolean bool = true;
-    public byte b = (byte) 1;
-    public short s = (short) 1;
-    public int i = 1;
-    public long l = 1L;
-    public float f = 1.0F;
-    public double d = 1.0D;
-    public char c = 'a';
+    var bool: kotlin.Boolean = true
+    var b: kotlin.Byte = 1.toByte()
+    var s: kotlin.Short = 1.toShort()
+    var i: Int = 1
+    var l: kotlin.Long = 1L
+    var f: kotlin.Float = 1.0f
+    var d: kotlin.Double = 1.0
+    var c: Char = 'a'
   }
 
-  public static class AnnotatedBean {
-    @NotNull private String fieldAnnotation;
-    private String methodAnnotation;
-    private String noAnnotation;
-
-    public String getFieldAnnotation() {
-      return fieldAnnotation;
-    }
-
-    public void setFieldAnnotation(String fieldAnnotation) {
-      this.fieldAnnotation = fieldAnnotation;
-    }
-
-    @NotNull
-    public String getMethodAnnotation() {
-      return methodAnnotation;
-    }
-
-    public void setMethodAnnotation(String methodAnnotation) {
-      this.methodAnnotation = methodAnnotation;
-    }
-
-    public String getNoAnnotation() {
-      return noAnnotation;
-    }
-
-    public void setNoAnnotation(String noAnnotation) {
-      this.noAnnotation = noAnnotation;
-    }
+  @Suppress("unused")
+  class AnnotatedBean {
+    @NotNull var fieldAnnotation: String? = null
+    @get:NotNull var methodAnnotation: String? = null
+    var noAnnotation: String? = null
   }
 
-  private class Dummy {}
+  private class Dummy
 
-  @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
-  @Retention(RUNTIME)
-  @Documented
-  public @interface NotNull {}
+  @Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER,
+    AnnotationTarget.FIELD,
+    AnnotationTarget.ANNOTATION_CLASS,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.VALUE_PARAMETER,
+  )
+  @Retention(AnnotationRetention.RUNTIME)
+  @MustBeDocumented
+  annotation class NotNull
+
+  companion object {
+    private const val INITIAL_CAPACITY = 10
+
+    @JvmStatic
+    @Suppress("unused")
+    private fun provideFieldNames(): List<Arguments> =
+      listOf(Arguments.of("fieldAnnotation"), Arguments.of("methodAnnotation"))
+  }
 }
