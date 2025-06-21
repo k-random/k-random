@@ -10,7 +10,7 @@ project:
     homepage: https://github.com/k-random/k-random
   java:
     groupId: io.github.k-random
-    version: "17"
+    version: "21"
   inceptionYear: "2024"
 
 signing:
