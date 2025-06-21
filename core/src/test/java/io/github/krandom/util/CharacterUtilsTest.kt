@@ -21,21 +21,17 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.util;
+package io.github.krandom.util
 
-import static io.github.krandom.util.CharacterUtils.filterLetters;
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.util.CharacterUtils.filterLetters
+import io.kotest.matchers.collections.shouldContainExactly
+import org.junit.jupiter.api.Test
 
-import java.util.List;
-import org.junit.jupiter.api.Test;
-
-class CharacterUtilsTest {
-
+internal class CharacterUtilsTest {
   @Test
-  void testFilterLetters() {
-    List<Character> characters = filterLetters(asList('a', 'b', '1'));
+  fun `test filter letters`() {
+    val characters: List<Char> = filterLetters(listOf('a', 'b', '1'))
 
-    assertThat(characters).containsExactly('a', 'b');
+    characters shouldContainExactly listOf('a', 'b')
   }
 }

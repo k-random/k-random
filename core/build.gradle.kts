@@ -11,6 +11,7 @@ dependencies {
   implementation(kotlin("reflect"))
   implementation(kotlin("stdlib"))
   testImplementation(libs.io.kotest.kotest.assertions.core)
+  testImplementation(libs.io.mockk.mockk)
   testImplementation(libs.org.assertj.assertj.core)
   testImplementation(libs.org.junit.jupiter.junit.jupiter)
   testImplementation(libs.org.mockito.mockito.core)
