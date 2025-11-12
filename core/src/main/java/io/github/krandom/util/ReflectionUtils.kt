@@ -498,8 +498,8 @@ object ReflectionUtils {
   fun getEmptyImplementationForMapInterface(mapInterface: Class<*>): MutableMap<*, *> =
     when {
       ConcurrentNavigableMap::class.java.isAssignableFrom(mapInterface) ->
-        ConcurrentSkipListMap<Any?, Any?>()
-      ConcurrentMap::class.java.isAssignableFrom(mapInterface) -> ConcurrentHashMap<Any?, Any?>()
+        ConcurrentSkipListMap<Any, Any>()
+      ConcurrentMap::class.java.isAssignableFrom(mapInterface) -> ConcurrentHashMap<Any, Any>()
       SortedMap::class.java.isAssignableFrom(mapInterface) -> TreeMap<Any?, Any?>()
       else -> HashMap<Any?, Any?>()
     }
