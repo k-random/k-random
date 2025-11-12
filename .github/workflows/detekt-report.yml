@@ -13,4 +13,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Detekt report
-        uses: natiginfo/action-detekt-all@2
+        uses: natiginfo/action-detekt-all@1.23.8
