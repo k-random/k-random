@@ -12,7 +12,7 @@ net-datafaker-datafaker = "2.4.2"
 org-assertj-assertj-core = "3.27.3"
 org-glassfish-jakarta-el = "4.0.2"
 org-hibernate-validator-hibernate-validator = "8.0.2.Final"
-org-junit-jupiter-junit-jupiter = "5.11.4"
+org-junit-jupiter-junit-jupiter = "5.13.1"]
 org-mockito-mockito = "5.18.0"
 org-objenesis-objenesis = "3.4"
 # keep-sorted end
