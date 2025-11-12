@@ -14,6 +14,8 @@ dependencies {
   testImplementation(libs.io.kotest.kotest.assertions.core)
   testImplementation(libs.org.assertj.assertj.core)
   testImplementation(libs.org.junit.jupiter.junit.jupiter)
+  testImplementation(libs.org.junit.platform.engine)
+  testImplementation(libs.org.junit.platform.launcher)
   // keep-sorted end
 }
 
@@ -21,4 +23,4 @@ description = "k-random Randomizers"
 
 repositories { mavenCentral() }
 
-kotlin { jvmToolchain(17) }
+kotlin { jvmToolchain(21) }

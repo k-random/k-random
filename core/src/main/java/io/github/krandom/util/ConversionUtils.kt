@@ -72,7 +72,7 @@ object ConversionUtils {
       Timestamp::class.java to { Timestamp.valueOf(it) },
       LocalDate::class.java to { LocalDate.parse(it) },
       LocalTime::class.java to { LocalTime.parse(it) },
-      LocalDateTime::class.java to { LocalDateTime.parse(it) }
+      LocalDateTime::class.java to { LocalDateTime.parse(it) },
     )
 
   @JvmStatic
@@ -96,7 +96,7 @@ object ConversionUtils {
   fun convertDateToLocalDate(date: UtilDate): LocalDate =
     date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
 
-  private fun handleArrayType(value: String, type: Class<*>): Any? {
+  private fun handleArrayType(value: String, type: Class<*>): Any {
     val values =
       value.split(COMMA_SEPARATOR.toRegex()).dropLastWhile { it.isEmpty() }.map { it.trim() }
     return convertArray(values, type)

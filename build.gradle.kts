@@ -4,10 +4,10 @@ import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
   id("com.diffplug.spotless") version "8.0.0"
-  id("com.palantir.git-version") version "3.1.0"
+  id("com.palantir.git-version") version "4.1.0"
   id("org.jetbrains.dokka") version "2.0.0" apply false
   id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
-  id("org.jetbrains.kotlinx.kover") version "0.9.1" apply false
+  id("org.jetbrains.kotlinx.kover") version "0.9.3" apply false
   java
   kotlin("jvm")
   `maven-publish`
@@ -93,7 +93,12 @@ subprojects {
       }
     }
     repositories {
-      maven { url = uri(layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()) }
+      maven {
+        url =
+            uri(
+                layout.buildDirectory.dir("staging-deploy").get().asFile.toURI(),
+            )
+      }
     }
   }
 }

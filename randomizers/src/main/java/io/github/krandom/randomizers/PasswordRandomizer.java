@@ -29,7 +29,7 @@ import java.util.Locale;
 /**
  * A {@link Randomizer} that generates random passwords.
  *
- * @author https://github.com/JJ1216
+ * @author <a href="https://github.com/JJ1216">JJ1216</a>
  */
 public class PasswordRandomizer extends FakerBasedRandomizer<String> {
 
@@ -113,6 +113,6 @@ public class PasswordRandomizer extends FakerBasedRandomizer<String> {
 
   @Override
   public String getRandomValue() {
-    return faker.internet().password(min, max, includeUppercase, includeSpecial);
+    return faker.credentials().password(min, max, includeUppercase, includeSpecial);
   }
 }

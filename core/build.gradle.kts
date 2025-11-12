@@ -14,6 +14,8 @@ dependencies {
   testImplementation(libs.io.mockk.mockk)
   testImplementation(libs.org.assertj.assertj.core)
   testImplementation(libs.org.junit.jupiter.junit.jupiter)
+  testImplementation(libs.org.junit.platform.engine)
+  testImplementation(libs.org.junit.platform.launcher)
   testImplementation(libs.org.mockito.mockito.core)
   testImplementation(libs.org.mockito.mockito.junit.jupiter)
   // keep-sorted end
@@ -23,4 +25,4 @@ description = "k-random Core"
 
 repositories { mavenCentral() }
 
-kotlin { jvmToolchain(17) }
+kotlin { jvmToolchain(21) }

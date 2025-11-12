@@ -93,6 +93,7 @@ internal class ReflectionUtilsTest {
     val javaVersion = BigDecimal(System.getProperty("java.specification.version"))
     val expectedSize =
       when {
+        javaVersion >= BigDecimal("21") -> 20
         javaVersion >= BigDecimal("12") -> 21
         javaVersion >= BigDecimal("9") -> 22
         else -> 20
@@ -350,6 +351,7 @@ internal class ReflectionUtilsTest {
   @Suppress("unused")
   private class PrimitiveFieldsWithDefaultValuesBean {
     var bool: kotlin.Boolean = false
+
     @JvmField var b: kotlin.Byte = 0
     var s: kotlin.Short = 0
     var i: Int = 0
@@ -374,6 +376,7 @@ internal class ReflectionUtilsTest {
   @Suppress("unused")
   class AnnotatedBean {
     @NotNull var fieldAnnotation: String? = null
+
     @get:NotNull var methodAnnotation: String? = null
     var noAnnotation: String? = null
   }
