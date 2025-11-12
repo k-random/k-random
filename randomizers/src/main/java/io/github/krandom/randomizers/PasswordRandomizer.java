@@ -113,6 +113,6 @@ public class PasswordRandomizer extends FakerBasedRandomizer<String> {
 
   @Override
   public String getRandomValue() {
-    return faker.internet().password(min, max, includeUppercase, includeSpecial);
+    return faker.credentials().password(min, max, includeUppercase, includeSpecial);
   }
 }

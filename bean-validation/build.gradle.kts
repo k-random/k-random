@@ -19,6 +19,8 @@ dependencies {
   testImplementation(libs.org.junit.jupiter.junit.jupiter.params)
   testImplementation(libs.org.mockito.mockito.core)
   testImplementation(libs.org.mockito.mockito.junit.jupiter)
+  testImplementation(libs.org.junit.platform.engine)
+  testImplementation(libs.org.junit.platform.launcher)
   // keep-sorted end
 }
 
@@ -26,4 +28,4 @@ description = "k-random Bean Validation"
 
 repositories { mavenCentral() }
 
-kotlin { jvmToolchain(17) }
+kotlin { jvmToolchain(21) }

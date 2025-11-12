@@ -62,7 +62,7 @@ object ReflectionUtils {
       Long::class.javaPrimitiveType!! to 0L,
       Float::class.javaPrimitiveType!! to 0.0f,
       Double::class.javaPrimitiveType!! to 0.0,
-      Char::class.javaPrimitiveType!! to '\u0000'
+      Char::class.javaPrimitiveType!! to '\u0000',
     )
 
   /**
@@ -89,7 +89,7 @@ object ReflectionUtils {
     return Proxy.newProxyInstance(
       Randomizer::class.java.getClassLoader(),
       arrayOf<Class<*>>(Randomizer::class.java),
-      RandomizerProxy(supplier)
+      RandomizerProxy(supplier),
     ) as Randomizer<T?>
   }
 
@@ -396,7 +396,7 @@ object ReflectionUtils {
             .filter { currentTypeArguments: Array<Type> ->
               fieldArugmentTypes.contentEquals(currentTypeArguments)
             }
-            .map { currentTypeArguments: Array<Type> -> currentConcreteType }
+            .map { _: Array<Type> -> currentConcreteType }
             .toList()
         )
       }
@@ -454,13 +454,13 @@ object ReflectionUtils {
     } else if (MutableSet::class.java.isAssignableFrom(collectionInterface)) {
       collection = HashSet<Any?>()
     } else if (BlockingDeque::class.java.isAssignableFrom(collectionInterface)) {
-      collection = LinkedBlockingDeque<Any?>()
+      collection = LinkedBlockingDeque<Any>()
     } else if (Deque::class.java.isAssignableFrom(collectionInterface)) {
       collection = ArrayDeque<Any?>()
     } else if (TransferQueue::class.java.isAssignableFrom(collectionInterface)) {
-      collection = LinkedTransferQueue<Any?>()
+      collection = LinkedTransferQueue<Any>()
     } else if (BlockingQueue::class.java.isAssignableFrom(collectionInterface)) {
-      collection = LinkedBlockingQueue<Any?>()
+      collection = LinkedBlockingQueue<Any>()
     } else if (Queue::class.java.isAssignableFrom(collectionInterface)) {
       collection = LinkedList<Any?>()
     }
@@ -481,7 +481,7 @@ object ReflectionUtils {
       fieldType.getDeclaredConstructor().newInstance() as MutableCollection<*>
     } catch (_: ReflectiveOperationException) {
       if (fieldType == ArrayBlockingQueue::class.java) {
-        ArrayBlockingQueue<Any?>(initialSize)
+        ArrayBlockingQueue<Any>(initialSize)
       } else {
         ObjenesisStd().newInstance(fieldType) as MutableCollection<*>?
       }
@@ -585,7 +585,7 @@ object ReflectionUtils {
   private fun getPublicMethod(
     name: String,
     target: Class<*>,
-    vararg parameterTypes: Class<*>?
+    vararg parameterTypes: Class<*>?,
   ): Optional<Method> {
     return try {
       Optional.of(target.getMethod(name, *parameterTypes))
@@ -596,7 +596,7 @@ object ReflectionUtils {
 
   private fun <T : Annotation?> getAnnotationFromReadMethod(
     readMethod: Method?,
-    clazz: Class<T?>
+    clazz: Class<T?>,
   ): T? = readMethod?.getAnnotation<T?>(clazz)
 
   private fun getActualTypeArgumentsOfGenericInterfaces(type: Class<*>): List<Array<Type>> =
@@ -619,7 +619,7 @@ object ReflectionUtils {
   @JvmStatic
   fun <T> newInstance(
     type: Class<T>,
-    randomizerArguments: Array<RandomizerArgument>
+    randomizerArguments: Array<RandomizerArgument>,
   ): Randomizer<T> {
     try {
       if (randomizerArguments.isNotEmpty()) {
@@ -638,21 +638,21 @@ object ReflectionUtils {
       val contentToString = randomizerArguments.contentToString()
       throw ObjectCreationException(
         "Could not create Randomizer of type: $type with constructor arguments: $contentToString",
-        e
+        e,
       )
     }
   }
 
   private fun hasSameArgumentNumber(
     constructor: Constructor<*>,
-    randomizerArguments: Array<RandomizerArgument>
+    randomizerArguments: Array<RandomizerArgument>,
   ): Boolean {
     return constructor.parameterCount == randomizerArguments.size
   }
 
   private fun hasSameArgumentTypes(
     constructor: Constructor<*>,
-    randomizerArguments: Array<RandomizerArgument>
+    randomizerArguments: Array<RandomizerArgument>,
   ): Boolean =
     constructor.parameterTypes.zip(randomizerArguments).all { (paramType, randomizerArg) ->
       paramType.isAssignableFrom(randomizerArg.type.java)

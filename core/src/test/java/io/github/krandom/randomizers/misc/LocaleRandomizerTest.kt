@@ -21,37 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.collections.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.math.BigDecimal
+import java.util.Locale
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.math.BigDecimal;
-import java.util.Locale;
-import org.junit.jupiter.api.Test;
-
-class LocaleRandomizerTest extends AbstractRandomizerTest<Locale> {
-
+internal class LocaleRandomizerTest : AbstractRandomizerTest<Locale>() {
   @Test
-  void shouldGenerateRandomLocale() {
-    assertThat(new LocaleRandomizer().getRandomValue()).isIn(Locale.getAvailableLocales());
+  fun shouldGenerateRandomLocale() {
+    LocaleRandomizer().getRandomValue() shouldBeIn Locale.getAvailableLocales()
   }
 
   @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    BigDecimal javaVersion = new BigDecimal(System.getProperty("java.specification.version"));
-    if (javaVersion.compareTo(new BigDecimal("17")) >= 0) {
-      assertThat(new LocaleRandomizer(SEED).getRandomValue()).isEqualTo(new Locale("mni", ""));
-    } else if (javaVersion.compareTo(new BigDecimal("14")) >= 0) {
-      assertThat(new LocaleRandomizer(SEED).getRandomValue()).isEqualTo(new Locale("rn", "BI"));
-    } else if (javaVersion.compareTo(new BigDecimal("13")) >= 0) {
-      assertThat(new LocaleRandomizer(SEED).getRandomValue()).isEqualTo(new Locale("zh", "CN"));
-    } else if (javaVersion.compareTo(new BigDecimal("11")) >= 0) {
-      assertThat(new LocaleRandomizer(SEED).getRandomValue()).isEqualTo(new Locale("en", "CK"));
-    } else if (javaVersion.compareTo(new BigDecimal("9")) >= 0) {
-      assertThat(new LocaleRandomizer(SEED).getRandomValue()).isEqualTo(new Locale("sw", "ke"));
-    } else {
-      assertThat(new LocaleRandomizer(SEED).getRandomValue()).isEqualTo(new Locale("nl", "be"));
-    }
+  fun shouldGenerateTheSameValueForTheSameSeed() {
+    val javaVersion = BigDecimal(System.getProperty("java.specification.version"))
+    val locale = LocaleRandomizer(SEED).getRandomValue()
+    val (language, country) =
+      when {
+        javaVersion >= BigDecimal("21") -> "pl" to "PL"
+        javaVersion >= BigDecimal("17") -> "mni" to ""
+        javaVersion >= BigDecimal("14") -> "rn" to "BI"
+        javaVersion >= BigDecimal("13") -> "zh" to "CN"
+        javaVersion >= BigDecimal("11") -> "en" to "CK"
+        javaVersion >= BigDecimal("9") -> "sw" to "KE"
+        else -> "nl" to "BE"
+      }
+    locale.language shouldBe language
+    locale.country shouldBe country
   }
 }

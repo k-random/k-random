@@ -4,16 +4,16 @@
 [versions]
 # keep-sorted start
 com-oneeyedmen-okeydoke = "2.0.3"
-io-github-classgraph-classgraph = "4.8.179"
-io-kotest-kotest-assertions-core = "5.9.1"
-io-mockk-mockk = "1.14.2"
+io-github-classgraph-classgraph = "4.8.184"
+io-kotest-kotest-assertions-core = "6.0.4"
+io-mockk-mockk = "1.14.6"
 jakarta-validation-jakarta-validation-api = "3.1.1"
-net-datafaker-datafaker = "2.4.2"
-org-assertj-assertj-core = "3.27.3"
+net-datafaker-datafaker = "2.5.3"
+org-assertj-assertj-core = "3.27.6"
 org-glassfish-jakarta-el = "4.0.2"
-org-hibernate-validator-hibernate-validator = "8.0.2.Final"
-org-junit-jupiter-junit-jupiter = "5.13.1"]
-org-mockito-mockito = "5.18.0"
+org-hibernate-validator-hibernate-validator = "9.1.0.Final"
+org-junit = "6.0.1"
+org-mockito-mockito = "5.20.0"
 org-objenesis-objenesis = "3.4"
 # keep-sorted end
 
@@ -28,8 +28,10 @@ net-datafaker-datafaker = { module = "net.datafaker:datafaker", version.ref = "n
 org-assertj-assertj-core = { module = "org.assertj:assertj-core", version.ref = "org-assertj-assertj-core" }
 org-glassfish-jakarta-el = { module = "org.glassfish:jakarta.el", version.ref = "org-glassfish-jakarta-el" }
 org-hibernate-validator-hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "org-hibernate-validator-hibernate-validator" }
-org-junit-jupiter-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "org-junit-jupiter-junit-jupiter" }
-org-junit-jupiter-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "org-junit-jupiter-junit-jupiter" }
+org-junit-jupiter-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "org-junit" }
+org-junit-jupiter-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "org-junit" }
+org-junit-platform-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "org-junit" }
+org-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "org-junit" }
 org-mockito-mockito-core = { module = "org.mockito:mockito-core", version.ref = "org-mockito-mockito" }
 org-mockito-mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "org-mockito-mockito" }
 org-objenesis-objenesis = { module = "org.objenesis:objenesis", version.ref = "org-objenesis-objenesis" }
