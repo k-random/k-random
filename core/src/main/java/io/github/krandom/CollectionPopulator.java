@@ -36,16 +36,50 @@ import java.util.Collection;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-class CollectionPopulator {
+public class CollectionPopulator {
 
   private final KRandom kRandom;
 
-  CollectionPopulator(final KRandom kRandom) {
+  /**
+   * Create a new collection populator backed by the given {@link KRandom} instance.
+   *
+   * <p>The provided {@code KRandom} is used to determine the collection size (according to {@link
+   * KRandomParameters}) and to populate elements of the target collection when the field is
+   * parameterized with a populatable element type.
+   *
+   * @param kRandom the random data generator and engine used for population (must not be {@code
+   *     null})
+   */
+  public CollectionPopulator(final KRandom kRandom) {
     this.kRandom = kRandom;
   }
 
+  /**
+   * Create and populate a random {@link Collection} for the given field.
+   *
+   * <p>The resulting collection type depends on the field declaration:
+   *
+   * <ul>
+   *   <li>If the field type is a collection interface, a default concrete implementation is
+   *       instantiated.
+   *   <li>If the field type is a concrete collection class, an empty instance of that class is
+   *       created.
+   * </ul>
+   *
+   * <p>The size of the collection is chosen randomly within the range defined by {@link
+   * KRandomParameters#getCollectionSizeRange()} in the provided {@link RandomizationContext}. If
+   * the field is parameterized (for example {@code List<Person>}), and the element type is
+   * considered populatable, each element is populated using {@link KRandom#doPopulateBean(Class,
+   * RandomizationContext)}. For raw types (for example {@code List}) or non-populatable element
+   * types, the collection will remain empty.
+   *
+   * @param field the collection-typed field that should be populated
+   * @param context the randomization context providing parameters and state
+   * @return a new collection instance with a random size and, when applicable, randomly populated
+   *     elements
+   */
   @SuppressWarnings({"unchecked", "rawtypes"})
-  Collection<?> getRandomCollection(final Field field, final RandomizationContext context) {
+  public Collection<?> getRandomCollection(final Field field, final RandomizationContext context) {
     int randomSize = getRandomCollectionSize(context.getParameters());
     Class<?> fieldType = field.getType();
     Type fieldGenericType = field.getGenericType();

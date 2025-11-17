@@ -251,8 +251,109 @@ public class KRandom extends Random {
   }
 
   private Collection<RandomizerRegistry> loadRegistries() {
-    List<RandomizerRegistry> registries = new ArrayList<>();
-    ServiceLoader.load(RandomizerRegistry.class).forEach(registries::add);
-    return registries;
+    return RegistryLoaderHolder.loadSafely();
+  }
+
+  /**
+   * Helper to load {@link RandomizerRegistry} implementations safely.
+   *
+   * <p>Some environments/agents may cause the default {@link ServiceLoader} discovery to re-enter
+   * while providers are being initialized (for example if a provider triggers the creation of
+   * another {@link KRandom} instance during static init). This helper guards against such
+   * re-entrance using a {@link ThreadLocal} flag and also uses a stable class loader to avoid class
+   * path handler issues.
+   */
+  private static final class RegistryLoaderHolder {
+    private static final ThreadLocal<Boolean> LOADING = ThreadLocal.withInitial(() -> false);
+
+    private static Collection<RandomizerRegistry> loadSafely() {
+      if (Boolean.TRUE.equals(LOADING.get())) {
+        // Prevent infinite recursion if a provider initialization triggers another KRandom
+        return Collections.emptyList();
+      }
+      LOADING.set(true);
+      try {
+        List<RandomizerRegistry> registries = new ArrayList<>();
+        ClassLoader cl = KRandom.class.getClassLoader();
+        if (cl == null) {
+          cl = ClassLoader.getSystemClassLoader();
+        }
+        try {
+          ServiceLoader<RandomizerRegistry> loader =
+              ServiceLoader.load(RandomizerRegistry.class, cl);
+          for (RandomizerRegistry registry : loader) {
+            registries.add(registry);
+          }
+        } catch (StackOverflowError | LinkageError e) {
+          // Fall back to manual defaults in case of agent/instrumentation issues
+          registries.addAll(buildDefaultRegistries());
+          return registries;
+        } catch (Throwable t) {
+          registries.addAll(buildDefaultRegistries());
+          return registries;
+        }
+
+        if (registries.isEmpty()) {
+          registries.addAll(buildDefaultRegistries());
+        }
+        return registries;
+      } finally {
+        LOADING.set(false);
+      }
+    }
+
+    private static Collection<RandomizerRegistry> buildDefaultRegistries() {
+      List<RandomizerRegistry> defaults = new ArrayList<>();
+      // Core registries
+      try {
+        defaults.add(
+            (RandomizerRegistry)
+                Class.forName(
+                        "io.github.krandom.randomizers.registry.InternalRandomizerRegistry",
+                        true,
+                        KRandom.class.getClassLoader())
+                    .getDeclaredConstructor()
+                    .newInstance());
+      } catch (Throwable ignored) {
+      }
+      try {
+        defaults.add(
+            (RandomizerRegistry)
+                Class.forName(
+                        "io.github.krandom.randomizers.registry.TimeRandomizerRegistry",
+                        true,
+                        KRandom.class.getClassLoader())
+                    .getDeclaredConstructor()
+                    .newInstance());
+      } catch (Throwable ignored) {
+      }
+      try {
+        defaults.add(
+            (RandomizerRegistry)
+                Class.forName(
+                        "io.github.krandom.randomizers.registry.AnnotationRandomizerRegistry",
+                        true,
+                        KRandom.class.getClassLoader())
+                    .getDeclaredConstructor()
+                    .newInstance());
+      } catch (Throwable ignored) {
+      }
+
+      // Optional bean-validation registry if present on classpath
+      try {
+        Class<?> bv =
+            Class.forName(
+                "io.github.krandom.validation.BeanValidationRandomizerRegistry",
+                true,
+                KRandom.class.getClassLoader());
+        Object instance = bv.getDeclaredConstructor().newInstance();
+        if (instance instanceof RandomizerRegistry) {
+          defaults.add((RandomizerRegistry) instance);
+        }
+      } catch (Throwable ignored) {
+      }
+
+      return defaults;
+    }
   }
 }

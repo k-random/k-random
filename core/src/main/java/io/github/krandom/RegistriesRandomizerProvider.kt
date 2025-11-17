@@ -59,12 +59,12 @@ internal class RegistriesRandomizerProvider : RandomizerProvider {
   }
 
   private class ByTypeProvider(private val type: Class<*>) : Provider {
-    override fun getRandomizer(registry: RandomizerRegistry): Randomizer<*> =
+    override fun getRandomizer(registry: RandomizerRegistry): Randomizer<*>? =
       registry.getRandomizer(type)
   }
 
   private class ByFieldProvider(private val field: Field) : Provider {
-    override fun getRandomizer(registry: RandomizerRegistry): Randomizer<*> =
+    override fun getRandomizer(registry: RandomizerRegistry): Randomizer<*>? =
       registry.getRandomizer(field)
   }
 }

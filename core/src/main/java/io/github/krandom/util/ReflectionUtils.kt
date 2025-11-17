@@ -547,7 +547,21 @@ object ReflectionUtils {
       return getter
     }
     // try to find isProperty for boolean properties
-    return getPublicMethod("is$capitalizedFieldName", fieldClass)
+    val booleanIsGetter = getPublicMethod("is$capitalizedFieldName", fieldClass)
+    if (booleanIsGetter.isPresent) {
+      return booleanIsGetter
+    }
+    // Special case: boolean properties whose name already starts with "is",
+    // e.g., field name is "isActive" with getter method "isActive()".
+    // In this case, the previous attempts tried getIsActive()/isIsActive(),
+    // but the actual getter is the field name itself. Try that as a last resort.
+    if (fieldName.length >= 3 && fieldName.startsWith("is")) {
+      val directBooleanGetter = getPublicMethod(fieldName, fieldClass)
+      if (directBooleanGetter.isPresent) {
+        return directBooleanGetter
+      }
+    }
+    return Optional.empty()
   }
 
   /**
