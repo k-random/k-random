@@ -21,38 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.api
+package io.github.krandom.validation
 
-import io.github.krandom.KRandom
-import io.github.krandom.KRandomParameters
+import io.github.krandom.annotation.Priority
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.RegularExpressionRandomizer
+import io.github.krandom.util.ReflectionUtils
+import jakarta.validation.constraints.Pattern
 import java.lang.reflect.Field
+import java.util.*
 
-/**
- * Interface for a registry of [Randomizer]s.
- *
- * @author Rémi Alvergnat (toilal.dev@gmail.com)
- */
-interface RandomizerRegistry {
-  /**
-   * Initialize the registry.
-   *
-   * @param parameters of the [KRandom] instance being configured
-   */
-  fun init(parameters: KRandomParameters)
+private const val PATTERN_HANDLER_PRIORITY = -5
 
-  /**
-   * Retrieves a randomizer for the given field.
-   *
-   * @param field the field for which a randomizer was registered
-   * @return the randomizer registered for the given field
-   */
-  fun getRandomizer(field: Field): Randomizer<*>?
+@Priority(PATTERN_HANDLER_PRIORITY)
+internal class PatternAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
+  private val random: Random = Random(seed)
 
-  /**
-   * Retrieves a randomizer for a given type.
-   *
-   * @param type the type for which a randomizer was registered
-   * @return the randomizer registered for the given type.
-   */
-  fun getRandomizer(type: Class<*>): Randomizer<*>?
+  @Suppress("UNCHECKED_CAST")
+  override fun getRandomizer(field: Field): Randomizer<*>? {
+    val fieldType = field.type
+    val patternAnnotation =
+      ReflectionUtils.getAnnotation<Pattern?>(field, Pattern::class.java as Class<Pattern?>)
+        ?: return null
+
+    val regex: String = patternAnnotation.regexp
+    return if (fieldType == String::class.java) {
+      RegularExpressionRandomizer(regex, random.nextLong())
+    } else null
+  }
 }

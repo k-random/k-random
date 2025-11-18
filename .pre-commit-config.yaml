@@ -3,13 +3,17 @@ repos:
     rev: v0.5.1
     hooks:
       - id: keep-sorted
-  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: v2.14.0
+  # Use the project's Spotless configuration (Gradle) to avoid formatter/version drift.
+  # This formats both Kotlin and Java consistently with the build.
+  - repo: local
     hooks:
-      - id: pretty-format-java
-        args: [ --autofix ]
-      - id: pretty-format-kotlin
-        args: [ --autofix, --ktfmt, --ktfmt-style=google ]
+      - id: gradle-spotless-apply
+        name: Gradle Spotless (apply)
+        entry: ./gradlew
+        language: system
+        args: [ "-q", "spotlessApply" ]
+        pass_filenames: false
+        stages: [ pre-commit ]
   - repo: local
     hooks:
       - id: commit-msg

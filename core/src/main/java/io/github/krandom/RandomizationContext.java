@@ -35,7 +35,7 @@ import java.util.*;
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-class RandomizationContext implements RandomizerContext {
+public class RandomizationContext implements RandomizerContext {
 
   private final KRandomParameters parameters;
 
@@ -49,7 +49,7 @@ class RandomizationContext implements RandomizerContext {
 
   private Object rootObject;
 
-  RandomizationContext(final Class<?> type, final KRandomParameters parameters) {
+  public RandomizationContext(final Class<?> type, final KRandomParameters parameters) {
     this.type = type;
     populatedBeans = new IdentityHashMap<>();
     stack = new Stack<>();

@@ -35,23 +35,48 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Random map populator.
+ * Populates {@link Map}-typed fields with random entries.
+ *
+ * <p>This helper creates an appropriate {@link Map} instance for the target field (choosing a
+ * concrete implementation for interfaces, and handling {@link java.util.EnumMap} specially), then
+ * fills it with randomly generated key/value pairs using {@link KRandom}. Only parameterized map
+ * types are populated; raw map types are left empty. If the key type cannot be determined (for
+ * example, a raw {@code EnumMap}), this method may return {@code null}.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-class MapPopulator {
+public class MapPopulator {
 
   private final KRandom kRandom;
 
   private final ObjectFactory objectFactory;
 
-  MapPopulator(final KRandom kRandom, final ObjectFactory objectFactory) {
+  /**
+   * Create a new {@code MapPopulator}.
+   *
+   * @param kRandom the engine used to generate random keys and values
+   * @param objectFactory factory used to instantiate concrete map implementations when needed
+   */
+  public MapPopulator(final KRandom kRandom, final ObjectFactory objectFactory) {
     this.kRandom = kRandom;
     this.objectFactory = objectFactory;
   }
 
+  /**
+   * Generate a random {@link Map} for the given map-typed {@link Field}.
+   *
+   * <p>The size of the map is chosen randomly within the configured {@link
+   * KRandomParameters#getCollectionSizeRange() collection size range}. Only parameterized map types
+   * are populated; raw maps are returned empty. If the target type is an {@link java.util.EnumMap}
+   * without a resolvable key type, {@code null} is returned.
+   *
+   * @param field a field whose type implements {@link Map}
+   * @param context the current randomization context
+   * @return a concrete map instance filled with random entries, empty, or {@code null} when the key
+   *     type cannot be resolved
+   */
   @SuppressWarnings("unchecked")
-  Map<?, ?> getRandomMap(final Field field, final RandomizationContext context) {
+  public Map<?, ?> getRandomMap(final Field field, final RandomizationContext context) {
     int randomSize = getRandomMapSize(context.getParameters());
     Class<?> fieldType = field.getType();
     Type fieldGenericType = field.getGenericType();

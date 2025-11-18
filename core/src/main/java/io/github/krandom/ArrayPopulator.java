@@ -31,15 +31,38 @@ import java.lang.reflect.Array;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-class ArrayPopulator {
+public class ArrayPopulator {
 
   private final KRandom kRandom;
 
-  ArrayPopulator(final KRandom kRandom) {
+  /**
+   * Create a new array populator backed by the given {@link KRandom} instance.
+   *
+   * @param kRandom the random data generator used to populate array elements; must not be null
+   */
+  public ArrayPopulator(final KRandom kRandom) {
     this.kRandom = kRandom;
   }
 
-  Object getRandomArray(final Class<?> fieldType, final RandomizationContext context) {
+  /**
+   * Generate a new array of random elements for the specified array {@code fieldType}.
+   *
+   * <p>The array size is chosen uniformly at random within the collection size range defined by
+   * {@link KRandomParameters#getCollectionSizeRange()} in the provided {@code context}. Each
+   * element is created by delegating to {@link KRandom#doPopulateBean(Class, RandomizationContext)}
+   * for the array component type.
+   *
+   * @param fieldType the expected array type to populate (for example, {@code String[].class});
+   *     must represent an array class
+   * @param context the current randomization context providing parameters and state; must not be
+   *     null
+   * @return a newly created array of the requested component type with a random length and randomly
+   *     populated elements
+   * @throws NullPointerException if {@code fieldType} is not an array type (i.e., its component
+   *     type is {@code null}) or if {@code context} is {@code null}
+   * @throws NegativeArraySizeException if the configured size range yields a negative size
+   */
+  public Object getRandomArray(final Class<?> fieldType, final RandomizationContext context) {
     Class<?> componentType = fieldType.getComponentType();
     int randomSize = getRandomArraySize(context.getParameters());
     Object result = Array.newInstance(componentType, randomSize);

@@ -21,38 +21,20 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.api
+package io.github.krandom.validation
 
-import io.github.krandom.KRandom
 import io.github.krandom.KRandomParameters
-import java.lang.reflect.Field
+import java.time.ZonedDateTime
 
-/**
- * Interface for a registry of [Randomizer]s.
- *
- * @author Rémi Alvergnat (toilal.dev@gmail.com)
- */
-interface RandomizerRegistry {
-  /**
-   * Initialize the registry.
-   *
-   * @param parameters of the [KRandom] instance being configured
-   */
-  fun init(parameters: KRandomParameters)
-
-  /**
-   * Retrieves a randomizer for the given field.
-   *
-   * @param field the field for which a randomizer was registered
-   * @return the randomizer registered for the given field
-   */
-  fun getRandomizer(field: Field): Randomizer<*>?
-
-  /**
-   * Retrieves a randomizer for a given type.
-   *
-   * @param type the type for which a randomizer was registered
-   * @return the randomizer registered for the given type.
-   */
-  fun getRandomizer(type: Class<*>): Randomizer<*>?
+private val zonedDateTime: ZonedDateTime by lazy {
+  ZonedDateTime.now()
+    .minusDays(1L)
+    .minusMinutes(KRandomParameters.DEFAULT_DATE_RANGE.toLong())
+    .minusMonths(1L)
+    .minusYears(1L)
 }
+
+internal class PastAnnotationHandler :
+  AbstractTemporalBaseAnnotationHandler(
+    zonedDateTime.minusYears(KRandomParameters.DEFAULT_DATE_RANGE.toLong())..zonedDateTime
+  )
