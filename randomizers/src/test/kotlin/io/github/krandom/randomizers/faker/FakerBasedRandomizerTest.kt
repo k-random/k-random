@@ -21,14 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.validation
+package io.github.krandom.randomizers.faker
 
-import io.github.krandom.randomizers.faker.EmailRandomizer
-import java.lang.reflect.Field
+import com.oneeyedmen.okeydoke.junit5.ApprovalsExtension
+import io.github.krandom.api.Randomizer
+import java.io.File
 import java.util.*
+import org.junit.jupiter.api.extension.RegisterExtension
 
-internal class EmailAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
-  private val random: Random = Random(seed)
+internal open class FakerBasedRandomizerTest<T> {
+  lateinit var randomizer: Randomizer<T>
 
-  override fun getRandomizer(field: Field) = EmailRandomizer(random.nextLong())
+  @field:RegisterExtension
+  @Suppress("unused")
+  val approvals: ApprovalsExtension = ApprovalsExtension(File(PATH))
+
+  companion object {
+    const val PATH = "src/test/resources/approval"
+    const val SEED: Long = 123L
+    val LOCALE: Locale = Locale.FRANCE
+  }
 }

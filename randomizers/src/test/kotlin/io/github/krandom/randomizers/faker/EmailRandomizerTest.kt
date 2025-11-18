@@ -21,14 +21,41 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.validation
+package io.github.krandom.randomizers.faker
 
-import io.github.krandom.randomizers.faker.EmailRandomizer
-import java.lang.reflect.Field
-import java.util.*
+import com.oneeyedmen.okeydoke.Approver
+import io.kotest.matchers.nulls.shouldNotBeNull
+import org.junit.jupiter.api.Test
 
-internal class EmailAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
-  private val random: Random = Random(seed)
+@Suppress("JUnitMalformedDeclaration")
+internal class EmailRandomizerTest : FakerBasedRandomizerTest<String>() {
+  @Test
+  fun `generated number should not be null`() {
+    randomizer = EmailRandomizer()
 
-  override fun getRandomizer(field: Field) = EmailRandomizer(random.nextLong())
+    randomizer.getRandomValue().shouldNotBeNull()
+  }
+
+  @Test
+  fun `should generate the same value for the same seed`(approver: Approver) {
+    randomizer = EmailRandomizer(SEED)
+
+    approver.assertApproved(randomizer.getRandomValue())
+  }
+
+  @Test
+  fun `should generate the same value for the same seed for same locale`(approver: Approver) {
+    randomizer = EmailRandomizer(SEED, LOCALE)
+
+    approver.assertApproved(randomizer.getRandomValue())
+  }
+
+  @Test
+  fun `should generate the same value for the same seed for same locale safe mode true`(
+    approver: Approver
+  ) {
+    randomizer = EmailRandomizer(SEED, LOCALE, true)
+
+    approver.assertApproved(randomizer.getRandomValue())
+  }
 }

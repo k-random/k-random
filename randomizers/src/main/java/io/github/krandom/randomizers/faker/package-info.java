@@ -21,14 +21,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.validation
-
-import io.github.krandom.randomizers.faker.EmailRandomizer
-import java.lang.reflect.Field
-import java.util.*
-
-internal class EmailAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
-  private val random: Random = Random(seed)
-
-  override fun getRandomizer(field: Field) = EmailRandomizer(random.nextLong())
-}
+/**
+ * Built-in {@link io.github.krandom.api.Randomizer}s.
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+package io.github.krandom.randomizers.faker;

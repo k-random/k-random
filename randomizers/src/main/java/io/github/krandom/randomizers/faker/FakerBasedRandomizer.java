@@ -21,14 +21,34 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.validation
+package io.github.krandom.randomizers.faker;
 
-import io.github.krandom.randomizers.faker.EmailRandomizer
-import java.lang.reflect.Field
-import java.util.*
+import io.github.krandom.api.Randomizer;
+import io.github.krandom.randomizers.AbstractRandomizer;
+import java.util.Locale;
+import net.datafaker.Faker;
 
-internal class EmailAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
-  private val random: Random = Random(seed)
+/**
+ * Abstract {@link Randomizer} based on <a href="https://github.com/datafaker-net/datafaker">Data
+ * Faker</a>.
+ *
+ * @param <T> the element type
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+public abstract class FakerBasedRandomizer<T> extends AbstractRandomizer<T> {
 
-  override fun getRandomizer(field: Field) = EmailRandomizer(random.nextLong())
+  protected final Faker faker;
+
+  protected FakerBasedRandomizer() {
+    faker = new Faker(Locale.ENGLISH);
+  }
+
+  protected FakerBasedRandomizer(final long seed) {
+    this(seed, Locale.ENGLISH);
+  }
+
+  protected FakerBasedRandomizer(final long seed, final Locale locale) {
+    super(seed);
+    faker = new Faker(locale, random);
+  }
 }

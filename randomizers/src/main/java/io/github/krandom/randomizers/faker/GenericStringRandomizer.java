@@ -21,14 +21,42 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.validation
+package io.github.krandom.randomizers.faker;
 
-import io.github.krandom.randomizers.faker.EmailRandomizer
-import java.lang.reflect.Field
-import java.util.*
+import io.github.krandom.api.Randomizer;
 
-internal class EmailAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
-  private val random: Random = Random(seed)
+/**
+ * A generic {@link Randomizer} that generates random values from a list of words.
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+public class GenericStringRandomizer extends FakerBasedRandomizer<String> {
 
-  override fun getRandomizer(field: Field) = EmailRandomizer(random.nextLong())
+  private final String[] words;
+
+  /**
+   * Create a new {@link GenericStringRandomizer}.
+   *
+   * @param words the list of words from which this randomizer will generate random values.
+   */
+  public GenericStringRandomizer(final String[] words) {
+    super();
+    this.words = words;
+  }
+
+  /**
+   * Create a new {@link GenericStringRandomizer}.
+   *
+   * @param words the list of words from which this randomizer will generate random values.
+   * @param seed the initial seed
+   */
+  public GenericStringRandomizer(final String[] words, final long seed) {
+    super(seed);
+    this.words = words;
+  }
+
+  @Override
+  public String getRandomValue() {
+    return faker.options().option(words);
+  }
 }

@@ -21,14 +21,37 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.validation
+package io.github.krandom.randomizers.faker
 
-import io.github.krandom.randomizers.faker.EmailRandomizer
-import java.lang.reflect.Field
-import java.util.*
+import com.oneeyedmen.okeydoke.Approver
+import io.kotest.matchers.collections.shouldContain
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-internal class EmailAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
-  private val random: Random = Random(seed)
+@Suppress("JUnitMalformedDeclaration")
+internal class GenericStringRandomizerTest : FakerBasedRandomizerTest<String>() {
+  private lateinit var words: Array<String>
 
-  override fun getRandomizer(field: Field) = EmailRandomizer(random.nextLong())
+  @BeforeEach
+  fun setUp() {
+    words = arrayOf("foo", "bar")
+  }
+
+  @Test
+  fun `random value should be generated from the given words`() {
+    randomizer = GenericStringRandomizer(words)
+
+    val randomWord = randomizer.getRandomValue()
+
+    words shouldContain randomWord
+  }
+
+  @Test
+  fun `random value should be always the same for the same seed`(approver: Approver) {
+    randomizer = GenericStringRandomizer(words, SEED)
+
+    val randomWord = randomizer.getRandomValue()
+
+    approver.assertApproved(randomWord)
+  }
 }
