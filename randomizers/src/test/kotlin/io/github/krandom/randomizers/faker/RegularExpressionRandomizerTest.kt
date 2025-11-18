@@ -21,14 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.validation
+package io.github.krandom.randomizers.faker
 
-import io.github.krandom.randomizers.faker.EmailRandomizer
-import java.lang.reflect.Field
-import java.util.*
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 
-internal class EmailAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
-  private val random: Random = Random(seed)
+internal class RegularExpressionRandomizerTest : FakerBasedRandomizerTest<String>() {
+  @Test
+  fun `leading boundary matcher is removed`() {
+    randomizer = RegularExpressionRandomizer("^A")
 
-  override fun getRandomizer(field: Field) = EmailRandomizer(random.nextLong())
+    val actual = randomizer.getRandomValue()
+
+    actual shouldBe "A"
+  }
+
+  @Test
+  fun `tailing boundary matcher is removed`() {
+    randomizer = RegularExpressionRandomizer("A$")
+
+    val actual = randomizer.getRandomValue()
+
+    actual shouldBe "A"
+  }
+
+  @Test
+  fun `leading and tailing boundary matcher is removed`() {
+    randomizer = RegularExpressionRandomizer("^A$")
+
+    val actual = randomizer.getRandomValue()
+
+    actual shouldBe "A"
+  }
 }

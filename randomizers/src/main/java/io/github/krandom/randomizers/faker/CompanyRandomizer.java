@@ -21,14 +21,42 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.validation
+package io.github.krandom.randomizers.faker;
 
-import io.github.krandom.randomizers.faker.EmailRandomizer
-import java.lang.reflect.Field
-import java.util.*
+import io.github.krandom.api.Randomizer;
+import java.util.Locale;
 
-internal class EmailAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
-  private val random: Random = Random(seed)
+/**
+ * A {@link Randomizer} that generates random companies.
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+public class CompanyRandomizer extends FakerBasedRandomizer<String> {
 
-  override fun getRandomizer(field: Field) = EmailRandomizer(random.nextLong())
+  /** Create a new {@link CompanyRandomizer}. */
+  public CompanyRandomizer() {}
+
+  /**
+   * Create a new {@link CompanyRandomizer}.
+   *
+   * @param seed the initial seed
+   */
+  public CompanyRandomizer(final long seed) {
+    super(seed);
+  }
+
+  /**
+   * Create a new {@link CompanyRandomizer}.
+   *
+   * @param seed the initial seed
+   * @param locale the locale to use
+   */
+  public CompanyRandomizer(final long seed, final Locale locale) {
+    super(seed, locale);
+  }
+
+  @Override
+  public String getRandomValue() {
+    return faker.company().name();
+  }
 }
