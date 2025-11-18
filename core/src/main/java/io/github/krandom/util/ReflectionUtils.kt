@@ -43,6 +43,9 @@ import java.util.concurrent.*
 import java.util.function.Supplier
 import org.objenesis.ObjenesisStd
 
+private const val BOOLEAN_IS_PREFIX: String = "is"
+private const val BOOLEAN_IS_PREFIX_MIN_LENGTH: Int = 3
+
 /**
  * Reflection utility methods.
  *
@@ -538,30 +541,28 @@ object ReflectionUtils {
    */
   @JvmStatic
   fun getReadMethod(field: Field): Optional<Method> {
+    // Detekt: keep return count low by computing a single Optional and returning once
     val fieldName = field.name
     val fieldClass = field.declaringClass
     val capitalizedFieldName = capitalize(fieldName)
     // try to find getProperty
-    val getter = getPublicMethod("get$capitalizedFieldName", fieldClass)
-    if (getter.isPresent) {
-      return getter
-    }
+    var result = getPublicMethod("get$capitalizedFieldName", fieldClass)
     // try to find isProperty for boolean properties
-    val booleanIsGetter = getPublicMethod("is$capitalizedFieldName", fieldClass)
-    if (booleanIsGetter.isPresent) {
-      return booleanIsGetter
+    if (result.isEmpty) {
+      result = getPublicMethod("is$capitalizedFieldName", fieldClass)
     }
     // Special case: boolean properties whose name already starts with "is",
     // e.g., field name is "isActive" with getter method "isActive()".
     // In this case, the previous attempts tried getIsActive()/isIsActive(),
     // but the actual getter is the field name itself. Try that as a last resort.
-    if (fieldName.length >= 3 && fieldName.startsWith("is")) {
-      val directBooleanGetter = getPublicMethod(fieldName, fieldClass)
-      if (directBooleanGetter.isPresent) {
-        return directBooleanGetter
-      }
+    if (
+      result.isEmpty &&
+        fieldName.startsWith(BOOLEAN_IS_PREFIX) &&
+        fieldName.length >= BOOLEAN_IS_PREFIX_MIN_LENGTH
+    ) {
+      result = getPublicMethod(fieldName, fieldClass)
     }
-    return Optional.empty()
+    return result
   }
 
   /**

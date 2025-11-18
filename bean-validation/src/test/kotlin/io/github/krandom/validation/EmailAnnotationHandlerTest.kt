@@ -1,11 +1,11 @@
 package io.github.krandom.validation
 
 import io.github.krandom.KRandom
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.string.shouldMatch
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import jakarta.validation.constraints.Email
-import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -34,7 +34,7 @@ internal class EmailAnnotationHandlerTest {
     }
     val violations = validator.validate(testBean)
 
-    Assertions.assertThat(violations).isEmpty()
+    violations.shouldBeEmpty()
   }
 
   internal class TestBean(@field:Email val testField: String)

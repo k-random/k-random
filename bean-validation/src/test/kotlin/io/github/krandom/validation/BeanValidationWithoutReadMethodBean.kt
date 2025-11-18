@@ -29,6 +29,7 @@ internal data class BeanValidationWithoutReadMethodBean(
   @field:NotNull private var fieldWithoutReadMethod: String
 ) {
   // Public write method without a corresponding read method
+  @Suppress("unused")
   fun setFieldWithoutReadMethod(value: String) {
     this.fieldWithoutReadMethod = value
   }

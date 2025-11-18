@@ -6,7 +6,6 @@ plugins { kotlin("jvm") }
 
 dependencies {
   // keep-sorted start
-  api(libs.org.jspecify.jspecify)
   implementation(kotlin("reflect"))
   implementation(kotlin("stdlib"))
   implementation(libs.jakarta.validation.jakarta.validation.api)
@@ -14,15 +13,12 @@ dependencies {
   implementation(project(":randomizers"))
   testImplementation(libs.io.kotest.kotest.assertions.core)
   testImplementation(libs.io.mockk.mockk)
-  testImplementation(libs.org.assertj.assertj.core)
   testImplementation(libs.org.glassfish.jakarta.el)
   testImplementation(libs.org.hibernate.validator.hibernate.validator)
   testImplementation(libs.org.junit.jupiter.junit.jupiter)
   testImplementation(libs.org.junit.jupiter.junit.jupiter.params)
   testImplementation(libs.org.junit.platform.engine)
   testImplementation(libs.org.junit.platform.launcher)
-  testImplementation(libs.org.mockito.mockito.core)
-  testImplementation(libs.org.mockito.mockito.junit.jupiter)
   // keep-sorted end
 }
 
