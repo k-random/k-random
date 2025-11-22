@@ -9,6 +9,7 @@ dependencies {
   api(libs.net.datafaker.datafaker)
   implementation(kotlin("reflect"))
   implementation(kotlin("stdlib"))
+  implementation(libs.org.jspecify.jspecify)
   implementation(project(":core"))
   testImplementation(libs.com.oneeyedmen.okeydoke)
   testImplementation(libs.io.kotest.kotest.assertions.core)
