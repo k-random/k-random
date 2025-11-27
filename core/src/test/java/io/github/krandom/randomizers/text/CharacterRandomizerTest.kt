@@ -21,41 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.text;
+package io.github.krandom.randomizers.text
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.nio.charset.StandardCharsets
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class CharacterRandomizerTest extends AbstractRandomizerTest<Character> {
-
+internal class CharacterRandomizerTest : AbstractRandomizerTest<Char>() {
   @BeforeEach
-  void setUp() {
-    randomizer = new CharacterRandomizer();
+  fun setUp() {
+    randomizer = CharacterRandomizer()
   }
 
   @Test
-  void generatedValueMustNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
-  }
-
-  @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
+  fun `should generate the same value for the same seed`() {
     // Given
-    randomizer = new CharacterRandomizer(SEED);
-    char expected = 'e';
+    randomizer = CharacterRandomizer(StandardCharsets.US_ASCII, SEED)
+    val expected = 'e'
 
     // When
-    Character actual = randomizer.getRandomValue();
+    val actual = randomizer.getRandomValue()
 
     // Then
-    assertThat(actual).isEqualTo(expected);
+    actual shouldBe expected
   }
 
   @Test
-  void shouldGenerateOnlyAlphabeticLetters() {
-    assertThat(randomizer.getRandomValue()).isBetween('A', 'z');
+  fun `should generate only alphabetic letters`() {
+    randomizer.getRandomValue() shouldBeIn 'A'..'z'
   }
 }

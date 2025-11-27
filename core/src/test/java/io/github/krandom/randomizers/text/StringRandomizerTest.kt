@@ -21,67 +21,76 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.text;
+package io.github.krandom.randomizers.text
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandomParameters
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.nio.charset.StandardCharsets
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class StringRandomizerTest extends AbstractRandomizerTest<String> {
-
+internal class StringRandomizerTest : AbstractRandomizerTest<String>() {
   @BeforeEach
-  void setUp() {
-    randomizer = new StringRandomizer();
+  fun setUp() {
+    randomizer = StringRandomizer()
   }
 
   @Test
-  void generatedValueMustNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
-  }
-
-  @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
+  fun `should generate the same value for the same seed`() {
     // Given
-    randomizer = new StringRandomizer(SEED);
-    String expected = "eOMtThyhVNLWUZNRcBaQKxI";
+    randomizer =
+      StringRandomizer(
+        StandardCharsets.US_ASCII,
+        KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.min,
+        KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.max,
+        SEED,
+      )
+    val expected = "eOMtThyhVNLWUZNRcBaQKxI"
 
     // When
-    String actual = randomizer.getRandomValue();
+    val actual = randomizer.getRandomValue()
 
     // Then
-    assertThat(actual).isEqualTo(expected);
+    actual shouldBe expected
   }
 
   @Test
-  void theLengthOfTheGeneratedValueShouldBeLowerThanTheSpecifiedMaxLength() {
+  fun `the length of the generated value should be lower than the specified max length`() {
     // Given
-    final int maxLength = 10;
-    randomizer = new StringRandomizer(maxLength, SEED);
-    String expectedValue = "eOMtThy";
+    val maxLength = 10
+    randomizer =
+      StringRandomizer(
+        StandardCharsets.US_ASCII,
+        KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.min,
+        maxLength,
+        SEED,
+      )
+    val expectedValue = "eOMtThy"
 
     // When
-    String actual = randomizer.getRandomValue();
+    val actual = randomizer.getRandomValue()
 
     // Then
-    assertThat(actual).isEqualTo(expectedValue);
-    assertThat(actual.length()).isLessThanOrEqualTo(maxLength);
+    actual shouldBe expectedValue
+    actual.length shouldBeLessThanOrEqualTo maxLength
   }
 
   @Test
-  void theLengthOfTheGeneratedValueShouldBeGreaterThanTheSpecifiedMinLength() {
+  fun `the length of the generated value should be greater than the specified min length`() {
     // Given
-    final int minLength = 3;
-    final int maxLength = 10;
-    randomizer = new StringRandomizer(minLength, maxLength, SEED);
-    String expectedValue = "eOMtThyh";
+    val minLength = 3
+    val maxLength = 10
+    randomizer = StringRandomizer(StandardCharsets.US_ASCII, minLength, maxLength, SEED)
+    val expectedValue = "eOMtThyh"
 
     // When
-    String actual = randomizer.getRandomValue();
+    val actual = randomizer.getRandomValue()
 
     // Then
-    assertThat(actual).isEqualTo(expectedValue);
-    assertThat(actual.length()).isBetween(minLength, maxLength);
+    actual shouldBe expectedValue
+    actual.length shouldBeIn minLength..maxLength
   }
 }

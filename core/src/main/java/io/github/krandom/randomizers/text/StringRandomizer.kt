@@ -21,135 +21,43 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.text;
+package io.github.krandom.randomizers.text
 
-import io.github.krandom.KRandomParameters;
-import java.nio.charset.Charset;
+import io.github.krandom.KRandomParameters
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import kotlin.random.Random
 
 /**
- * Generate a random {@link String}.
+ * Generate a random [String].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class StringRandomizer extends CharSequenceRandomizer<String> {
+class StringRandomizer
+/**
+ * Create a new [StringRandomizer].
+ *
+ * @param charset to use
+ * @param maxLength of the String to generate
+ * @param minLength of the String to generate
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  charset: Charset = StandardCharsets.US_ASCII,
+  private var minLength: Int = KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.min,
+  private var maxLength: Int = KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.max,
+  seed: Long = Random.nextLong(),
+  private val characterRandomizer: CharacterRandomizer = CharacterRandomizer(charset, seed),
+) : CharSequenceRandomizer<String>(seed) {
 
-  private final CharacterRandomizer characterRandomizer;
-
-  private int maxLength = KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.getMax();
-  private int minLength = KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.getMin();
-
-  /** Create a new {@link StringRandomizer}. */
-  public StringRandomizer() {
-    super();
-    characterRandomizer = new CharacterRandomizer();
+  init {
+    require(minLength <= maxLength) { "minLength should be less than or equal to maxLength" }
   }
 
-  /**
-   * Create a new {@link StringRandomizer}.
-   *
-   * @param charset to use
-   */
-  public StringRandomizer(final Charset charset) {
-    characterRandomizer = new CharacterRandomizer(charset);
-  }
-
-  /**
-   * Create a new {@link StringRandomizer}.
-   *
-   * @param maxLength of the String to generate
-   */
-  public StringRandomizer(int maxLength) {
-    super();
-    this.maxLength = maxLength;
-    characterRandomizer = new CharacterRandomizer();
-  }
-
-  /**
-   * Create a new {@link StringRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public StringRandomizer(long seed) {
-    super(seed);
-    characterRandomizer = new CharacterRandomizer(seed);
-  }
-
-  /**
-   * Create a new {@link StringRandomizer}.
-   *
-   * @param charset to use
-   * @param seed initial seed
-   */
-  public StringRandomizer(final Charset charset, final long seed) {
-    super(seed);
-    characterRandomizer = new CharacterRandomizer(charset, seed);
-  }
-
-  /**
-   * Create a new {@link StringRandomizer}.
-   *
-   * @param maxLength of the String to generate
-   * @param seed initial seed
-   */
-  public StringRandomizer(final int maxLength, final long seed) {
-    super(seed);
-    this.maxLength = maxLength;
-    characterRandomizer = new CharacterRandomizer(seed);
-  }
-
-  /**
-   * Create a new {@link StringRandomizer}.
-   *
-   * @param maxLength of the String to generate
-   * @param minLength of the String to generate
-   * @param seed initial seed
-   */
-  public StringRandomizer(final int minLength, final int maxLength, final long seed) {
-    super(seed);
-    this.maxLength = maxLength;
-    this.minLength = minLength;
-    characterRandomizer = new CharacterRandomizer(seed);
-  }
-
-  /**
-   * Create a new {@link StringRandomizer}.
-   *
-   * @param charset to use
-   * @param maxLength of the String to generate
-   * @param seed initial seed
-   */
-  public StringRandomizer(final Charset charset, final int maxLength, final long seed) {
-    super(seed);
-    this.maxLength = maxLength;
-    characterRandomizer = new CharacterRandomizer(charset, seed);
-  }
-
-  /**
-   * Create a new {@link StringRandomizer}.
-   *
-   * @param charset to use
-   * @param maxLength of the String to generate
-   * @param minLength of the String to generate
-   * @param seed initial seed
-   */
-  public StringRandomizer(
-      final Charset charset, final int minLength, final int maxLength, final long seed) {
-    super(seed);
-    if (minLength > maxLength) {
-      throw new IllegalArgumentException("minLength should be less than or equal to maxLength");
-    }
-    this.maxLength = maxLength;
-    this.minLength = minLength;
-    characterRandomizer = new CharacterRandomizer(charset, seed);
-  }
-
-  @Override
-  public String getRandomValue() {
-    int length = (int) nextDouble(minLength, maxLength);
-    char[] chars = new char[length];
-    for (int i = 0; i < length; i++) {
-      chars[i] = characterRandomizer.getRandomValue();
-    }
-    return new String(chars);
-  }
+  override fun getRandomValue() =
+    CharArray(nextDouble(minLength.toDouble(), maxLength.toDouble()).toInt()) {
+        characterRandomizer.getRandomValue()
+      }
+      .concatToString()
 }

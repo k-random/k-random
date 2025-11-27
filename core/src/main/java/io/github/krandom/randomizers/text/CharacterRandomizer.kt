@@ -21,68 +21,33 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.text;
+package io.github.krandom.randomizers.text
 
-import static io.github.krandom.util.CharacterUtils.collectPrintableCharactersOf;
-import static io.github.krandom.util.CharacterUtils.filterLetters;
-
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
+import io.github.krandom.randomizers.AbstractRandomizer
+import io.github.krandom.util.CharacterUtils.collectPrintableCharactersOf
+import io.github.krandom.util.CharacterUtils.filterLetters
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 /**
- * Generate a random {@link Character}.
+ * Generate a random [Character].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class CharacterRandomizer extends AbstractRandomizer<Character> {
+class CharacterRandomizer
+/**
+ * Create a new [CharacterRandomizer].
+ *
+ * @param charset to use
+ */
+@JvmOverloads
+constructor(
+  private var charset: Charset = StandardCharsets.US_ASCII,
+  seed: Long = Random.nextLong(),
+  private val characters: List<Char> = filterLetters(collectPrintableCharactersOf(charset)),
+) : AbstractRandomizer<Char>(seed) {
 
-  private Charset charset = StandardCharsets.US_ASCII;
-
-  private List<Character> characters = collectPrintableCharactersOf(charset);
-
-  /** Create a new {@link CharacterRandomizer}. */
-  public CharacterRandomizer() {
-    super();
-    characters = filterLetters(characters);
-  }
-
-  /**
-   * Create a new {@link CharacterRandomizer}.
-   *
-   * @param charset to use
-   */
-  public CharacterRandomizer(final Charset charset) {
-    super();
-    this.charset = charset;
-    characters = filterLetters(characters);
-  }
-
-  /**
-   * Create a new {@link CharacterRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public CharacterRandomizer(final long seed) {
-    super(seed);
-    characters = filterLetters(characters);
-  }
-
-  /**
-   * Create a new {@link CharacterRandomizer}.
-   *
-   * @param charset to use
-   * @param seed initial seed
-   */
-  public CharacterRandomizer(final Charset charset, final long seed) {
-    super(seed);
-    this.charset = charset;
-    characters = filterLetters(characters);
-  }
-
-  @Override
-  public Character getRandomValue() {
-    return characters.get(random.nextInt(characters.size()));
-  }
+  override fun getRandomValue(): Char = characters.random(random.asKotlinRandom())
 }

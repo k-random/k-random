@@ -21,17 +21,11 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.text;
+package io.github.krandom.randomizers.text
 
-import io.github.krandom.randomizers.AbstractRandomizer;
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
 
-public abstract class CharSequenceRandomizer<T extends CharSequence> extends AbstractRandomizer<T> {
-
-  protected CharSequenceRandomizer() {
-    super();
-  }
-
-  protected CharSequenceRandomizer(long seed) {
-    super(seed);
-  }
-}
+abstract class CharSequenceRandomizer<T : CharSequence>
+@JvmOverloads
+protected constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<T>(seed)

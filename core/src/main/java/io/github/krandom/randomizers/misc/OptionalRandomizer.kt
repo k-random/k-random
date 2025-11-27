@@ -41,12 +41,7 @@ class OptionalRandomizer<T>
  * @param optionalPercent The percentage of randomized value to return (between 0 and 100)
  */
 constructor(private val delegate: Randomizer<T>, optionalPercent: Int) : AbstractRandomizer<T?>() {
-  private val optionalPercent: Int =
-    when {
-      optionalPercent < PERCENT_RANGE.first -> PERCENT_RANGE.first
-      optionalPercent > PERCENT_RANGE.last -> PERCENT_RANGE.last
-      else -> optionalPercent
-    }
+  private val optionalPercent: Int = optionalPercent.coerceIn(PERCENT_RANGE)
 
   override fun getRandomValue(): T? =
     if (random.nextInt(PERCENT_RANGE.last) <= optionalPercent) delegate.getRandomValue() else null

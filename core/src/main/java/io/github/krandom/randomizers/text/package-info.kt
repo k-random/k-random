@@ -26,4 +26,4 @@
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-package io.github.krandom.randomizers.text;
+package io.github.krandom.randomizers.text

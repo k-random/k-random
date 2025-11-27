@@ -21,37 +21,34 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.text;
+package io.github.krandom.randomizers.text
 
-import static java.lang.String.valueOf;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import io.github.krandom.api.Randomizer
+import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-import io.github.krandom.api.Randomizer;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+@ExtendWith(MockKExtension::class)
+internal class StringDelegatingRandomizerTest {
+  @MockK private lateinit var delegate: Randomizer<Any>
+  @MockK private lateinit var any: Any
 
-@ExtendWith(MockitoExtension.class)
-class StringDelegatingRandomizerTest {
-
-  @Mock private Randomizer<Object> delegate;
-  @Mock private Object object;
-
-  private StringDelegatingRandomizer stringDelegatingRandomizer;
+  private lateinit var stringDelegatingRandomizer: StringDelegatingRandomizer
 
   @BeforeEach
-  void setUp() {
-    stringDelegatingRandomizer = new StringDelegatingRandomizer(delegate);
-    when(delegate.getRandomValue()).thenReturn(object);
+  fun setUp() {
+    stringDelegatingRandomizer = StringDelegatingRandomizer(delegate)
+    every { delegate.getRandomValue() } returns any
   }
 
   @Test
-  void generatedValueShouldTheSameAs() {
-    String actual = stringDelegatingRandomizer.getRandomValue();
+  fun `generated value should the same as`() {
+    val actual = stringDelegatingRandomizer.getRandomValue()
 
-    assertThat(actual).isEqualTo(valueOf(object));
+    actual shouldBe any.toString()
   }
 }
