@@ -21,35 +21,29 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
+import java.lang.reflect.Field
+import java.util.function.Predicate
 
 /**
  * Common predicates to identify fields. Usually used in combination to define a field in an object
  * graph. For example:
- *
  * <pre>
- *     Predicate&lt;Field&gt; predicate = named("name").and(ofType(String.class)).and(inClass(Person.class));
- * </pre>
+ * Predicate&lt;Field&gt; predicate = named("name").and(ofType(String.class)).and(inClass(Person.class));
+ * </pre> *
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class FieldPredicates {
-
+object FieldPredicates {
   /**
    * Create a predicate to check that a field has a certain name pattern.
    *
    * @param name pattern of the field name to check
    * @return Predicate to check that a field has a certain name pattern
    */
-  public static Predicate<Field> named(final String name) {
-    final Pattern pattern = Pattern.compile(name);
-    return field -> pattern.matcher(field.getName()).matches();
-  }
+  @JvmStatic
+  fun named(name: String) = Predicate { field: Field -> name.toRegex().matches(field.name) }
 
   /**
    * Create a predicate to check that a field has a certain type.
@@ -57,9 +51,7 @@ public class FieldPredicates {
    * @param type of the field to check
    * @return Predicate to check that a field has a certain type
    */
-  public static Predicate<Field> ofType(Class<?> type) {
-    return field -> field.getType().equals(type);
-  }
+  @JvmStatic fun ofType(type: Class<*>) = Predicate { field: Field -> field.type == type }
 
   /**
    * Create a predicate to check that a field is defined in a given class.
@@ -67,9 +59,8 @@ public class FieldPredicates {
    * @param clazz enclosing type of the field to check
    * @return Predicate to check that a field is defined in a given class.
    */
-  public static Predicate<Field> inClass(Class<?> clazz) {
-    return field -> field.getDeclaringClass().equals(clazz);
-  }
+  @JvmStatic
+  fun inClass(clazz: Class<*>) = Predicate { field: Field -> field.declaringClass == clazz }
 
   /**
    * Create a predicate to check that a field is annotated with one of the given annotations.
@@ -77,15 +68,9 @@ public class FieldPredicates {
    * @param annotations present on the field
    * @return Predicate to check that a field is annotated with one of the given annotations.
    */
-  public static Predicate<Field> isAnnotatedWith(Class<? extends Annotation>... annotations) {
-    return field -> {
-      for (Class<? extends Annotation> annotation : annotations) {
-        if (field.isAnnotationPresent(annotation)) {
-          return true;
-        }
-      }
-      return false;
-    };
+  @JvmStatic
+  fun isAnnotatedWith(vararg annotations: Class<out Annotation>) = Predicate { field: Field ->
+    annotations.any { field.isAnnotationPresent(it) }
   }
 
   /**
@@ -94,7 +79,8 @@ public class FieldPredicates {
    * @param modifiers of the field to check
    * @return Predicate to check that a field has a given set of modifiers
    */
-  public static Predicate<Field> hasModifiers(final Integer modifiers) {
-    return field -> (modifiers & field.getModifiers()) == modifiers;
+  @JvmStatic
+  fun hasModifiers(modifiers: Int) = Predicate { field: Field ->
+    (modifiers and field.modifiers) == modifiers
   }
 }

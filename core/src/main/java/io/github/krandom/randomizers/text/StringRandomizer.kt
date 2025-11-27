@@ -21,37 +21,43 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.text;
+package io.github.krandom.randomizers.text
 
-import static java.lang.String.valueOf;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import io.github.krandom.KRandomParameters
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import kotlin.random.Random
 
-import io.github.krandom.api.Randomizer;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+/**
+ * Generate a random [String].
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+class StringRandomizer
+/**
+ * Create a new [StringRandomizer].
+ *
+ * @param charset to use
+ * @param maxLength of the String to generate
+ * @param minLength of the String to generate
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  charset: Charset = StandardCharsets.US_ASCII,
+  private var minLength: Int = KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.min,
+  private var maxLength: Int = KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.max,
+  seed: Long = Random.nextLong(),
+  private val characterRandomizer: CharacterRandomizer = CharacterRandomizer(charset, seed),
+) : CharSequenceRandomizer<String>(seed) {
 
-@ExtendWith(MockitoExtension.class)
-class StringDelegatingRandomizerTest {
-
-  @Mock private Randomizer<Object> delegate;
-  @Mock private Object object;
-
-  private StringDelegatingRandomizer stringDelegatingRandomizer;
-
-  @BeforeEach
-  void setUp() {
-    stringDelegatingRandomizer = new StringDelegatingRandomizer(delegate);
-    when(delegate.getRandomValue()).thenReturn(object);
+  init {
+    require(minLength <= maxLength) { "minLength should be less than or equal to maxLength" }
   }
 
-  @Test
-  void generatedValueShouldTheSameAs() {
-    String actual = stringDelegatingRandomizer.getRandomValue();
-
-    assertThat(actual).isEqualTo(valueOf(object));
-  }
+  override fun getRandomValue() =
+    CharArray(nextDouble(minLength.toDouble(), maxLength.toDouble()).toInt()) {
+        characterRandomizer.getRandomValue()
+      }
+      .concatToString()
 }

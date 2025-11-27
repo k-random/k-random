@@ -23,12 +23,20 @@
  */
 package io.github.krandom.validation
 
+import io.github.krandom.KRandomParameters
 import io.github.krandom.randomizers.text.StringRandomizer
 import java.lang.reflect.Field
+import java.nio.charset.StandardCharsets
 import java.util.Random
 
 internal class NotBlankAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
   private val random: Random = Random(seed)
 
-  override fun getRandomizer(field: Field) = StringRandomizer(random.nextLong())
+  override fun getRandomizer(field: Field) =
+    StringRandomizer(
+      StandardCharsets.US_ASCII,
+      KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.min,
+      KRandomParameters.DEFAULT_STRING_LENGTH_RANGE.max,
+      random.nextLong(),
+    )
 }

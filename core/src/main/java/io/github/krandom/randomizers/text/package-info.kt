@@ -21,17 +21,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.text;
-
-import io.github.krandom.randomizers.AbstractRandomizer;
-
-public abstract class CharSequenceRandomizer<T extends CharSequence> extends AbstractRandomizer<T> {
-
-  protected CharSequenceRandomizer() {
-    super();
-  }
-
-  protected CharSequenceRandomizer(long seed) {
-    super(seed);
-  }
-}
+/**
+ * This package contains text types randomizers.
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+package io.github.krandom.randomizers.text

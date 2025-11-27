@@ -21,41 +21,11 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.text;
+package io.github.krandom.randomizers.text
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class CharacterRandomizerTest extends AbstractRandomizerTest<Character> {
-
-  @BeforeEach
-  void setUp() {
-    randomizer = new CharacterRandomizer();
-  }
-
-  @Test
-  void generatedValueMustNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
-  }
-
-  @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    // Given
-    randomizer = new CharacterRandomizer(SEED);
-    char expected = 'e';
-
-    // When
-    Character actual = randomizer.getRandomValue();
-
-    // Then
-    assertThat(actual).isEqualTo(expected);
-  }
-
-  @Test
-  void shouldGenerateOnlyAlphabeticLetters() {
-    assertThat(randomizer.getRandomValue()).isBetween('A', 'z');
-  }
-}
+abstract class CharSequenceRandomizer<T : CharSequence>
+@JvmOverloads
+protected constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<T>(seed)
