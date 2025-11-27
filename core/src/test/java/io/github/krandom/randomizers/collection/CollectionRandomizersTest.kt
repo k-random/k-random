@@ -21,101 +21,100 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.collection;
+package io.github.krandom.randomizers.collection
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import io.github.krandom.api.Randomizer
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.collections.shouldNotBeEmpty
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
-import io.github.krandom.api.Randomizer;
-import java.util.Collection;
-import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-class CollectionRandomizersTest {
-
-  private static final int collectionSize = 3;
-
-  static Object[] generateCollectionRandomizers() {
-    Randomizer<String> elementRandomizer = elementRandomizer();
-    return new Object[] {
-      new ListRandomizer(elementRandomizer),
-      new QueueRandomizer(elementRandomizer),
-      new SetRandomizer(elementRandomizer)
-    };
-  }
-
+internal class CollectionRandomizersTest {
   @ParameterizedTest
   @MethodSource("generateCollectionRandomizers")
-  <T> void generatedCollectionShouldNotBeNull(Randomizer<Collection<T>> collectionRandomizer) {
+  fun <T> `generated collection should not be null`(
+    collectionRandomizer: Randomizer<MutableCollection<T>>
+  ) {
     // when
-    Collection<T> randomCollection = collectionRandomizer.getRandomValue();
+    val randomCollection = collectionRandomizer.getRandomValue()
 
-    then(randomCollection).isNotNull();
-  }
-
-  static Object[] generateCollectionRandomizersWithSpecificSize() {
-    return new Object[] {
-      new ListRandomizer(elementRandomizer(), collectionSize),
-      new QueueRandomizer(elementRandomizer(), collectionSize),
-      new SetRandomizer(elementRandomizer(), collectionSize)
-    };
+    randomCollection.shouldNotBeEmpty()
   }
 
   @ParameterizedTest
   @MethodSource("generateCollectionRandomizersWithSpecificSize")
-  <T> void generatedCollectionSizeShouldBeEqualToTheSpecifiedSize(
-      Randomizer<Collection<T>> collectionRandomizer) {
+  fun <T> `generated collection size should be equal to the specified size`(
+    collectionRandomizer: Randomizer<MutableCollection<T>>
+  ) {
     // when
-    Collection<T> randomCollection = collectionRandomizer.getRandomValue();
+    val randomCollection = collectionRandomizer.getRandomValue()
 
-    then(randomCollection).hasSize(collectionSize);
-  }
-
-  static Object[] generateCollectionRandomizersForEmptyCollections() {
-    return new Object[] {
-      new ListRandomizer(elementRandomizer(), 0),
-      new QueueRandomizer(elementRandomizer(), 0),
-      new SetRandomizer(elementRandomizer(), 0)
-    };
+    randomCollection shouldHaveSize COLLECTION_SIZE
   }
 
   @ParameterizedTest
   @MethodSource("generateCollectionRandomizersForEmptyCollections")
-  <T> void shouldAllowGeneratingEmptyCollections(Randomizer<Collection<T>> collectionRandomizer) {
+  fun <T> `should allow generating empty collections`(
+    collectionRandomizer: Randomizer<MutableCollection<T>>
+  ) {
     // when
-    Collection<T> randomCollection = collectionRandomizer.getRandomValue();
+    val randomCollection = collectionRandomizer.getRandomValue()
 
-    then(randomCollection).isEmpty();
-  }
-
-  static Object[] generateCollectionRandomizersWithIllegalSize() {
-    Randomizer<String> elementRandomizer = elementRandomizer();
-    int illegalSize = -1;
-    return new Object[] {
-      (ThrowingCallable) () -> new ListRandomizer(elementRandomizer, illegalSize),
-      (ThrowingCallable) () -> new QueueRandomizer(elementRandomizer, illegalSize),
-      (ThrowingCallable) () -> new SetRandomizer(elementRandomizer, illegalSize)
-    };
+    randomCollection.shouldBeEmpty()
   }
 
   @ParameterizedTest
   @MethodSource("generateCollectionRandomizersWithIllegalSize")
-  void specifiedSizeShouldBePositive(ThrowingCallable callable) {
-    // when
-    Throwable expectedException = catchThrowable(callable);
-
+  fun `specified size should be positive`(invokable: () -> Randomizer<MutableCollection<String>>) {
     // then
-    assertThat(expectedException).isInstanceOf(IllegalArgumentException.class);
+    shouldThrow<IllegalArgumentException> { invokable.invoke() }
   }
 
-  @SuppressWarnings("unchecked")
-  static Randomizer<String> elementRandomizer() {
-    Randomizer<String> elementRandomizer = mock(Randomizer.class);
-    when(elementRandomizer.getRandomValue()).thenReturn("a", "b", "c");
-    return elementRandomizer;
+  companion object {
+    private const val COLLECTION_SIZE = 3
+
+    @JvmStatic
+    fun generateCollectionRandomizers() =
+      listOf(
+        Arguments.of(ListRandomizer(elementRandomizer())),
+        Arguments.of(QueueRandomizer(elementRandomizer())),
+        Arguments.of(SetRandomizer(elementRandomizer())),
+      )
+
+    @JvmStatic
+    fun generateCollectionRandomizersWithSpecificSize() =
+      listOf(
+        Arguments.of(ListRandomizer(elementRandomizer(), COLLECTION_SIZE)),
+        Arguments.of(QueueRandomizer(elementRandomizer(), COLLECTION_SIZE)),
+        Arguments.of(SetRandomizer(elementRandomizer(), COLLECTION_SIZE)),
+      )
+
+    @JvmStatic
+    fun generateCollectionRandomizersForEmptyCollections() =
+      listOf(
+        Arguments.of(ListRandomizer(elementRandomizer(), 0)),
+        Arguments.of(QueueRandomizer(elementRandomizer(), 0)),
+        Arguments.of(SetRandomizer(elementRandomizer(), 0)),
+      )
+
+    @JvmStatic
+    fun generateCollectionRandomizersWithIllegalSize() =
+      listOf(
+        Arguments.of({ ListRandomizer(elementRandomizer(), -1) }),
+        Arguments.of({ QueueRandomizer(elementRandomizer(), -1) }),
+        Arguments.of({ SetRandomizer(elementRandomizer(), -1) }),
+      )
+
+    @JvmStatic
+    fun elementRandomizer(): Randomizer<String> {
+      val elementRandomizer: Randomizer<String> = mockk<Randomizer<String>>()
+      every { elementRandomizer.getRandomValue() } returnsMany listOf("a", "b", "c")
+      return elementRandomizer
+    }
   }
 }

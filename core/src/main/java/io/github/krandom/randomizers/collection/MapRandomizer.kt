@@ -21,77 +21,64 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.collection;
+package io.github.krandom.randomizers.collection
 
-import static java.lang.Math.abs;
-
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.number.ByteRandomizer;
-import java.util.HashMap;
-import java.util.Map;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.number.ByteRandomizer
+import kotlin.math.abs
 
 /**
- * A {@link Randomizer} that generates a {@link Map} with random entries.
+ * A [Randomizer] that generates a [Map] with random entries.
  *
  * @param <K> the type of keys
  * @param <V> the type of values
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com) </V></K>
  */
-public class MapRandomizer<K, V> implements Randomizer<Map<K, V>> {
+class MapRandomizer<K, V>
+@JvmOverloads
+constructor(
+  keyRandomizer: Randomizer<K>,
+  valueRandomizer: Randomizer<V>,
+  nbEntries: Int = randomSize,
+) : Randomizer<MutableMap<K, V>> {
+  private val nbElements: Int
 
-  private final int nbElements;
+  private val keyRandomizer: Randomizer<K>
 
-  private final Randomizer<K> keyRandomizer;
-
-  private final Randomizer<V> valueRandomizer;
-
-  /**
-   * Create a new {@link MapRandomizer} with a random number of entries.
-   *
-   * @param keyRandomizer the randomizer for keys
-   * @param valueRandomizer the randomizer for values
-   */
-  public MapRandomizer(final Randomizer<K> keyRandomizer, final Randomizer<V> valueRandomizer) {
-    this(keyRandomizer, valueRandomizer, getRandomSize());
-  }
+  private val valueRandomizer: Randomizer<V>
 
   /**
-   * Create a new {@link MapRandomizer} with a fixed number of entries.
+   * Create a new [MapRandomizer] with a fixed number of entries.
    *
    * @param keyRandomizer the randomizer for keys
    * @param valueRandomizer the randomizer for values
    * @param nbEntries the number of entries to generate
    */
-  public MapRandomizer(
-      final Randomizer<K> keyRandomizer, final Randomizer<V> valueRandomizer, final int nbEntries) {
-    if (keyRandomizer == null) {
-      throw new IllegalArgumentException("keyRandomizer must not be null");
-    }
-    if (valueRandomizer == null) {
-      throw new IllegalArgumentException("valueRandomizer must not be null");
-    }
-    checkArguments(nbEntries);
-    this.keyRandomizer = keyRandomizer;
-    this.valueRandomizer = valueRandomizer;
-    this.nbElements = nbEntries;
+  /**
+   * Create a new [MapRandomizer] with a random number of entries.
+   *
+   * @param keyRandomizer the randomizer for keys
+   * @param valueRandomizer the randomizer for values
+   */
+  init {
+    checkArguments(nbEntries)
+    this.keyRandomizer = keyRandomizer
+    this.valueRandomizer = valueRandomizer
+    this.nbElements = nbEntries
   }
 
-  @Override
-  public Map<K, V> getRandomValue() {
-    Map<K, V> result = new HashMap<>();
-    for (int i = 0; i < nbElements; i++) {
-      result.put(keyRandomizer.getRandomValue(), valueRandomizer.getRandomValue());
-    }
-    return result;
+  override fun getRandomValue(): MutableMap<K, V> {
+    val result: MutableMap<K, V> = HashMap()
+    repeat(nbElements) { result[keyRandomizer.getRandomValue()] = valueRandomizer.getRandomValue() }
+    return result
   }
 
-  private void checkArguments(final int nbEntries) {
-    if (nbEntries < 0) {
-      throw new IllegalArgumentException("The number of entries to generate must be >= 0");
-    }
+  private fun checkArguments(nbEntries: Int) {
+    require(nbEntries >= 0) { "The number of entries to generate must be >= 0" }
   }
 
-  private static int getRandomSize() {
-    return abs(new ByteRandomizer().getRandomValue()) + 1;
+  companion object {
+    private val randomSize: Int
+      get() = abs(ByteRandomizer().getRandomValue().toInt()) + 1
   }
 }

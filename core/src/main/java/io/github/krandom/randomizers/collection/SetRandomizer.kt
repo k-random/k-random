@@ -21,52 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.collection;
+package io.github.krandom.randomizers.collection
 
-import io.github.krandom.api.Randomizer;
-import java.util.HashSet;
-import java.util.Set;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.number.ByteRandomizer
+import kotlin.math.abs
 
 /**
- * A {@link Randomizer} that generates a set of random values using a delegate {@link Randomizer}.
+ * A [Randomizer] that generates a set of random values using a delegate [Randomizer].
  *
  * @param <T> the type of elements to generate
- * @author Eric Taix (eric.taix@gmail.com)
+ * @author Eric Taix (eric.taix@gmail.com) </T>
  */
-public class SetRandomizer<T> extends CollectionRandomizer<T> {
+class SetRandomizer<T>
+/**
+ * Create a new [SetRandomizer] that will generate a [Set] with a fixed number of elements.
+ *
+ * @param delegate The [Randomizer] used to generate each element
+ * @param nbElements The number of elements to generate
+ */
+@JvmOverloads
+constructor(
+  delegate: Randomizer<T>,
+  nbElements: Int = abs(ByteRandomizer().getRandomValue().toInt()),
+) : CollectionRandomizer<T>(delegate, nbElements) {
 
-  /**
-   * Create a new {@link SetRandomizer} that will generate a {@link Set} with a random number of
-   * elements.
-   *
-   * @param delegate the {@link Randomizer} to use to generate random elements
-   */
-  public SetRandomizer(final Randomizer<T> delegate) {
-    super(delegate);
-  }
+  override fun getRandomValue() = List(nbElements) { randomElement }.toMutableSet()
 
-  /**
-   * Create a new {@link SetRandomizer} that will generate a {@link Set} with a fixed number of
-   * elements.
-   *
-   * @param delegate The {@link Randomizer} used to generate each element
-   * @param nbElements The number of elements to generate
-   */
-  public SetRandomizer(final Randomizer<T> delegate, final int nbElements) {
-    super(delegate, nbElements);
-  }
-
-  @Override
-  public Set<T> getRandomValue() {
-    Set<T> result = new HashSet<>();
-    for (int i = 0; i < nbElements; i++) {
-      result.add(getRandomElement());
-    }
-    return result;
-  }
-
-  @Override
-  public String toString() {
-    return "SetRandomizer [delegate=" + delegate + ", nbElements=" + nbElements + "]";
-  }
+  override fun toString() = "SetRandomizer [delegate=$delegate, nbElements=$nbElements]"
 }

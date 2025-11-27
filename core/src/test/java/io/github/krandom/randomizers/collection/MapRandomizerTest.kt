@@ -21,55 +21,52 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.collection;
+package io.github.krandom.randomizers.collection
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import io.github.krandom.api.Randomizer
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.maps.shouldBeEmpty
+import io.kotest.matchers.maps.shouldHaveSize
+import io.kotest.matchers.maps.shouldNotBeEmpty
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-import io.github.krandom.api.Randomizer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-@ExtendWith(MockitoExtension.class)
-class MapRandomizerTest {
-
-  @Mock private Randomizer<Integer> keyRandomizer;
-  @Mock private Randomizer<String> valueRandomizer;
+@ExtendWith(MockKExtension::class)
+internal class MapRandomizerTest {
+  @MockK private lateinit var keyRandomizer: Randomizer<Int>
+  @MockK private lateinit var valueRandomizer: Randomizer<String>
 
   @Test
-  void generatedMapShouldNotBeEmpty() {
-    assertThat(new MapRandomizer(keyRandomizer, valueRandomizer).getRandomValue()).isNotEmpty();
+  fun `generated map should not be empty`() {
+    var counter = 0
+    every { keyRandomizer.getRandomValue() } answers
+      {
+        counter++
+        counter
+      }
+    every { valueRandomizer.getRandomValue() } returns "k-random"
+
+    MapRandomizer(keyRandomizer, valueRandomizer).getRandomValue().shouldNotBeEmpty()
   }
 
   @Test
-  void generatedMapSizeShouldBeEqualToTheSpecifiedSize() {
-    when(keyRandomizer.getRandomValue()).thenReturn(1, 2, 3);
-    assertThat(new MapRandomizer(keyRandomizer, valueRandomizer, 3).getRandomValue()).hasSize(3);
+  fun `generated map size should be equal to the specified size`() {
+    every { keyRandomizer.getRandomValue() } returnsMany listOf(1, 2, 3)
+    every { valueRandomizer.getRandomValue() } returnsMany listOf("a", "b", "c")
+
+    MapRandomizer(keyRandomizer, valueRandomizer, 3).getRandomValue() shouldHaveSize 3
   }
 
   @Test
-  void specifiedSizeCanBeZero() {
-    assertThat(new MapRandomizer(keyRandomizer, valueRandomizer, 0).getRandomValue()).isEmpty();
+  fun `specified size can be zero`() {
+    MapRandomizer(keyRandomizer, valueRandomizer, 0).getRandomValue().shouldBeEmpty()
   }
 
   @Test
-  void specifiedSizeShouldBePositive() {
-    assertThatThrownBy(() -> new MapRandomizer(keyRandomizer, valueRandomizer, -3))
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  void nullKeyRandomizer() {
-    assertThatThrownBy(() -> new MapRandomizer(null, valueRandomizer, 3))
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  void nullValueRandomizer() {
-    assertThatThrownBy(() -> new MapRandomizer(keyRandomizer, null, 3))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `specified size should be positive`() {
+    shouldThrow<IllegalArgumentException> { MapRandomizer(keyRandomizer, valueRandomizer, -3) }
   }
 }

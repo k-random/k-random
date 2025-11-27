@@ -21,46 +21,34 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.collection;
+package io.github.krandom.randomizers.collection
 
-import static java.lang.Math.abs;
-
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.number.ByteRandomizer;
-import java.util.Collection;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.number.ByteRandomizer
+import kotlin.math.abs
 
 /**
  * A base class for collection randomizers.
  *
  * @param <T> the type of elements in the collection
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com) </T>
  */
-abstract class CollectionRandomizer<T> implements Randomizer<Collection<T>> {
+abstract class CollectionRandomizer<T>
+@JvmOverloads
+constructor(
+  delegate: Randomizer<T>,
+  nbElements: Int = abs(ByteRandomizer().getRandomValue().toInt()),
+) : Randomizer<MutableCollection<T>> {
+  @JvmField val nbElements: Int
 
-  final int nbElements;
+  @JvmField val delegate: Randomizer<T>
 
-  final Randomizer<T> delegate;
-
-  CollectionRandomizer(final Randomizer<T> delegate) {
-    this(delegate, abs(new ByteRandomizer().getRandomValue()));
+  init {
+    require(nbElements >= 0) { "The number of elements to generate must be >= 0" }
+    this.nbElements = nbElements
+    this.delegate = delegate
   }
 
-  CollectionRandomizer(final Randomizer<T> delegate, final int nbElements) {
-    if (delegate == null) {
-      throw new IllegalArgumentException("delegate must not be null");
-    }
-    checkArguments(nbElements);
-    this.nbElements = nbElements;
-    this.delegate = delegate;
-  }
-
-  private void checkArguments(final int nbElements) {
-    if (nbElements < 0) {
-      throw new IllegalArgumentException("The number of elements to generate must be >= 0");
-    }
-  }
-
-  T getRandomElement() {
-    return delegate.getRandomValue();
-  }
+  val randomElement: T
+    get() = delegate.getRandomValue()
 }

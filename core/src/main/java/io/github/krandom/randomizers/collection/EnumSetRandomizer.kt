@@ -21,55 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.collection;
+package io.github.krandom.randomizers.collection
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.misc.EnumRandomizer;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
+import io.github.krandom.randomizers.misc.EnumRandomizer
+import io.github.krandom.randomizers.number.ByteRandomizer
+import java.util.*
+import kotlin.math.abs
 
 /**
- * A {@link Randomizer} that generates an {@link EnumSet} of random enum values using a delegate
- * {@link EnumRandomizer}.
+ * A [io.github.krandom.api.Randomizer] that generates an [EnumSet] of random enum values using a
+ * delegate [EnumRandomizer].
  *
  * @param <E> type of elements to generate
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com) </E>
  */
-public class EnumSetRandomizer<E extends Enum<E>> extends CollectionRandomizer<E> {
+class EnumSetRandomizer<E : Enum<E>>
+/**
+ * Create a new [EnumSetRandomizer] that will generate an [EnumSet] with a fixed number of elements.
+ *
+ * @param delegate the [EnumRandomizer] used to generate random elements
+ * @param nbElements The number of elements to generate
+ */
+@JvmOverloads
+constructor(
+  delegate: EnumRandomizer<E>,
+  nbElements: Int = abs(ByteRandomizer().getRandomValue().toInt()),
+) : CollectionRandomizer<E>(delegate, nbElements) {
 
-  /**
-   * Create a new {@link EnumSetRandomizer} that will generate an {@link EnumSet} with a random
-   * number of elements.
-   *
-   * @param delegate the {@link EnumRandomizer} used to generate random elements
-   */
-  public EnumSetRandomizer(final EnumRandomizer<E> delegate) {
-    super(delegate);
-  }
+  override fun getRandomValue(): EnumSet<E> = EnumSet.copyOf(List(nbElements) { randomElement })
 
-  /**
-   * Create a new {@link EnumSetRandomizer} that will generate an {@link EnumSet} with a fixed
-   * number of elements.
-   *
-   * @param delegate the {@link EnumRandomizer} used to generate random elements
-   * @param nbElements The number of elements to generate
-   */
-  public EnumSetRandomizer(final EnumRandomizer<E> delegate, final int nbElements) {
-    super(delegate, nbElements);
-  }
-
-  @Override
-  public EnumSet<E> getRandomValue() {
-    List<E> elements = new ArrayList<>();
-    for (int i = 0; i < nbElements; i++) {
-      elements.add(getRandomElement());
-    }
-    return EnumSet.copyOf(elements);
-  }
-
-  @Override
-  public String toString() {
-    return "EnumSetRandomizer [delegate=" + delegate + ", nbElements=" + nbElements + "]";
+  override fun toString(): String {
+    return "EnumSetRandomizer [delegate=$delegate, nbElements=$nbElements]"
   }
 }

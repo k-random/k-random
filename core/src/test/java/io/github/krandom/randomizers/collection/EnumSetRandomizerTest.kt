@@ -21,28 +21,25 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.collection;
+package io.github.krandom.randomizers.collection
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.misc.EnumRandomizer
+import io.kotest.matchers.collections.shouldContainAll
+import java.time.Month
+import java.util.*
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.misc.EnumRandomizer;
-import java.time.Month;
-import java.util.EnumSet;
-import org.junit.jupiter.api.Test;
-
-class EnumSetRandomizerTest {
-
+internal class EnumSetRandomizerTest {
   @Test
-  void testEnumSetGeneration() {
+  fun `test enum set generation`() {
     // given
-    EnumRandomizer<Month> delegate = new EnumRandomizer<>(Month.class);
-    EnumSetRandomizer<Month> randomizer = new EnumSetRandomizer<>(delegate);
+    val delegate = EnumRandomizer(Month::class.java)
+    val randomizer = EnumSetRandomizer<Month>(delegate)
 
     // when
-    EnumSet<Month> randomEnumSet = randomizer.getRandomValue();
+    val randomEnumSet: EnumSet<Month> = randomizer.getRandomValue()
 
     // then
-    assertThat(randomEnumSet).containsAnyElementsOf(asList(Month.values()));
+    Month.entries shouldContainAll randomEnumSet
   }
 }

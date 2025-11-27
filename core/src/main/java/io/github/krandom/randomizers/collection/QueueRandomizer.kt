@@ -21,52 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.collection;
+package io.github.krandom.randomizers.collection
 
-import io.github.krandom.api.Randomizer;
-import java.util.LinkedList;
-import java.util.Queue;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.number.ByteRandomizer
+import java.util.*
+import kotlin.math.abs
 
 /**
- * A {@link Randomizer} that generates a queue of random values using a delegate {@link Randomizer}.
+ * A [Randomizer] that generates a queue of random values using a delegate [Randomizer].
  *
  * @param <T> the type of elements in the queue
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com) </T>
  */
-public class QueueRandomizer<T> extends CollectionRandomizer<T> {
+class QueueRandomizer<T>
+/**
+ * Create a new [QueueRandomizer] that will generate a queue with a fixed number of elements.
+ *
+ * @param delegate The delegate [Randomizer] used to generate elements
+ * @param nbElements The number of elements to generate
+ */
+@JvmOverloads
+constructor(
+  delegate: Randomizer<T>,
+  nbElements: Int = abs(ByteRandomizer().getRandomValue().toInt()),
+) : CollectionRandomizer<T>(delegate, nbElements) {
+  override fun getRandomValue(): Queue<T> = LinkedList(List(nbElements) { randomElement })
 
-  /**
-   * Create a new {@link QueueRandomizer} that will generate a queue with a random number of
-   * elements.
-   *
-   * @param delegate the delegate {@link Randomizer} used to generate elements
-   */
-  public QueueRandomizer(final Randomizer<T> delegate) {
-    super(delegate);
-  }
-
-  /**
-   * Create a new {@link QueueRandomizer} that will generate a queue with a fixed number of
-   * elements.
-   *
-   * @param delegate The delegate {@link Randomizer} used to generate elements
-   * @param nbElements The number of elements to generate
-   */
-  public QueueRandomizer(final Randomizer<T> delegate, final int nbElements) {
-    super(delegate, nbElements);
-  }
-
-  @Override
-  public Queue<T> getRandomValue() {
-    Queue<T> result = new LinkedList<>();
-    for (int i = 0; i < nbElements; i++) {
-      result.add(getRandomElement());
-    }
-    return result;
-  }
-
-  @Override
-  public String toString() {
-    return "QueueRandomizer [delegate=" + delegate + ", nbElements=" + nbElements + "]";
-  }
+  override fun toString() = "QueueRandomizer [delegate=$delegate, nbElements=$nbElements]"
 }

@@ -21,13 +21,14 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers;
+package io.github.krandom.randomizers
 
-import io.github.krandom.api.Randomizer;
+import io.github.krandom.api.Randomizer
 
-public abstract class AbstractRandomizerTest<T> {
+abstract class AbstractRandomizerTest<T> {
+  protected lateinit var randomizer: Randomizer<T>
 
-  protected static final long SEED = 123L;
-
-  protected Randomizer<T> randomizer;
+  companion object {
+    protected const val SEED: Long = 123L
+  }
 }
