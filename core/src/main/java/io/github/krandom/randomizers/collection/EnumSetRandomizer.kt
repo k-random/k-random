@@ -46,7 +46,7 @@ class EnumSetRandomizer<E : Enum<E>>
 constructor(
   delegate: EnumRandomizer<E>,
   nbElements: Int = abs(ByteRandomizer().getRandomValue().toInt()),
-) : CollectionRandomizer<E>(delegate, nbElements) {
+) : CollectionRandomizer<E?>(delegate, nbElements) {
 
   override fun getRandomValue(): EnumSet<E> = EnumSet.copyOf(List(nbElements) { randomElement })
 

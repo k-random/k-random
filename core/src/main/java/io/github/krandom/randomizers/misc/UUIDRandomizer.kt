@@ -21,19 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.api.Randomizer;
+import io.github.krandom.randomizers.AbstractRandomizer
+import java.util.*
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates null values.
+ * Generate a random [UUID].
  *
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ * @author Pascal Schumacher (https://github.com/PascalSchumacher)
  */
-public class NullRandomizer implements Randomizer<Void> {
-
-  @Override
-  public Void getRandomValue() {
-    return null;
-  }
+class UUIDRandomizer
+/**
+ * Create a new [UUIDRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<UUID>(seed) {
+  override fun getRandomValue() = UUID(random.nextLong(), random.nextLong())
 }

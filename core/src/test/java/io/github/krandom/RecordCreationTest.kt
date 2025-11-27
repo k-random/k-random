@@ -21,22 +21,25 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-/**
- * Exception thrown when k-random is unable to create an instance of a given type.
- *
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
- */
-public class ObjectCreationException extends RuntimeException {
+import io.github.krandom.records.Person
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.string.shouldNotBeBlank
+import org.junit.jupiter.api.Test
 
-  private static final long serialVersionUID = -9049778508557432869L;
+class RecordCreationTest {
+  @Test
+  fun `test random record creation`() {
+    // given
+    val kRandom = KRandom()
 
-  public ObjectCreationException(String message) {
-    super(message);
-  }
+    // when
+    val person = kRandom.nextObject(Person::class.java)
 
-  public ObjectCreationException(String message, Throwable cause) {
-    super(message, cause);
+    // then
+    person.shouldNotBeNull()
+    person.id.shouldNotBeNull()
+    person.name.shouldNotBeBlank()
   }
 }

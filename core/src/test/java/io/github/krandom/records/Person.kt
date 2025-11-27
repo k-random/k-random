@@ -21,25 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom.records
 
-import io.github.krandom.records.Person;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-public class RecordCreationTest {
-
-  @Test
-  void testRandomRecordCreation() {
-    // given
-    KRandom kRandom = new KRandom();
-
-    // when
-    Person person = kRandom.nextObject(Person.class);
-
-    // then
-    Assertions.assertThat(person).isNotNull();
-    Assertions.assertThat(person.id()).isNotNull();
-    Assertions.assertThat(person.name()).isNotNull();
-  }
-}
+@JvmRecord data class Person(val id: Long, val name: String)

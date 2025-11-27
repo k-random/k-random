@@ -34,7 +34,7 @@ internal class EnumSetRandomizerTest {
   fun `test enum set generation`() {
     // given
     val delegate = EnumRandomizer(Month::class.java)
-    val randomizer = EnumSetRandomizer<Month>(delegate)
+    val randomizer = EnumSetRandomizer(delegate)
 
     // when
     val randomEnumSet: EnumSet<Month> = randomizer.getRandomValue()

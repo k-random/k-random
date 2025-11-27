@@ -21,22 +21,15 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.api.Randomizer
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import org.junit.jupiter.api.Test;
-
-class BooleanRandomizerTest extends AbstractRandomizerTest<Boolean> {
-
-  @Test
-  void generatedBooleanShouldNotBeNull() {
-    assertThat(new BooleanRandomizer().getRandomValue()).isNotNull();
-  }
-
-  @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    assertThat(new BooleanRandomizer(SEED).getRandomValue()).isTrue();
-  }
+/**
+ * A [Randomizer] that generates null values.
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+class NullRandomizer : Randomizer<Void?> {
+  override fun getRandomValue() = null
 }

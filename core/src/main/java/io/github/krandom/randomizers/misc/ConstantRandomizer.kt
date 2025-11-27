@@ -21,33 +21,21 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.util.Locale;
+import io.github.krandom.api.Randomizer
 
 /**
- * Generate a random {@link Locale}.
+ * A [Randomizer] that generates constant values. Yeah.. That's not random :-)
  *
- * @author Pascal Schumacher (https://github.com/PascalSchumacher)
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class LocaleRandomizer extends AbstractRandomizer<Locale> {
-
-  /** Create a new {@link LocaleRandomizer}. */
-  public LocaleRandomizer() {}
-
-  /**
-   * Create a new {@link LocaleRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public LocaleRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Locale getRandomValue() {
-    Locale[] availableLocales = Locale.getAvailableLocales();
-    return availableLocales[random.nextInt(availableLocales.length)];
-  }
+class ConstantRandomizer<T>
+/**
+ * Create a new [ConstantRandomizer].
+ *
+ * @param value the constant value
+ */
+constructor(private val value: T) : Randomizer<T> {
+  override fun getRandomValue(): T = value
 }

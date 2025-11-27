@@ -21,16 +21,17 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.booleans.shouldBeTrue
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Test;
-
-class NullRandomizerTest {
-
+internal class BooleanRandomizerTest : AbstractRandomizerTest<Boolean>() {
   @Test
-  void generatedValueShouldBeNull() {
-    assertThat(new NullRandomizer().getRandomValue()).isNull();
+  fun `should generate the same value for the same seed`() {
+    randomizer = BooleanRandomizer(SEED)
+
+    randomizer.getRandomValue().shouldBeTrue()
   }
 }

@@ -21,30 +21,17 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.api.Randomizer;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 
-/**
- * A {@link Randomizer} that generates constant values. Yeah.. That's not random :-)
- *
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
- */
-public class ConstantRandomizer<T> implements Randomizer<T> {
+internal class ConstantRandomizerTest : AbstractRandomizerTest<String>() {
+  @Test
+  fun `should always generate the same value`() {
+    randomizer = ConstantRandomizer("a")
 
-  private final T value;
-
-  /**
-   * Create a new {@link ConstantRandomizer}.
-   *
-   * @param value the constant value
-   */
-  public ConstantRandomizer(T value) {
-    this.value = value;
-  }
-
-  @Override
-  public T getRandomValue() {
-    return value;
+    randomizer.getRandomValue() shouldBe "a"
   }
 }

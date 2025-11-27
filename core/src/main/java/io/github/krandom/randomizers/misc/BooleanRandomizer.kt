@@ -21,35 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
-import io.github.krandom.api.Randomizer;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-@ExtendWith(MockitoExtension.class)
-class OptionalRandomizerTest {
-
-  private static final String NAME = "foo";
-
-  @Mock private Randomizer<String> randomizer;
-
-  private OptionalRandomizer<String> optionalRandomizer;
-
-  @BeforeEach
-  void setUp() {
-    when(randomizer.getRandomValue()).thenReturn(NAME);
-    optionalRandomizer = new OptionalRandomizer<>(randomizer, 100);
-  }
-
-  @Test
-  void whenOptionalPercentIsOneHundredThenShouldGenerateValue() {
-    assertThat(optionalRandomizer.getRandomValue()).isEqualTo(NAME);
-  }
+/**
+ * Generate a random [Boolean].
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+class BooleanRandomizer
+/**
+ * Create a new [BooleanRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<Boolean>(seed) {
+  override fun getRandomValue() = random.asKotlinRandom().nextBoolean()
 }

@@ -21,20 +21,18 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.api.Randomizer;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.shouldBe
+import java.util.*
+import org.junit.jupiter.api.Test
 
-/**
- * A randomizer used to skip fields from being populated. This is an implementation of the Null
- * Object Pattern
- *
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
- */
-public class SkipRandomizer implements Randomizer<Object> {
+internal class UUIDRandomizerTest : AbstractRandomizerTest<UUID>() {
+  @Test
+  fun shouldGenerateTheSameValueForTheSameSeed() {
+    randomizer = UUIDRandomizer(SEED)
 
-  @Override
-  public Object getRandomValue() {
-    return null;
+    randomizer.getRandomValue() shouldBe UUID(-5106534569952410475L, -167885730524958550L)
   }
 }

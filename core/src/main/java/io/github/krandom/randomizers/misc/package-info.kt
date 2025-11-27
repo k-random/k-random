@@ -21,6 +21,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.records;
-
-public record Person(Long id, String name) {}
+/**
+ * This package contains miscellaneous randomizers.
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+package io.github.krandom.randomizers.misc

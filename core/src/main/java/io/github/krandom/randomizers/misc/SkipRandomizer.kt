@@ -21,32 +21,16 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.util.UUID;
+import io.github.krandom.api.Randomizer
 
 /**
- * Generate a random {@link UUID}.
+ * A randomizer used to skip fields from being populated. This is an implementation of the Null
+ * Object Pattern
  *
- * @author Pascal Schumacher (https://github.com/PascalSchumacher)
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class UUIDRandomizer extends AbstractRandomizer<UUID> {
-
-  /** Create a new {@link UUIDRandomizer}. */
-  public UUIDRandomizer() {}
-
-  /**
-   * Create a new {@link UUIDRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public UUIDRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public UUID getRandomValue() {
-    return new UUID(random.nextLong(), random.nextLong());
-  }
+class SkipRandomizer : Randomizer<Any?> {
+  override fun getRandomValue() = null
 }

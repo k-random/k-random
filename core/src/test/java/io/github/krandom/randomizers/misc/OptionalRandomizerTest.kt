@@ -23,26 +23,49 @@
  */
 package io.github.krandom.randomizers.misc
 
-import io.github.krandom.randomizers.AbstractRandomizerTest
-import io.kotest.matchers.collections.shouldBeIn
+import io.github.krandom.api.Randomizer
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
-import java.util.Locale
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.verify
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-internal class LocaleRandomizerTest : AbstractRandomizerTest<Locale>() {
-  @Test
-  fun shouldGenerateRandomLocale() {
-    randomizer = LocaleRandomizer()
+@ExtendWith(MockKExtension::class)
+internal class OptionalRandomizerTest {
+  @MockK private lateinit var randomizer: Randomizer<String>
 
-    randomizer.getRandomValue() shouldBeIn Locale.getAvailableLocales()
+  private lateinit var optionalRandomizer: OptionalRandomizer<String>
+
+  @BeforeEach
+  fun setUp() {
+    every { randomizer.getRandomValue() } returns NAME
   }
 
   @Test
-  fun shouldGenerateTheSameValueForTheSameSeed() {
-    randomizer = LocaleRandomizer(SEED)
-    val locale = randomizer.getRandomValue()
+  fun `when optional percent is one hundred then should generate value`() {
+    optionalRandomizer = OptionalRandomizer(randomizer, 100)
 
-    locale.language shouldBe "pl"
-    locale.country shouldBe "PL"
+    val randomValue = optionalRandomizer.getRandomValue()
+
+    randomValue shouldBe NAME
+    verify { randomizer.getRandomValue() }
+  }
+
+  @Test
+  fun `when optional percent is zero then should not generate value`() {
+    optionalRandomizer = OptionalRandomizer(randomizer, 0)
+
+    val randomValue = optionalRandomizer.getRandomValue()
+
+    randomValue.shouldBeNull()
+    verify(exactly = 0) { randomizer.getRandomValue() }
+  }
+
+  companion object {
+    private const val NAME = "foo"
   }
 }

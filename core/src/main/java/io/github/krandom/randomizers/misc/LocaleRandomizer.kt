@@ -21,16 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.AbstractRandomizer
+import java.util.*
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
-import org.junit.jupiter.api.Test;
-
-class ConstantRandomizerTest {
-
-  @Test
-  void shouldAlwaysGenerateTheSameValue() {
-    assertThat(new ConstantRandomizer("a").getRandomValue()).isEqualTo("a");
-  }
+/**
+ * Generate a random [Locale].
+ *
+ * @author [Pascal Schumacher](https://github.com/PascalSchumacher)
+ */
+class LocaleRandomizer
+/**
+ * Create a new [LocaleRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(private val seed: Long = Random.nextLong()) : AbstractRandomizer<Locale>(seed) {
+  override fun getRandomValue(): Locale =
+    Locale.getAvailableLocales().random(random.asKotlinRandom())
 }

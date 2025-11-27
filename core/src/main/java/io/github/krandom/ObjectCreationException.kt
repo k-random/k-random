@@ -21,31 +21,19 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
-
-import io.github.krandom.randomizers.AbstractRandomizer;
+package io.github.krandom
 
 /**
- * Generate a random {@link Boolean}.
+ * Exception thrown when k-random is unable to create an instance of a given type.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class BooleanRandomizer extends AbstractRandomizer<Boolean> {
+class ObjectCreationException : RuntimeException {
+  constructor(message: String) : super(message)
 
-  /** Create a new {@link BooleanRandomizer}. */
-  public BooleanRandomizer() {}
+  constructor(message: String, cause: Throwable) : super(message, cause)
 
-  /**
-   * Create a new {@link BooleanRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public BooleanRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Boolean getRandomValue() {
-    return random.nextBoolean();
+  companion object {
+    @Suppress("unused") private const val serialVersionUID = -9049778508557432869L
   }
 }

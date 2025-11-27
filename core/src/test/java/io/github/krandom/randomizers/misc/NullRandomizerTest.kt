@@ -21,9 +21,14 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-/**
- * This package contains miscellaneous randomizers.
- *
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
- */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
+
+import io.kotest.matchers.nulls.shouldBeNull
+import org.junit.jupiter.api.Test
+
+internal class NullRandomizerTest {
+  @Test
+  fun `generated value should be null`() {
+    NullRandomizer().getRandomValue().shouldBeNull()
+  }
+}

@@ -3,17 +3,23 @@ repos:
     rev: v0.7.1
     hooks:
       - id: keep-sorted
-  # Use the project's Spotless configuration (Gradle) to avoid formatter/version drift.
-  # This formats both Kotlin and Java consistently with the build.
   - repo: local
     hooks:
       - id: gradle-spotless-apply
-        name: Gradle Spotless (apply)
-        entry: ./gradlew
+        name: Gradle Spotless (apply, skip on "Rename .java to .kt")
+        entry: bash
         language: system
-        args: [ "-q", "spotlessApply" ]
-        pass_filenames: false
-        stages: [ pre-commit ]
+        args:
+          - -c
+          - |
+            COMMIT_MSG_FILE="$1"
+            # Only run Spotless if the commit message is NOT exactly "Rename .java to .kt"
+            if ! grep -qx "Rename .java to .kt" "$COMMIT_MSG_FILE"; then
+              ./gradlew -q spotlessApply && git add -A
+            fi
+          - --
+        pass_filenames: true
+        stages: [ commit-msg ]
   - repo: local
     hooks:
       - id: commit-msg
