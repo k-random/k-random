@@ -21,9 +21,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.api.Randomizer;
+import io.github.krandom.api.Randomizer
 
 /**
  * A randomizer used to skip fields from being populated. This is an implementation of the Null
@@ -31,10 +31,6 @@ import io.github.krandom.api.Randomizer;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class SkipRandomizer implements Randomizer<Object> {
-
-  @Override
-  public Object getRandomValue() {
-    return null;
-  }
+class SkipRandomizer : Randomizer<Any?> {
+  override fun getRandomValue() = null
 }

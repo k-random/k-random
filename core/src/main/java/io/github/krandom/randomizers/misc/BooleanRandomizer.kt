@@ -21,31 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.randomizers.AbstractRandomizer;
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 /**
- * Generate a random {@link Boolean}.
+ * Generate a random [Boolean].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class BooleanRandomizer extends AbstractRandomizer<Boolean> {
-
-  /** Create a new {@link BooleanRandomizer}. */
-  public BooleanRandomizer() {}
-
-  /**
-   * Create a new {@link BooleanRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public BooleanRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Boolean getRandomValue() {
-    return random.nextBoolean();
-  }
+class BooleanRandomizer
+/**
+ * Create a new [BooleanRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<Boolean>(seed) {
+  override fun getRandomValue() = random.asKotlinRandom().nextBoolean()
 }

@@ -21,25 +21,25 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import io.github.krandom.records.Person;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+import io.github.krandom.records.Person
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.string.shouldNotBeBlank
+import org.junit.jupiter.api.Test
 
-public class RecordCreationTest {
-
+class RecordCreationTest {
   @Test
-  void testRandomRecordCreation() {
+  fun `test random record creation`() {
     // given
-    KRandom kRandom = new KRandom();
+    val kRandom = KRandom()
 
     // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom.nextObject(Person::class.java)
 
     // then
-    Assertions.assertThat(person).isNotNull();
-    Assertions.assertThat(person.id()).isNotNull();
-    Assertions.assertThat(person.name()).isNotNull();
+    person.shouldNotBeNull()
+    person.id.shouldNotBeNull()
+    person.name.shouldNotBeBlank()
   }
 }

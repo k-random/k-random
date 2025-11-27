@@ -21,35 +21,51 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import io.github.krandom.api.Randomizer
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.verify
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-import io.github.krandom.api.Randomizer;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+@ExtendWith(MockKExtension::class)
+internal class OptionalRandomizerTest {
+  @MockK private lateinit var randomizer: Randomizer<String>
 
-@ExtendWith(MockitoExtension.class)
-class OptionalRandomizerTest {
-
-  private static final String NAME = "foo";
-
-  @Mock private Randomizer<String> randomizer;
-
-  private OptionalRandomizer<String> optionalRandomizer;
+  private lateinit var optionalRandomizer: OptionalRandomizer<String>
 
   @BeforeEach
-  void setUp() {
-    when(randomizer.getRandomValue()).thenReturn(NAME);
-    optionalRandomizer = new OptionalRandomizer<>(randomizer, 100);
+  fun setUp() {
+    every { randomizer.getRandomValue() } returns NAME
   }
 
   @Test
-  void whenOptionalPercentIsOneHundredThenShouldGenerateValue() {
-    assertThat(optionalRandomizer.getRandomValue()).isEqualTo(NAME);
+  fun `when optional percent is one hundred then should generate value`() {
+    optionalRandomizer = OptionalRandomizer(randomizer, 100)
+
+    val randomValue = optionalRandomizer.getRandomValue()
+
+    randomValue shouldBe NAME
+    verify { randomizer.getRandomValue() }
+  }
+
+  @Test
+  fun `when optional percent is zero then should not generate value`() {
+    optionalRandomizer = OptionalRandomizer(randomizer, 0)
+
+    val randomValue = optionalRandomizer.getRandomValue()
+
+    randomValue.shouldBeNull()
+    verify(exactly = 0) { randomizer.getRandomValue() }
+  }
+
+  companion object {
+    private const val NAME = "foo"
   }
 }

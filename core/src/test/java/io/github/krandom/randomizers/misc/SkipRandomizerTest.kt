@@ -21,16 +21,14 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.kotest.matchers.nulls.shouldBeNull
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Test;
-
-class SkipRandomizerTest {
-
+internal class SkipRandomizerTest {
   @Test
-  void generatedValueShouldBeNull() {
-    assertThat(new SkipRandomizer().getRandomValue()).isNull();
+  fun generatedValueShouldBeNull() {
+    SkipRandomizer().getRandomValue().shouldBeNull()
   }
 }

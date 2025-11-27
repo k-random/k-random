@@ -26,31 +26,23 @@ package io.github.krandom.randomizers.misc
 import io.github.krandom.randomizers.AbstractRandomizerTest
 import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.shouldBe
-import java.math.BigDecimal
 import java.util.Locale
 import org.junit.jupiter.api.Test
 
 internal class LocaleRandomizerTest : AbstractRandomizerTest<Locale>() {
   @Test
   fun shouldGenerateRandomLocale() {
-    LocaleRandomizer().getRandomValue() shouldBeIn Locale.getAvailableLocales()
+    randomizer = LocaleRandomizer()
+
+    randomizer.getRandomValue() shouldBeIn Locale.getAvailableLocales()
   }
 
   @Test
   fun shouldGenerateTheSameValueForTheSameSeed() {
-    val javaVersion = BigDecimal(System.getProperty("java.specification.version"))
-    val locale = LocaleRandomizer(SEED).getRandomValue()
-    val (language, country) =
-      when {
-        javaVersion >= BigDecimal("21") -> "pl" to "PL"
-        javaVersion >= BigDecimal("17") -> "mni" to ""
-        javaVersion >= BigDecimal("14") -> "rn" to "BI"
-        javaVersion >= BigDecimal("13") -> "zh" to "CN"
-        javaVersion >= BigDecimal("11") -> "en" to "CK"
-        javaVersion >= BigDecimal("9") -> "sw" to "KE"
-        else -> "nl" to "BE"
-      }
-    locale.language shouldBe language
-    locale.country shouldBe country
+    randomizer = LocaleRandomizer(SEED)
+    val locale = randomizer.getRandomValue()
+
+    locale.language shouldBe "pl"
+    locale.country shouldBe "PL"
   }
 }

@@ -21,66 +21,95 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import static io.github.krandom.randomizers.misc.EnumRandomizerTest.Gender.FEMALE;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldBeIn
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import org.junit.jupiter.api.Test;
-
-class EnumRandomizerTest extends AbstractRandomizerTest<EnumRandomizerTest.Gender> {
-
-  @Test
-  void generatedValueShouldBeOfTheSpecifiedEnum() {
-    assertThat(new EnumRandomizer(Gender.class).getRandomValue()).isIn(Gender.values());
-  }
-
-  @Test
-  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-    assertThat(new EnumRandomizer(Gender.class, SEED).getRandomValue()).isEqualTo(FEMALE);
-  }
-
-  @Test
-  void shouldAlwaysGenerateTheSameValueForTheSameSeedWithExcludedValues() {
-    assertThat(new EnumRandomizer<>(TriState.class, SEED, TriState.Maybe).getRandomValue())
-        .isEqualTo(TriState.False);
-  }
-
-  public enum Gender {
+internal class EnumRandomizerTest {
+  enum class Gender {
     MALE,
-    FEMALE
+    FEMALE,
+    NON_BINARY,
   }
 
-  @Test
-  void should_return_a_value_different_from_the_excluded_one() {
-    Gender valueToExclude = Gender.MALE;
-    Gender randomElement = new EnumRandomizer<>(Gender.class, valueToExclude).getRandomValue();
-    assertThat(randomElement).isNotNull();
-    assertThat(randomElement).isNotEqualTo(valueToExclude);
-  }
+  @Nested
+  inner class GenderRandomizerTest : AbstractRandomizerTest<Gender?>() {
+    @Test
+    fun `generated value should be of the specified enum`() {
+      randomizer = EnumRandomizer(Gender::class.java)
 
-  @Test
-  void should_throw_an_exception_when_all_values_are_excluded() {
-    assertThatThrownBy(() -> new EnumRandomizer<>(Gender.class, Gender.values()))
-        .isInstanceOf(IllegalArgumentException.class);
-  }
+      val gender = randomizer.getRandomValue()
 
-  public enum Empty {}
+      gender shouldBeIn Gender.entries
+    }
 
-  @Test
-  public void should_return_null_for_empty_enum() {
-    Empty randomElement = new EnumRandomizer<>(Empty.class).getRandomValue();
-    assertThat(randomElement).isNull();
+    @Test
+    fun `should always generate the same value for the same seed`() {
+      randomizer = EnumRandomizer(Gender::class.java, SEED)
+
+      val gender = randomizer.getRandomValue()
+
+      gender shouldBe Gender.NON_BINARY
+    }
+
+    @Test
+    fun `should return a value different from the excluded one`() {
+      val valueToExclude = Gender.MALE
+      randomizer = EnumRandomizer(Gender::class.java, SEED, valueToExclude)
+
+      val gender = randomizer.getRandomValue()
+
+      gender.shouldNotBeNull()
+      gender shouldBeIn Gender.entries.filterNot { it == valueToExclude }
+    }
+
+    @Test
+    fun `should throw an exception when all values are excluded`() {
+      shouldThrow<IllegalArgumentException> {
+        EnumRandomizer(Gender::class.java, SEED, *Gender.entries.toTypedArray())
+      }
+    }
   }
 
   // always keep three options here, as we want to exclude one and still select the same one
   // deterministically
-  @SuppressWarnings("unused")
-  private enum TriState {
-    True,
-    False,
-    Maybe
+  @Suppress("unused")
+  enum class TriState {
+    TRUE,
+    FALSE,
+    MAYBE,
+  }
+
+  @Nested
+  inner class TriStateRandomizerTest : AbstractRandomizerTest<TriState?>() {
+    @Test
+    fun `should always generate the same value for the same seed with excluded values`() {
+      randomizer = EnumRandomizer(TriState::class.java, SEED, TriState.MAYBE)
+
+      val tristate = randomizer.getRandomValue()
+
+      tristate shouldBe TriState.FALSE
+    }
+  }
+
+  enum class Empty
+
+  @Nested
+  inner class EmptyEnumRandomizerTest : AbstractRandomizerTest<Empty?>() {
+    @Test
+    fun `should return null for empty enum`() {
+      randomizer = EnumRandomizer(Empty::class.java)
+
+      val empty = randomizer.getRandomValue()
+
+      empty.shouldBeNull()
+    }
   }
 }

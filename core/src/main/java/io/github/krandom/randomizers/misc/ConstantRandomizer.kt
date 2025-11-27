@@ -21,30 +21,21 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.api.Randomizer;
+import io.github.krandom.api.Randomizer
 
 /**
- * A {@link Randomizer} that generates constant values. Yeah.. That's not random :-)
+ * A [Randomizer] that generates constant values. Yeah.. That's not random :-)
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class ConstantRandomizer<T> implements Randomizer<T> {
-
-  private final T value;
-
-  /**
-   * Create a new {@link ConstantRandomizer}.
-   *
-   * @param value the constant value
-   */
-  public ConstantRandomizer(T value) {
-    this.value = value;
-  }
-
-  @Override
-  public T getRandomValue() {
-    return value;
-  }
+class ConstantRandomizer<T>
+/**
+ * Create a new [ConstantRandomizer].
+ *
+ * @param value the constant value
+ */
+constructor(private val value: T) : Randomizer<T> {
+  override fun getRandomValue(): T = value
 }

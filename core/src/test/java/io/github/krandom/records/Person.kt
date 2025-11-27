@@ -21,6 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.records;
+package io.github.krandom.records
 
-public record Person(Long id, String name) {}
+@JvmRecord data class Person(val id: Long, val name: String)

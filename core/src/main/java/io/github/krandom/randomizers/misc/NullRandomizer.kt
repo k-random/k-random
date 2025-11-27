@@ -21,19 +21,15 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.api.Randomizer;
+import io.github.krandom.api.Randomizer
 
 /**
- * A {@link Randomizer} that generates null values.
+ * A [Randomizer] that generates null values.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class NullRandomizer implements Randomizer<Void> {
-
-  @Override
-  public Void getRandomValue() {
-    return null;
-  }
+class NullRandomizer : Randomizer<Void?> {
+  override fun getRandomValue() = null
 }

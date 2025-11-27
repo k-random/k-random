@@ -21,25 +21,18 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.shouldBe
+import java.util.*
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.util.Locale;
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
-
-class UUIDRandomizerTest extends AbstractRandomizerTest<Locale> {
-
+internal class UUIDRandomizerTest : AbstractRandomizerTest<UUID>() {
   @Test
-  void shouldGenerateRandomUUID() {
-    assertThat(new UUIDRandomizer().getRandomValue()).isNotNull();
-  }
+  fun shouldGenerateTheSameValueForTheSameSeed() {
+    randomizer = UUIDRandomizer(SEED)
 
-  @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    assertThat(new UUIDRandomizer(SEED).getRandomValue())
-        .isEqualTo(new UUID(-5106534569952410475L, -167885730524958550L));
+    randomizer.getRandomValue() shouldBe UUID(-5106534569952410475L, -167885730524958550L)
   }
 }

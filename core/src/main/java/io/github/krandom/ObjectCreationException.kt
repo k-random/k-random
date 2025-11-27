@@ -21,22 +21,19 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
 /**
  * Exception thrown when k-random is unable to create an instance of a given type.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class ObjectCreationException extends RuntimeException {
+class ObjectCreationException : RuntimeException {
+  constructor(message: String) : super(message)
 
-  private static final long serialVersionUID = -9049778508557432869L;
+  constructor(message: String, cause: Throwable) : super(message, cause)
 
-  public ObjectCreationException(String message) {
-    super(message);
-  }
-
-  public ObjectCreationException(String message, Throwable cause) {
-    super(message, cause);
+  companion object {
+    @Suppress("unused") private const val serialVersionUID = -9049778508557432869L
   }
 }

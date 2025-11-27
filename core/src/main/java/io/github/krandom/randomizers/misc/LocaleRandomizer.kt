@@ -21,33 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.util.Locale;
+import io.github.krandom.randomizers.AbstractRandomizer
+import java.util.*
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 /**
- * Generate a random {@link Locale}.
+ * Generate a random [Locale].
  *
- * @author Pascal Schumacher (https://github.com/PascalSchumacher)
+ * @author [Pascal Schumacher](https://github.com/PascalSchumacher)
  */
-public class LocaleRandomizer extends AbstractRandomizer<Locale> {
-
-  /** Create a new {@link LocaleRandomizer}. */
-  public LocaleRandomizer() {}
-
-  /**
-   * Create a new {@link LocaleRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public LocaleRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Locale getRandomValue() {
-    Locale[] availableLocales = Locale.getAvailableLocales();
-    return availableLocales[random.nextInt(availableLocales.length)];
-  }
+class LocaleRandomizer
+/**
+ * Create a new [LocaleRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(private val seed: Long = Random.nextLong()) : AbstractRandomizer<Locale>(seed) {
+  override fun getRandomValue(): Locale =
+    Locale.getAvailableLocales().random(random.asKotlinRandom())
 }

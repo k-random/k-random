@@ -21,74 +21,39 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 /**
- * A {@link Randomizer} that generates a random value from a given {@link Enum}.
+ * A [io.github.krandom.api.Randomizer] that generates a random value from a given [Enum].
  *
  * @param <E> the type of elements in the enumeration
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com) </E>
  */
-public class EnumRandomizer<E extends Enum<E>> extends AbstractRandomizer<E> {
+@Suppress("SpreadOperator")
+class EnumRandomizer<E : Enum<E>>
+/**
+ * Create a new [EnumRandomizer].
+ *
+ * @param enumeration the enumeration from which this randomizer will generate random values
+ * @param seed the initial seed
+ * @param excludedValues the values to exclude from random picking
+ * @throws IllegalArgumentException when excludedValues contains all enumeration values, ie all
+ *   elements from the enumeration are excluded
+ */
+@SafeVarargs
+@JvmOverloads
+constructor(enumeration: Class<E>, seed: Long = Random.nextLong(), vararg excludedValues: E) :
+  AbstractRandomizer<E?>(seed) {
 
-  private List<E> enumConstants;
+  private val enumConstants: List<E>
 
-  /**
-   * Create a new {@link EnumRandomizer}.
-   *
-   * @param enumeration the enumeration from which this randomizer will generate random values
-   */
-  public EnumRandomizer(final Class<E> enumeration) {
-    super();
-    this.enumConstants = Arrays.asList(enumeration.getEnumConstants());
-  }
-
-  /**
-   * Create a new {@link EnumRandomizer}.
-   *
-   * @param enumeration the enumeration from which this randomizer will generate random values
-   * @param seed the initial seed
-   */
-  public EnumRandomizer(final Class<E> enumeration, final long seed) {
-    super(seed);
-    this.enumConstants = Arrays.asList(enumeration.getEnumConstants());
-  }
-
-  /**
-   * Create a new {@link EnumRandomizer}.
-   *
-   * @param enumeration the enumeration from which this randomizer will generate random values
-   * @param excludedValues the values to exclude from random picking
-   * @throws IllegalArgumentException when excludedValues contains all enumeration values, ie all
-   *     elements from the enumeration are excluded
-   */
-  public EnumRandomizer(final Class<E> enumeration, final E... excludedValues)
-      throws IllegalArgumentException {
-    checkExcludedValues(enumeration, excludedValues);
-    this.enumConstants = getFilteredList(enumeration, excludedValues);
-  }
-
-  /**
-   * Create a new {@link EnumRandomizer}.
-   *
-   * @param enumeration the enumeration from which this randomizer will generate random values
-   * @param seed the initial seed
-   * @param excludedValues the values to exclude from random picking
-   * @throws IllegalArgumentException when excludedValues contains all enumeration values, ie all
-   *     elements from the enumeration are excluded
-   */
-  public EnumRandomizer(final Class<E> enumeration, final long seed, final E... excludedValues)
-      throws IllegalArgumentException {
-    super(seed);
-    checkExcludedValues(enumeration, excludedValues);
-    this.enumConstants = getFilteredList(enumeration, excludedValues);
+  init {
+    checkExcludedValues(enumeration, excludedValues)
+    this.enumConstants = getFilteredList(enumeration, *excludedValues)
   }
 
   /**
@@ -96,36 +61,17 @@ public class EnumRandomizer<E extends Enum<E>> extends AbstractRandomizer<E> {
    *
    * @return a random value within the enumeration
    */
-  @Override
-  public E getRandomValue() {
-    if (enumConstants.isEmpty()) {
-      return null;
-    }
-    int randomIndex = random.nextInt(enumConstants.size());
-    return enumConstants.get(randomIndex);
-  }
+  override fun getRandomValue(): E? = enumConstants.randomOrNull(random.asKotlinRandom())
 
-  private void checkExcludedValues(Class<E> enumeration, E[] excludedValues) {
-    boolean excludedValuesIncludeAllValues =
-        Arrays.asList(excludedValues).containsAll(Arrays.asList(enumeration.getEnumConstants()));
-    if (excludedValuesIncludeAllValues) {
-      throw new IllegalArgumentException("No enum element available for random picking.");
-    }
-  }
-
-  /**
-   * Get a subset of enumeration.
-   *
-   * @return the enumeration values minus those excluded.
-   */
-  private List<E> getFilteredList(Class<E> enumeration, E... excludedValues) {
-    List<E> filteredValues = new ArrayList<>();
-    Collections.addAll(filteredValues, enumeration.getEnumConstants());
-    if (excludedValues != null) {
-      for (E element : excludedValues) {
-        filteredValues.remove(element);
+  private fun checkExcludedValues(enumeration: Class<E>, excludedValues: Array<out E>) {
+    enumeration.enumConstants.asList().let { enums ->
+      require(enums.isEmpty() || enums.any { it !in excludedValues.toSet() }) {
+        "No enum element available for random picking."
       }
     }
-    return filteredValues;
   }
+
+  @SafeVarargs
+  private fun getFilteredList(enumeration: Class<E>, vararg excludedValues: E) =
+    enumeration.enumConstants.asList().filterNot { it in excludedValues.toSet() }
 }

@@ -21,32 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.misc;
+package io.github.krandom.randomizers.misc
 
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.util.UUID;
+import io.github.krandom.randomizers.AbstractRandomizer
+import java.util.*
+import kotlin.random.Random
 
 /**
- * Generate a random {@link UUID}.
+ * Generate a random [UUID].
  *
  * @author Pascal Schumacher (https://github.com/PascalSchumacher)
  */
-public class UUIDRandomizer extends AbstractRandomizer<UUID> {
-
-  /** Create a new {@link UUIDRandomizer}. */
-  public UUIDRandomizer() {}
-
-  /**
-   * Create a new {@link UUIDRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public UUIDRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public UUID getRandomValue() {
-    return new UUID(random.nextLong(), random.nextLong());
-  }
+class UUIDRandomizer
+/**
+ * Create a new [UUIDRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<UUID>(seed) {
+  override fun getRandomValue() = UUID(random.nextLong(), random.nextLong())
 }
