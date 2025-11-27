@@ -42,14 +42,6 @@ abstract class AbstractRandomizer<T> : Randomizer<T> {
     random = Random(seed)
   }
 
-  protected fun getPredefinedValuesOf(key: String): Array<String> {
-    return ResourceBundle.getBundle("krandom-data")
-      .getString(key)
-      .split(",".toRegex())
-      .dropLastWhile { it.isEmpty() }
-      .toTypedArray()
-  }
-
   override fun toString(): String = javaClass.simpleName
 
   /**
@@ -61,6 +53,14 @@ abstract class AbstractRandomizer<T> : Randomizer<T> {
    */
   protected fun nextDouble(min: Double, max: Double): Double =
     (min + (random.nextDouble() * (max - min))).coerceIn(min, max)
-  // NB: ThreadLocalRandom.current().nextDouble(min, max)) cannot be used
-  // because the seed is not configurable and is created per thread (see Javadoc)
+
+  companion object {
+    @JvmStatic
+    protected fun getPredefinedValuesOf(key: String): Array<String> =
+      ResourceBundle.getBundle("krandom-data")
+        .getString(key)
+        .split(",".toRegex())
+        .dropLastWhile { it.isEmpty() }
+        .toTypedArray()
+  }
 }

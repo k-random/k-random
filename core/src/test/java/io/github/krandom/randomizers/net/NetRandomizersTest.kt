@@ -21,56 +21,64 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.net;
+package io.github.krandom.randomizers.net
 
-import static org.assertj.core.api.BDDAssertions.then;
+import io.github.krandom.KRandom
+import io.github.krandom.api.Randomizer
+import io.github.krandom.beans.Website
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import java.net.URI
+import java.net.URL
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
-import io.github.krandom.KRandom;
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.beans.Website;
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.net.URI;
-import java.net.URL;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-class NetRandomizersTest extends AbstractRandomizerTest<Randomizer<?>> {
-
-  static Object[] generateRandomizers() {
-    return new Object[] {new UriRandomizer(), new UrlRandomizer()};
-  }
-
+internal class NetRandomizersTest : AbstractRandomizerTest<Randomizer<*>?>() {
   @ParameterizedTest
   @MethodSource("generateRandomizers")
-  void generatedValueShouldNotBeNull(Randomizer<?> randomizer) {
+  fun `generated value should not be null`(randomizer: Randomizer<*>) {
     // when
-    Object value = randomizer.getRandomValue();
+    val value: Any? = randomizer.getRandomValue()
 
-    then(value).isNotNull();
-  }
-
-  static Object[][] generateSeededRandomizersAndTheirExpectedValues() throws Exception {
-    return new Object[][] {
-      {new UriRandomizer(SEED), new URI("telnet://192.0.2.16:80/")},
-      {new UrlRandomizer(SEED), new URL("http://www.google.com")}
-    };
+    value.shouldNotBeNull()
   }
 
   @ParameterizedTest
   @MethodSource("generateSeededRandomizersAndTheirExpectedValues")
-  void shouldGenerateTheSameValueForTheSameSeed(Randomizer<?> randomizer, Object expected) {
+  fun `should generate the same value for the same seed`(
+    randomizer: Randomizer<*>,
+    expected: Any?,
+  ) {
     // when
-    Object actual = randomizer.getRandomValue();
+    val actual: Any? = randomizer.getRandomValue()
 
-    then(actual).isEqualTo(expected);
+    actual.shouldNotBeNull()
+    actual shouldBe expected
   }
 
   @Test
-  void javaNetTypesShouldBePopulated() {
+  fun `java net types should be populated`() {
     // when
-    Website website = new KRandom().nextObject(Website.class);
+    val website = KRandom().nextObject(Website::class.java)
 
-    then(website).hasNoNullFieldsOrProperties();
+    website.shouldNotBeNull()
+    website.url.shouldNotBeNull()
+    website.uri.shouldNotBeNull()
+  }
+
+  companion object {
+    @JvmStatic
+    fun generateRandomizers() = listOf(Arguments.of(UriRandomizer()), Arguments.of(UrlRandomizer()))
+
+    @JvmStatic
+    @Throws(Exception::class)
+    fun generateSeededRandomizersAndTheirExpectedValues() =
+      listOf(
+        Arguments.of(UriRandomizer(SEED), URI("telnet://192.0.2.16:80/")),
+        Arguments.of(UrlRandomizer(SEED), URL.of(URI("http://www.google.com"), null)),
+      )
   }
 }
