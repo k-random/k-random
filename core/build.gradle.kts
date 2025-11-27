@@ -10,6 +10,7 @@ dependencies {
   api(libs.org.objenesis.objenesis)
   implementation(kotlin("reflect"))
   implementation(kotlin("stdlib"))
+  implementation(libs.org.jspecify.jspecify)
   testImplementation(libs.io.kotest.kotest.assertions.core)
   testImplementation(libs.io.mockk.mockk)
   testImplementation(libs.org.assertj.assertj.core)

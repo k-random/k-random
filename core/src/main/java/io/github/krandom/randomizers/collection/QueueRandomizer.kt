@@ -21,9 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
+package io.github.krandom.randomizers.collection
+
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.number.ByteRandomizer
+import java.util.*
+import kotlin.math.abs
+
 /**
- * This package contains collection randomizers.
+ * A [Randomizer] that generates a queue of random values using a delegate [Randomizer].
  *
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ * @param <T> the type of elements in the queue
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com) </T>
  */
-package io.github.krandom.randomizers.collection;
+class QueueRandomizer<T>
+/**
+ * Create a new [QueueRandomizer] that will generate a queue with a fixed number of elements.
+ *
+ * @param delegate The delegate [Randomizer] used to generate elements
+ * @param nbElements The number of elements to generate
+ */
+@JvmOverloads
+constructor(
+  delegate: Randomizer<T>,
+  nbElements: Int = abs(ByteRandomizer().getRandomValue().toInt()),
+) : CollectionRandomizer<T>(delegate, nbElements) {
+  override fun getRandomValue(): Queue<T> = LinkedList(List(nbElements) { randomElement })
+
+  override fun toString() = "QueueRandomizer [delegate=$delegate, nbElements=$nbElements]"
+}

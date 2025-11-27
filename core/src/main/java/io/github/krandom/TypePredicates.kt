@@ -21,33 +21,28 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Modifier;
-import java.util.function.Predicate;
+import java.lang.reflect.Modifier
+import java.util.function.Predicate
 
 /**
  * Common predicates to identify types. Usually used in combination to define a collection of types.
  * For example:
- *
  * <pre>
- *     Predicate&lt;Class&lt;?&gt;&gt; predicate = inPackage("java.util").or(inPackage("com.sun"));
- * </pre>
+ * Predicate&lt;Class&lt;?&gt;&gt; predicate = inPackage("java.util").or(inPackage("com.sun"));
+ * </pre> *
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class TypePredicates {
-
+object TypePredicates {
   /**
    * Create a predicate to check that a type has a given name.
    *
    * @param name name on the type
    * @return Predicate to check that a type has a given name.
    */
-  public static Predicate<Class<?>> named(final String name) {
-    return clazz -> clazz.getName().equals(name);
-  }
+  @JvmStatic fun named(name: String) = Predicate { clazz: Class<*> -> clazz.getName() == name }
 
   /**
    * Create a predicate to check that a class has a certain type.
@@ -55,9 +50,7 @@ public class TypePredicates {
    * @param type of the class to check
    * @return Predicate to check that a class has a certain type
    */
-  public static Predicate<Class<?>> ofType(Class<?> type) {
-    return clazz -> clazz.equals(type);
-  }
+  @JvmStatic fun ofType(type: Class<*>) = Predicate { clazz: Class<*> -> clazz == type }
 
   /**
    * Create a predicate to check that a type is defined in a given package.
@@ -65,8 +58,9 @@ public class TypePredicates {
    * @param packageNamePrefix prefix of the package name
    * @return Predicate to check that a type is defined in a given package.
    */
-  public static Predicate<Class<?>> inPackage(final String packageNamePrefix) {
-    return clazz -> clazz.getPackage().getName().startsWith(packageNamePrefix);
+  @JvmStatic
+  fun inPackage(packageNamePrefix: String) = Predicate { clazz: Class<*> ->
+    clazz.getPackage().name.startsWith(packageNamePrefix)
   }
 
   /**
@@ -75,43 +69,15 @@ public class TypePredicates {
    * @param annotations present on the type
    * @return Predicate to check that a type is annotated with one of the given annotations.
    */
-  public static Predicate<Class<?>> isAnnotatedWith(Class<? extends Annotation>... annotations) {
-    return clazz -> {
-      for (Class<? extends Annotation> annotation : annotations) {
-        if (clazz.isAnnotationPresent(annotation)) {
-          return true;
-        }
-      }
-      return false;
-    };
+  @SafeVarargs
+  @JvmStatic
+  fun isAnnotatedWith(vararg annotations: Class<out Annotation>) = Predicate { clazz: Class<*> ->
+    annotations.any(clazz::isAnnotationPresent)
   }
 
-  /**
-   * Create a predicate to check if a type is an interface.
-   *
-   * @return a predicate to check if a type is an interface
-   */
-  public static Predicate<Class<?>> isInterface() {
-    return Class::isInterface;
-  }
+  @JvmStatic fun isInterface() = Predicate { obj: Class<*> -> obj.isInterface }
 
-  /**
-   * Create a predicate to check if a type is primitive.
-   *
-   * @return a predicate to check if a type is primitive
-   */
-  public static Predicate<Class<?>> isPrimitive() {
-    return Class::isPrimitive;
-  }
-
-  /**
-   * Create a predicate to check if a class is abstract.
-   *
-   * @return a predicate to check if a class is abstract
-   */
-  public static Predicate<Class<?>> isAbstract() {
-    return hasModifiers(Modifier.ABSTRACT);
-  }
+  @JvmStatic fun isAbstract() = hasModifiers(Modifier.ABSTRACT)
 
   /**
    * Create a predicate to check that a type has a given set of modifiers.
@@ -119,27 +85,14 @@ public class TypePredicates {
    * @param modifiers of the type to check
    * @return Predicate to check that a type has a given set of modifiers
    */
-  public static Predicate<Class<?>> hasModifiers(final Integer modifiers) {
-    return clazz -> (modifiers & clazz.getModifiers()) == modifiers;
+  @JvmStatic
+  fun hasModifiers(modifiers: Int) = Predicate { clazz: Class<*> ->
+    (modifiers and clazz.modifiers) == modifiers
   }
 
-  /**
-   * Create a predicate to check if a type is an enumeration.
-   *
-   * @return a predicate to check if a type is an enumeration
-   */
-  public static Predicate<Class<?>> isEnum() {
-    return Class::isEnum;
-  }
+  @JvmStatic fun isEnum() = Predicate { obj: Class<*> -> obj.isEnum }
 
-  /**
-   * Create a predicate to check if a type is an array.
-   *
-   * @return a predicate to check if a type is an array
-   */
-  public static Predicate<Class<?>> isArray() {
-    return Class::isArray;
-  }
+  @JvmStatic fun isArray() = Predicate { obj: Class<*> -> obj.isArray }
 
   /**
    * Create a predicate to check if a type is assignable from another type.
@@ -147,7 +100,7 @@ public class TypePredicates {
    * @param type to check
    * @return a predicate to check if a type is assignable from another type.
    */
-  public static Predicate<Class<?>> isAssignableFrom(Class<?> type) {
-    return clazz -> clazz.isAssignableFrom(type);
+  fun isAssignableFrom(type: Class<*>) = Predicate { clazz: Class<*> ->
+    clazz.isAssignableFrom(type)
   }
 }

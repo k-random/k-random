@@ -21,46 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.collection;
+package io.github.krandom.randomizers.collection
 
-import static java.lang.Math.abs;
-
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.number.ByteRandomizer;
-import java.util.Collection;
+import io.github.krandom.randomizers.misc.EnumRandomizer
+import io.github.krandom.randomizers.number.ByteRandomizer
+import java.util.*
+import kotlin.math.abs
 
 /**
- * A base class for collection randomizers.
+ * A [io.github.krandom.api.Randomizer] that generates an [EnumSet] of random enum values using a
+ * delegate [EnumRandomizer].
  *
- * @param <T> the type of elements in the collection
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ * @param <E> type of elements to generate
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com) </E>
  */
-abstract class CollectionRandomizer<T> implements Randomizer<Collection<T>> {
+class EnumSetRandomizer<E : Enum<E>>
+/**
+ * Create a new [EnumSetRandomizer] that will generate an [EnumSet] with a fixed number of elements.
+ *
+ * @param delegate the [EnumRandomizer] used to generate random elements
+ * @param nbElements The number of elements to generate
+ */
+@JvmOverloads
+constructor(
+  delegate: EnumRandomizer<E>,
+  nbElements: Int = abs(ByteRandomizer().getRandomValue().toInt()),
+) : CollectionRandomizer<E>(delegate, nbElements) {
 
-  final int nbElements;
+  override fun getRandomValue(): EnumSet<E> = EnumSet.copyOf(List(nbElements) { randomElement })
 
-  final Randomizer<T> delegate;
-
-  CollectionRandomizer(final Randomizer<T> delegate) {
-    this(delegate, abs(new ByteRandomizer().getRandomValue()));
-  }
-
-  CollectionRandomizer(final Randomizer<T> delegate, final int nbElements) {
-    if (delegate == null) {
-      throw new IllegalArgumentException("delegate must not be null");
-    }
-    checkArguments(nbElements);
-    this.nbElements = nbElements;
-    this.delegate = delegate;
-  }
-
-  private void checkArguments(final int nbElements) {
-    if (nbElements < 0) {
-      throw new IllegalArgumentException("The number of elements to generate must be >= 0");
-    }
-  }
-
-  T getRandomElement() {
-    return delegate.getRandomValue();
+  override fun toString(): String {
+    return "EnumSetRandomizer [delegate=$delegate, nbElements=$nbElements]"
   }
 }

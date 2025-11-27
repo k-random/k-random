@@ -21,28 +21,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.collection;
-
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import io.github.krandom.randomizers.misc.EnumRandomizer;
-import java.time.Month;
-import java.util.EnumSet;
-import org.junit.jupiter.api.Test;
-
-class EnumSetRandomizerTest {
-
-  @Test
-  void testEnumSetGeneration() {
-    // given
-    EnumRandomizer<Month> delegate = new EnumRandomizer<>(Month.class);
-    EnumSetRandomizer<Month> randomizer = new EnumSetRandomizer<>(delegate);
-
-    // when
-    EnumSet<Month> randomEnumSet = randomizer.getRandomValue();
-
-    // then
-    assertThat(randomEnumSet).containsAnyElementsOf(asList(Month.values()));
-  }
-}
+/**
+ * This package contains collection randomizers.
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+package io.github.krandom.randomizers.collection
