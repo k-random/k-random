@@ -21,41 +21,35 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.net;
+package io.github.krandom.randomizers.net
 
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.net.MalformedURLException;
-import java.net.URL;
+import io.github.krandom.randomizers.AbstractRandomizer
+import java.net.URI
+import java.net.URISyntaxException
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 /**
- * Generate a random {@link URL}.
+ * Generate a random [URI].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class UrlRandomizer extends AbstractRandomizer<URL> {
-
-  private final String[] urls = getPredefinedValuesOf("urls");
-
-  /** Create a new {@link UrlRandomizer}. */
-  public UrlRandomizer() {}
-
-  /**
-   * Create a new {@link UrlRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public UrlRandomizer(long seed) {
-    super(seed);
-  }
-
-  @Override
-  public URL getRandomValue() {
+class UriRandomizer
+/**
+ * Create a new [UriRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val uris: Array<String> = getPredefinedValuesOf("uris"),
+) : AbstractRandomizer<URI?>(seed) {
+  override fun getRandomValue(): URI? =
     try {
-      int randomIndex = random.nextInt(urls.length);
-      return new URL(urls[randomIndex]);
-    } catch (MalformedURLException e) {
-      // predefined URLs are valid
-      return null;
+      URI(uris.random(random.asKotlinRandom()))
+    } catch (_: URISyntaxException) {
+      // predefined URIs are valid
+      null
     }
-  }
 }
