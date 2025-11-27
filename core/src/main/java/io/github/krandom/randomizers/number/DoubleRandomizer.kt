@@ -21,31 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.randomizers.AbstractRandomizer;
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 /**
- * Generate a random {@link Double}.
+ * Generate a random [Double].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class DoubleRandomizer extends AbstractRandomizer<Double> {
-
-  /** Create a new {@link DoubleRandomizer}. */
-  public DoubleRandomizer() {}
-
-  /**
-   * Create a new {@link DoubleRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public DoubleRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Double getRandomValue() {
-    return random.nextDouble();
-  }
+class DoubleRandomizer
+/**
+ * Create a new [DoubleRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<Double>(seed) {
+  override fun getRandomValue() = random.asKotlinRandom().nextDouble()
 }

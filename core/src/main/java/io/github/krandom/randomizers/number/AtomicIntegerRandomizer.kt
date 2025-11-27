@@ -21,36 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.api.Randomizer;
-import java.util.concurrent.atomic.AtomicInteger;
+import io.github.krandom.api.Randomizer
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.random.Random
 
 /**
- * Generate a random {@link AtomicInteger}.
+ * Generate a random [AtomicInteger].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class AtomicIntegerRandomizer implements Randomizer<AtomicInteger> {
+class AtomicIntegerRandomizer
+/**
+ * Create a new [AtomicIntegerRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : Randomizer<AtomicInteger> {
+  private val delegate: IntegerRandomizer = IntegerRandomizer(seed)
 
-  private final IntegerRandomizer delegate;
-
-  /** Create a new {@link AtomicIntegerRandomizer}. */
-  public AtomicIntegerRandomizer() {
-    delegate = new IntegerRandomizer();
-  }
-
-  /**
-   * Create a new {@link AtomicIntegerRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public AtomicIntegerRandomizer(final long seed) {
-    delegate = new IntegerRandomizer(seed);
-  }
-
-  @Override
-  public AtomicInteger getRandomValue() {
-    return new AtomicInteger(delegate.getRandomValue());
-  }
+  override fun getRandomValue() = AtomicInteger(delegate.getRandomValue())
 }

@@ -21,35 +21,22 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import static org.assertj.core.api.BDDAssertions.then;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.shouldBe
+import java.util.concurrent.atomic.AtomicInteger
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.jupiter.api.Test;
-
-class AtomicIntegerRandomizerTest extends AbstractRandomizerTest<AtomicInteger> {
-
+internal class AtomicIntegerRandomizerTest : AbstractRandomizerTest<AtomicInteger>() {
   @Test
-  void generateValueShouldNotBeNull() {
+  fun `should generate the same value for the same seed`() {
     // given
-    AtomicIntegerRandomizer atomicIntegerRandomizer = new AtomicIntegerRandomizer();
+    randomizer = AtomicIntegerRandomizer(SEED)
 
     // when
-    AtomicInteger atomicInteger = atomicIntegerRandomizer.getRandomValue();
+    val atomicInteger = randomizer.getRandomValue()
 
-    then(atomicInteger).isNotNull();
-  }
-
-  @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    // given
-    AtomicIntegerRandomizer atomicIntegerRandomizer = new AtomicIntegerRandomizer(SEED);
-
-    // when
-    AtomicInteger atomicInteger = atomicIntegerRandomizer.getRandomValue();
-
-    then(atomicInteger).hasValue(-1188957731);
+    atomicInteger.get() shouldBe -1188957731
   }
 }

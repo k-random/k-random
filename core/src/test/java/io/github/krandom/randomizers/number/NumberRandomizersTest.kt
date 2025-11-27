@@ -21,65 +21,73 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import static org.assertj.core.api.BDDAssertions.then;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import java.math.BigDecimal
+import java.math.BigInteger
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-class NumberRandomizersTest extends AbstractRandomizerTest<Object> {
-
-  static Object[] generateRandomizers() {
-    return new Object[] {
-      new ByteRandomizer(),
-      new ShortRandomizer(),
-      new IntegerRandomizer(),
-      new NumberRandomizer(),
-      new LongRandomizer(),
-      new FloatRandomizer(),
-      new DoubleRandomizer(),
-      new BigDecimalRandomizer(),
-      new BigIntegerRandomizer(),
-    };
-  }
-
+internal class NumberRandomizersTest : AbstractRandomizerTest<Any?>() {
   @ParameterizedTest
   @MethodSource("generateRandomizers")
-  void generatedNumberShouldNotBeNull(Randomizer<?> randomizer) {
+  fun `generated number should not be null`(randomizer: Randomizer<*>) {
     // when
-    Object randomNumber = randomizer.getRandomValue();
+    val randomNumber: Any? = randomizer.getRandomValue()
 
-    then(randomNumber).isNotNull();
-  }
-
-  static Object[][] generateSeededRandomizersAndTheirExpectedValues() {
-    return new Object[][] {
-      {new ByteRandomizer(SEED), (byte) -35},
-      {new ShortRandomizer(SEED), (short) -3619},
-      {new IntegerRandomizer(SEED), -1188957731},
-      {new NumberRandomizer(SEED), -1188957731},
-      {new LongRandomizer(SEED), -5106534569952410475L},
-      {new FloatRandomizer(SEED), 0.72317415F},
-      {new DoubleRandomizer(SEED), 0.7231742029971469},
-      {
-        new BigDecimalRandomizer(SEED),
-        new BigDecimal(0.723174202997146853277854461339302361011505126953125)
-      },
-      {new BigIntegerRandomizer(SEED), new BigInteger("295011414634219278107705585431435293517")},
-    };
+    randomNumber.shouldNotBeNull()
   }
 
   @ParameterizedTest
   @MethodSource("generateSeededRandomizersAndTheirExpectedValues")
-  void shouldGenerateTheSameValueForTheSameSeed(Randomizer<?> randomizer, Object expected) {
+  fun `should generate the same value for the same seed`(
+    randomizer: Randomizer<*>,
+    expected: Any?,
+  ) {
     // when
-    Object actual = randomizer.getRandomValue();
+    val actual: Any? = randomizer.getRandomValue()
 
-    then(actual).isEqualTo(expected);
+    actual shouldBe expected
+  }
+
+  companion object {
+    @JvmStatic
+    fun generateRandomizers() =
+      listOf(
+        Arguments.of(ByteRandomizer()),
+        Arguments.of(ShortRandomizer()),
+        Arguments.of(IntegerRandomizer()),
+        Arguments.of(NumberRandomizer()),
+        Arguments.of(LongRandomizer()),
+        Arguments.of(FloatRandomizer()),
+        Arguments.of(DoubleRandomizer()),
+        Arguments.of(BigDecimalRandomizer()),
+        Arguments.of(BigIntegerRandomizer()),
+      )
+
+    @JvmStatic
+    fun generateSeededRandomizersAndTheirExpectedValues() =
+      listOf(
+        Arguments.of(ByteRandomizer(SEED), (-35).toByte()),
+        Arguments.of(ShortRandomizer(SEED), (-3619).toShort()),
+        Arguments.of(IntegerRandomizer(SEED), -1188957731),
+        Arguments.of(NumberRandomizer(SEED), -1188957731),
+        Arguments.of(LongRandomizer(SEED), -5106534569952410475L),
+        Arguments.of(FloatRandomizer(SEED), 0.72317415f),
+        Arguments.of(DoubleRandomizer(SEED), 0.7231742029971469),
+        Arguments.of(
+          BigDecimalRandomizer(SEED),
+          BigDecimal("0.723174202997146853277854461339302361011505126953125"),
+        ),
+        Arguments.of(
+          BigIntegerRandomizer(SEED),
+          BigInteger("295011414634219278107705585431435293517"),
+        ),
+      )
   }
 }

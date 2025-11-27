@@ -21,35 +21,22 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import static org.assertj.core.api.BDDAssertions.then;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.shouldBe
+import java.util.concurrent.atomic.AtomicLong
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.util.concurrent.atomic.AtomicLong;
-import org.junit.jupiter.api.Test;
-
-class AtomicLongRandomizerTest extends AbstractRandomizerTest<AtomicLong> {
-
+internal class AtomicLongRandomizerTest : AbstractRandomizerTest<AtomicLong>() {
   @Test
-  void generateValueShouldNotBeNull() {
+  fun `should generate the same value for the same seed`() {
     // given
-    AtomicLongRandomizer atomicLongRandomizer = new AtomicLongRandomizer();
+    randomizer = AtomicLongRandomizer(SEED)
 
     // when
-    AtomicLong atomicLong = atomicLongRandomizer.getRandomValue();
+    val atomicLong = randomizer.getRandomValue()
 
-    then(atomicLong).isNotNull();
-  }
-
-  @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    // given
-    AtomicLongRandomizer atomicLongRandomizer = new AtomicLongRandomizer(SEED);
-
-    // when
-    AtomicLong atomicLong = atomicLongRandomizer.getRandomValue();
-
-    then(atomicLong).hasValue(-5106534569952410475L);
+    atomicLong.get() shouldBe -5106534569952410475L
   }
 }

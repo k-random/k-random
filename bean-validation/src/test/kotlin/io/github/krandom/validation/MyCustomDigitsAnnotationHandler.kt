@@ -26,12 +26,13 @@ package io.github.krandom.validation
 import io.github.krandom.api.Randomizer
 import io.github.krandom.randomizers.number.BigDecimalRandomizer
 import java.lang.reflect.Field
+import kotlin.random.Random
 
 class MyCustomDigitsAnnotationHandler : BeanValidationAnnotationHandler {
   override fun getRandomizer(field: Field): Randomizer<*> {
     // `@Digits` is applicable to several types (see its javadoc)
     // for this test, just assuming the field is a BigDecimal
     val scale = 2
-    return BigDecimalRandomizer(scale)
+    return BigDecimalRandomizer(Random.nextLong(), scale)
   }
 }

@@ -21,36 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.api.Randomizer;
-import java.util.concurrent.atomic.AtomicLong;
+import io.github.krandom.api.Randomizer
+import java.util.concurrent.atomic.AtomicLong
+import kotlin.random.Random
 
 /**
- * Generate a random {@link AtomicLong}.
+ * Generate a random [AtomicLong].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class AtomicLongRandomizer implements Randomizer<AtomicLong> {
+class AtomicLongRandomizer
+/**
+ * Create a new [AtomicLongRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : Randomizer<AtomicLong> {
+  private val delegate: LongRandomizer = LongRandomizer(seed)
 
-  private final LongRandomizer delegate;
-
-  /** Create a new {@link AtomicLongRandomizer}. */
-  public AtomicLongRandomizer() {
-    delegate = new LongRandomizer();
-  }
-
-  /**
-   * Create a new {@link AtomicLongRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public AtomicLongRandomizer(final long seed) {
-    delegate = new LongRandomizer(seed);
-  }
-
-  @Override
-  public AtomicLong getRandomValue() {
-    return new AtomicLong(delegate.getRandomValue());
-  }
+  override fun getRandomValue() = AtomicLong(delegate.getRandomValue())
 }

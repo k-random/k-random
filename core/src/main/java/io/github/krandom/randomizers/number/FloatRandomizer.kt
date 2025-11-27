@@ -21,31 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.randomizers.AbstractRandomizer;
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 /**
- * Generate a random {@link Float}.
+ * Generate a random [Float].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class FloatRandomizer extends AbstractRandomizer<Float> {
-
-  /** Create a new {@link FloatRandomizer}. */
-  public FloatRandomizer() {}
-
-  /**
-   * Create a new {@link FloatRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public FloatRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Float getRandomValue() {
-    return random.nextFloat();
-  }
+class FloatRandomizer
+/**
+ * Create a new [FloatRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<Float>(seed) {
+  override fun getRandomValue() = random.asKotlinRandom().nextFloat()
 }

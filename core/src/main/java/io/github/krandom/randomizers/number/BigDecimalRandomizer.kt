@@ -21,78 +21,38 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.api.Randomizer;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import io.github.krandom.api.Randomizer
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.random.Random
 
 /**
- * Generate a random {@link BigDecimal}.
+ * Generate a random [BigDecimal].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class BigDecimalRandomizer implements Randomizer<BigDecimal> {
+class BigDecimalRandomizer
+/**
+ * Create a new [BigDecimalRandomizer].
+ *
+ * @param scale of the `BigDecimal` value to be returned.
+ * @param roundingMode of the `BigDecimal` value to be returned.
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val scale: Int? = null,
+  private val roundingMode: RoundingMode = RoundingMode.HALF_UP,
+) : Randomizer<BigDecimal> {
+  private val delegate: DoubleRandomizer = DoubleRandomizer(seed)
 
-  private final DoubleRandomizer delegate;
-  private Integer scale;
-  private RoundingMode roundingMode = RoundingMode.HALF_UP;
-
-  /** Create a new {@link BigDecimalRandomizer}. */
-  public BigDecimalRandomizer() {
-    delegate = new DoubleRandomizer();
-  }
-
-  /**
-   * Create a new {@link BigDecimalRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public BigDecimalRandomizer(final long seed) {
-    delegate = new DoubleRandomizer(seed);
-  }
-
-  /**
-   * Create a new {@link BigDecimalRandomizer}. The default rounding mode is {@link
-   * RoundingMode#HALF_UP}.
-   *
-   * @param scale of the {@code BigDecimal} value to be returned.
-   */
-  public BigDecimalRandomizer(final Integer scale) {
-    delegate = new DoubleRandomizer();
-    this.scale = scale;
-  }
-
-  /**
-   * Create a new {@link BigDecimalRandomizer}.
-   *
-   * @param scale of the {@code BigDecimal} value to be returned.
-   * @param roundingMode of the {@code BigDecimal} value to be returned.
-   */
-  public BigDecimalRandomizer(final Integer scale, final RoundingMode roundingMode) {
-    this(scale);
-    this.roundingMode = roundingMode;
-  }
-
-  /**
-   * Create a new {@link BigDecimalRandomizer}.
-   *
-   * @param scale of the {@code BigDecimal} value to be returned.
-   * @param roundingMode of the {@code BigDecimal} value to be returned.
-   */
-  public BigDecimalRandomizer(
-      final long seed, final Integer scale, final RoundingMode roundingMode) {
-    this(seed);
-    this.scale = scale;
-    this.roundingMode = roundingMode;
-  }
-
-  @Override
-  public BigDecimal getRandomValue() {
-    BigDecimal randomValue = new BigDecimal(delegate.getRandomValue());
+  override fun getRandomValue(): BigDecimal {
+    var randomValue = BigDecimal(delegate.getRandomValue())
     if (scale != null) {
-      randomValue = randomValue.setScale(this.scale, this.roundingMode);
+      randomValue = randomValue.setScale(this.scale, this.roundingMode)
     }
-    return randomValue;
+    return randomValue
   }
 }

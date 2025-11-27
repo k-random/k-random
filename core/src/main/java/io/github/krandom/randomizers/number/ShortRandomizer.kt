@@ -21,31 +21,23 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.randomizers.AbstractRandomizer;
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Short}.
+ * Generate a random [Short].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class ShortRandomizer extends AbstractRandomizer<Short> {
-
-  /** Create a new {@link ShortRandomizer}. */
-  public ShortRandomizer() {}
-
-  /**
-   * Create a new {@link ShortRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public ShortRandomizer(long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Short getRandomValue() {
-    return (short) random.nextInt();
-  }
+class ShortRandomizer
+/**
+ * Create a new [ShortRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<Short>(seed) {
+  override fun getRandomValue() = random.nextInt().toShort()
 }

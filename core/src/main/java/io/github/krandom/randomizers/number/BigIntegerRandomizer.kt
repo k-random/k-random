@@ -21,36 +21,28 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.math.BigInteger;
+import io.github.krandom.randomizers.AbstractRandomizer
+import java.math.BigInteger
+import kotlin.random.Random
 
 /**
- * Generate a random {@link BigInteger}.
+ * Generate a random [BigInteger].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class BigIntegerRandomizer extends AbstractRandomizer<BigInteger> {
+class BigIntegerRandomizer
+/**
+ * Create a new [BigIntegerRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<BigInteger>(seed) {
+  override fun getRandomValue() = BigInteger(NUM_BITS, random)
 
-  private static final int NUM_BITS = 128;
-
-  /** Create a new {@link BigIntegerRandomizer}. */
-  public BigIntegerRandomizer() {
-    super();
-  }
-
-  /**
-   * Create a new {@link BigIntegerRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public BigIntegerRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public BigInteger getRandomValue() {
-    return new BigInteger(NUM_BITS, random);
+  companion object {
+    private const val NUM_BITS = 128
   }
 }

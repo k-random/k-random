@@ -21,53 +21,51 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import static org.assertj.core.api.BDDAssertions.then;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.shouldBe
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.random.Random.Default.nextLong
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import org.junit.jupiter.api.Test;
-
-class BigDecimalRandomizerTest extends AbstractRandomizerTest<BigDecimal> {
-
+internal class BigDecimalRandomizerTest : AbstractRandomizerTest<BigDecimal>() {
   @Test
-  void generatedValueShouldHaveProvidedPositiveScale() {
+  fun `generated value should have provided positive scale`() {
     // given
-    Integer scale = 1;
-    BigDecimalRandomizer bigDecimalRandomizer = new BigDecimalRandomizer(scale);
+    val scale = 1
+    randomizer = BigDecimalRandomizer(nextLong(), scale)
 
     // when
-    BigDecimal bigDecimal = bigDecimalRandomizer.getRandomValue();
+    val bigDecimal = randomizer.getRandomValue()
 
-    then(bigDecimal.scale()).isEqualTo(scale);
+    bigDecimal.scale() shouldBe scale
   }
 
   @Test
-  void generatedValueShouldHaveProvidedNegativeScale() {
+  fun `generated value should have provided negative scale`() {
     // given
-    Integer scale = -1;
-    BigDecimalRandomizer bigDecimalRangeRandomizer = new BigDecimalRandomizer(scale);
+    val scale = -1
+    randomizer = BigDecimalRandomizer(nextLong(), scale)
 
     // when
-    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    val bigDecimal = randomizer.getRandomValue()
 
-    then(bigDecimal.scale()).isEqualTo(scale);
+    bigDecimal.scale() shouldBe scale
   }
 
   @Test
-  void testCustomRoundingMode() {
+  fun `test custom rounding mode`() {
     // given
-    long initialSeed = 123;
-    Integer scale = 1;
-    RoundingMode roundingMode = RoundingMode.DOWN;
-    BigDecimalRandomizer bigDecimalRandomizer =
-        new BigDecimalRandomizer(initialSeed, scale, roundingMode);
+    val initialSeed: Long = 123
+    val scale = 1
+    val roundingMode = RoundingMode.DOWN
+    randomizer = BigDecimalRandomizer(initialSeed, scale, roundingMode)
 
     // when
-    BigDecimal bigDecimal = bigDecimalRandomizer.getRandomValue();
+    val bigDecimal = randomizer.getRandomValue()
 
-    then(bigDecimal).isEqualTo(new BigDecimal("0.7"));
+    bigDecimal shouldBe BigDecimal("0.7")
   }
 }

@@ -21,35 +21,25 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.api.Randomizer;
+import io.github.krandom.api.Randomizer
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Byte}.
+ * Generate a random [Byte].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class ByteRandomizer implements Randomizer<Byte> {
+class ByteRandomizer
+/**
+ * Create a new [ByteRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : Randomizer<Byte> {
+  private val delegate: IntegerRandomizer = IntegerRandomizer(seed)
 
-  private final IntegerRandomizer delegate;
-
-  /** Create a new {@link ByteRandomizer}. */
-  public ByteRandomizer() {
-    delegate = new IntegerRandomizer();
-  }
-
-  /**
-   * Create a new {@link ByteRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public ByteRandomizer(final long seed) {
-    delegate = new IntegerRandomizer(seed);
-  }
-
-  @Override
-  public Byte getRandomValue() {
-    return delegate.getRandomValue().byteValue();
-  }
+  override fun getRandomValue() = delegate.getRandomValue().toByte()
 }
