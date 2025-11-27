@@ -21,9 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
+package io.github.krandom.randomizers.number
+
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
+
 /**
- * This package contains number randomizers.
+ * Generate a random [Double].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-package io.github.krandom.randomizers.number;
+class DoubleRandomizer
+/**
+ * Create a new [DoubleRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<Double>(seed) {
+  override fun getRandomValue() = random.asKotlinRandom().nextDouble()
+}

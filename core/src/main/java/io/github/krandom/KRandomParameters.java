@@ -117,7 +117,7 @@ public class KRandomParameters {
     userRegistries = new LinkedHashSet<>();
     fieldExclusionPredicates = new HashSet<>();
     typeExclusionPredicates = new HashSet<>();
-    exclusionPolicy = new DefaultExclusionPolicy();
+    exclusionPolicy = DefaultExclusionPolicy.INSTANCE;
     objectFactory = new ObjenesisObjectFactory();
     randomizerProvider = new RegistriesRandomizerProvider();
   }

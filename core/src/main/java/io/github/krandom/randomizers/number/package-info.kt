@@ -21,31 +21,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
-
-import io.github.krandom.randomizers.AbstractRandomizer;
-
 /**
- * Generate a random {@link Number}.
+ * This package contains number randomizers.
  *
- * @author Andrew Neal (https://github.com/aeneal)
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class NumberRandomizer extends AbstractRandomizer<Number> {
-
-  /** Create a new {@link NumberRandomizer}. */
-  public NumberRandomizer() {}
-
-  /**
-   * Create a new {@link NumberRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public NumberRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Integer getRandomValue() {
-    return random.nextInt();
-  }
-}
+package io.github.krandom.randomizers.number

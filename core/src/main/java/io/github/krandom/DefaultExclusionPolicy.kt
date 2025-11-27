@@ -21,16 +21,12 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static io.github.krandom.util.ReflectionUtils.*;
-
-import io.github.krandom.api.ExclusionPolicy;
-import io.github.krandom.api.RandomizerContext;
-import java.lang.reflect.Field;
-import java.util.Set;
-import java.util.function.Predicate;
-import org.jetbrains.annotations.NotNull;
+import io.github.krandom.api.ExclusionPolicy
+import io.github.krandom.api.RandomizerContext
+import io.github.krandom.util.ReflectionUtils.isStatic
+import java.lang.reflect.Field
 
 /**
  * Component that encapsulates the logic of field/type exclusion in a given randomization context.
@@ -38,8 +34,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class DefaultExclusionPolicy implements ExclusionPolicy {
-
+object DefaultExclusionPolicy : ExclusionPolicy {
   /**
    * Given the current randomization context, should the field be excluded from being populated ?
    *
@@ -47,20 +42,8 @@ public class DefaultExclusionPolicy implements ExclusionPolicy {
    * @param context the current randomization context
    * @return true if the field should be excluded, false otherwise
    */
-  public boolean shouldBeExcluded(
-      @NotNull final Field field, @NotNull final RandomizerContext context) {
-    if (isStatic(field)) {
-      return true;
-    }
-    Set<Predicate<Field>> fieldExclusionPredicates =
-        context.getParameters().getFieldExclusionPredicates();
-    for (Predicate<Field> fieldExclusionPredicate : fieldExclusionPredicates) {
-      if (fieldExclusionPredicate.test(field)) {
-        return true;
-      }
-    }
-    return false;
-  }
+  override fun shouldBeExcluded(field: Field, context: RandomizerContext) =
+    isStatic(field) || context.parameters.fieldExclusionPredicates.any { it.test(field) }
 
   /**
    * Given the current randomization context, should the type be excluded from being populated ?
@@ -69,14 +52,6 @@ public class DefaultExclusionPolicy implements ExclusionPolicy {
    * @param context the current randomization context
    * @return true if the type should be excluded, false otherwise
    */
-  public boolean shouldBeExcluded(@NotNull final Class<?> type, final RandomizerContext context) {
-    Set<Predicate<Class<?>>> typeExclusionPredicates =
-        context.getParameters().getTypeExclusionPredicates();
-    for (Predicate<Class<?>> typeExclusionPredicate : typeExclusionPredicates) {
-      if (typeExclusionPredicate.test(type)) {
-        return true;
-      }
-    }
-    return false;
-  }
+  override fun shouldBeExcluded(type: Class<*>, context: RandomizerContext) =
+    context.parameters.typeExclusionPredicates.any { it.test(type) }
 }

@@ -21,31 +21,22 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.randomizers.AbstractRandomizer;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.shouldBe
+import java.util.concurrent.atomic.AtomicInteger
+import org.junit.jupiter.api.Test
 
-/**
- * Generate a random {@link Integer}.
- *
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
- */
-public class IntegerRandomizer extends AbstractRandomizer<Integer> {
+internal class AtomicIntegerRandomizerTest : AbstractRandomizerTest<AtomicInteger>() {
+  @Test
+  fun `should generate the same value for the same seed`() {
+    // given
+    randomizer = AtomicIntegerRandomizer(SEED)
 
-  /** Create a new {@link IntegerRandomizer}. */
-  public IntegerRandomizer() {}
+    // when
+    val atomicInteger = randomizer.getRandomValue()
 
-  /**
-   * Create a new {@link IntegerRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public IntegerRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Integer getRandomValue() {
-    return random.nextInt();
+    atomicInteger.get() shouldBe -1188957731
   }
 }

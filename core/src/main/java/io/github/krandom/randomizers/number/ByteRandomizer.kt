@@ -21,35 +21,25 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import static org.assertj.core.api.BDDAssertions.then;
+import io.github.krandom.api.Randomizer
+import kotlin.random.Random
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.util.concurrent.atomic.AtomicLong;
-import org.junit.jupiter.api.Test;
+/**
+ * Generate a random [Byte].
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+class ByteRandomizer
+/**
+ * Create a new [ByteRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : Randomizer<Byte> {
+  private val delegate: IntegerRandomizer = IntegerRandomizer(seed)
 
-class AtomicLongRandomizerTest extends AbstractRandomizerTest<AtomicLong> {
-
-  @Test
-  void generateValueShouldNotBeNull() {
-    // given
-    AtomicLongRandomizer atomicLongRandomizer = new AtomicLongRandomizer();
-
-    // when
-    AtomicLong atomicLong = atomicLongRandomizer.getRandomValue();
-
-    then(atomicLong).isNotNull();
-  }
-
-  @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    // given
-    AtomicLongRandomizer atomicLongRandomizer = new AtomicLongRandomizer(SEED);
-
-    // when
-    AtomicLong atomicLong = atomicLongRandomizer.getRandomValue();
-
-    then(atomicLong).hasValue(-5106534569952410475L);
-  }
+  override fun getRandomValue() = delegate.getRandomValue().toByte()
 }

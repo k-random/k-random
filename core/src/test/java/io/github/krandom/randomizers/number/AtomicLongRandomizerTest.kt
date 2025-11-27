@@ -21,31 +21,22 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.randomizers.AbstractRandomizer;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.matchers.shouldBe
+import java.util.concurrent.atomic.AtomicLong
+import org.junit.jupiter.api.Test
 
-/**
- * Generate a random {@link Float}.
- *
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
- */
-public class FloatRandomizer extends AbstractRandomizer<Float> {
+internal class AtomicLongRandomizerTest : AbstractRandomizerTest<AtomicLong>() {
+  @Test
+  fun `should generate the same value for the same seed`() {
+    // given
+    randomizer = AtomicLongRandomizer(SEED)
 
-  /** Create a new {@link FloatRandomizer}. */
-  public FloatRandomizer() {}
+    // when
+    val atomicLong = randomizer.getRandomValue()
 
-  /**
-   * Create a new {@link FloatRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public FloatRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Float getRandomValue() {
-    return random.nextFloat();
+    atomicLong.get() shouldBe -5106534569952410475L
   }
 }

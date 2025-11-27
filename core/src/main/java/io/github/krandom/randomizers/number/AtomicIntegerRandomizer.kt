@@ -21,31 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.randomizers.AbstractRandomizer;
+import io.github.krandom.api.Randomizer
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Short}.
+ * Generate a random [AtomicInteger].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class ShortRandomizer extends AbstractRandomizer<Short> {
+class AtomicIntegerRandomizer
+/**
+ * Create a new [AtomicIntegerRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : Randomizer<AtomicInteger> {
+  private val delegate: IntegerRandomizer = IntegerRandomizer(seed)
 
-  /** Create a new {@link ShortRandomizer}. */
-  public ShortRandomizer() {}
-
-  /**
-   * Create a new {@link ShortRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public ShortRandomizer(long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Short getRandomValue() {
-    return (short) random.nextInt();
-  }
+  override fun getRandomValue() = AtomicInteger(delegate.getRandomValue())
 }

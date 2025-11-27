@@ -21,35 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import static org.assertj.core.api.BDDAssertions.then;
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.jupiter.api.Test;
-
-class AtomicIntegerRandomizerTest extends AbstractRandomizerTest<AtomicInteger> {
-
-  @Test
-  void generateValueShouldNotBeNull() {
-    // given
-    AtomicIntegerRandomizer atomicIntegerRandomizer = new AtomicIntegerRandomizer();
-
-    // when
-    AtomicInteger atomicInteger = atomicIntegerRandomizer.getRandomValue();
-
-    then(atomicInteger).isNotNull();
-  }
-
-  @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    // given
-    AtomicIntegerRandomizer atomicIntegerRandomizer = new AtomicIntegerRandomizer(SEED);
-
-    // when
-    AtomicInteger atomicInteger = atomicIntegerRandomizer.getRandomValue();
-
-    then(atomicInteger).hasValue(-1188957731);
-  }
+/**
+ * Generate a random [Long].
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+class LongRandomizer
+/**
+ * Create a new [LongRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<Long>(seed) {
+  override fun getRandomValue() = random.asKotlinRandom().nextLong()
 }

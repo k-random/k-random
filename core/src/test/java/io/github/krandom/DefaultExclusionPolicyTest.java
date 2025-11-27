@@ -43,7 +43,7 @@ class DefaultExclusionPolicyTest {
 
   @BeforeEach
   void setUp() {
-    exclusionPolicy = new DefaultExclusionPolicy();
+    exclusionPolicy = DefaultExclusionPolicy.INSTANCE;
   }
 
   @Test

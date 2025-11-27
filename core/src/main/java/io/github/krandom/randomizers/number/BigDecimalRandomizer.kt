@@ -21,31 +21,38 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.randomizers.AbstractRandomizer;
+import io.github.krandom.api.Randomizer
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Double}.
+ * Generate a random [BigDecimal].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class DoubleRandomizer extends AbstractRandomizer<Double> {
+class BigDecimalRandomizer
+/**
+ * Create a new [BigDecimalRandomizer].
+ *
+ * @param scale of the `BigDecimal` value to be returned.
+ * @param roundingMode of the `BigDecimal` value to be returned.
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val scale: Int? = null,
+  private val roundingMode: RoundingMode = RoundingMode.HALF_UP,
+) : Randomizer<BigDecimal> {
+  private val delegate: DoubleRandomizer = DoubleRandomizer(seed)
 
-  /** Create a new {@link DoubleRandomizer}. */
-  public DoubleRandomizer() {}
-
-  /**
-   * Create a new {@link DoubleRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public DoubleRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public Double getRandomValue() {
-    return random.nextDouble();
+  override fun getRandomValue(): BigDecimal {
+    var randomValue = BigDecimal(delegate.getRandomValue())
+    if (scale != null) {
+      randomValue = randomValue.setScale(this.scale, this.roundingMode)
+    }
+    return randomValue
   }
 }

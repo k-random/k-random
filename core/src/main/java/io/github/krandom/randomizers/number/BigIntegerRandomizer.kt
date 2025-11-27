@@ -21,36 +21,28 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.number;
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.api.Randomizer;
-import java.util.concurrent.atomic.AtomicLong;
+import io.github.krandom.randomizers.AbstractRandomizer
+import java.math.BigInteger
+import kotlin.random.Random
 
 /**
- * Generate a random {@link AtomicLong}.
+ * Generate a random [BigInteger].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class AtomicLongRandomizer implements Randomizer<AtomicLong> {
+class BigIntegerRandomizer
+/**
+ * Create a new [BigIntegerRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<BigInteger>(seed) {
+  override fun getRandomValue() = BigInteger(NUM_BITS, random)
 
-  private final LongRandomizer delegate;
-
-  /** Create a new {@link AtomicLongRandomizer}. */
-  public AtomicLongRandomizer() {
-    delegate = new LongRandomizer();
-  }
-
-  /**
-   * Create a new {@link AtomicLongRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public AtomicLongRandomizer(final long seed) {
-    delegate = new LongRandomizer(seed);
-  }
-
-  @Override
-  public AtomicLong getRandomValue() {
-    return new AtomicLong(delegate.getRandomValue());
+  companion object {
+    private const val NUM_BITS = 128
   }
 }

@@ -21,18 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.validation
+package io.github.krandom.randomizers.number
 
-import io.github.krandom.api.Randomizer
-import io.github.krandom.randomizers.number.BigDecimalRandomizer
-import java.lang.reflect.Field
+import io.github.krandom.randomizers.AbstractRandomizer
 import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
-class MyCustomDigitsAnnotationHandler : BeanValidationAnnotationHandler {
-  override fun getRandomizer(field: Field): Randomizer<*> {
-    // `@Digits` is applicable to several types (see its javadoc)
-    // for this test, just assuming the field is a BigDecimal
-    val scale = 2
-    return BigDecimalRandomizer(Random.nextLong(), scale)
-  }
+/**
+ * Generate a random [Number].
+ *
+ * @author Andrew Neal (https://github.com/aeneal)
+ */
+class NumberRandomizer
+/**
+ * Create a new [NumberRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<Number>(seed) {
+  override fun getRandomValue() = random.asKotlinRandom().nextInt()
 }
