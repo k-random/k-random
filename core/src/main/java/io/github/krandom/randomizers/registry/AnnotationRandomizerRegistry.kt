@@ -21,31 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.registry;
+package io.github.krandom.randomizers.registry
 
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.annotation.Priority;
-import io.github.krandom.annotation.Randomizer;
-import io.github.krandom.annotation.RandomizerArgument;
-import io.github.krandom.api.RandomizerRegistry;
-import io.github.krandom.util.ReflectionUtils;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
+import io.github.krandom.KRandomParameters
+import io.github.krandom.annotation.Priority
+import io.github.krandom.annotation.Randomizer as RandomizerAnnotation
+import io.github.krandom.api.Randomizer
+import io.github.krandom.api.RandomizerRegistry
+import io.github.krandom.util.ReflectionUtils.newInstance
+import java.lang.reflect.Field
 
 /**
- * A {@link RandomizerRegistry} for fields annotated with {@link Randomizer}.
+ * A [RandomizerRegistry] for fields annotated with [Randomizer].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 @Priority(-1)
-public class AnnotationRandomizerRegistry implements RandomizerRegistry {
+class AnnotationRandomizerRegistry : RandomizerRegistry {
+  private val customFieldRandomizersRegistry: MutableMap<Field, Randomizer<*>> = mutableMapOf()
 
-  private final Map<Field, io.github.krandom.api.Randomizer<?>> customFieldRandomizersRegistry =
-      new HashMap<>();
-
-  @Override
-  public void init(KRandomParameters parameters) {
+  override fun init(parameters: KRandomParameters) {
     // no op
   }
 
@@ -55,25 +50,16 @@ public class AnnotationRandomizerRegistry implements RandomizerRegistry {
    * @param field the field for which a randomizer was registered
    * @return the randomizer registered for the given field
    */
-  @Override
-  public io.github.krandom.api.Randomizer<?> getRandomizer(Field field) {
-    if (field.isAnnotationPresent(Randomizer.class)) {
-      io.github.krandom.api.Randomizer<?> randomizer = customFieldRandomizersRegistry.get(field);
-      if (randomizer == null) {
-        Randomizer annotation = field.getAnnotation(Randomizer.class);
-        Class<?> type = annotation.value();
-        RandomizerArgument[] arguments = annotation.args();
-        randomizer = ReflectionUtils.newInstance(type, arguments);
-        customFieldRandomizersRegistry.put(field, randomizer);
-      }
-      return randomizer;
+  override fun getRandomizer(field: Field): Randomizer<*>? {
+    val annotation = field.getAnnotation(RandomizerAnnotation::class.java) ?: return null
+
+    return customFieldRandomizersRegistry.getOrPut(field) {
+      val type = annotation.value.java
+      val arguments = annotation.args
+      newInstance(type, arguments)
     }
-    return null;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public io.github.krandom.api.Randomizer<?> getRandomizer(Class<?> clazz) {
-    return null;
-  }
+  override fun getRandomizer(type: Class<*>) = null
 }

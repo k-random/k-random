@@ -234,7 +234,7 @@ object ReflectionUtils {
    * @param <T> the actual type to check
    * @return true if the type is abstract, false otherwise </T>
    */
-  @JvmStatic fun <T> isAbstract(type: Class<T?>): Boolean = Modifier.isAbstract(type.modifiers)
+  @JvmStatic fun <T> isAbstract(type: Class<T>): Boolean = Modifier.isAbstract(type.modifiers)
 
   /**
    * Check if the type is public.
@@ -375,7 +375,7 @@ object ReflectionUtils {
    * @return a list of all concrete subtypes found </T>
    */
   @JvmStatic
-  fun <T> getPublicConcreteSubTypesOf(type: Class<T?>): List<Class<*>?> {
+  fun <T> getPublicConcreteSubTypesOf(type: Class<T>): List<Class<*>> {
     return ClassGraphFacade.getPublicConcreteSubTypesOf(type)
   }
 
