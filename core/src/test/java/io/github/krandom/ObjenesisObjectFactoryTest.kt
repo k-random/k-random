@@ -21,46 +21,42 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.github.krandom.api.RandomizerContext
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-import io.github.krandom.api.RandomizerContext;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Answers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+@ExtendWith(MockKExtension::class)
+internal class ObjenesisObjectFactoryTest {
+  @MockK private lateinit var context: RandomizerContext
 
-@ExtendWith(MockitoExtension.class)
-class ObjenesisObjectFactoryTest {
-
-  @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-  private RandomizerContext context;
-
-  private ObjenesisObjectFactory objenesisObjectFactory;
+  private lateinit var objenesisObjectFactory: ObjenesisObjectFactory
 
   @BeforeEach
-  void setUp() {
-    objenesisObjectFactory = new ObjenesisObjectFactory();
+  fun setUp() {
+    objenesisObjectFactory = ObjenesisObjectFactory()
+    every { context.parameters.seed } returns 123L
+    every { context.parameters.isScanClasspathForConcreteTypes } returns true
   }
 
   @Test
-  void concreteClassesShouldBeCreatedAsExpected() {
-    String string = objenesisObjectFactory.createInstance(String.class, context);
-
-    assertThat(string).isNotNull();
+  fun `concrete classes should be created as expected`() {
+    shouldNotThrowAny { objenesisObjectFactory.createInstance(String::class.java, context) }
   }
 
   @Test
-  void whenNoConcreteTypeIsFound_thenShouldThrowAnInstantiationError() {
-    Mockito.when(context.getParameters().isScanClasspathForConcreteTypes()).thenReturn(true);
-    assertThatThrownBy(() -> objenesisObjectFactory.createInstance(AbstractFoo.class, context))
-        .isInstanceOf(InstantiationError.class);
+  fun `when no concrete type is found then should throw an instantiation error`() {
+    shouldThrow<InstantiationError> {
+      objenesisObjectFactory.createInstance(AbstractFoo::class.java, context)
+    }
   }
 
-  private abstract class AbstractFoo {}
+  private abstract class AbstractFoo
 }
