@@ -21,17 +21,15 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.registry;
+package io.github.krandom.randomizers.registry
 
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.annotation.Priority;
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.api.RandomizerRegistry;
-import io.github.krandom.util.ReflectionUtils;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Predicate;
+import io.github.krandom.KRandomParameters
+import io.github.krandom.annotation.Priority
+import io.github.krandom.api.Randomizer
+import io.github.krandom.api.RandomizerRegistry
+import io.github.krandom.util.ReflectionUtils.getWrapperType
+import java.lang.reflect.Field
+import java.util.function.Predicate
 
 /**
  * Registry of user defined randomizers.
@@ -39,44 +37,37 @@ import java.util.function.Predicate;
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 @Priority(-1)
-public class CustomRandomizerRegistry implements RandomizerRegistry {
+class CustomRandomizerRegistry : RandomizerRegistry {
+  private val customFieldRandomizersRegistry: MutableMap<Predicate<Field>, Randomizer<*>> =
+    mutableMapOf()
+  private val customTypeRandomizersRegistry: MutableMap<Class<*>, Randomizer<*>> = mutableMapOf()
 
-  private final Map<Predicate<Field>, Randomizer<?>> customFieldRandomizersRegistry =
-      new HashMap<>();
-  private final Map<Class<?>, Randomizer<?>> customTypeRandomizersRegistry = new HashMap<>();
-
-  @Override
-  public void init(KRandomParameters parameters) {
+  override fun init(parameters: KRandomParameters) {
     // no op
   }
 
-  @Override
-  public Randomizer<?> getRandomizer(Field field) {
-    for (Predicate<Field> fieldPredicate : customFieldRandomizersRegistry.keySet()) {
-      if (fieldPredicate.test(field)) {
-        return customFieldRandomizersRegistry.get(fieldPredicate);
-      }
-    }
-    return getRandomizer(field.getType());
+  override fun getRandomizer(field: Field): Randomizer<*>? {
+    return customFieldRandomizersRegistry.entries
+      .firstOrNull { (predicate, _) -> predicate.test(field) }
+      ?.value ?: getRandomizer(field.type)
   }
 
-  @Override
-  public Randomizer<?> getRandomizer(Class<?> type) {
+  override fun getRandomizer(type: Class<*>): Randomizer<*>? {
     // issue 241: primitive type were ignored: try to get randomizer by primitive type, if not, then
     // try by wrapper type
-    Randomizer<?> randomizer = customTypeRandomizersRegistry.get(type);
+    var randomizer = customTypeRandomizersRegistry[type]
     if (randomizer == null) {
-      Class<?> wrapperType = type.isPrimitive() ? ReflectionUtils.getWrapperType(type) : type;
-      randomizer = customTypeRandomizersRegistry.get(wrapperType);
+      val wrapperType = if (type.isPrimitive) getWrapperType(type) else type
+      randomizer = customTypeRandomizersRegistry[wrapperType]
     }
-    return randomizer;
+    return randomizer
   }
 
-  public <T, R> void registerRandomizer(final Class<T> type, final Randomizer<R> randomizer) {
-    customTypeRandomizersRegistry.put(type, randomizer);
+  fun <T, R> registerRandomizer(type: Class<T>, randomizer: Randomizer<R>) {
+    customTypeRandomizersRegistry[type] = randomizer
   }
 
-  public void registerRandomizer(final Predicate<Field> predicate, Randomizer<?> randomizer) {
-    customFieldRandomizersRegistry.put(predicate, randomizer);
+  fun registerRandomizer(predicate: Predicate<Field>, randomizer: Randomizer<*>) {
+    customFieldRandomizersRegistry[predicate] = randomizer
   }
 }

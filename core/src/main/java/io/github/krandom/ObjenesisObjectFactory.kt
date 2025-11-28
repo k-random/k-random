@@ -21,19 +21,15 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static io.github.krandom.util.ReflectionUtils.getPublicConcreteSubTypesOf;
-import static io.github.krandom.util.ReflectionUtils.isAbstract;
-
-import io.github.krandom.api.ObjectFactory;
-import io.github.krandom.api.RandomizerContext;
-import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.Random;
-import org.jetbrains.annotations.NotNull;
-import org.objenesis.Objenesis;
-import org.objenesis.ObjenesisStd;
+import io.github.krandom.api.ObjectFactory
+import io.github.krandom.api.RandomizerContext
+import io.github.krandom.util.ReflectionUtils.getPublicConcreteSubTypesOf
+import io.github.krandom.util.ReflectionUtils.isAbstract
+import kotlin.random.Random
+import org.objenesis.Objenesis
+import org.objenesis.ObjenesisStd
 
 /**
  * Objenesis based factory to create "fancy" objects: immutable java beans, generic types, abstract
@@ -41,44 +37,43 @@ import org.objenesis.ObjenesisStd;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-@SuppressWarnings({"unchecked"})
-public class ObjenesisObjectFactory implements ObjectFactory {
+class ObjenesisObjectFactory : ObjectFactory {
+  private val objenesis: Objenesis = ObjenesisStd()
 
-  private final Objenesis objenesis = new ObjenesisStd();
+  private lateinit var random: Random
 
-  private Random random;
-
-  @Override
-  public <T> T createInstance(@NotNull Class<T> type, @NotNull RandomizerContext context) {
-    if (random == null) {
-      random = new Random(context.getParameters().getSeed());
+  @Suppress("UNCHECKED_CAST", "TooGenericExceptionCaught")
+  override fun <T> createInstance(type: Class<T>, context: RandomizerContext): T {
+    if (!(::random.isInitialized)) {
+      random = Random(context.parameters.seed)
     }
-    if (context.getParameters().isScanClasspathForConcreteTypes() && isAbstract(type)) {
-      List<Class<?>> publicConcreteSubTypes = getPublicConcreteSubTypesOf(type);
+    if (context.parameters.isScanClasspathForConcreteTypes && isAbstract(type)) {
+      val publicConcreteSubTypes: List<Class<*>> = getPublicConcreteSubTypesOf(type)
       if (publicConcreteSubTypes.isEmpty()) {
-        throw new InstantiationError(
-            "Unable to find a matching concrete subtype of type: " + type + " in the classpath");
+        throw InstantiationError(
+          "Unable to find a matching concrete subtype of type: $type in the classpath"
+        )
       } else {
-        Class<?> randomConcreteSubType =
-            publicConcreteSubTypes.get(random.nextInt(publicConcreteSubTypes.size()));
-        return (T) createNewInstance(randomConcreteSubType);
+        val randomConcreteSubType: Class<*> =
+          publicConcreteSubTypes[random.nextInt(publicConcreteSubTypes.size)]
+        return createNewInstance(randomConcreteSubType) as T
       }
     } else {
       try {
-        return createNewInstance(type);
-      } catch (Error e) {
-        throw new ObjectCreationException("Unable to create an instance of type: " + type, e);
+        return createNewInstance(type)
+      } catch (e: Error) {
+        throw ObjectCreationException("Unable to create an instance of type: $type", e)
       }
     }
   }
 
-  private <T> T createNewInstance(final Class<T> type) {
+  private fun <T> createNewInstance(type: Class<T>): T {
     try {
-      Constructor<T> noArgConstructor = type.getDeclaredConstructor();
-      noArgConstructor.trySetAccessible();
-      return noArgConstructor.newInstance();
-    } catch (Exception exception) {
-      return objenesis.newInstance(type);
+      val noArgConstructor = type.getDeclaredConstructor()
+      noArgConstructor.trySetAccessible()
+      return noArgConstructor.newInstance()
+    } catch (_: Exception) {
+      return objenesis.newInstance<T>(type)
     }
   }
 }

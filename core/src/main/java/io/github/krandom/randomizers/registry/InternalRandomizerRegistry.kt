@@ -21,123 +21,116 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.registry;
+package io.github.krandom.randomizers.registry
 
-import static io.github.krandom.util.ConversionUtils.convertDateToLocalDate;
-import static java.sql.Date.valueOf;
+import io.github.krandom.KRandomParameters
+import io.github.krandom.annotation.Priority
+import io.github.krandom.api.Randomizer
+import io.github.krandom.api.RandomizerRegistry
+import io.github.krandom.randomizers.misc.BooleanRandomizer
+import io.github.krandom.randomizers.misc.LocaleRandomizer
+import io.github.krandom.randomizers.misc.SkipRandomizer
+import io.github.krandom.randomizers.misc.UUIDRandomizer
+import io.github.krandom.randomizers.net.UriRandomizer
+import io.github.krandom.randomizers.net.UrlRandomizer
+import io.github.krandom.randomizers.number.AtomicIntegerRandomizer
+import io.github.krandom.randomizers.number.AtomicLongRandomizer
+import io.github.krandom.randomizers.number.BigDecimalRandomizer
+import io.github.krandom.randomizers.number.BigIntegerRandomizer
+import io.github.krandom.randomizers.number.ByteRandomizer
+import io.github.krandom.randomizers.number.DoubleRandomizer
+import io.github.krandom.randomizers.number.FloatRandomizer
+import io.github.krandom.randomizers.number.IntegerRandomizer
+import io.github.krandom.randomizers.number.LongRandomizer
+import io.github.krandom.randomizers.number.ShortRandomizer
+import io.github.krandom.randomizers.range.DateRangeRandomizer
+import io.github.krandom.randomizers.range.SqlDateRangeRandomizer
+import io.github.krandom.randomizers.text.CharacterRandomizer
+import io.github.krandom.randomizers.text.StringRandomizer
+import io.github.krandom.randomizers.time.CalendarRandomizer
+import io.github.krandom.randomizers.time.SqlTimeRandomizer
+import io.github.krandom.randomizers.time.SqlTimestampRandomizer
+import io.github.krandom.util.ConversionUtils.convertDateToLocalDate
+import java.lang.reflect.Field
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.net.URI
+import java.net.URL
+import java.sql.Date as SqlDate
+import java.sql.Time
+import java.sql.Timestamp
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
+import kotlin.collections.set
+import kotlin.reflect.KClass
 
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.annotation.Priority;
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.api.RandomizerRegistry;
-import io.github.krandom.randomizers.misc.BooleanRandomizer;
-import io.github.krandom.randomizers.misc.LocaleRandomizer;
-import io.github.krandom.randomizers.misc.SkipRandomizer;
-import io.github.krandom.randomizers.misc.UUIDRandomizer;
-import io.github.krandom.randomizers.net.UriRandomizer;
-import io.github.krandom.randomizers.net.UrlRandomizer;
-import io.github.krandom.randomizers.number.*;
-import io.github.krandom.randomizers.range.DateRangeRandomizer;
-import io.github.krandom.randomizers.range.SqlDateRangeRandomizer;
-import io.github.krandom.randomizers.text.CharacterRandomizer;
-import io.github.krandom.randomizers.text.StringRandomizer;
-import io.github.krandom.randomizers.time.*;
-import io.github.krandom.randomizers.time.CalendarRandomizer;
-import io.github.krandom.randomizers.time.SqlTimeRandomizer;
-import io.github.krandom.randomizers.time.SqlTimestampRandomizer;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+private const val PRIORITY = -4
 
 /**
  * Registry for Java built-in types.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-@Priority(-4)
-public class InternalRandomizerRegistry implements RandomizerRegistry {
+@Priority(PRIORITY)
+class InternalRandomizerRegistry : RandomizerRegistry {
+  private val randomizers: MutableMap<KClass<*>, Randomizer<*>> = mutableMapOf()
 
-  private final Map<Class<?>, Randomizer<?>> randomizers = new HashMap<>();
-
-  @Override
-  public void init(KRandomParameters parameters) {
-    long seed = parameters.getSeed();
-    Charset charset = parameters.getCharset();
-    randomizers.put(
-        String.class,
-        new StringRandomizer(
-            charset,
-            parameters.getStringLengthRange().getMin(),
-            parameters.getStringLengthRange().getMax(),
-            seed));
-    CharacterRandomizer characterRandomizer = new CharacterRandomizer(charset, seed);
-    randomizers.put(Character.class, characterRandomizer);
-    randomizers.put(char.class, characterRandomizer);
-    randomizers.put(Boolean.class, new BooleanRandomizer(seed));
-    randomizers.put(boolean.class, new BooleanRandomizer(seed));
-    randomizers.put(Byte.class, new ByteRandomizer(seed));
-    randomizers.put(byte.class, new ByteRandomizer(seed));
-    randomizers.put(Short.class, new ShortRandomizer(seed));
-    randomizers.put(short.class, new ShortRandomizer(seed));
-    randomizers.put(Integer.class, new IntegerRandomizer(seed));
-    randomizers.put(int.class, new IntegerRandomizer(seed));
-    randomizers.put(Long.class, new LongRandomizer(seed));
-    randomizers.put(long.class, new LongRandomizer(seed));
-    randomizers.put(Double.class, new DoubleRandomizer(seed));
-    randomizers.put(double.class, new DoubleRandomizer(seed));
-    randomizers.put(Float.class, new FloatRandomizer(seed));
-    randomizers.put(float.class, new FloatRandomizer(seed));
-    randomizers.put(BigInteger.class, new BigIntegerRandomizer(seed));
-    randomizers.put(BigDecimal.class, new BigDecimalRandomizer(seed));
-    randomizers.put(AtomicLong.class, new AtomicLongRandomizer(seed));
-    randomizers.put(AtomicInteger.class, new AtomicIntegerRandomizer(seed));
-    Date minDate = new Date(Long.MIN_VALUE);
-    Date maxDate = new Date(Long.MAX_VALUE);
+  override fun init(parameters: KRandomParameters) {
+    val seed = parameters.seed
+    val charset = parameters.charset
+    randomizers[String::class] =
+      StringRandomizer(
+        charset,
+        parameters.stringLengthRange.min,
+        parameters.stringLengthRange.max,
+        seed,
+      )
+    randomizers[Char::class] = CharacterRandomizer(charset, seed)
+    randomizers[Boolean::class] = BooleanRandomizer(seed)
+    randomizers[Byte::class] = ByteRandomizer(seed)
+    randomizers[Short::class] = ShortRandomizer(seed)
+    randomizers[Int::class] = IntegerRandomizer(seed)
+    randomizers[Long::class] = LongRandomizer(seed)
+    randomizers[Double::class] = DoubleRandomizer(seed)
+    randomizers[Float::class] = FloatRandomizer(seed)
+    randomizers[BigInteger::class] = BigIntegerRandomizer(seed)
+    randomizers[BigDecimal::class] = BigDecimalRandomizer(seed)
+    randomizers[AtomicLong::class] = AtomicLongRandomizer(seed)
+    randomizers[AtomicInteger::class] = AtomicIntegerRandomizer(seed)
+    var minDate = Date(Long.MIN_VALUE)
+    var maxDate = Date(Long.MAX_VALUE)
     minDate =
-        convertDateToLocalDate(minDate).isAfter(parameters.getDateRange().getMin())
-            ? minDate
-            : valueOf(parameters.getDateRange().getMin());
+      if (convertDateToLocalDate(minDate).isAfter(parameters.dateRange.min)) minDate
+      else SqlDate.valueOf(parameters.dateRange.min)
     maxDate =
-        convertDateToLocalDate(maxDate).isBefore(parameters.getDateRange().getMax())
-            ? maxDate
-            : valueOf(parameters.getDateRange().getMax());
-    randomizers.put(Date.class, new DateRangeRandomizer(minDate, maxDate, seed));
-    randomizers.put(
-        java.sql.Date.class,
-        new SqlDateRangeRandomizer(
-            new java.sql.Date(minDate.getTime()), new java.sql.Date(maxDate.getTime()), seed));
-    randomizers.put(java.sql.Time.class, new SqlTimeRandomizer(seed));
-    randomizers.put(java.sql.Timestamp.class, new SqlTimestampRandomizer(seed));
-    randomizers.put(Calendar.class, new CalendarRandomizer(seed));
-    randomizers.put(URL.class, new UrlRandomizer(seed));
-    randomizers.put(URI.class, new UriRandomizer(seed));
-    randomizers.put(Locale.class, new LocaleRandomizer(seed));
-    randomizers.put(UUID.class, new UUIDRandomizer(seed));
+      if (convertDateToLocalDate(maxDate).isBefore(parameters.dateRange.max)) maxDate
+      else SqlDate.valueOf(parameters.dateRange.max)
+    randomizers[Date::class] = DateRangeRandomizer(minDate, maxDate, seed)
+    randomizers[SqlDate::class] =
+      SqlDateRangeRandomizer(SqlDate(minDate.time), SqlDate(maxDate.time), seed)
+    randomizers[Time::class] = SqlTimeRandomizer(seed)
+    randomizers[Timestamp::class] = SqlTimestampRandomizer(seed)
+    randomizers[Calendar::class] = CalendarRandomizer(seed)
+    randomizers[URL::class] = UrlRandomizer(seed)
+    randomizers[URI::class] = UriRandomizer(seed)
+    randomizers[Locale::class] = LocaleRandomizer(seed)
+    randomizers[UUID::class] = UUIDRandomizer(seed)
     // issue #280: skip fields of type Class
-    randomizers.put(Class.class, new SkipRandomizer());
+    randomizers[Class::class] = SkipRandomizer()
     // issue #7: skip fields of type Exception
-    randomizers.put(Exception.class, new SkipRandomizer());
+    randomizers[Exception::class] = SkipRandomizer()
   }
 
-  @Override
-  public Randomizer<?> getRandomizer(final Field field) {
-    return getRandomizer(field.getType());
+  override fun getRandomizer(field: Field): Randomizer<*>? {
+    return getRandomizer(field.type)
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Randomizer<?> getRandomizer(Class<?> type) {
-    return randomizers.get(type);
+  override fun getRandomizer(type: Class<*>): Randomizer<*>? {
+    return randomizers[type.kotlin]
   }
 }

@@ -21,68 +21,50 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.registry;
+package io.github.krandom.randomizers.registry
 
-import io.github.krandom.FieldPredicates;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.TypePredicates;
-import io.github.krandom.annotation.Exclude;
-import io.github.krandom.annotation.Priority;
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.api.RandomizerRegistry;
-import io.github.krandom.randomizers.misc.SkipRandomizer;
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Predicate;
+import io.github.krandom.FieldPredicates
+import io.github.krandom.KRandomParameters
+import io.github.krandom.TypePredicates
+import io.github.krandom.annotation.Exclude
+import io.github.krandom.annotation.Priority
+import io.github.krandom.api.Randomizer
+import io.github.krandom.api.RandomizerRegistry
+import io.github.krandom.randomizers.misc.SkipRandomizer
+import java.lang.reflect.Field
+import java.util.function.Predicate
 
 /**
- * A {@link RandomizerRegistry} to exclude fields using a {@link Predicate}.
+ * A [RandomizerRegistry] to exclude fields using a [Predicate].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 @Priority(0)
-public class ExclusionRandomizerRegistry implements RandomizerRegistry {
-
-  private Set<Predicate<Field>> fieldPredicates = new HashSet<>();
-  private Set<Predicate<Class<?>>> typePredicates = new HashSet<>();
+class ExclusionRandomizerRegistry : RandomizerRegistry {
+  private val fieldPredicates: MutableSet<Predicate<Field>> = mutableSetOf()
+  private val typePredicates: MutableSet<Predicate<Class<*>>> = mutableSetOf()
 
   /** {@inheritDoc} */
-  @Override
-  public void init(KRandomParameters parameters) {
-    fieldPredicates.add(FieldPredicates.isAnnotatedWith(Exclude.class));
-    typePredicates.add(TypePredicates.isAnnotatedWith(Exclude.class));
+  override fun init(parameters: KRandomParameters) {
+    fieldPredicates.add(FieldPredicates.isAnnotatedWith(Exclude::class.java))
+    typePredicates.add(TypePredicates.isAnnotatedWith(Exclude::class.java))
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Randomizer<?> getRandomizer(Field field) {
-    for (Predicate<Field> fieldPredicate : fieldPredicates) {
-      if (fieldPredicate.test(field)) {
-        return new SkipRandomizer();
-      }
-    }
-    return null;
-  }
+  override fun getRandomizer(field: Field): Randomizer<*>? =
+    if (fieldPredicates.any { it.test(field) }) SkipRandomizer() else null
 
   /** {@inheritDoc} */
-  @Override
-  public Randomizer<?> getRandomizer(Class<?> clazz) {
-    for (Predicate<Class<?>> typePredicate : typePredicates) {
-      if (typePredicate.test(clazz)) {
-        return new SkipRandomizer();
-      }
-    }
-    return null;
-  }
+  override fun getRandomizer(type: Class<*>): Randomizer<*>? =
+    if (typePredicates.any { it.test(type) }) SkipRandomizer() else null
 
   /**
    * Add a field predicate.
    *
    * @param predicate to add
    */
-  public void addFieldPredicate(Predicate<Field> predicate) {
-    fieldPredicates.add(predicate);
+  fun addFieldPredicate(predicate: Predicate<Field>) {
+    fieldPredicates.add(predicate)
   }
 
   /**
@@ -90,7 +72,7 @@ public class ExclusionRandomizerRegistry implements RandomizerRegistry {
    *
    * @param predicate to add
    */
-  public void addTypePredicate(Predicate<Class<?>> predicate) {
-    typePredicates.add(predicate);
+  fun addTypePredicate(predicate: Predicate<Class<*>>) {
+    typePredicates.add(predicate)
   }
 }
