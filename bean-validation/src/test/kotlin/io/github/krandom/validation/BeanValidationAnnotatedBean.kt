@@ -46,7 +46,7 @@ import jakarta.validation.constraints.Size
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Date
 
 @Suppress("ArrayInDataClass")
 internal data class BeanValidationAnnotatedBean(

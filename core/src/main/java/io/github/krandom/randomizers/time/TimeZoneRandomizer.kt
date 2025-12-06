@@ -21,33 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.util.TimeZone;
+import io.github.krandom.randomizers.AbstractRandomizer
+import java.util.TimeZone
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 /**
- * Generate a random {@link TimeZone}.
+ * Generate a random [TimeZone].
  *
  * @author Pascal Schumacher (https://github.com/PascalSchumacher)
  */
-public class TimeZoneRandomizer extends AbstractRandomizer<TimeZone> {
-
-  /** Create a new {@link TimeZoneRandomizer}. */
-  public TimeZoneRandomizer() {}
-
-  /**
-   * Create a new {@link TimeZoneRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public TimeZoneRandomizer(final long seed) {
-    super(seed);
-  }
-
-  @Override
-  public TimeZone getRandomValue() {
-    String[] timeZoneIds = TimeZone.getAvailableIDs();
-    return TimeZone.getTimeZone(timeZoneIds[random.nextInt(timeZoneIds.length)]);
-  }
+class TimeZoneRandomizer
+/**
+ * Create a new [TimeZoneRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<TimeZone>(seed) {
+  override fun getRandomValue(): TimeZone =
+    TimeZone.getTimeZone(TimeZone.getAvailableIDs().random(random.asKotlinRandom()))
 }

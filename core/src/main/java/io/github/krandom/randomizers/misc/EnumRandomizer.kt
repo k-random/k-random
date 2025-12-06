@@ -26,6 +26,7 @@ package io.github.krandom.randomizers.misc
 import io.github.krandom.randomizers.AbstractRandomizer
 import kotlin.random.Random
 import kotlin.random.asKotlinRandom
+import kotlin.reflect.KClass
 
 /**
  * A [io.github.krandom.api.Randomizer] that generates a random value from a given [Enum].
@@ -46,7 +47,7 @@ class EnumRandomizer<E : Enum<E>>
  */
 @SafeVarargs
 @JvmOverloads
-constructor(enumeration: Class<E>, seed: Long = Random.nextLong(), vararg excludedValues: E) :
+constructor(enumeration: KClass<E>, seed: Long = Random.nextLong(), vararg excludedValues: E) :
   AbstractRandomizer<E?>(seed) {
 
   private val enumConstants: List<E>
@@ -63,8 +64,8 @@ constructor(enumeration: Class<E>, seed: Long = Random.nextLong(), vararg exclud
    */
   override fun getRandomValue(): E? = enumConstants.randomOrNull(random.asKotlinRandom())
 
-  private fun checkExcludedValues(enumeration: Class<E>, excludedValues: Array<out E>) {
-    enumeration.enumConstants.asList().let { enums ->
+  private fun checkExcludedValues(enumeration: KClass<E>, excludedValues: Array<out E>) {
+    enumeration.java.enumConstants.asList().let { enums ->
       require(enums.isEmpty() || enums.any { it !in excludedValues.toSet() }) {
         "No enum element available for random picking."
       }
@@ -72,6 +73,6 @@ constructor(enumeration: Class<E>, seed: Long = Random.nextLong(), vararg exclud
   }
 
   @SafeVarargs
-  private fun getFilteredList(enumeration: Class<E>, vararg excludedValues: E) =
-    enumeration.enumConstants.asList().filterNot { it in excludedValues.toSet() }
+  private fun getFilteredList(enumeration: KClass<E>, vararg excludedValues: E) =
+    enumeration.java.enumConstants.asList().filterNot { it in excludedValues.toSet() }
 }

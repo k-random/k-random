@@ -21,48 +21,45 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.misc.EnumRandomizer;
-import java.time.Month;
-import java.time.Period;
-import java.time.Year;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.misc.EnumRandomizer
+import java.time.Month
+import java.time.Period
 
 /**
- * A {@link Randomizer} that generates random {@link Period}.
+ * A [Randomizer] that generates random [Period].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class PeriodRandomizer implements Randomizer<Period> {
+class PeriodRandomizer : Randomizer<Period?> {
+  private val yearRandomizer: YearRandomizer
+  private val monthRandomizer: EnumRandomizer<Month>
+  private val dayRandomizer: DayRandomizer
 
-  private final YearRandomizer yearRandomizer;
-  private final EnumRandomizer<Month> monthRandomizer;
-  private final DayRandomizer dayRandomizer;
-
-  /** Create a new {@link PeriodRandomizer}. */
-  public PeriodRandomizer() {
-    yearRandomizer = new YearRandomizer();
-    monthRandomizer = new EnumRandomizer<>(Month.class);
-    dayRandomizer = new DayRandomizer();
+  /** Create a new [PeriodRandomizer]. */
+  constructor() {
+    yearRandomizer = YearRandomizer()
+    monthRandomizer = EnumRandomizer(Month::class)
+    dayRandomizer = DayRandomizer()
   }
 
   /**
-   * Create a new {@link PeriodRandomizer}.
+   * Create a new [PeriodRandomizer].
    *
    * @param seed initial seed
    */
-  public PeriodRandomizer(final long seed) {
-    yearRandomizer = new YearRandomizer(seed);
-    monthRandomizer = new EnumRandomizer<>(Month.class, seed);
-    dayRandomizer = new DayRandomizer(seed);
+  constructor(seed: Long) {
+    yearRandomizer = YearRandomizer(seed)
+    monthRandomizer = EnumRandomizer(Month::class, seed)
+    dayRandomizer = DayRandomizer(seed)
   }
 
-  @Override
-  public Period getRandomValue() {
-    Year randomYear = yearRandomizer.getRandomValue();
-    Month randomMonth = monthRandomizer.getRandomValue();
-    int randomDay = dayRandomizer.getRandomValue();
-    return Period.of(randomYear.getValue(), randomMonth.getValue(), randomDay);
+  override fun getRandomValue(): Period {
+    val randomYear = yearRandomizer.getRandomValue()
+    val randomMonth = monthRandomizer.getRandomValue()
+    val randomDay = dayRandomizer.getRandomValue()
+    return Period.of(randomYear.value, randomMonth!!.value, randomDay)
   }
 }

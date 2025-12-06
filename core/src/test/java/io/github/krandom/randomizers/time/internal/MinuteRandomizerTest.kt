@@ -21,44 +21,40 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time.internal;
+package io.github.krandom.randomizers.time.internal
 
-import static io.github.krandom.randomizers.time.MinuteRandomizer.MAX_MINUTE;
-import static io.github.krandom.randomizers.time.MinuteRandomizer.MIN_MINUTE;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.github.krandom.randomizers.time.MinuteRandomizer
+import io.github.krandom.randomizers.time.MinuteRandomizer.Companion.MINUTE_RANGE
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.matchers.ints.shouldBeInRange
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import io.github.krandom.randomizers.time.MinuteRandomizer;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class MinuteRandomizerTest extends AbstractRandomizerTest<Integer> {
-
+internal class MinuteRandomizerTest : AbstractRandomizerTest<Int>() {
   @BeforeEach
-  void setUp() {
-    randomizer = new MinuteRandomizer();
+  fun setUp() {
+    randomizer = MinuteRandomizer()
   }
 
   @Test
-  void generatedValueShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `should not throw exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void generatedValueShouldBeWithinRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(MIN_MINUTE, MAX_MINUTE);
+  fun `generated value should be within range`() {
+    randomizer.getRandomValue() shouldBeInRange MINUTE_RANGE
   }
 
   @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    // Given
-    randomizer = new MinuteRandomizer(SEED);
-    Integer expected = 42;
+  fun `should generate the same value for the same seed`() {
+    randomizer = MinuteRandomizer(SEED)
+    val expected = 42
 
-    // When
-    Integer actual = randomizer.getRandomValue();
+    val actual = randomizer.getRandomValue()
 
-    // Then
-    assertThat(actual).isEqualTo(expected);
+    actual shouldBe expected
   }
 }

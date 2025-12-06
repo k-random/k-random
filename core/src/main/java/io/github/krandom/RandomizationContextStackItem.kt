@@ -21,39 +21,13 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Field
 
 /**
- * Context object holding the data of a recursion step in {@link KRandom#nextObject(Class)}.
+ * Context object holding the data of a recursion step in [KRandom.nextObject].
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-class RandomizationContextStackItem {
-
-  private Object object;
-
-  private Field field;
-
-  RandomizationContextStackItem(final Object object, final Field field) {
-    this.object = object;
-    this.field = field;
-  }
-
-  public Object getObject() {
-    return object;
-  }
-
-  public void setObject(Object object) {
-    this.object = object;
-  }
-
-  public Field getField() {
-    return field;
-  }
-
-  public void setField(Field field) {
-    this.field = field;
-  }
-}
+internal data class RandomizationContextStackItem(val any: Any, val field: Field)

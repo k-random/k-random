@@ -21,38 +21,28 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import java.time.Instant;
-import java.util.Date;
+import io.github.krandom.api.Randomizer
+import java.time.Instant
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates random {@link Instant}.
+ * A [Randomizer] that generates random [Instant].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class InstantRandomizer implements Randomizer<Instant> {
-
-  private final DateRandomizer dateRandomizer;
-
-  /** Create a new {@link InstantRandomizer}. */
-  public InstantRandomizer() {
-    dateRandomizer = new DateRandomizer();
-  }
-
-  /**
-   * Create a new {@link InstantRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public InstantRandomizer(final long seed) {
-    dateRandomizer = new DateRandomizer(seed);
-  }
-
-  @Override
-  public Instant getRandomValue() {
-    Date randomDate = dateRandomizer.getRandomValue();
-    return Instant.ofEpochMilli(randomDate.getTime());
-  }
+class InstantRandomizer
+/**
+ * Create a new [InstantRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val dateRandomizer: DateRandomizer = DateRandomizer(seed),
+) : Randomizer<Instant> {
+  override fun getRandomValue(): Instant =
+    Instant.ofEpochMilli(dateRandomizer.getRandomValue().time)
 }

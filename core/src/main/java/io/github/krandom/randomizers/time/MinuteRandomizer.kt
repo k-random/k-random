@@ -21,34 +21,34 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates a random minute value between {@link
- * MinuteRandomizer#MIN_MINUTE} and {@link MinuteRandomizer#MAX_MINUTE}.
+ * A [Randomizer] that generates a random minute value in range [MINUTE_RANGE]
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class MinuteRandomizer implements Randomizer<Integer> {
-
-  public static final int MIN_MINUTE = 0;
-  public static final int MAX_MINUTE = 59;
-
-  private final IntegerRangeRandomizer minuteRandomizer;
-
-  public MinuteRandomizer() {
-    minuteRandomizer = new IntegerRangeRandomizer(MIN_MINUTE, MAX_MINUTE);
+class MinuteRandomizer
+/**
+ * Generates a random minute value.
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val delegate: IntegerRangeRandomizer =
+    IntegerRangeRandomizer(MINUTE_RANGE.first, MINUTE_RANGE.last, seed),
+) : Randomizer<Int> {
+  override fun getRandomValue(): Int {
+    return delegate.getRandomValue()
   }
 
-  public MinuteRandomizer(final long seed) {
-    minuteRandomizer = new IntegerRangeRandomizer(MIN_MINUTE, MAX_MINUTE, seed);
-  }
-
-  @Override
-  public Integer getRandomValue() {
-    return minuteRandomizer.getRandomValue();
+  companion object {
+    val MINUTE_RANGE = 0..59
   }
 }

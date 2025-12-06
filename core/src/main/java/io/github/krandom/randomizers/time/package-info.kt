@@ -22,4 +22,4 @@
  *   THE SOFTWARE.
  */
 /** This package contains randomizers for date and time types. */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time

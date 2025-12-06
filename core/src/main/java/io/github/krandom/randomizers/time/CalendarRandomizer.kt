@@ -21,38 +21,28 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import java.util.Calendar;
+import io.github.krandom.api.Randomizer
+import java.util.Calendar
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Calendar}.
+ * Generate a random [Calendar].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class CalendarRandomizer implements Randomizer<Calendar> {
-
-  private final DateRandomizer delegate;
-
-  /** Create a new {@link CalendarRandomizer}. */
-  public CalendarRandomizer() {
-    delegate = new DateRandomizer();
-  }
-
-  /**
-   * Create a new {@link CalendarRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public CalendarRandomizer(final long seed) {
-    delegate = new DateRandomizer(seed);
-  }
-
-  @Override
-  public Calendar getRandomValue() {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(delegate.getRandomValue());
-    return calendar;
-  }
+class CalendarRandomizer
+/**
+ * Create a new [CalendarRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val delegate: DateRandomizer = DateRandomizer(seed),
+) : Randomizer<Calendar> {
+  override fun getRandomValue(): Calendar =
+    Calendar.getInstance().apply { setTime(delegate.getRandomValue()) }
 }

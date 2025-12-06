@@ -38,13 +38,14 @@ import io.github.krandom.randomizers.range.YearRangeRandomizer
 import io.github.krandom.randomizers.range.ZonedDateTimeRangeRandomizer
 import io.github.krandom.randomizers.time.DurationRandomizer
 import io.github.krandom.randomizers.time.GregorianCalendarRandomizer
+import io.github.krandom.randomizers.time.JavaDurationRandomizer
 import io.github.krandom.randomizers.time.MonthDayRandomizer
 import io.github.krandom.randomizers.time.PeriodRandomizer
 import io.github.krandom.randomizers.time.TimeZoneRandomizer
 import io.github.krandom.randomizers.time.ZoneIdRandomizer
 import io.github.krandom.randomizers.time.ZoneOffsetRandomizer
 import java.lang.reflect.Field
-import java.time.Duration
+import java.time.Duration as JavaDuration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -61,6 +62,7 @@ import java.time.ZonedDateTime
 import java.util.GregorianCalendar
 import java.util.TimeZone
 import kotlin.reflect.KClass
+import kotlin.time.Duration
 
 private const val PRIORITY = -3
 
@@ -79,53 +81,58 @@ class TimeRandomizerRegistry : RandomizerRegistry {
     val maxDate = parameters.dateRange.max
     val minTime = parameters.timeRange.min
     val maxTime = parameters.timeRange.max
-    randomizers[Duration::class] = DurationRandomizer(seed)
-    randomizers[GregorianCalendar::class] = GregorianCalendarRandomizer(seed)
-    randomizers[Instant::class] =
+    val instantRangeRandomizer =
       InstantRangeRandomizer(
         minDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
         maxDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
         seed,
       )
-    randomizers[LocalDate::class] = LocalDateRangeRandomizer(minDate, maxDate, seed)
-    randomizers[LocalDateTime::class] =
+    val localDateTimeRangeRandomizer =
       LocalDateTimeRangeRandomizer(
         LocalDateTime.of(minDate, minTime),
         LocalDateTime.of(maxDate, maxTime),
         seed,
       )
-    randomizers[LocalTime::class] = LocalTimeRangeRandomizer(minTime, maxTime, seed)
-    randomizers[MonthDay::class] = MonthDayRandomizer(seed)
-    randomizers[OffsetDateTime::class] =
+    val offsetDateTimeRangeRandomizer =
       OffsetDateTimeRangeRandomizer(
         toOffsetDateTime(minDate, minTime),
         toOffsetDateTime(maxDate, maxTime),
         seed,
       )
-    randomizers[OffsetTime::class] =
+    val offsetTimeRangeRandomizer =
       OffsetTimeRangeRandomizer(
         minTime.atOffset(OffsetDateTime.now().offset),
         maxTime.atOffset(OffsetDateTime.now().offset),
         seed,
       )
-    randomizers[Period::class] = PeriodRandomizer(seed)
-    randomizers[TimeZone::class] = TimeZoneRandomizer(seed)
-    randomizers[YearMonth::class] =
+    val yearMonthRangeRandomizer =
       YearMonthRangeRandomizer(
         YearMonth.of(minDate.year, minDate.month),
         YearMonth.of(maxDate.year, maxDate.month),
         seed,
       )
-    randomizers[Year::class] =
+    val yearRangeRandomizer =
       YearRangeRandomizer(Year.of(minDate.year), Year.of(maxDate.year), seed)
-    randomizers[ZonedDateTime::class] =
+    val zonedDateTimeRangeRandomizer =
       ZonedDateTimeRangeRandomizer(
         toZonedDateTime(minDate, minTime),
         toZonedDateTime(maxDate, maxTime),
         seed,
       )
-    randomizers[ZoneOffset::class] = ZoneOffsetRandomizer(seed)
-    randomizers[ZoneId::class] = ZoneIdRandomizer(seed)
+    registerTimeRandomizers(
+      seed,
+      instantRangeRandomizer,
+      minDate,
+      maxDate,
+      localDateTimeRangeRandomizer,
+      minTime,
+      maxTime,
+      offsetDateTimeRangeRandomizer,
+      offsetTimeRangeRandomizer,
+      yearMonthRangeRandomizer,
+      yearRangeRandomizer,
+      zonedDateTimeRangeRandomizer,
+    )
   }
 
   override fun getRandomizer(field: Field): Randomizer<*>? {
@@ -133,7 +140,43 @@ class TimeRandomizerRegistry : RandomizerRegistry {
   }
 
   override fun getRandomizer(type: Class<*>): Randomizer<*>? {
-    return randomizers.get(type.kotlin)
+    return randomizers[type.kotlin]
+  }
+
+  @Suppress("LongParameterList")
+  private fun registerTimeRandomizers(
+    seed: Long,
+    instantRangeRandomizer: InstantRangeRandomizer,
+    minDate: LocalDate?,
+    maxDate: LocalDate?,
+    localDateTimeRangeRandomizer: LocalDateTimeRangeRandomizer,
+    minTime: LocalTime?,
+    maxTime: LocalTime?,
+    offsetDateTimeRangeRandomizer: OffsetDateTimeRangeRandomizer,
+    offsetTimeRangeRandomizer: OffsetTimeRangeRandomizer,
+    yearMonthRangeRandomizer: YearMonthRangeRandomizer,
+    yearRangeRandomizer: YearRangeRandomizer,
+    zonedDateTimeRangeRandomizer: ZonedDateTimeRangeRandomizer,
+  ) {
+    // keep-sorted start
+    randomizers[Duration::class] = DurationRandomizer(seed)
+    randomizers[GregorianCalendar::class] = GregorianCalendarRandomizer(seed)
+    randomizers[Instant::class] = instantRangeRandomizer
+    randomizers[JavaDuration::class] = JavaDurationRandomizer(seed)
+    randomizers[LocalDate::class] = LocalDateRangeRandomizer(minDate, maxDate, seed)
+    randomizers[LocalDateTime::class] = localDateTimeRangeRandomizer
+    randomizers[LocalTime::class] = LocalTimeRangeRandomizer(minTime, maxTime, seed)
+    randomizers[MonthDay::class] = MonthDayRandomizer(seed)
+    randomizers[OffsetDateTime::class] = offsetDateTimeRangeRandomizer
+    randomizers[OffsetTime::class] = offsetTimeRangeRandomizer
+    randomizers[Period::class] = PeriodRandomizer(seed)
+    randomizers[TimeZone::class] = TimeZoneRandomizer(seed)
+    randomizers[Year::class] = yearRangeRandomizer
+    randomizers[YearMonth::class] = yearMonthRangeRandomizer
+    randomizers[ZoneId::class] = ZoneIdRandomizer(seed)
+    randomizers[ZoneOffset::class] = ZoneOffsetRandomizer(seed)
+    randomizers[ZonedDateTime::class] = zonedDateTimeRangeRandomizer
+    // keep-sorted end
   }
 
   companion object {

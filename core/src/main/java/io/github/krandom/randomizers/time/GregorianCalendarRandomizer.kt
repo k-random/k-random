@@ -21,35 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.number.LongRandomizer;
-import java.util.GregorianCalendar;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.number.LongRandomizer
+import java.util.GregorianCalendar
+import kotlin.math.abs
+import kotlin.random.Random
 
-/** Generate a random {@link GregorianCalendarRandomizer}. */
-public class GregorianCalendarRandomizer implements Randomizer<GregorianCalendar> {
-
-  private final LongRandomizer delegate;
-
-  /** Create a new {@link GregorianCalendarRandomizer}. */
-  public GregorianCalendarRandomizer() {
-    delegate = new LongRandomizer();
-  }
-
-  /**
-   * Create a new {@link GregorianCalendarRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public GregorianCalendarRandomizer(final long seed) {
-    delegate = new LongRandomizer(seed);
-  }
-
-  @Override
-  public GregorianCalendar getRandomValue() {
-    GregorianCalendar gregorianCalendar = new GregorianCalendar();
-    gregorianCalendar.setTimeInMillis(Math.abs(delegate.getRandomValue()));
-    return gregorianCalendar;
-  }
+/** Generate a random [GregorianCalendarRandomizer]. */
+class GregorianCalendarRandomizer
+/**
+ * Create a new [GregorianCalendarRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val delegate: LongRandomizer = LongRandomizer(seed),
+) : Randomizer<GregorianCalendar> {
+  override fun getRandomValue() =
+    GregorianCalendar().apply { timeInMillis = abs(delegate.getRandomValue()) }
 }

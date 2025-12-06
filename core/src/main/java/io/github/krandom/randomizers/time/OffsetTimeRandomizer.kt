@@ -21,51 +21,31 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import java.time.LocalTime;
-import java.time.OffsetTime;
-import java.time.ZoneOffset;
+import io.github.krandom.api.Randomizer
+import java.time.OffsetTime
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates random {@link OffsetTime}.
+ * A [Randomizer] that generates random [OffsetTime].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class OffsetTimeRandomizer implements Randomizer<OffsetTime> {
-
-  private LocalTimeRandomizer localTimeRandomizer;
-  private ZoneOffsetRandomizer zoneOffsetRandomizer;
-
-  /** Create a new {@link OffsetTimeRandomizer}. */
-  public OffsetTimeRandomizer() {
-    localTimeRandomizer = new LocalTimeRandomizer();
-    zoneOffsetRandomizer = new ZoneOffsetRandomizer();
-  }
-
-  /**
-   * Create a new {@link OffsetTimeRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public OffsetTimeRandomizer(final long seed) {
-    localTimeRandomizer = new LocalTimeRandomizer(seed);
-    zoneOffsetRandomizer = new ZoneOffsetRandomizer(seed);
-  }
-
-  @Override
-  public OffsetTime getRandomValue() {
-    LocalTime randomLocalTime = localTimeRandomizer.getRandomValue();
-    ZoneOffset randomZoneOffset = zoneOffsetRandomizer.getRandomValue();
-    return OffsetTime.of(randomLocalTime, randomZoneOffset);
-  }
-
-  public void setLocalTimeRandomizer(final LocalTimeRandomizer localTimeRandomizer) {
-    this.localTimeRandomizer = localTimeRandomizer;
-  }
-
-  public void setZoneOffsetRandomizer(final ZoneOffsetRandomizer zoneOffsetRandomizer) {
-    this.zoneOffsetRandomizer = zoneOffsetRandomizer;
-  }
+class OffsetTimeRandomizer
+/**
+ * Create a new [OffsetTimeRandomizer].
+ *
+ * @param seed initial seed
+ * @param localTimeRandomizer [Randomizer] for [java.time.LocalTime]
+ * @param zoneOffsetRandomizer [Randomizer] for [java.time.ZoneOffset]
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val localTimeRandomizer: LocalTimeRandomizer = LocalTimeRandomizer(seed),
+  private val zoneOffsetRandomizer: ZoneOffsetRandomizer = ZoneOffsetRandomizer(seed),
+) : Randomizer<OffsetTime> {
+  override fun getRandomValue(): OffsetTime =
+    OffsetTime.of(localTimeRandomizer.getRandomValue(), zoneOffsetRandomizer.getRandomValue())
 }

@@ -21,34 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates a random hour value between {@link HourRandomizer#MIN_HOUR}
- * and {@link HourRandomizer#MAX_HOUR}.
+ * A [Randomizer] that generates a random hour value between in range [HOUR_RANGE].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class HourRandomizer implements Randomizer<Integer> {
+class HourRandomizer
+/**
+ * Creates a new [HourRandomizer].
+ *
+ * @param seed the seed to use
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val integerRangeRandomizer: IntegerRangeRandomizer =
+    IntegerRangeRandomizer(HOUR_RANGE.first, HOUR_RANGE.last, seed),
+) : Randomizer<Int> {
+  override fun getRandomValue(): Int = integerRangeRandomizer.getRandomValue()
 
-  public static final int MIN_HOUR = 0;
-  public static final int MAX_HOUR = 23;
-
-  private final IntegerRangeRandomizer hourRandomizer;
-
-  public HourRandomizer() {
-    hourRandomizer = new IntegerRangeRandomizer(MIN_HOUR, MAX_HOUR);
-  }
-
-  public HourRandomizer(final long seed) {
-    hourRandomizer = new IntegerRangeRandomizer(MIN_HOUR, MAX_HOUR, seed);
-  }
-
-  @Override
-  public Integer getRandomValue() {
-    return hourRandomizer.getRandomValue();
+  companion object {
+    val HOUR_RANGE = 0..23
   }
 }

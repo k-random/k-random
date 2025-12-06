@@ -21,36 +21,29 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import java.sql.Timestamp;
+import io.github.krandom.api.Randomizer
+import java.sql.Timestamp as SqlTimestamp
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Timestamp}.
+ * Generate a random [SqlTimestamp].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class SqlTimestampRandomizer implements Randomizer<Timestamp> {
+class SqlTimestampRandomizer
+/**
+ * Create a new [SqlTimestampRandomizer].
+ *
+ * @param seed initial seed
+ * @param delegate date [Randomizer]
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val delegate: DateRandomizer = DateRandomizer(seed),
+) : Randomizer<SqlTimestamp> {
 
-  private final DateRandomizer delegate;
-
-  /** Create a new {@link SqlTimestampRandomizer}. */
-  public SqlTimestampRandomizer() {
-    delegate = new DateRandomizer();
-  }
-
-  /**
-   * Create a new {@link SqlTimestampRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public SqlTimestampRandomizer(final long seed) {
-    delegate = new DateRandomizer(seed);
-  }
-
-  @Override
-  public Timestamp getRandomValue() {
-    return new Timestamp(delegate.getRandomValue().getTime());
-  }
+  override fun getRandomValue(): SqlTimestamp = SqlTimestamp(delegate.getRandomValue().time)
 }

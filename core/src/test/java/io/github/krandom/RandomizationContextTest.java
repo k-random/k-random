@@ -103,7 +103,7 @@ public class RandomizationContextTest {
   void stackedFieldNamesShouldBeCorrectlyEncoded() throws NoSuchFieldException {
     // Given
     Field address = Person.class.getDeclaredField("address");
-    randomizationContext.pushStackItem(new RandomizationContextStackItem(null, address));
+    randomizationContext.pushStackItem(new RandomizationContextStackItem(Void.class, address));
     Field street = Address.class.getDeclaredField("street");
 
     // When

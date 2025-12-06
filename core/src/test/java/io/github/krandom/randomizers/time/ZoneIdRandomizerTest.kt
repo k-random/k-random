@@ -21,36 +21,31 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.matchers.shouldBe
+import java.time.ZoneId
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.time.ZoneId;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class ZoneIdRandomizerTest extends AbstractRandomizerTest<ZoneId> {
-
+internal class ZoneIdRandomizerTest : AbstractRandomizerTest<ZoneId>() {
   @BeforeEach
-  void setUp() {
-    randomizer = new ZoneIdRandomizer(SEED);
+  fun setUp() {
+    randomizer = ZoneIdRandomizer(SEED)
   }
 
   @Test
-  void generatedValueShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `should not throw exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    // we cannot use a canned value, because values returned by the randomizer differ between
-    // locales/jdks
-    ZoneId firstZoneId = new ZoneIdRandomizer(SEED).getRandomValue();
-    ZoneId secondZoneId = new ZoneIdRandomizer(SEED).getRandomValue();
+  fun shouldGenerateTheSameValueForTheSameSeed() {
+    val firstZoneId = ZoneIdRandomizer(SEED).getRandomValue()
+    val secondZoneId = ZoneIdRandomizer(SEED).getRandomValue()
 
-    assertThat(firstZoneId).isNotNull();
-    assertThat(secondZoneId).isNotNull();
-    assertThat(firstZoneId).isEqualTo(secondZoneId);
+    firstZoneId shouldBe secondZoneId
   }
 }

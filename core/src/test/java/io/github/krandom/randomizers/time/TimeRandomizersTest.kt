@@ -21,159 +21,153 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import static java.time.LocalDateTime.of;
-import static java.time.ZoneOffset.ofTotalSeconds;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.BDDAssertions.then;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import java.sql.Date as SqlDate
+import java.sql.Time
+import java.sql.Timestamp
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Month.MARCH
+import java.time.MonthDay
+import java.time.OffsetDateTime
+import java.time.OffsetTime
+import java.time.Period
+import java.time.Year
+import java.time.YearMonth
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
+import java.time.temporal.ChronoUnit.HOURS
+import java.time.temporal.ChronoUnit.MILLIS
+import java.time.temporal.ChronoUnit.MINUTES
+import java.util.Calendar
+import java.util.Date
+import java.util.GregorianCalendar
+import kotlin.time.toKotlinDuration
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.MethodSource
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.MonthDay;
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
-import java.time.Period;
-import java.time.Year;
-import java.time.YearMonth;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-class TimeRandomizersTest extends AbstractRandomizerTest<Randomizer<?>> {
-
-  static Object[] generateRandomizers() {
-    return new Object[] {
-      new DurationRandomizer(),
-      new LocalDateRandomizer(),
-      new MonthDayRandomizer(),
-      new LocalTimeRandomizer(),
-      new PeriodRandomizer(),
-      new YearRandomizer(),
-      new YearMonthRandomizer(),
-      new ZoneOffsetRandomizer(),
-      new CalendarRandomizer(),
-      new DateRandomizer(),
-      new GregorianCalendarRandomizer(),
-      new InstantRandomizer(),
-      new LocalDateTimeRandomizer(),
-      new OffsetDateTimeRandomizer(),
-      new OffsetTimeRandomizer(),
-      new SqlDateRandomizer(),
-      new SqlTimeRandomizer(),
-      new SqlTimestampRandomizer()
-    };
-  }
-
+internal class TimeRandomizersTest : AbstractRandomizerTest<Randomizer<*>>() {
   @ParameterizedTest
   @MethodSource("generateRandomizers")
-  void generatedTimeShouldNotBeNull(Randomizer<?> randomizer) {
+  fun `generated time should not be null`(randomizer: Randomizer<*>) {
     // when
-    Object randomNumber = randomizer.getRandomValue();
+    val randomTime: Any? = randomizer.getRandomValue()
 
-    then(randomNumber).isNotNull();
-  }
-
-  static Object[][] generateSeededRandomizersAndTheirExpectedValues() {
-    Calendar expectedCalendar = Calendar.getInstance();
-    expectedCalendar.setTime(new Date(1718736844570L));
-
-    GregorianCalendar expectedGregorianCalendar = new GregorianCalendar();
-    expectedGregorianCalendar.setTimeInMillis(5106534569952410475L);
-
-    return new Object[][] {
-      {new DurationRandomizer(SEED), Duration.of(72L, ChronoUnit.HOURS)},
-      {new DurationRandomizer(SEED, ChronoUnit.MINUTES), Duration.of(72L, ChronoUnit.MINUTES)},
-      {new DurationRandomizer(SEED, ChronoUnit.MILLIS), Duration.of(72L, ChronoUnit.MILLIS)},
-      {new LocalDateRandomizer(SEED), LocalDate.of(2024, Month.MARCH, 20)},
-      {new MonthDayRandomizer(SEED), MonthDay.of(Month.MARCH, 20)},
-      {new LocalTimeRandomizer(SEED), LocalTime.of(16, 42, 58, 723174202)},
-      {new PeriodRandomizer(SEED), Period.of(2024, 3, 20)},
-      {new YearRandomizer(SEED), Year.of(2024)},
-      {new YearMonthRandomizer(SEED), YearMonth.of(2024, Month.MARCH)},
-      {new ZoneOffsetRandomizer(SEED), ZoneOffset.ofTotalSeconds(28923)},
-      {new CalendarRandomizer(SEED), expectedCalendar},
-      {new DateRandomizer(SEED), new Date(1718736844570L)},
-      {new GregorianCalendarRandomizer(SEED), expectedGregorianCalendar},
-      {new InstantRandomizer(SEED), Instant.ofEpochSecond(1718736844L, 570000000)},
-      {
-        new LocalDateTimeRandomizer(SEED),
-        LocalDateTime.of(2024, Month.MARCH, 20, 16, 42, 58, 723174202)
-      },
-      {
-        new OffsetDateTimeRandomizer(SEED),
-        OffsetDateTime.of(of(2024, Month.MARCH, 20, 16, 42, 58, 723174202), ofTotalSeconds(28923))
-      },
-      {
-        new OffsetTimeRandomizer(SEED),
-        OffsetTime.of(LocalTime.of(16, 42, 58, 723174202), ofTotalSeconds(28923))
-      },
-      {new SqlDateRandomizer(SEED), new java.sql.Date(1718736844570L)},
-      {new SqlTimeRandomizer(SEED), new Time(1718736844570L)},
-      {new SqlTimestampRandomizer(SEED), new Timestamp(1718736844570L)}
-    };
+    randomTime.shouldNotBeNull()
   }
 
   @ParameterizedTest
   @MethodSource("generateSeededRandomizersAndTheirExpectedValues")
-  void shouldGenerateTheSameValueForTheSameSeed(Randomizer<?> randomizer, Object expected) {
+  fun `should generate the same value for the same seed`(
+    randomizer: Randomizer<*>,
+    expected: Any?,
+  ) {
     // when
-    Object actual = randomizer.getRandomValue();
+    val actual: Any? = randomizer.getRandomValue()
 
-    then(actual).isEqualTo(expected);
+    actual shouldBe expected
   }
 
-  @Test
-  void shouldAllowToCreateDurationRandomizerWithSuitableTemporalUnits() {
-    assertThat(new DurationRandomizer(ChronoUnit.NANOS).getRandomValue())
-        .isGreaterThanOrEqualTo(Duration.ZERO);
-    assertThat(new DurationRandomizer(ChronoUnit.MICROS).getRandomValue())
-        .isGreaterThanOrEqualTo(Duration.ZERO);
-    assertThat(new DurationRandomizer(ChronoUnit.MILLIS).getRandomValue())
-        .isGreaterThanOrEqualTo(Duration.ZERO);
-    assertThat(new DurationRandomizer(ChronoUnit.SECONDS).getRandomValue())
-        .isGreaterThanOrEqualTo(Duration.ZERO);
-    assertThat(new DurationRandomizer(ChronoUnit.MINUTES).getRandomValue())
-        .isGreaterThanOrEqualTo(Duration.ZERO);
-    assertThat(new DurationRandomizer(ChronoUnit.HOURS).getRandomValue())
-        .isGreaterThanOrEqualTo(Duration.ZERO);
-    assertThat(new DurationRandomizer(ChronoUnit.HALF_DAYS).getRandomValue())
-        .isGreaterThanOrEqualTo(Duration.ZERO);
-    assertThat(new DurationRandomizer(ChronoUnit.DAYS).getRandomValue())
-        .isGreaterThanOrEqualTo(Duration.ZERO);
+  @ParameterizedTest
+  @EnumSource(
+    value = ChronoUnit::class,
+    names = ["NANOS", "MICROS", "MILLIS", "SECONDS", "MINUTES", "HOURS", "HALF_DAYS", "DAYS"],
+  )
+  fun `should allow to create duration randomizer with suitable temporal units`(unit: ChronoUnit) {
+    val randomizer = JavaDurationRandomizer(unit = unit)
+
+    val randomDuration = randomizer.getRandomValue()
+
+    randomDuration shouldBeGreaterThanOrEqualTo Duration.ZERO
   }
 
-  @Test
-  void shouldDisallowToCreateDurationRandomizerWithEstimatedTemporalUnits() {
-    assertThatThrownBy(() -> new DurationRandomizer(ChronoUnit.WEEKS))
-        .isInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> new DurationRandomizer(ChronoUnit.MONTHS))
-        .isInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> new DurationRandomizer(ChronoUnit.YEARS))
-        .isInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> new DurationRandomizer(ChronoUnit.DECADES))
-        .isInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> new DurationRandomizer(ChronoUnit.CENTURIES))
-        .isInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> new DurationRandomizer(ChronoUnit.MILLENNIA))
-        .isInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> new DurationRandomizer(ChronoUnit.ERAS))
-        .isInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> new DurationRandomizer(ChronoUnit.FOREVER))
-        .isInstanceOf(IllegalArgumentException.class);
+  @ParameterizedTest
+  @EnumSource(
+    value = ChronoUnit::class,
+    names = ["WEEKS", "MONTHS", "YEARS", "DECADES", "CENTURIES", "MILLENNIA", "ERAS", "FOREVER"],
+  )
+  fun `should disallow to create duration randomizer with estimated temporal units`(
+    unit: ChronoUnit
+  ) {
+    shouldThrow<IllegalArgumentException> { JavaDurationRandomizer(unit = unit) }
+  }
+
+  companion object {
+    @JvmStatic
+    fun generateRandomizers() =
+      listOf(
+        // keep-sorted start
+        Arguments.of(CalendarRandomizer()),
+        Arguments.of(DateRandomizer()),
+        Arguments.of(DurationRandomizer()),
+        Arguments.of(GregorianCalendarRandomizer()),
+        Arguments.of(InstantRandomizer()),
+        Arguments.of(JavaDurationRandomizer()),
+        Arguments.of(LocalDateRandomizer()),
+        Arguments.of(LocalDateTimeRandomizer()),
+        Arguments.of(LocalTimeRandomizer()),
+        Arguments.of(MonthDayRandomizer()),
+        Arguments.of(OffsetDateTimeRandomizer()),
+        Arguments.of(OffsetTimeRandomizer()),
+        Arguments.of(PeriodRandomizer()),
+        Arguments.of(SqlDateRandomizer()),
+        Arguments.of(SqlTimeRandomizer()),
+        Arguments.of(SqlTimestampRandomizer()),
+        Arguments.of(YearMonthRandomizer()),
+        Arguments.of(YearRandomizer()),
+        Arguments.of(ZoneOffsetRandomizer()),
+        // keep-sorted end
+      )
+
+    @JvmStatic
+    fun generateSeededRandomizersAndTheirExpectedValues(): List<Arguments> {
+      val date = 1718736844570L
+      val nanoOfSecond = 723174202
+      val inMillis = 5106534569952410475L
+      val epochSecond = 1718736844L
+      val nanoAdjustment = 570000000L
+      val localDateTime = LocalDateTime.of(2024, MARCH, 20, 16, 42, 58, nanoOfSecond)
+      val offsetDateTime = OffsetDateTime.of(localDateTime, ZoneOffset.ofTotalSeconds(28923))
+      val offsetTime =
+        OffsetTime.of(LocalTime.of(16, 42, 58, nanoOfSecond), ZoneOffset.ofTotalSeconds(28923))
+      val gregorianCalendar = GregorianCalendar().apply { timeInMillis = inMillis }
+      return listOf(
+        // keep-sorted start
+        Arguments.of(CalendarRandomizer(SEED), Calendar.getInstance().apply { time = Date(date) }),
+        Arguments.of(DateRandomizer(SEED), Date(date)),
+        Arguments.of(DurationRandomizer(SEED), Duration.of(72L, HOURS).toKotlinDuration()),
+        Arguments.of(GregorianCalendarRandomizer(SEED), gregorianCalendar),
+        Arguments.of(InstantRandomizer(SEED), Instant.ofEpochSecond(epochSecond, nanoAdjustment)),
+        Arguments.of(JavaDurationRandomizer(SEED), Duration.of(72L, HOURS)),
+        Arguments.of(JavaDurationRandomizer(SEED, MILLIS), Duration.of(72L, MILLIS)),
+        Arguments.of(JavaDurationRandomizer(SEED, MINUTES), Duration.of(72L, MINUTES)),
+        Arguments.of(LocalDateRandomizer(SEED), LocalDate.of(2024, MARCH, 20)),
+        Arguments.of(LocalDateTimeRandomizer(SEED), localDateTime),
+        Arguments.of(LocalTimeRandomizer(SEED), LocalTime.of(16, 42, 58, nanoOfSecond)),
+        Arguments.of(MonthDayRandomizer(SEED), MonthDay.of(MARCH, 20)),
+        Arguments.of(OffsetDateTimeRandomizer(SEED), offsetDateTime),
+        Arguments.of(OffsetTimeRandomizer(SEED), offsetTime),
+        Arguments.of(PeriodRandomizer(SEED), Period.of(2024, 3, 20)),
+        Arguments.of(SqlDateRandomizer(SEED), SqlDate(date)),
+        Arguments.of(SqlTimeRandomizer(SEED), Time(date)),
+        Arguments.of(SqlTimestampRandomizer(SEED), Timestamp(date)),
+        Arguments.of(YearMonthRandomizer(SEED), YearMonth.of(2024, MARCH)),
+        Arguments.of(YearRandomizer(SEED), Year.of(2024)),
+        Arguments.of(ZoneOffsetRandomizer(SEED), ZoneOffset.ofTotalSeconds(28923)),
+        // keep-sorted end
+      )
+    }
   }
 }

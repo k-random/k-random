@@ -21,48 +21,36 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.misc.EnumRandomizer;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.misc.EnumRandomizer
+import java.time.LocalDate
+import java.time.Month
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates random {@link LocalDate}.
+ * A [Randomizer] that generates random [LocalDate].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class LocalDateRandomizer implements Randomizer<LocalDate> {
-
-  private final YearRandomizer yearRandomizer;
-  private final EnumRandomizer<Month> monthRandomizer;
-  private final DayRandomizer dayRandomizer;
-
-  /** Create a new {@link LocalDateRandomizer}. */
-  public LocalDateRandomizer() {
-    yearRandomizer = new YearRandomizer();
-    monthRandomizer = new EnumRandomizer<>(Month.class);
-    dayRandomizer = new DayRandomizer();
-  }
-
-  /**
-   * Create a new {@link LocalDateRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public LocalDateRandomizer(final long seed) {
-    yearRandomizer = new YearRandomizer(seed);
-    monthRandomizer = new EnumRandomizer<>(Month.class, seed);
-    dayRandomizer = new DayRandomizer(seed);
-  }
-
-  @Override
-  public LocalDate getRandomValue() {
-    Year randomYear = yearRandomizer.getRandomValue();
-    Month randomMonth = monthRandomizer.getRandomValue();
-    int randomDay = dayRandomizer.getRandomValue();
-    return LocalDate.of(randomYear.getValue(), randomMonth.getValue(), randomDay);
-  }
+class LocalDateRandomizer
+/**
+ * Create a new [LocalDateRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val yearRandomizer: YearRandomizer = YearRandomizer(seed),
+  private val monthRandomizer: EnumRandomizer<Month> = EnumRandomizer(Month::class, seed),
+  private val dayRandomizer: DayRandomizer = DayRandomizer(seed),
+) : Randomizer<LocalDate> {
+  override fun getRandomValue(): LocalDate =
+    LocalDate.of(
+      yearRandomizer.getRandomValue().value,
+      monthRandomizer.getRandomValue()!!.value,
+      dayRandomizer.getRandomValue(),
+    )
 }

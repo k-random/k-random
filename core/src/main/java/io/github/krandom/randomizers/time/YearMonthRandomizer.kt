@@ -21,44 +21,34 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.misc.EnumRandomizer;
-import java.time.Month;
-import java.time.Year;
-import java.time.YearMonth;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.misc.EnumRandomizer
+import java.time.Month
+import java.time.Year
+import java.time.YearMonth
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates random {@link YearMonth}.
+ * A [Randomizer] that generates random [YearMonth].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class YearMonthRandomizer implements Randomizer<YearMonth> {
-
-  private final YearRandomizer yearRandomizer;
-  private final EnumRandomizer<Month> monthRandomizer;
-
-  /** Create a new {@link YearMonthRandomizer}. */
-  public YearMonthRandomizer() {
-    yearRandomizer = new YearRandomizer();
-    monthRandomizer = new EnumRandomizer<>(Month.class);
-  }
-
-  /**
-   * Create a new {@link YearMonthRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public YearMonthRandomizer(final long seed) {
-    yearRandomizer = new YearRandomizer(seed);
-    monthRandomizer = new EnumRandomizer<>(Month.class, seed);
-  }
-
-  @Override
-  public YearMonth getRandomValue() {
-    Year randomYear = yearRandomizer.getRandomValue();
-    Month randomMonth = monthRandomizer.getRandomValue();
-    return YearMonth.of(randomYear.getValue(), randomMonth.getValue());
-  }
+class YearMonthRandomizer
+/**
+ * Create a new [YearMonthRandomizer].
+ *
+ * @param seed initial seed
+ * @param yearRandomizer [Randomizer] for [Year]
+ * @param monthRandomizer [Randomizer] for [Month]
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val yearRandomizer: YearRandomizer = YearRandomizer(seed),
+  private val monthRandomizer: EnumRandomizer<Month> = EnumRandomizer(Month::class, seed),
+) : Randomizer<YearMonth> {
+  override fun getRandomValue(): YearMonth =
+    YearMonth.of(yearRandomizer.getRandomValue().value, monthRandomizer.getRandomValue()!!.value)
 }

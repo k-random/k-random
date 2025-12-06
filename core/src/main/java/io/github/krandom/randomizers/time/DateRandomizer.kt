@@ -21,52 +21,44 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import static java.util.Date.from;
-
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.range.DateRangeRandomizer;
-import java.time.ZonedDateTime;
-import java.util.Date;
+import io.github.krandom.KRandomParameters
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.range.DateRangeRandomizer
+import java.time.ZonedDateTime
+import java.util.Date
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Date}.
+ * Generate a random [Date].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class DateRandomizer implements Randomizer<Date> {
-
-  private final DateRangeRandomizer delegate;
-
-  /** Create a new {@link DateRandomizer}. */
-  public DateRandomizer() {
-    delegate =
-        new DateRangeRandomizer(
-            toDate(KRandomParameters.DEFAULT_DATES_RANGE.getMin()),
-            toDate(KRandomParameters.DEFAULT_DATES_RANGE.getMax()));
+class DateRandomizer
+/**
+ * Create a new [DateRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val delegate: DateRangeRandomizer =
+    DateRangeRandomizer(
+      toDate(KRandomParameters.DEFAULT_DATES_RANGE.getMin()),
+      toDate(KRandomParameters.DEFAULT_DATES_RANGE.getMax()),
+      seed,
+    ),
+) : Randomizer<Date> {
+  override fun getRandomValue(): Date {
+    return delegate.getRandomValue()
   }
 
-  /**
-   * Create a new {@link DateRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public DateRandomizer(final long seed) {
-    delegate =
-        new DateRangeRandomizer(
-            toDate(KRandomParameters.DEFAULT_DATES_RANGE.getMin()),
-            toDate(KRandomParameters.DEFAULT_DATES_RANGE.getMax()),
-            seed);
-  }
-
-  @Override
-  public Date getRandomValue() {
-    return delegate.getRandomValue();
-  }
-
-  private Date toDate(ZonedDateTime zonedDateTime) {
-    return from(zonedDateTime.toInstant());
+  companion object {
+    @JvmStatic
+    private fun toDate(zonedDateTime: ZonedDateTime): Date {
+      return Date.from(zonedDateTime.toInstant())
+    }
   }
 }

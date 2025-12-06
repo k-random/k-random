@@ -25,7 +25,7 @@ package io.github.krandom.randomizers.misc
 
 import io.github.krandom.randomizers.AbstractRandomizerTest
 import io.kotest.matchers.shouldBe
-import java.util.*
+import java.util.UUID
 import org.junit.jupiter.api.Test
 
 internal class UUIDRandomizerTest : AbstractRandomizerTest<UUID>() {

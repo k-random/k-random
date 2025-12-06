@@ -21,34 +21,35 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates a random nano-second value between {@link
- * NanoSecondRandomizer#MIN_NANO_SECOND} and {@link NanoSecondRandomizer#MAX_NANO_SECOND}.
+ * A [Randomizer] that generates a random nanosecond value in range [NANO_SECOND_RANGE].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class NanoSecondRandomizer implements Randomizer<Integer> {
-
-  public static final int MIN_NANO_SECOND = 0;
-  public static final int MAX_NANO_SECOND = 999_999_999;
-
-  private final IntegerRangeRandomizer nanoSecondRandomizer;
-
-  public NanoSecondRandomizer() {
-    nanoSecondRandomizer = new IntegerRangeRandomizer(MIN_NANO_SECOND, MAX_NANO_SECOND);
+class NanoSecondRandomizer
+/**
+ * Create a new [NanoSecondRandomizer].
+ *
+ * @param seed initial seed
+ * @param integerRangeRandomizer the randomizer used to generate the nano-second value.
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val integerRangeRandomizer: IntegerRangeRandomizer =
+    IntegerRangeRandomizer(NANO_SECOND_RANGE.first, NANO_SECOND_RANGE.last, seed),
+) : Randomizer<Int> {
+  override fun getRandomValue(): Int {
+    return integerRangeRandomizer.getRandomValue()
   }
 
-  public NanoSecondRandomizer(final long seed) {
-    nanoSecondRandomizer = new IntegerRangeRandomizer(MIN_NANO_SECOND, MAX_NANO_SECOND, seed);
-  }
-
-  @Override
-  public Integer getRandomValue() {
-    return nanoSecondRandomizer.getRandomValue();
+  companion object {
+    val NANO_SECOND_RANGE = 0..999999999
   }
 }

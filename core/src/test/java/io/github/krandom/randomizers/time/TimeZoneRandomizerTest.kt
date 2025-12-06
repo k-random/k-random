@@ -21,35 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.matchers.shouldBe
+import java.util.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.util.TimeZone;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class TimeZoneRandomizerTest extends AbstractRandomizerTest<TimeZone> {
-
+internal class TimeZoneRandomizerTest : AbstractRandomizerTest<TimeZone>() {
   @BeforeEach
-  void setUp() {
-    randomizer = new TimeZoneRandomizer(SEED);
+  fun setUp() {
+    randomizer = TimeZoneRandomizer(SEED)
   }
 
   @Test
-  void generatedValueShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `should not throw exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
+  fun `should generate the same value for the same seed`() {
     // we cannot use a canned value, because the available TimeZones differ between locales/jdks
-    TimeZone firstTimeZone = new TimeZoneRandomizer(SEED).getRandomValue();
-    TimeZone secondTimeZone = new TimeZoneRandomizer(SEED).getRandomValue();
+    val firstTimeZone = TimeZoneRandomizer(SEED).getRandomValue()
+    val secondTimeZone = TimeZoneRandomizer(SEED).getRandomValue()
 
-    assertThat(firstTimeZone).isNotNull();
-    assertThat(secondTimeZone).isNotNull();
-    assertThat(firstTimeZone).isEqualTo(secondTimeZone);
+    firstTimeZone shouldBe secondTimeZone
   }
 }

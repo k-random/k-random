@@ -21,44 +21,59 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import static io.github.krandom.FieldPredicates.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.FieldPredicates.inClass
+import io.github.krandom.FieldPredicates.named
+import io.github.krandom.FieldPredicates.ofType
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.beans.TimeBean
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import java.time.Instant
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.beans.TimeBean;
-import java.time.Instant;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class TimeSupportTest {
-
-  private KRandom kRandom;
+internal class TimeSupportTest {
+  private lateinit var kRandom: KRandom
 
   @BeforeEach
-  void setUp() {
-    kRandom = new KRandom();
+  fun setUp() {
+    kRandom = KRandom()
   }
 
   @Test
-  void threeTenTypesShouldBePopulated() {
-    TimeBean timeBean = kRandom.nextObject(TimeBean.class);
+  fun `three ten types should be populated`() {
+    val timeBean = kRandom.nextObject(TimeBean::class.java)
 
-    assertThat(timeBean).hasNoNullFieldsOrProperties();
+    timeBean.duration.shouldNotBeNull()
+    timeBean.instant.shouldNotBeNull()
+    timeBean.localTime.shouldNotBeNull()
+    timeBean.localDate.shouldNotBeNull()
+    timeBean.localDateTime.shouldNotBeNull()
+    timeBean.monthDay.shouldNotBeNull()
+    timeBean.offsetDateTime.shouldNotBeNull()
+    timeBean.offsetTime.shouldNotBeNull()
+    timeBean.period.shouldNotBeNull()
+    timeBean.yearMonth.shouldNotBeNull()
+    timeBean.year.shouldNotBeNull()
+    timeBean.zonedDateTime.shouldNotBeNull()
+    timeBean.zoneOffset.shouldNotBeNull()
+    timeBean.zoneId.shouldNotBeNull()
   }
 
   @Test
-  // https://github.com/k-random/k-random/issues/135
-  void threeTenRandomizersCanBeOverriddenByCustomRandomizers() {
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .excludeField(named("instant").and(ofType(Instant.class)).and(inClass(TimeBean.class)));
-    kRandom = new KRandom(parameters);
+  fun `three ten randomizers can be overridden by custom randomizers`() {
+    val parameters =
+      KRandomParameters()
+        .excludeField(
+          named("instant").and(ofType(Instant::class.java)).and(inClass(TimeBean::class.java))
+        )
+    kRandom = KRandom(parameters)
 
-    TimeBean timeBean = kRandom.nextObject(TimeBean.class);
+    val timeBean = kRandom.nextObject(TimeBean::class.java)
 
-    assertThat(timeBean.getInstant()).isNull();
+    timeBean.instant.shouldBeNull()
   }
 }

@@ -21,56 +21,29 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import io.github.krandom.randomizers.AbstractRandomizer
+import java.time.ZonedDateTime
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates random {@link ZonedDateTime}.
+ * A [io.github.krandom.api.Randomizer] that generates random [ZonedDateTime].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class ZonedDateTimeRandomizer extends AbstractRandomizer<ZonedDateTime> {
-
-  private LocalDateTimeRandomizer localDateTimeRandomizer;
-
-  /** Create a new {@link ZonedDateTimeRandomizer}. */
-  public ZonedDateTimeRandomizer() {
-    localDateTimeRandomizer = new LocalDateTimeRandomizer();
-  }
-
-  /**
-   * Create a new {@link ZonedDateTimeRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public ZonedDateTimeRandomizer(final long seed) {
-    super(seed);
-    localDateTimeRandomizer = new LocalDateTimeRandomizer(seed);
-  }
-
-  @Override
-  public ZonedDateTime getRandomValue() {
-    LocalDateTime randomLocalDateTime = localDateTimeRandomizer.getRandomValue();
-    ZoneId randomZoneId = getRandomZoneId();
-    return ZonedDateTime.of(randomLocalDateTime, randomZoneId);
-  }
-
-  private ZoneId getRandomZoneId() {
-    Set<String> availableZoneIds = ZoneOffset.getAvailableZoneIds();
-    List<String> ids = new ArrayList<>(availableZoneIds);
-    return ZoneId.of(ids.get(random.nextInt(ids.size())));
-  }
-
-  public void setLocalDateTimeRandomizer(final LocalDateTimeRandomizer localDateTimeRandomizer) {
-    this.localDateTimeRandomizer = localDateTimeRandomizer;
-  }
+class ZonedDateTimeRandomizer
+/**
+ * Create a new [ZonedDateTimeRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val localDateTimeRandomizer: LocalDateTimeRandomizer = LocalDateTimeRandomizer(seed),
+  private val zoneIdRandomizer: ZoneIdRandomizer = ZoneIdRandomizer(seed),
+) : AbstractRandomizer<ZonedDateTime>(seed) {
+  override fun getRandomValue(): ZonedDateTime =
+    ZonedDateTime.of(localDateTimeRandomizer.getRandomValue(), zoneIdRandomizer.getRandomValue())
 }

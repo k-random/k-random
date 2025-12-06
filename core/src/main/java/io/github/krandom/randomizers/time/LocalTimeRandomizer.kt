@@ -21,46 +21,35 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import java.time.LocalTime;
+import io.github.krandom.api.Randomizer
+import java.time.LocalTime
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates random {@link LocalTime}.
+ * A [Randomizer] that generates random [LocalTime].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class LocalTimeRandomizer implements Randomizer<LocalTime> {
-
-  private final HourRandomizer hourRandomizer;
-  private final MinuteRandomizer minuteRandomizer;
-  private final NanoSecondRandomizer nanoSecondRandomizer;
-
-  /** Create a new {@link LocalTimeRandomizer}. */
-  public LocalTimeRandomizer() {
-    hourRandomizer = new HourRandomizer();
-    minuteRandomizer = new MinuteRandomizer();
-    nanoSecondRandomizer = new NanoSecondRandomizer();
-  }
-
-  /**
-   * Create a new {@link LocalTimeRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public LocalTimeRandomizer(final long seed) {
-    hourRandomizer = new HourRandomizer(seed);
-    minuteRandomizer = new MinuteRandomizer(seed);
-    nanoSecondRandomizer = new NanoSecondRandomizer(seed);
-  }
-
-  @Override
-  public LocalTime getRandomValue() {
-    int randomHour = hourRandomizer.getRandomValue();
-    int randomMinute = minuteRandomizer.getRandomValue();
-    int randomSecond = minuteRandomizer.getRandomValue(); // seconds are also between 0 and 59
-    int randomNanoSecond = nanoSecondRandomizer.getRandomValue();
-    return LocalTime.of(randomHour, randomMinute, randomSecond, randomNanoSecond);
-  }
+class LocalTimeRandomizer
+/**
+ * Create a new [LocalTimeRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val hourRandomizer: HourRandomizer = HourRandomizer(seed),
+  private val minuteRandomizer: MinuteRandomizer = MinuteRandomizer(seed),
+  private val nanoSecondRandomizer: NanoSecondRandomizer = NanoSecondRandomizer(seed),
+) : Randomizer<LocalTime> {
+  override fun getRandomValue(): LocalTime =
+    LocalTime.of(
+      hourRandomizer.getRandomValue(),
+      minuteRandomizer.getRandomValue(),
+      minuteRandomizer.getRandomValue(),
+      nanoSecondRandomizer.getRandomValue(),
+    )
 }

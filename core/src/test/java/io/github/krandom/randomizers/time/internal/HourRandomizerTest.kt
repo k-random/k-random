@@ -21,44 +21,40 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time.internal;
+package io.github.krandom.randomizers.time.internal
 
-import static io.github.krandom.randomizers.time.HourRandomizer.MAX_HOUR;
-import static io.github.krandom.randomizers.time.HourRandomizer.MIN_HOUR;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.github.krandom.randomizers.time.HourRandomizer
+import io.github.krandom.randomizers.time.HourRandomizer.Companion.HOUR_RANGE
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.matchers.ints.shouldBeInRange
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import io.github.krandom.randomizers.time.HourRandomizer;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class HourRandomizerTest extends AbstractRandomizerTest<Integer> {
-
+internal class HourRandomizerTest : AbstractRandomizerTest<Int>() {
   @BeforeEach
-  void setUp() {
-    randomizer = new HourRandomizer();
+  fun setUp() {
+    randomizer = HourRandomizer()
   }
 
   @Test
-  void generatedValueShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `should not throw exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void generatedValueShouldBeWithinRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(MIN_HOUR, MAX_HOUR);
+  fun `generated value should be within range`() {
+    randomizer.getRandomValue() shouldBeInRange HOUR_RANGE
   }
 
   @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    // Given
-    randomizer = new HourRandomizer(SEED);
-    Integer expected = 16;
+  fun `should generate the same value for the same seed`() {
+    randomizer = HourRandomizer(SEED)
+    val expected = 16
 
-    // When
-    Integer actual = randomizer.getRandomValue();
+    val actual = randomizer.getRandomValue()
 
-    // Then
-    assertThat(actual).isEqualTo(expected);
+    actual shouldBe expected
   }
 }

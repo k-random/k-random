@@ -24,23 +24,21 @@
 package io.github.krandom.randomizers
 
 import io.github.krandom.api.Randomizer
-import java.util.*
+import java.util.Random as JavaRandom
+import java.util.ResourceBundle
+import kotlin.random.Random
 
 /**
  * Base class for [Randomizer] implementations.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-abstract class AbstractRandomizer<T> : Randomizer<T> {
-  @JvmField protected val random: Random
-
-  protected constructor() {
-    random = Random()
-  }
-
-  protected constructor(seed: Long) {
-    random = Random(seed)
-  }
+abstract class AbstractRandomizer<T>
+@JvmOverloads
+protected constructor(
+  seed: Long = Random.nextLong(),
+  @JvmField protected val random: JavaRandom = JavaRandom(seed),
+) : Randomizer<T> {
 
   override fun toString(): String = javaClass.simpleName
 

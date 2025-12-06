@@ -25,7 +25,7 @@ package io.github.krandom.validation
 
 import io.github.krandom.randomizers.faker.EmailRandomizer
 import java.lang.reflect.Field
-import java.util.*
+import java.util.Random
 
 internal class EmailAnnotationHandler(seed: Long) : BeanValidationAnnotationHandler {
   private val random: Random = Random(seed)

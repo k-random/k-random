@@ -21,45 +21,35 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer;
-import java.time.ZoneOffset;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import java.time.ZoneOffset
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates random {@link ZoneOffset}.
+ * A [Randomizer] that generates random [ZoneOffset].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class ZoneOffsetRandomizer implements Randomizer<ZoneOffset> {
+class ZoneOffsetRandomizer
+/**
+ * Create a new [ZoneOffsetRandomizer].
+ *
+ * @param seed initial seed
+ * @param integerRangeRandomizer the [Randomizer] used to generate the seconds part of the offset
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val integerRangeRandomizer: IntegerRangeRandomizer =
+    IntegerRangeRandomizer(SECONDS_RANGE.first, SECONDS_RANGE.last, seed),
+) : Randomizer<ZoneOffset> {
+  override fun getRandomValue(): ZoneOffset =
+    ZoneOffset.ofTotalSeconds(integerRangeRandomizer.getRandomValue())
 
-  /**
-   * Upper bound for ZoneOffset seconds
-   *
-   * @see java.time.ZoneOffset#ofTotalSeconds
-   */
-  private static final int MAX_SECONDS = 64800;
-
-  private final IntegerRangeRandomizer integerRangeRandomizer;
-
-  /** Create a new {@link ZoneOffsetRandomizer}. */
-  public ZoneOffsetRandomizer() {
-    integerRangeRandomizer = new IntegerRangeRandomizer(-MAX_SECONDS, MAX_SECONDS);
-  }
-
-  /**
-   * Create a new {@link ZoneOffsetRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public ZoneOffsetRandomizer(final long seed) {
-    integerRangeRandomizer = new IntegerRangeRandomizer(-MAX_SECONDS, MAX_SECONDS, seed);
-  }
-
-  @Override
-  public ZoneOffset getRandomValue() {
-    Integer randomValue = integerRangeRandomizer.getRandomValue();
-    return ZoneOffset.ofTotalSeconds(randomValue);
+  companion object {
+    private val SECONDS_RANGE = -64800..64800
   }
 }

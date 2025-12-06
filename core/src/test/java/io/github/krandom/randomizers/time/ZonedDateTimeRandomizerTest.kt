@@ -21,40 +21,30 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import static org.assertj.core.api.BDDAssertions.then;
+import io.github.krandom.randomizers.AbstractRandomizerTest
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.matchers.shouldBe
+import java.time.ZonedDateTime
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
-import java.time.ZonedDateTime;
-import org.junit.jupiter.api.Test;
-
-class ZonedDateTimeRandomizerTest extends AbstractRandomizerTest<ZonedDateTime> {
-
+internal class ZonedDateTimeRandomizerTest : AbstractRandomizerTest<ZonedDateTime>() {
   @Test
-  void generatedValueShouldNotBeNull() {
-    // given
-    ZonedDateTimeRandomizer zonedDateTimeRandomizer = new ZonedDateTimeRandomizer();
+  fun `should not throw exception`() {
+    randomizer = ZonedDateTimeRandomizer()
 
-    // when
-    ZonedDateTime zonedDateTime = zonedDateTimeRandomizer.getRandomValue();
-
-    then(zonedDateTime).isNotNull();
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void shouldGenerateTheSameValueForTheSameSeed() {
-    // given
-    ZonedDateTimeRandomizer firstSeededZonedDateTimeRandomizer = new ZonedDateTimeRandomizer(SEED);
-    ZonedDateTimeRandomizer secondSeededZonedDateTimeRandomizer = new ZonedDateTimeRandomizer(SEED);
+  fun shouldGenerateTheSameValueForTheSameSeed() {
+    val firstSeededZonedDateTimeRandomizer = ZonedDateTimeRandomizer(SEED)
+    val secondSeededZonedDateTimeRandomizer = ZonedDateTimeRandomizer(SEED)
 
-    // when
-    // we cannot use a canned value, because the available TimeZones differ between locales/jdks
-    ZonedDateTime firstZonedTimeDate = firstSeededZonedDateTimeRandomizer.getRandomValue();
-    ZonedDateTime secondZonedTimeDate = secondSeededZonedDateTimeRandomizer.getRandomValue();
+    val firstZonedTimeDate = firstSeededZonedDateTimeRandomizer.getRandomValue()
+    val secondZonedTimeDate = secondSeededZonedDateTimeRandomizer.getRandomValue()
 
-    then(firstZonedTimeDate).isNotNull();
-    then(secondZonedTimeDate).isNotNull();
-    then(firstZonedTimeDate).isEqualTo(secondZonedTimeDate);
+    firstZonedTimeDate shouldBe secondZonedTimeDate
   }
 }

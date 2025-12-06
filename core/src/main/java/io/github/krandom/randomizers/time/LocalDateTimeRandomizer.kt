@@ -21,51 +21,29 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import io.github.krandom.api.Randomizer
+import java.time.LocalDateTime
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates random {@link LocalDateTime}.
+ * A [Randomizer] that generates random [LocalDateTime].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class LocalDateTimeRandomizer implements Randomizer<LocalDateTime> {
-
-  private LocalDateRandomizer localDateRandomizer;
-  private LocalTimeRandomizer localTimeRandomizer;
-
-  /** Create a new {@link LocalDateTimeRandomizer}. */
-  public LocalDateTimeRandomizer() {
-    localDateRandomizer = new LocalDateRandomizer();
-    localTimeRandomizer = new LocalTimeRandomizer();
-  }
-
-  /**
-   * Create a new {@link LocalDateTimeRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public LocalDateTimeRandomizer(final long seed) {
-    localDateRandomizer = new LocalDateRandomizer(seed);
-    localTimeRandomizer = new LocalTimeRandomizer(seed);
-  }
-
-  @Override
-  public LocalDateTime getRandomValue() {
-    LocalDate localDate = localDateRandomizer.getRandomValue();
-    LocalTime localTime = localTimeRandomizer.getRandomValue();
-    return LocalDateTime.of(localDate, localTime);
-  }
-
-  public void setLocalDateRandomizer(final LocalDateRandomizer localDateRandomizer) {
-    this.localDateRandomizer = localDateRandomizer;
-  }
-
-  public void setLocalTimeRandomizer(final LocalTimeRandomizer localTimeRandomizer) {
-    this.localTimeRandomizer = localTimeRandomizer;
-  }
+class LocalDateTimeRandomizer
+/**
+ * Create a new [LocalDateTimeRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val localDateRandomizer: LocalDateRandomizer = LocalDateRandomizer(seed),
+  private val localTimeRandomizer: LocalTimeRandomizer = LocalTimeRandomizer(seed),
+) : Randomizer<LocalDateTime> {
+  override fun getRandomValue(): LocalDateTime =
+    LocalDateTime.of(localDateRandomizer.getRandomValue(), localTimeRandomizer.getRandomValue())
 }

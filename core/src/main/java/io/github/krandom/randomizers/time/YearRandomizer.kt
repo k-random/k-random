@@ -21,46 +21,35 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer;
-import java.time.Year;
+import io.github.krandom.KRandomParameters
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import java.time.Year
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates random {@link Year}.
+ * A [Randomizer] that generates random [Year].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class YearRandomizer implements Randomizer<Year> {
-
-  private final IntegerRangeRandomizer yearRandomizer;
-
-  /** Create a new {@link YearRandomizer}. */
-  public YearRandomizer() {
-    yearRandomizer =
-        new IntegerRangeRandomizer(
-            KRandomParameters.DEFAULT_DATES_RANGE.getMin().getYear(),
-            KRandomParameters.DEFAULT_DATES_RANGE.getMax().getYear());
-  }
-
-  /**
-   * Create a new {@link YearRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public YearRandomizer(final long seed) {
-    yearRandomizer =
-        new IntegerRangeRandomizer(
-            KRandomParameters.DEFAULT_DATES_RANGE.getMin().getYear(),
-            KRandomParameters.DEFAULT_DATES_RANGE.getMax().getYear(),
-            seed);
-  }
-
-  @Override
-  public Year getRandomValue() {
-    int randomYear = yearRandomizer.getRandomValue();
-    return Year.of(randomYear);
-  }
+class YearRandomizer
+/**
+ * Create a new [YearRandomizer].
+ *
+ * @param seed initial seed
+ * @param yearRandomizer the [Randomizer] used to generate the [Year]
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val yearRandomizer: IntegerRangeRandomizer =
+    IntegerRangeRandomizer(
+      KRandomParameters.DEFAULT_DATES_RANGE.getMin().year,
+      KRandomParameters.DEFAULT_DATES_RANGE.getMax().year,
+      seed,
+    ),
+) : Randomizer<Year> {
+  override fun getRandomValue(): Year = Year.of(yearRandomizer.getRandomValue())
 }

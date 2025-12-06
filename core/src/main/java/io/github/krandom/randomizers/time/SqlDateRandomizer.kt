@@ -21,36 +21,28 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import java.sql.Date;
+import io.github.krandom.api.Randomizer
+import java.sql.Date as SqlDate
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Date}.
+ * Generate a random [SqlDate].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class SqlDateRandomizer implements Randomizer<Date> {
-
-  private final DateRandomizer delegate;
-
-  /** Create a new {@link SqlDateRandomizer}. */
-  public SqlDateRandomizer() {
-    delegate = new DateRandomizer();
-  }
-
-  /**
-   * Create a new {@link SqlDateRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public SqlDateRandomizer(final long seed) {
-    delegate = new DateRandomizer(seed);
-  }
-
-  @Override
-  public Date getRandomValue() {
-    return new Date(delegate.getRandomValue().getTime());
-  }
+class SqlDateRandomizer
+/**
+ * Create a new [SqlDateRandomizer].
+ *
+ * @param seed initial seed
+ * @param delegate [Randomizer] to generate the underlying [SqlDate]
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val delegate: DateRandomizer = DateRandomizer(seed),
+) : Randomizer<SqlDate> {
+  override fun getRandomValue() = SqlDate(delegate.getRandomValue().time)
 }

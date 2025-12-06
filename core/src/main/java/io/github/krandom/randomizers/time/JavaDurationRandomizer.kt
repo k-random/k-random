@@ -24,38 +24,48 @@
 package io.github.krandom.randomizers.time
 
 import io.github.krandom.api.Randomizer
-import io.github.krandom.randomizers.misc.EnumRandomizer
-import java.time.Month
-import java.time.MonthDay
+import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import java.time.Duration
+import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalUnit
+import kotlin.random.Random
 
 /**
- * A [Randomizer] that generates random [MonthDay].
+ * A [Randomizer] that generates random [Duration].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-class MonthDayRandomizer : Randomizer<MonthDay?> {
-  private val monthRandomizer: EnumRandomizer<Month>
-  private val dayRandomizer: DayRandomizer
-
-  /** Create a new [MonthDayRandomizer]. */
-  constructor() {
-    monthRandomizer = EnumRandomizer(Month::class)
-    dayRandomizer = DayRandomizer()
+class JavaDurationRandomizer
+/**
+ * Create a new [JavaDurationRandomizer].
+ *
+ * @param seed initial seed
+ * @param unit the unit of the duration to generate
+ * @param amountRandomizer the randomizer for the duration amount
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val unit: TemporalUnit = ChronoUnit.HOURS,
+  private val amountRandomizer: IntegerRangeRandomizer =
+    IntegerRangeRandomizer(DURATION_RANGE.first, DURATION_RANGE.last, seed),
+) : Randomizer<Duration> {
+  init {
+    requireValid(unit)
   }
 
-  /**
-   * Create a new [MonthDayRandomizer].
-   *
-   * @param seed initial seed
-   */
-  constructor(seed: Long) {
-    monthRandomizer = EnumRandomizer(Month::class, seed)
-    dayRandomizer = DayRandomizer(seed)
+  override fun getRandomValue(): Duration {
+    val randomAmount = amountRandomizer.getRandomValue()
+    return Duration.of(randomAmount.toLong(), unit)
   }
 
-  override fun getRandomValue(): MonthDay {
-    val randomMonth = monthRandomizer.getRandomValue()
-    val randomDay = dayRandomizer.getRandomValue()
-    return MonthDay.of(randomMonth, randomDay)
+  companion object Companion {
+    val DURATION_RANGE = 0..100
+
+    @JvmStatic
+    private fun requireValid(unit: TemporalUnit) =
+      require(!(unit.isDurationEstimated && unit !== ChronoUnit.DAYS)) {
+        "Temporal unit $unit can't be used to create Duration objects"
+      }
   }
 }

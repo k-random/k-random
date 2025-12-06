@@ -21,35 +21,33 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer;
+import io.github.krandom.api.Randomizer
+import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates a random day value between {@link DayRandomizer#MIN_DAY} and
- * {@link DayRandomizer#MAX_DAY}.
+ * A [Randomizer] that generates a random day value in range [DAY_RANGE].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class DayRandomizer implements Randomizer<Integer> {
+class DayRandomizer
+/**
+ * Creates a new [DayRandomizer] with the given seed.
+ *
+ * @param seed the seed to use for the random number generator
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val integerRangeRandomizer: IntegerRangeRandomizer =
+    IntegerRangeRandomizer(DAY_RANGE.first, DAY_RANGE.last, seed),
+) : Randomizer<Int> {
+  /** Generates a random day value. */
+  override fun getRandomValue(): Int = integerRangeRandomizer.getRandomValue()
 
-  public static final int MIN_DAY = 1;
-  // 31 may break some LocalDateTime instances when the dayOfMonth is invalid
-  public static final int MAX_DAY = 28;
-
-  private final IntegerRangeRandomizer dayRandomizer;
-
-  public DayRandomizer() {
-    dayRandomizer = new IntegerRangeRandomizer(MIN_DAY, MAX_DAY);
-  }
-
-  public DayRandomizer(final long seed) {
-    dayRandomizer = new IntegerRangeRandomizer(MIN_DAY, MAX_DAY, seed);
-  }
-
-  @Override
-  public Integer getRandomValue() {
-    return dayRandomizer.getRandomValue();
+  companion object {
+    val DAY_RANGE = 1..28
   }
 }

@@ -25,7 +25,7 @@ package io.github.krandom.randomizers.collection
 
 import io.github.krandom.randomizers.misc.EnumRandomizer
 import io.github.krandom.randomizers.number.ByteRandomizer
-import java.util.*
+import java.util.EnumSet
 import kotlin.math.abs
 
 /**

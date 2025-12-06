@@ -21,36 +21,28 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import java.sql.Time;
+import io.github.krandom.api.Randomizer
+import java.sql.Time as SqlTime
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Time}.
+ * Generate a random [SqlTime].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class SqlTimeRandomizer implements Randomizer<Time> {
-
-  private final DateRandomizer delegate;
-
-  /** Create a new {@link SqlTimeRandomizer}. */
-  public SqlTimeRandomizer() {
-    delegate = new DateRandomizer();
-  }
-
-  /**
-   * Create a new {@link SqlTimeRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public SqlTimeRandomizer(final long seed) {
-    delegate = new DateRandomizer(seed);
-  }
-
-  @Override
-  public Time getRandomValue() {
-    return new Time(delegate.getRandomValue().getTime());
-  }
+class SqlTimeRandomizer
+/**
+ * Create a new [SqlTimeRandomizer].
+ *
+ * @param seed initial see
+ * @param delegate date [Randomizer]
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val delegate: DateRandomizer = DateRandomizer(seed),
+) : Randomizer<SqlTime> {
+  override fun getRandomValue() = SqlTime(delegate.getRandomValue().time)
 }

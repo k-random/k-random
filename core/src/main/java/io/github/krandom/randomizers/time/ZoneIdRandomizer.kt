@@ -21,38 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.randomizers.AbstractRandomizer;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import io.github.krandom.randomizers.AbstractRandomizer
+import java.time.ZoneId
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 /**
- * A {@link Randomizer} that generates random {@link ZoneId}.
+ * A [io.github.krandom.api.Randomizer] that generates random [ZoneId].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class ZoneIdRandomizer extends AbstractRandomizer<ZoneId> {
-
-  /** Create a new {@link ZoneIdRandomizer}. */
-  public ZoneIdRandomizer() {}
-
-  /**
-   * Create a new {@link ZoneIdRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public ZoneIdRandomizer(long seed) {
-    super(seed);
-  }
-
-  @Override
-  public ZoneId getRandomValue() {
-    List<Map.Entry<String, String>> zoneIds = new ArrayList<>(ZoneId.SHORT_IDS.entrySet());
-    Map.Entry<String, String> randomZoneId = zoneIds.get(random.nextInt(zoneIds.size()));
-    return ZoneId.of(randomZoneId.getValue());
-  }
+class ZoneIdRandomizer
+/**
+ * Create a new [ZoneIdRandomizer].
+ *
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(seed: Long = Random.nextLong()) : AbstractRandomizer<ZoneId>(seed) {
+  override fun getRandomValue(): ZoneId =
+    ZoneId.of(ZoneId.SHORT_IDS.entries.map { it.value }.random(random.asKotlinRandom()))
 }

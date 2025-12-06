@@ -21,60 +21,37 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time;
+package io.github.krandom.randomizers.time
 
-import io.github.krandom.api.Randomizer;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import io.github.krandom.api.Randomizer
+import java.time.OffsetDateTime
+import kotlin.random.Random
 
 /**
- * A {@link Randomizer} that generates random {@link OffsetDateTime}.
+ * A [Randomizer] that generates random [OffsetDateTime].
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class OffsetDateTimeRandomizer implements Randomizer<OffsetDateTime> {
-
-  private LocalDateRandomizer localDateRandomizer;
-  private LocalTimeRandomizer localTimeRandomizer;
-  private ZoneOffsetRandomizer zoneOffsetRandomizer;
-
-  /** Create a new {@link OffsetDateTimeRandomizer}. */
-  public OffsetDateTimeRandomizer() {
-    localDateRandomizer = new LocalDateRandomizer();
-    localTimeRandomizer = new LocalTimeRandomizer();
-    zoneOffsetRandomizer = new ZoneOffsetRandomizer();
-  }
-
-  /**
-   * Create a new {@link OffsetDateTimeRandomizer}.
-   *
-   * @param seed initial seed
-   */
-  public OffsetDateTimeRandomizer(final long seed) {
-    localDateRandomizer = new LocalDateRandomizer(seed);
-    localTimeRandomizer = new LocalTimeRandomizer(seed);
-    zoneOffsetRandomizer = new ZoneOffsetRandomizer(seed);
-  }
-
-  @Override
-  public OffsetDateTime getRandomValue() {
-    LocalDate randomLocalDate = localDateRandomizer.getRandomValue();
-    LocalTime randomLocalTime = localTimeRandomizer.getRandomValue();
-    ZoneOffset randomZoneOffset = zoneOffsetRandomizer.getRandomValue();
-    return OffsetDateTime.of(randomLocalDate, randomLocalTime, randomZoneOffset);
-  }
-
-  public void setLocalDateRandomizer(final LocalDateRandomizer localDateRandomizer) {
-    this.localDateRandomizer = localDateRandomizer;
-  }
-
-  public void setLocalTimeRandomizer(final LocalTimeRandomizer localTimeRandomizer) {
-    this.localTimeRandomizer = localTimeRandomizer;
-  }
-
-  public void setZoneOffsetRandomizer(final ZoneOffsetRandomizer zoneOffsetRandomizer) {
-    this.zoneOffsetRandomizer = zoneOffsetRandomizer;
-  }
+class OffsetDateTimeRandomizer
+/**
+ * Create a new [OffsetDateTimeRandomizer].
+ *
+ * @param seed initial seed
+ * @param localDateRandomizer [Randomizer] for [java.time.LocalDate]
+ * @param localTimeRandomizer [Randomizer] for [java.time.LocalTime]
+ * @param zoneOffsetRandomizer [Randomizer] for [java.time.ZoneOffset]
+ */
+@JvmOverloads
+constructor(
+  seed: Long = Random.nextLong(),
+  private val localDateRandomizer: LocalDateRandomizer = LocalDateRandomizer(seed),
+  private val localTimeRandomizer: LocalTimeRandomizer = LocalTimeRandomizer(seed),
+  private val zoneOffsetRandomizer: ZoneOffsetRandomizer = ZoneOffsetRandomizer(seed),
+) : Randomizer<OffsetDateTime> {
+  override fun getRandomValue(): OffsetDateTime =
+    OffsetDateTime.of(
+      localDateRandomizer.getRandomValue(),
+      localTimeRandomizer.getRandomValue(),
+      zoneOffsetRandomizer.getRandomValue(),
+    )
 }

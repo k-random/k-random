@@ -24,6 +24,7 @@
 package io.github.krandom;
 
 import static io.github.krandom.util.ReflectionUtils.*;
+import static kotlin.jvm.JvmClassMappingKt.getKotlinClass;
 
 import io.github.krandom.api.*;
 import io.github.krandom.randomizers.misc.EnumRandomizer;
@@ -201,7 +202,8 @@ public class KRandom extends Random {
   private <T> T randomize(final Class<T> type, final RandomizationContext context) {
     if (isEnumType(type)) {
       if (!enumRandomizersByType.containsKey(type)) {
-        enumRandomizersByType.put(type, new EnumRandomizer(type, parameters.getSeed()));
+        enumRandomizersByType.put(
+            type, new EnumRandomizer(getKotlinClass(type), parameters.getSeed()));
       }
       return (T) enumRandomizersByType.get(type).getRandomValue();
     }

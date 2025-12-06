@@ -82,25 +82,6 @@ class InternalRandomizerRegistry : RandomizerRegistry {
   override fun init(parameters: KRandomParameters) {
     val seed = parameters.seed
     val charset = parameters.charset
-    randomizers[String::class] =
-      StringRandomizer(
-        charset,
-        parameters.stringLengthRange.min,
-        parameters.stringLengthRange.max,
-        seed,
-      )
-    randomizers[Char::class] = CharacterRandomizer(charset, seed)
-    randomizers[Boolean::class] = BooleanRandomizer(seed)
-    randomizers[Byte::class] = ByteRandomizer(seed)
-    randomizers[Short::class] = ShortRandomizer(seed)
-    randomizers[Int::class] = IntegerRandomizer(seed)
-    randomizers[Long::class] = LongRandomizer(seed)
-    randomizers[Double::class] = DoubleRandomizer(seed)
-    randomizers[Float::class] = FloatRandomizer(seed)
-    randomizers[BigInteger::class] = BigIntegerRandomizer(seed)
-    randomizers[BigDecimal::class] = BigDecimalRandomizer(seed)
-    randomizers[AtomicLong::class] = AtomicLongRandomizer(seed)
-    randomizers[AtomicInteger::class] = AtomicIntegerRandomizer(seed)
     var minDate = Date(Long.MIN_VALUE)
     var maxDate = Date(Long.MAX_VALUE)
     minDate =
@@ -109,20 +90,41 @@ class InternalRandomizerRegistry : RandomizerRegistry {
     maxDate =
       if (convertDateToLocalDate(maxDate).isBefore(parameters.dateRange.max)) maxDate
       else SqlDate.valueOf(parameters.dateRange.max)
-    randomizers[Date::class] = DateRangeRandomizer(minDate, maxDate, seed)
-    randomizers[SqlDate::class] =
+    val stringRandomizer =
+      StringRandomizer(
+        charset,
+        parameters.stringLengthRange.min,
+        parameters.stringLengthRange.max,
+        seed,
+      )
+    val sqlDateRangeRandomizer =
       SqlDateRangeRandomizer(SqlDate(minDate.time), SqlDate(maxDate.time), seed)
+    // keep-sorted start
+    randomizers[AtomicInteger::class] = AtomicIntegerRandomizer(seed)
+    randomizers[AtomicLong::class] = AtomicLongRandomizer(seed)
+    randomizers[BigDecimal::class] = BigDecimalRandomizer(seed)
+    randomizers[BigInteger::class] = BigIntegerRandomizer(seed)
+    randomizers[Boolean::class] = BooleanRandomizer(seed)
+    randomizers[Byte::class] = ByteRandomizer(seed)
+    randomizers[Calendar::class] = CalendarRandomizer(seed)
+    randomizers[Char::class] = CharacterRandomizer(charset, seed)
+    randomizers[Class::class] = SkipRandomizer()
+    randomizers[Date::class] = DateRangeRandomizer(minDate, maxDate, seed)
+    randomizers[Double::class] = DoubleRandomizer(seed)
+    randomizers[Exception::class] = SkipRandomizer()
+    randomizers[Float::class] = FloatRandomizer(seed)
+    randomizers[Int::class] = IntegerRandomizer(seed)
+    randomizers[Locale::class] = LocaleRandomizer(seed)
+    randomizers[Long::class] = LongRandomizer(seed)
+    randomizers[Short::class] = ShortRandomizer(seed)
+    randomizers[SqlDate::class] = sqlDateRangeRandomizer
+    randomizers[String::class] = stringRandomizer
     randomizers[Time::class] = SqlTimeRandomizer(seed)
     randomizers[Timestamp::class] = SqlTimestampRandomizer(seed)
-    randomizers[Calendar::class] = CalendarRandomizer(seed)
-    randomizers[URL::class] = UrlRandomizer(seed)
     randomizers[URI::class] = UriRandomizer(seed)
-    randomizers[Locale::class] = LocaleRandomizer(seed)
+    randomizers[URL::class] = UrlRandomizer(seed)
     randomizers[UUID::class] = UUIDRandomizer(seed)
-    // issue #280: skip fields of type Class
-    randomizers[Class::class] = SkipRandomizer()
-    // issue #7: skip fields of type Exception
-    randomizers[Exception::class] = SkipRandomizer()
+    // keep-sorted end
   }
 
   override fun getRandomizer(field: Field): Randomizer<*>? {
