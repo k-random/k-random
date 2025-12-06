@@ -26,14 +26,14 @@ package io.github.krandom.randomizers.collection
 import io.github.krandom.randomizers.misc.EnumRandomizer
 import io.kotest.matchers.collections.shouldContainAll
 import java.time.Month
-import java.util.*
+import java.util.EnumSet
 import org.junit.jupiter.api.Test
 
 internal class EnumSetRandomizerTest {
   @Test
   fun `test enum set generation`() {
     // given
-    val delegate = EnumRandomizer(Month::class.java)
+    val delegate = EnumRandomizer(Month::class)
     val randomizer = EnumSetRandomizer(delegate)
 
     // when

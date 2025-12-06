@@ -43,7 +43,7 @@ internal class EnumRandomizerTest {
   inner class GenderRandomizerTest : AbstractRandomizerTest<Gender?>() {
     @Test
     fun `generated value should be of the specified enum`() {
-      randomizer = EnumRandomizer(Gender::class.java)
+      randomizer = EnumRandomizer(Gender::class)
 
       val gender = randomizer.getRandomValue()
 
@@ -52,7 +52,7 @@ internal class EnumRandomizerTest {
 
     @Test
     fun `should always generate the same value for the same seed`() {
-      randomizer = EnumRandomizer(Gender::class.java, SEED)
+      randomizer = EnumRandomizer(Gender::class, SEED)
 
       val gender = randomizer.getRandomValue()
 
@@ -62,7 +62,7 @@ internal class EnumRandomizerTest {
     @Test
     fun `should return a value different from the excluded one`() {
       val valueToExclude = Gender.MALE
-      randomizer = EnumRandomizer(Gender::class.java, SEED, valueToExclude)
+      randomizer = EnumRandomizer(Gender::class, SEED, valueToExclude)
 
       val gender = randomizer.getRandomValue()
 
@@ -73,7 +73,7 @@ internal class EnumRandomizerTest {
     @Test
     fun `should throw an exception when all values are excluded`() {
       shouldThrow<IllegalArgumentException> {
-        EnumRandomizer(Gender::class.java, SEED, *Gender.entries.toTypedArray())
+        EnumRandomizer(Gender::class, SEED, *Gender.entries.toTypedArray())
       }
     }
   }
@@ -91,7 +91,7 @@ internal class EnumRandomizerTest {
   inner class TriStateRandomizerTest : AbstractRandomizerTest<TriState?>() {
     @Test
     fun `should always generate the same value for the same seed with excluded values`() {
-      randomizer = EnumRandomizer(TriState::class.java, SEED, TriState.MAYBE)
+      randomizer = EnumRandomizer(TriState::class, SEED, TriState.MAYBE)
 
       val tristate = randomizer.getRandomValue()
 
@@ -105,7 +105,7 @@ internal class EnumRandomizerTest {
   inner class EmptyEnumRandomizerTest : AbstractRandomizerTest<Empty?>() {
     @Test
     fun `should return null for empty enum`() {
-      randomizer = EnumRandomizer(Empty::class.java)
+      randomizer = EnumRandomizer(Empty::class)
 
       val empty = randomizer.getRandomValue()
 

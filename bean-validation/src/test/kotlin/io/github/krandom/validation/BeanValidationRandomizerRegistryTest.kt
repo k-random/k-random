@@ -45,7 +45,7 @@ internal class BeanValidationRandomizerRegistryTest {
   @ParameterizedTest
   @MethodSource("provideArguments")
   fun mapContainsExpectedKeyValuePairs(
-    annotation: Class<out Annotation>,
+    annotation: KClass<out Annotation>,
     annotationHandler: KClass<*>,
   ) {
     underTest.init(kRandomParameters)
@@ -61,25 +61,27 @@ internal class BeanValidationRandomizerRegistryTest {
     @Suppress("unused")
     private fun provideArguments(): List<Arguments> {
       return listOf(
-        Arguments.of(AssertFalse::class.java, AssertFalseAnnotationHandler::class),
-        Arguments.of(AssertTrue::class.java, AssertTrueAnnotationHandler::class),
-        Arguments.of(Null::class.java, NullAnnotationHandler::class),
-        Arguments.of(Future::class.java, FutureAnnotationHandler::class),
-        Arguments.of(FutureOrPresent::class.java, FutureOrPresentAnnotationHandler::class),
-        Arguments.of(Past::class.java, PastAnnotationHandler::class),
-        Arguments.of(PastOrPresent::class.java, PastOrPresentAnnotationHandler::class),
-        Arguments.of(Min::class.java, MinMaxAnnotationHandler::class),
-        Arguments.of(Max::class.java, MinMaxAnnotationHandler::class),
-        Arguments.of(DecimalMin::class.java, DecimalMinMaxAnnotationHandler::class),
-        Arguments.of(DecimalMax::class.java, DecimalMinMaxAnnotationHandler::class),
-        Arguments.of(Pattern::class.java, PatternAnnotationHandler::class),
-        Arguments.of(Size::class.java, SizeAnnotationHandler::class),
-        Arguments.of(Positive::class.java, PositiveAnnotationHandler::class),
-        Arguments.of(PositiveOrZero::class.java, PositiveOrZeroAnnotationHandler::class),
-        Arguments.of(Negative::class.java, NegativeAnnotationHandler::class),
-        Arguments.of(NegativeOrZero::class.java, NegativeOrZeroAnnotationHandler::class),
-        Arguments.of(NotBlank::class.java, NotBlankAnnotationHandler::class),
-        Arguments.of(Email::class.java, EmailAnnotationHandler::class),
+        // keep-sorted start
+        Arguments.of(AssertFalse::class, AssertFalseAnnotationHandler::class),
+        Arguments.of(AssertTrue::class, AssertTrueAnnotationHandler::class),
+        Arguments.of(DecimalMax::class, DecimalMinMaxAnnotationHandler::class),
+        Arguments.of(DecimalMin::class, DecimalMinMaxAnnotationHandler::class),
+        Arguments.of(Email::class, EmailAnnotationHandler::class),
+        Arguments.of(Future::class, FutureAnnotationHandler::class),
+        Arguments.of(FutureOrPresent::class, FutureOrPresentAnnotationHandler::class),
+        Arguments.of(Max::class, MinMaxAnnotationHandler::class),
+        Arguments.of(Min::class, MinMaxAnnotationHandler::class),
+        Arguments.of(Negative::class, NegativeAnnotationHandler::class),
+        Arguments.of(NegativeOrZero::class, NegativeOrZeroAnnotationHandler::class),
+        Arguments.of(NotBlank::class, NotBlankAnnotationHandler::class),
+        Arguments.of(Null::class, NullAnnotationHandler::class),
+        Arguments.of(Past::class, PastAnnotationHandler::class),
+        Arguments.of(PastOrPresent::class, PastOrPresentAnnotationHandler::class),
+        Arguments.of(Pattern::class, PatternAnnotationHandler::class),
+        Arguments.of(Positive::class, PositiveAnnotationHandler::class),
+        Arguments.of(PositiveOrZero::class, PositiveOrZeroAnnotationHandler::class),
+        Arguments.of(Size::class, SizeAnnotationHandler::class),
+        // keep-sorted end
       )
     }
   }

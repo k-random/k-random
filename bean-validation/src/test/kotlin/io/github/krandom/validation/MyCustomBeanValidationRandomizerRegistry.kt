@@ -29,6 +29,6 @@ import jakarta.validation.constraints.Digits
 class MyCustomBeanValidationRandomizerRegistry : BeanValidationRandomizerRegistry() {
   override fun init(parameters: KRandomParameters) {
     super.init(parameters)
-    annotationHandlers[Digits::class.java] = MyCustomDigitsAnnotationHandler()
+    annotationHandlers[Digits::class] = MyCustomDigitsAnnotationHandler()
   }
 }

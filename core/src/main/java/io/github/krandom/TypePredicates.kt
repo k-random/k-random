@@ -100,6 +100,7 @@ object TypePredicates {
    * @param type to check
    * @return a predicate to check if a type is assignable from another type.
    */
+  @JvmStatic
   fun isAssignableFrom(type: Class<*>) = Predicate { clazz: Class<*> ->
     clazz.isAssignableFrom(type)
   }

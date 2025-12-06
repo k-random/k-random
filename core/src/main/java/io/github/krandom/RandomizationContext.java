@@ -123,7 +123,7 @@ public class RandomizationContext implements RandomizerContext {
     if (stack.empty()) {
       return rootObject;
     } else {
-      return stack.lastElement().getObject();
+      return stack.lastElement().getAny();
     }
   }
 

@@ -25,7 +25,8 @@ package io.github.krandom.randomizers.collection
 
 import io.github.krandom.api.Randomizer
 import io.github.krandom.randomizers.number.ByteRandomizer
-import java.util.*
+import java.util.LinkedList
+import java.util.Queue
 import kotlin.math.abs
 
 /**

@@ -24,7 +24,7 @@
 package io.github.krandom.randomizers.misc
 
 import io.github.krandom.randomizers.AbstractRandomizer
-import java.util.*
+import java.util.UUID
 import kotlin.random.Random
 
 /**

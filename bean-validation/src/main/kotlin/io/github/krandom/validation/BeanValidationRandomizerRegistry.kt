@@ -48,6 +48,7 @@ import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.PositiveOrZero
 import jakarta.validation.constraints.Size
 import java.lang.reflect.Field
+import kotlin.reflect.KClass
 
 private const val PRIORITY = -2
 
@@ -60,37 +61,39 @@ private const val PRIORITY = -2
 @Priority(PRIORITY)
 open class BeanValidationRandomizerRegistry : RandomizerRegistry {
   protected val annotationHandlers:
-    MutableMap<Class<out Annotation>, BeanValidationAnnotationHandler> =
+    MutableMap<KClass<out Annotation>, BeanValidationAnnotationHandler> =
     mutableMapOf()
 
   internal fun getAnnotationHandlers() = annotationHandlers.toMutableMap()
 
   override fun init(parameters: KRandomParameters) {
     val seed = parameters.seed
-    annotationHandlers[AssertFalse::class.java] = AssertFalseAnnotationHandler()
-    annotationHandlers[AssertTrue::class.java] = AssertTrueAnnotationHandler()
-    annotationHandlers[Null::class.java] = NullAnnotationHandler()
-    annotationHandlers[Future::class.java] = FutureAnnotationHandler()
-    annotationHandlers[FutureOrPresent::class.java] = FutureOrPresentAnnotationHandler()
-    annotationHandlers[Past::class.java] = PastAnnotationHandler()
-    annotationHandlers[PastOrPresent::class.java] = PastOrPresentAnnotationHandler()
-    annotationHandlers[Min::class.java] = MinMaxAnnotationHandler(seed)
-    annotationHandlers[Max::class.java] = MinMaxAnnotationHandler(seed)
-    annotationHandlers[DecimalMin::class.java] = DecimalMinMaxAnnotationHandler(seed)
-    annotationHandlers[DecimalMax::class.java] = DecimalMinMaxAnnotationHandler(seed)
-    annotationHandlers[Pattern::class.java] = PatternAnnotationHandler(seed)
-    annotationHandlers[Size::class.java] = SizeAnnotationHandler(parameters)
-    annotationHandlers[Positive::class.java] = PositiveAnnotationHandler(seed)
-    annotationHandlers[PositiveOrZero::class.java] = PositiveOrZeroAnnotationHandler(seed)
-    annotationHandlers[Negative::class.java] = NegativeAnnotationHandler(seed)
-    annotationHandlers[NegativeOrZero::class.java] = NegativeOrZeroAnnotationHandler(seed)
-    annotationHandlers[NotBlank::class.java] = NotBlankAnnotationHandler(seed)
-    annotationHandlers[Email::class.java] = EmailAnnotationHandler(seed)
+    // keep-sorted start
+    annotationHandlers[AssertFalse::class] = AssertFalseAnnotationHandler()
+    annotationHandlers[AssertTrue::class] = AssertTrueAnnotationHandler()
+    annotationHandlers[DecimalMax::class] = DecimalMinMaxAnnotationHandler(seed)
+    annotationHandlers[DecimalMin::class] = DecimalMinMaxAnnotationHandler(seed)
+    annotationHandlers[Email::class] = EmailAnnotationHandler(seed)
+    annotationHandlers[Future::class] = FutureAnnotationHandler()
+    annotationHandlers[FutureOrPresent::class] = FutureOrPresentAnnotationHandler()
+    annotationHandlers[Max::class] = MinMaxAnnotationHandler(seed)
+    annotationHandlers[Min::class] = MinMaxAnnotationHandler(seed)
+    annotationHandlers[Negative::class] = NegativeAnnotationHandler(seed)
+    annotationHandlers[NegativeOrZero::class] = NegativeOrZeroAnnotationHandler(seed)
+    annotationHandlers[NotBlank::class] = NotBlankAnnotationHandler(seed)
+    annotationHandlers[Null::class] = NullAnnotationHandler()
+    annotationHandlers[Past::class] = PastAnnotationHandler()
+    annotationHandlers[PastOrPresent::class] = PastOrPresentAnnotationHandler()
+    annotationHandlers[Pattern::class] = PatternAnnotationHandler(seed)
+    annotationHandlers[Positive::class] = PositiveAnnotationHandler(seed)
+    annotationHandlers[PositiveOrZero::class] = PositiveOrZeroAnnotationHandler(seed)
+    annotationHandlers[Size::class] = SizeAnnotationHandler(parameters)
+    // keep-sorted end
   }
 
   override fun getRandomizer(field: Field): Randomizer<*>? {
     return annotationHandlers.entries
-      .firstOrNull { (annotationType, _) -> isAnnotationPresent(field, annotationType) }
+      .firstOrNull { (annotationType, _) -> isAnnotationPresent(field, annotationType.java) }
       ?.value
       ?.getRandomizer(field)
   }
