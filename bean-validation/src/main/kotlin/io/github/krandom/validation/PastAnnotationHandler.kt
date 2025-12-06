@@ -30,7 +30,6 @@ private val zonedDateTime: ZonedDateTime by lazy {
   ZonedDateTime.now()
     .minusDays(1L)
     .minusMinutes(KRandomParameters.DEFAULT_DATE_RANGE.toLong())
-    .minusMonths(1L)
     .minusYears(1L)
 }
 
