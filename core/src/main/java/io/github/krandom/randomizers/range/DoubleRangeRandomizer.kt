@@ -21,55 +21,33 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
+
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Double} in the given range.
+ * Generate a random [Double] in the given range.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class DoubleRangeRandomizer extends AbstractRangeRandomizer<Double> {
+class DoubleRangeRandomizer
+/**
+ * Create a new [DoubleRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: Double?, max: Double?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<Double>(min, max, seed) {
+  override val defaultMinValue: Double
+    get() = -Double.MAX_VALUE
 
-  /**
-   * Create a new {@link DoubleRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public DoubleRangeRandomizer(final Double min, final Double max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: Double
+    get() = Double.MAX_VALUE
 
-  /**
-   * Create a new {@link DoubleRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public DoubleRangeRandomizer(final Double min, final Double max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min > max) {
-      throw new IllegalArgumentException("max must be greater than min");
-    }
-  }
-
-  @Override
-  protected Double getDefaultMinValue() {
-    return Double.MAX_VALUE * -1;
-  }
-
-  @Override
-  protected Double getDefaultMaxValue() {
-    return Double.MAX_VALUE;
-  }
-
-  @Override
-  public Double getRandomValue() {
-    return nextDouble(min, max);
+  override fun getRandomValue(): Double {
+    return nextDouble(min, max)
   }
 }

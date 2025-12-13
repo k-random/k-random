@@ -21,62 +21,62 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.BDDAssertions.then;
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.math.BigInteger
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import java.math.BigInteger;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class BigIntegerRangeRandomizerTest extends AbstractRangeRandomizerTest<BigInteger> {
-
-  private Integer min, max;
+internal class BigIntegerRangeRandomizerTest : AbstractRangeRandomizerTest<BigInteger>() {
+  override val min: BigInteger = BigInteger("1")
+  override val max: BigInteger = BigInteger("10")
 
   @BeforeEach
-  void setUp() {
-    min = 1;
-    max = 10;
-    randomizer = new BigIntegerRangeRandomizer(min, max);
+  fun setUp() {
+    randomizer = BigIntegerRangeRandomizer(min.toInt(), max.toInt())
   }
 
   @Test
-  void generatedValueShouldBeWithinSpecifiedRange() {
-    BigInteger randomValue = randomizer.getRandomValue();
-    assertThat(randomValue.intValue()).isBetween(min, max);
+  fun `generated value should be within specified range`() {
+    val randomValue: BigInteger = randomizer.getRandomValue()
+
+    randomValue shouldBeIn min..max
   }
 
   @Test
-  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new BigIntegerRangeRandomizer(max, min))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min value is after max value then throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { BigIntegerRangeRandomizer(max.toInt(), min.toInt()) }
   }
 
   @Test
-  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-    randomizer = new BigIntegerRangeRandomizer(null, max);
-    BigInteger radomBigInteger = randomizer.getRandomValue();
-    assertThat(radomBigInteger.intValue()).isLessThanOrEqualTo(max);
+  fun `when specified min value is null then should use default min value`() {
+    randomizer = BigIntegerRangeRandomizer(null, max.toInt())
+
+    val radomBigInteger = randomizer.getRandomValue()
+
+    radomBigInteger shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-    randomizer = new BigIntegerRangeRandomizer(min, null);
-    BigInteger radomBigInteger = randomizer.getRandomValue();
-    assertThat(radomBigInteger.intValue()).isGreaterThanOrEqualTo(min);
+  fun `when specified maxvalue is null then should use default max value`() {
+    randomizer = BigIntegerRangeRandomizer(min.toInt(), null)
+
+    val radomBigInteger = randomizer.getRandomValue()
+
+    radomBigInteger shouldBeGreaterThanOrEqualTo min
   }
 
   @Test
-  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-    // given
-    BigIntegerRangeRandomizer bigIntegerRangeRandomizer =
-        new BigIntegerRangeRandomizer(min, max, SEED);
+  fun `should always generate the same value for the same seed`() {
+    randomizer = BigIntegerRangeRandomizer(min.toInt(), max.toInt(), SEED)
 
-    // when
-    BigInteger bigInteger = bigIntegerRangeRandomizer.getRandomValue();
+    val bigInteger = randomizer.getRandomValue()
 
-    then(bigInteger).isEqualTo(new BigInteger("7"));
+    bigInteger shouldBe BigInteger("7")
   }
 }

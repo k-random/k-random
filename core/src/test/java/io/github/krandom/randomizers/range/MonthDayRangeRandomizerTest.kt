@@ -1,55 +1,59 @@
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.BDDAssertions.then;
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.time.MonthDay
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import java.time.MonthDay;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+internal class MonthDayRangeRandomizerTest : AbstractRangeRandomizerTest<MonthDay>() {
+  override val min: MonthDay = MonthDay.of(1, 1)
+  override val max: MonthDay = MonthDay.of(3, 31)
 
-class MonthDayRangeRandomizerTest extends AbstractRangeRandomizerTest<MonthDay> {
   @BeforeEach
-  void setUp() {
-    min = MonthDay.of(1, 1);
-    max = MonthDay.of(3, 31);
-    randomizer = new MonthDayRangeRandomizer(min, max);
+  fun setUp() {
+    randomizer = MonthDayRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedValueShouldBeWithinSpecifiedRange() {
-    MonthDay randomValue = randomizer.getRandomValue();
-    assertThat(randomValue).isBetween(min, max);
+  fun `generated value should be within specified range`() {
+    val randomValue: MonthDay = randomizer.getRandomValue()
+
+    randomValue shouldBeIn min..max
   }
 
   @Test
-  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new MonthDayRangeRandomizer(max, min))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min value is after max value then throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { MonthDayRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-    randomizer = new MonthDayRangeRandomizer(null, max);
-    MonthDay randomMonthDay = randomizer.getRandomValue();
-    assertThat(randomMonthDay).isLessThanOrEqualTo(max);
+  fun `when specified min value is null then should use default min value`() {
+    randomizer = MonthDayRangeRandomizer(null, max)
+
+    val randomMonthDay = randomizer.getRandomValue()
+
+    randomMonthDay shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-    randomizer = new MonthDayRangeRandomizer(min, null);
-    MonthDay randomMonthDay = randomizer.getRandomValue();
-    assertThat(randomMonthDay).isGreaterThanOrEqualTo(min);
+  fun `when specified maxvalue is null then should use default max value`() {
+    randomizer = MonthDayRangeRandomizer(min, null)
+
+    val randomMonthDay = randomizer.getRandomValue()
+
+    randomMonthDay shouldBeGreaterThanOrEqualTo min
   }
 
   @Test
-  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-    // given
-    MonthDayRangeRandomizer monthDayRangeRandomizer = new MonthDayRangeRandomizer(min, max, SEED);
+  fun shouldAlwaysGenerateTheSameValueForTheSameSeed() {
+    val monthDayRangeRandomizer = MonthDayRangeRandomizer(min, max, SEED)
 
-    // when
-    MonthDay monthDay = monthDayRangeRandomizer.getRandomValue();
+    val monthDay = monthDayRangeRandomizer.getRandomValue()
 
-    then(monthDay).isEqualTo(MonthDay.of(3, 6));
+    monthDay shouldBe MonthDay.of(3, 6)
   }
 }

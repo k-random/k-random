@@ -50,7 +50,7 @@ internal class PriorityComparatorTest {
     objects shouldContainInOrder listOf(bar, foo)
   }
 
-  @Priority(1) private inner class Foo
+  @Priority(1) private class Foo
 
-  @Priority(2) private inner class Bar
+  @Priority(2) private class Bar
 }

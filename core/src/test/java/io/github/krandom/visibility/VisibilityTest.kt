@@ -21,27 +21,25 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.visibility;
+package io.github.krandom.visibility
 
-import static io.github.krandom.util.ReflectionUtils.asRandomizer;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.util.ReflectionUtils.asRandomizer
+import io.kotest.matchers.shouldBe
+import java.util.function.Supplier
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import java.util.function.Supplier;
-import org.junit.jupiter.api.Test;
-
-class VisibilityTest {
-
+internal class VisibilityTest {
   @Test
-  void canPassSupplierLambdaFromOtherPackage() {
-    Supplier<String> supplier = () -> "test";
-    KRandomParameters parameters =
-        new KRandomParameters().randomize(String.class, asRandomizer(supplier));
-    KRandom kRandom = new KRandom(parameters);
+  fun canPassSupplierLambdaFromOtherPackage() {
+    val test = "test"
+    val supplier: Supplier<String?> = Supplier { test }
+    val parameters = KRandomParameters().randomize(String::class.java, asRandomizer(supplier))
+    val kRandom = KRandom(parameters)
 
-    String value = kRandom.nextObject(String.class);
+    val value = kRandom.nextObject(String::class.java)
 
-    assertThat(value).isEqualTo("test");
+    value shouldBe test
   }
 }

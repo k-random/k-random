@@ -21,62 +21,38 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import io.github.krandom.KRandomParameters;
-import java.time.Instant;
-import java.time.ZonedDateTime;
+import io.github.krandom.KRandomParameters
+import java.time.Instant
+import java.time.ZonedDateTime
+import kotlin.random.Random
 
-/** Generate a random {@link ZonedDateTime} in the given range. */
-public class ZonedDateTimeRangeRandomizer extends AbstractRangeRandomizer<ZonedDateTime> {
+/** Generate a random [ZonedDateTime] in the given range. */
+class ZonedDateTimeRangeRandomizer
+/**
+ * Create a new [ZonedDateTimeRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: ZonedDateTime?, max: ZonedDateTime?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<ZonedDateTime>(min, max, seed) {
+  override val defaultMinValue: ZonedDateTime
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMin()
 
-  /**
-   * Create a new {@link ZonedDateTimeRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public ZonedDateTimeRangeRandomizer(final ZonedDateTime min, final ZonedDateTime max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: ZonedDateTime
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMax()
 
-  /**
-   * Create a new {@link ZonedDateTimeRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public ZonedDateTimeRangeRandomizer(
-      final ZonedDateTime min, final ZonedDateTime max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
-
-  @Override
-  protected ZonedDateTime getDefaultMinValue() {
-    return KRandomParameters.DEFAULT_DATES_RANGE.getMin();
-  }
-
-  @Override
-  protected ZonedDateTime getDefaultMaxValue() {
-    return KRandomParameters.DEFAULT_DATES_RANGE.getMax();
-  }
-
-  @Override
-  public ZonedDateTime getRandomValue() {
-    long minSeconds = min.toEpochSecond();
-    long maxSeconds = max.toEpochSecond();
-    long seconds = (long) nextDouble(minSeconds, maxSeconds);
-    int minNanoSeconds = min.getNano();
-    int maxNanoSeconds = max.getNano();
-    long nanoSeconds = (long) nextDouble(minNanoSeconds, maxNanoSeconds);
-    return ZonedDateTime.ofInstant(Instant.ofEpochSecond(seconds, nanoSeconds), min.getZone());
+  override fun getRandomValue(): ZonedDateTime {
+    val minSeconds = min.toEpochSecond()
+    val maxSeconds = max.toEpochSecond()
+    val seconds = nextDouble(minSeconds.toDouble(), maxSeconds.toDouble()).toLong()
+    val minNanoSeconds = min.nano
+    val maxNanoSeconds = max.nano
+    val nanoSeconds = nextDouble(minNanoSeconds.toDouble(), maxNanoSeconds.toDouble()).toLong()
+    return ZonedDateTime.ofInstant(Instant.ofEpochSecond(seconds, nanoSeconds), min.zone)
   }
 }

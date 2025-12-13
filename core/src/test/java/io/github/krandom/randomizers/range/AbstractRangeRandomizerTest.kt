@@ -21,11 +21,12 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import io.github.krandom.randomizers.AbstractRandomizerTest;
+import io.github.krandom.randomizers.AbstractRandomizerTest
 
-abstract class AbstractRangeRandomizerTest<T> extends AbstractRandomizerTest<T> {
-
-  T min, max;
+internal abstract class AbstractRangeRandomizerTest<T> : AbstractRandomizerTest<T>()
+  where T : Comparable<T> {
+  abstract val min: T
+  abstract val max: T
 }

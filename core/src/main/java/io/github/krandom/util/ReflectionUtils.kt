@@ -415,7 +415,7 @@ object ReflectionUtils {
   @JvmStatic
   fun filterSameParameterizedTypes(types: List<Class<*>>, type: Type): List<Class<*>> {
     if (type is ParameterizedType) {
-      val fieldArugmentTypes = type.getActualTypeArguments()
+      val fieldArugmentTypes = type.actualTypeArguments
       val typesWithSameParameterizedTypes: MutableList<Class<*>> = ArrayList<Class<*>>()
       for (currentConcreteType in types) {
         val actualTypeArguments = getActualTypeArgumentsOfGenericInterfaces(currentConcreteType)

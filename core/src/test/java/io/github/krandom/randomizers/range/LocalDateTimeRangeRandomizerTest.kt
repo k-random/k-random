@@ -21,92 +21,78 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.time.LocalDateTime
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import java.time.LocalDateTime;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class LocalDateTimeRangeRandomizerTest extends AbstractRangeRandomizerTest<LocalDateTime> {
-
-  private LocalDateTime minDateTime, maxDateTime;
+internal class LocalDateTimeRangeRandomizerTest : AbstractRangeRandomizerTest<LocalDateTime>() {
+  override val min: LocalDateTime = LocalDateTime.MIN
+  override val max: LocalDateTime = LocalDateTime.MAX
 
   @BeforeEach
-  void setUp() {
-    minDateTime = LocalDateTime.MIN;
-    maxDateTime = LocalDateTime.MAX;
-    randomizer = new LocalDateTimeRangeRandomizer(minDateTime, maxDateTime);
+  fun setUp() {
+    randomizer = LocalDateTimeRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedLocalDateTimeShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `generated local date time should not throw any exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void generatedLocalDateTimeShouldBeWithinSpecifiedRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(minDateTime, maxDateTime);
+  fun `generated local date time should be within specified range`() {
+    randomizer.getRandomValue() shouldBeIn min..max
   }
 
   @Test
-  void generatedLocalDateTimeShouldBeAlwaysTheSameForTheSameSeed() {
+  fun `generated local date time should be always the same for the same seed`() {
+    randomizer = LocalDateTimeRangeRandomizer(min, max, SEED)
+    val expected = LocalDateTime.parse("+446348406-04-09T16:32:16.990898895")
 
-    // Given
-    randomizer = new LocalDateTimeRangeRandomizer(minDateTime, maxDateTime, SEED);
-    LocalDateTime expected = LocalDateTime.parse("+446348406-04-09T16:32:16.990898895");
+    val randomValue = randomizer.getRandomValue()
 
-    // When
-    LocalDateTime randomValue = randomizer.getRandomValue();
-
-    // Then
-    assertThat(randomValue).isEqualTo(expected);
+    randomValue shouldBe expected
   }
 
   @Test
-  void whenSpecifiedMinDateTimeIsAfterMaxDateTime_thenShouldThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new LocalDateTimeRangeRandomizer(maxDateTime, minDateTime))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min date time is after max then should throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { LocalDateTimeRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinDateTimeIsNull_thenShouldUseDefaultMinValue() {
-    // Given
-    randomizer = new LocalDateTimeRangeRandomizer(null, maxDateTime);
+  fun `when specified min is null then should use default min value`() {
+    randomizer = LocalDateTimeRangeRandomizer(null, max)
 
-    // When
-    LocalDateTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isBeforeOrEqualTo(maxDateTime);
+    randomValue shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxDateTimeIsNull_thenShouldUseDefaultMaxValue() {
-    // Given
-    randomizer = new LocalDateTimeRangeRandomizer(minDateTime, null);
+  fun `when specified max is null then should use default max value`() {
+    randomizer = LocalDateTimeRangeRandomizer(min, null)
 
-    // when
-    LocalDateTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isAfterOrEqualTo(minDateTime);
+    randomValue shouldBeGreaterThanOrEqualTo min
   }
 
   @Test
-  void whenMaxDateIsAfterMidnight_thenShouldNotThrowException() {
-    minDateTime = LocalDateTime.parse("2019-10-21T23:33:44");
-    maxDateTime = LocalDateTime.parse("2019-10-22T00:33:22");
+  fun `when max date is after midnight then should not throw exception`() {
+    val min = LocalDateTime.parse("2019-10-21T23:33:44")
+    val max = LocalDateTime.parse("2019-10-22T00:33:22")
+    randomizer = LocalDateTimeRangeRandomizer(min, max)
 
-    // Given
-    randomizer = new LocalDateTimeRangeRandomizer(minDateTime, maxDateTime);
+    val randomValue = randomizer.getRandomValue()
 
-    // when
-    LocalDateTime randomValue = randomizer.getRandomValue();
-
-    // Then
-    assertThat(randomValue).isBetween(minDateTime, maxDateTime);
+    randomValue shouldBeIn min..max
   }
 }

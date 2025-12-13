@@ -26,4 +26,4 @@
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range

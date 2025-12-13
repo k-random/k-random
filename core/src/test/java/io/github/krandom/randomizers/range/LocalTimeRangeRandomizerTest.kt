@@ -21,76 +21,67 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.time.LocalTime
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import java.time.LocalTime;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class LocalTimeRangeRandomizerTest extends AbstractRangeRandomizerTest<LocalTime> {
-
-  private LocalTime minTime, maxTime;
+internal class LocalTimeRangeRandomizerTest : AbstractRangeRandomizerTest<LocalTime>() {
+  override val min: LocalTime = LocalTime.MIN
+  override var max: LocalTime = LocalTime.MAX
 
   @BeforeEach
-  void setUp() {
-    minTime = LocalTime.MIN;
-    maxTime = LocalTime.MAX;
-    randomizer = new LocalTimeRangeRandomizer(minTime, maxTime);
+  fun setUp() {
+    randomizer = LocalTimeRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedLocalTimeShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `generated local time should not throw any exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void generatedLocalTimeShouldBeWithinSpecifiedRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(minTime, maxTime);
+  fun `generated local time should be within specified range`() {
+    randomizer.getRandomValue() shouldBeIn min..max
   }
 
   @Test
-  void generatedLocalTimeShouldBeAlwaysTheSameForTheSameSeed() {
-    // Given
-    randomizer = new LocalTimeRangeRandomizer(minTime, maxTime, SEED);
-    LocalTime expected = LocalTime.of(14, 14, 58, 723174202);
+  fun `generated local time should be always the same for the same seed`() {
+    randomizer = LocalTimeRangeRandomizer(min, max, SEED)
+    val expected = LocalTime.of(14, 14, 58, 723174202)
 
-    // When
-    LocalTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isEqualTo(expected);
+    randomValue shouldBe expected
   }
 
   @Test
-  void whenSpecifiedMinTimeIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new LocalTimeRangeRandomizer(maxTime, minTime))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min is after max date then should throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { LocalTimeRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinTimeIsNull_thenShouldUseDefaultMinValue() {
-    // Given
-    randomizer = new LocalTimeRangeRandomizer(null, maxTime);
+  fun `when specified min is null then should use default min value`() {
+    randomizer = LocalTimeRangeRandomizer(null, max)
 
-    // When
-    LocalTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isBeforeOrEqualTo(maxTime);
+    randomValue shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxTimeIsNull_thenShouldUseDefaultMaxValue() {
-    // Given
-    randomizer = new LocalTimeRangeRandomizer(minTime, null);
+  fun `when specified max is null then should use default max value`() {
+    randomizer = LocalTimeRangeRandomizer(min, null)
 
-    // when
-    LocalTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isAfterOrEqualTo(minTime);
+    randomValue shouldBeGreaterThanOrEqualTo min
   }
 }

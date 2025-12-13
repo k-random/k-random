@@ -21,55 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
+
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Short} in the given range.
+ * Generate a random [Short] in the given range.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-public class ShortRangeRandomizer extends AbstractRangeRandomizer<Short> {
+class ShortRangeRandomizer
+/**
+ * Create a new [ShortRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: Short?, max: Short?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<Short>(min, max, seed) {
+  override val defaultMinValue: Short
+    get() = Short.MIN_VALUE
 
-  /**
-   * Create a new {@link ShortRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public ShortRangeRandomizer(final Short min, final Short max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: Short
+    get() = Short.MAX_VALUE
 
-  /**
-   * Create a new {@link ShortRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public ShortRangeRandomizer(final Short min, final Short max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min > max) {
-      throw new IllegalArgumentException("max must be greater than min");
-    }
-  }
-
-  @Override
-  public Short getRandomValue() {
-    return (short) nextDouble(min, max);
-  }
-
-  @Override
-  protected Short getDefaultMaxValue() {
-    return Short.MAX_VALUE;
-  }
-
-  @Override
-  protected Short getDefaultMinValue() {
-    return Short.MIN_VALUE;
-  }
+  override fun getRandomValue(): Short =
+    nextDouble(min.toDouble(), max.toDouble()).toInt().toShort()
 }

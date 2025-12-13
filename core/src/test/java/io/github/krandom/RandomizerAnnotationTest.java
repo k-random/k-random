@@ -109,7 +109,7 @@ class RandomizerAnnotationTest {
 
   public static class MyStringRandomizer extends AbstractRandomizer<String> {
 
-    private String[] words;
+    private final String[] words;
     private static int numConstructorCalled = 0;
 
     public MyStringRandomizer(final long seed, String[] words) {
@@ -135,7 +135,7 @@ class RandomizerAnnotationTest {
 
   public static class MyNumbersRandomizer extends AbstractRandomizer<Integer> {
 
-    private Integer[] numbers;
+    private final Integer[] numbers;
 
     public MyNumbersRandomizer(Integer[] numbers) {
       this.numbers = numbers;

@@ -21,64 +21,33 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import io.github.krandom.KRandomParameters;
-import java.time.Instant;
-import java.time.OffsetDateTime;
+import io.github.krandom.KRandomParameters
+import java.time.OffsetDateTime
+import kotlin.random.Random
 
-/** Generate a random {@link OffsetDateTime} in the given range. */
-public class OffsetDateTimeRangeRandomizer extends AbstractRangeRandomizer<OffsetDateTime> {
+/** Generate a random [OffsetDateTime] in the given range. */
+class OffsetDateTimeRangeRandomizer
+/**
+ * Create a new [OffsetDateTimeRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: OffsetDateTime?, max: OffsetDateTime?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<OffsetDateTime>(min, max, seed) {
+  override val defaultMinValue: OffsetDateTime
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime()
 
-  /**
-   * Create a new {@link OffsetDateTimeRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public OffsetDateTimeRangeRandomizer(final OffsetDateTime min, final OffsetDateTime max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: OffsetDateTime
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime()
 
-  /**
-   * Create a new {@link OffsetDateTimeRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public OffsetDateTimeRangeRandomizer(
-      final OffsetDateTime min, final OffsetDateTime max, final long seed) {
-    super(min, max, seed);
-  }
+  private val zonedDateTimeRangeRandomizer: ZonedDateTimeRangeRandomizer =
+    ZonedDateTimeRangeRandomizer(this.min.toZonedDateTime(), this.max.toZonedDateTime(), seed)
 
-  @Override
-  protected void checkValues() {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
-
-  @Override
-  protected OffsetDateTime getDefaultMinValue() {
-    return KRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime();
-  }
-
-  @Override
-  protected OffsetDateTime getDefaultMaxValue() {
-    return KRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime();
-  }
-
-  @Override
-  public OffsetDateTime getRandomValue() {
-    long minSeconds = min.toEpochSecond();
-    long maxSeconds = max.toEpochSecond();
-    long seconds = (long) nextDouble(minSeconds, maxSeconds);
-    int minNanoSeconds = min.getNano();
-    int maxNanoSeconds = max.getNano();
-    long nanoSeconds = (long) nextDouble(minNanoSeconds, maxNanoSeconds);
-    return OffsetDateTime.ofInstant(
-        Instant.ofEpochSecond(seconds, nanoSeconds),
-        KRandomParameters.DEFAULT_DATES_RANGE.getMin().getZone());
-  }
+  override fun getRandomValue(): OffsetDateTime =
+    zonedDateTimeRangeRandomizer.getRandomValue().toOffsetDateTime()
 }

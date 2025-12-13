@@ -21,76 +21,69 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.time.Year
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import java.time.Year;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class YearRangeRandomizerTest extends AbstractRangeRandomizerTest<Year> {
-
-  private Year minYear, maxYear;
+internal class YearRangeRandomizerTest : AbstractRangeRandomizerTest<Year>() {
+  override var min: Year = Year.of(1000)
+  override var max: Year = Year.of(3000)
 
   @BeforeEach
-  void setUp() {
-    minYear = Year.of(1000);
-    maxYear = Year.of(3000);
-    randomizer = new YearRangeRandomizer(minYear, maxYear);
+  fun setUp() {
+    randomizer = YearRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedYearShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `generated year should not be null`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void generatedYearShouldBeWithinSpecifiedRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(minYear, maxYear);
+  fun `generated year should be within specified range`() {
+    val value = randomizer.getRandomValue()
+
+    value shouldBeIn min..max
   }
 
   @Test
-  void generatedYearShouldBeAlwaysTheSameForTheSameSeed() {
-    // Given
-    randomizer = new YearRangeRandomizer(minYear, maxYear, SEED);
-    Year expected = Year.of(2446);
+  fun `generated year should be always the same for the same seed`() {
+    randomizer = YearRangeRandomizer(min, max, SEED)
+    val expected = Year.of(2446)
 
-    // When
-    Year randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isEqualTo(expected);
+    randomValue shouldBe expected
   }
 
   @Test
-  void whenSpecifiedMinYearIsAfterMaxYear_thenShouldThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new YearRangeRandomizer(maxYear, minYear))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min year is after max year then should throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { YearRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinYearIsNull_thenShouldUseDefaultMinValue() {
-    // Given
-    randomizer = new YearRangeRandomizer(null, maxYear);
+  fun `when specified min year is null then should use default min value`() {
+    randomizer = YearRangeRandomizer(null, max)
 
-    // When
-    Year randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isLessThanOrEqualTo(maxYear);
+    randomValue shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxYearIsNull_thenShouldUseDefaultMaxValue() {
-    // Given
-    randomizer = new YearRangeRandomizer(minYear, null);
+  fun `when specified max year is null then should use default max value`() {
+    randomizer = YearRangeRandomizer(min, null)
 
-    // when
-    Year randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isGreaterThanOrEqualTo(minYear);
+    randomValue shouldBeGreaterThanOrEqualTo min
   }
 }

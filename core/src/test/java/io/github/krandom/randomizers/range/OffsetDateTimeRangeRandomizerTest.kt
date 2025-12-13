@@ -21,81 +21,72 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.github.krandom.KRandomParameters
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.time.OffsetDateTime
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandomParameters;
-import java.time.OffsetDateTime;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class OffsetDateTimeRangeRandomizerTest extends AbstractRangeRandomizerTest<OffsetDateTime> {
-
-  private OffsetDateTime minOffsetDateTime, maxOffsetDateTime;
+internal class OffsetDateTimeRangeRandomizerTest : AbstractRangeRandomizerTest<OffsetDateTime>() {
+  override val min: OffsetDateTime =
+    KRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime().minusYears(50)
+  override val max: OffsetDateTime =
+    KRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime().plusYears(50)
 
   @BeforeEach
-  void setUp() {
-    minOffsetDateTime =
-        KRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime().minusYears(50);
-    maxOffsetDateTime =
-        KRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime().plusYears(50);
-    randomizer = new OffsetDateTimeRangeRandomizer(minOffsetDateTime, maxOffsetDateTime);
+  fun setUp() {
+    randomizer = OffsetDateTimeRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedOffsetDateTimeShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `generated offset date time should not throw any exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void generatedOffsetDateTimeShouldBeWithinSpecifiedRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(minOffsetDateTime, maxOffsetDateTime);
+  fun `generated offset date time should be within specified range`() {
+    val value = randomizer.getRandomValue()
+
+    value shouldBeIn min..max
   }
 
   @Test
-  void generatedOffsetDateTimeShouldBeAlwaysTheSameForTheSameSeed() {
-    // Given
-    randomizer = new OffsetDateTimeRangeRandomizer(minOffsetDateTime, maxOffsetDateTime, SEED);
-    OffsetDateTime expected = OffsetDateTime.parse("2046-10-12T17:24:27Z");
+  fun `generated offset date time should be always the same for the same seed`() {
+    randomizer = OffsetDateTimeRangeRandomizer(min, max, SEED)
+    val expected = OffsetDateTime.parse("2046-10-12T17:24:27Z")
 
-    // When
-    OffsetDateTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isEqualTo(expected);
+    randomValue shouldBe expected
   }
 
   @Test
-  void
-      whenSpecifiedMinOffsetDateTimeIsAfterMaxOffsetDateTime_thenShouldThrowIllegalArgumentException() {
-    assertThatThrownBy(
-            () -> new OffsetDateTimeRangeRandomizer(maxOffsetDateTime, minOffsetDateTime))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min is after max then should throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { OffsetDateTimeRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinOffsetDateTimeIsNull_thenShouldUseDefaultMinValue() {
-    // Given
-    randomizer = new OffsetDateTimeRangeRandomizer(null, maxOffsetDateTime);
+  fun `when specified min is null then should use default min value`() {
+    randomizer = OffsetDateTimeRangeRandomizer(null, max)
 
-    // When
-    OffsetDateTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isBeforeOrEqualTo(maxOffsetDateTime);
+    randomValue shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxOffsetDateTimeIsNull_thenShouldUseDefaultMaxValue() {
-    // Given
-    randomizer = new OffsetDateTimeRangeRandomizer(minOffsetDateTime, null);
+  fun `when specified max is null then should use default max value`() {
+    randomizer = OffsetDateTimeRangeRandomizer(min, null)
 
-    // when
-    OffsetDateTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isAfterOrEqualTo(minOffsetDateTime);
+    randomValue shouldBeGreaterThanOrEqualTo min
   }
 }

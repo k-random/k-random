@@ -21,58 +21,35 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import io.github.krandom.KRandomParameters;
-import java.time.Year;
-import java.time.temporal.ChronoField;
+import io.github.krandom.KRandomParameters
+import java.time.Year
+import java.time.temporal.ChronoField
+import kotlin.random.Random
 
-/** Generate a random {@link Year} in the given range. */
-public class YearRangeRandomizer extends AbstractRangeRandomizer<Year> {
+/** Generate a random [Year] in the given range. */
+class YearRangeRandomizer
+/**
+ * Create a new [YearRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: Year?, max: Year?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<Year>(min, max, seed) {
+  override val defaultMinValue: Year
+    get() = Year.of(KRandomParameters.DEFAULT_DATES_RANGE.getMin().year)
 
-  /**
-   * Create a new {@link YearRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public YearRangeRandomizer(final Year min, final Year max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: Year
+    get() = Year.of(KRandomParameters.DEFAULT_DATES_RANGE.getMax().year)
 
-  /**
-   * Create a new {@link YearRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public YearRangeRandomizer(final Year min, final Year max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
-
-  @Override
-  protected Year getDefaultMinValue() {
-    return Year.of(KRandomParameters.DEFAULT_DATES_RANGE.getMin().getYear());
-  }
-
-  @Override
-  protected Year getDefaultMaxValue() {
-    return Year.of(KRandomParameters.DEFAULT_DATES_RANGE.getMax().getYear());
-  }
-
-  @Override
-  public Year getRandomValue() {
-    long minYear = min.getLong(ChronoField.YEAR);
-    long maxYear = max.getLong(ChronoField.YEAR);
-    long randomYear = (long) nextDouble(minYear, maxYear);
-    return Year.of(Math.toIntExact(randomYear));
+  override fun getRandomValue(): Year {
+    val minYear = min.getLong(ChronoField.YEAR)
+    val maxYear = max.getLong(ChronoField.YEAR)
+    val randomYear = nextDouble(minYear.toDouble(), maxYear.toDouble()).toLong()
+    return Year.of(Math.toIntExact(randomYear))
   }
 }

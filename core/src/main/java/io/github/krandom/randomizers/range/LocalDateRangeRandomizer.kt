@@ -21,61 +21,38 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoField;
+import java.time.LocalDate
+import java.time.temporal.ChronoField
+import kotlin.random.Random
 
 /**
- * Generate a random {@link LocalDate} in the given range.
+ * Generate a random [LocalDate] in the given range.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class LocalDateRangeRandomizer extends AbstractRangeRandomizer<LocalDate> {
+class LocalDateRangeRandomizer
+/**
+ * Create a new [LocalDateRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: LocalDate?, max: LocalDate?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<LocalDate>(min, max, seed) {
+  override val defaultMinValue: LocalDate
+    get() = LocalDate.MIN
 
-  /**
-   * Create a new {@link LocalDateRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public LocalDateRangeRandomizer(final LocalDate min, final LocalDate max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: LocalDate
+    get() = LocalDate.MAX
 
-  /**
-   * Create a new {@link LocalDateRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public LocalDateRangeRandomizer(final LocalDate min, final LocalDate max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
-
-  @Override
-  protected LocalDate getDefaultMinValue() {
-    return LocalDate.MIN;
-  }
-
-  @Override
-  protected LocalDate getDefaultMaxValue() {
-    return LocalDate.MAX;
-  }
-
-  @Override
-  public LocalDate getRandomValue() {
-    long minEpochDay = min.getLong(ChronoField.EPOCH_DAY);
-    long maxEpochDay = max.getLong(ChronoField.EPOCH_DAY);
-    long randomEpochDay = (long) nextDouble(minEpochDay, maxEpochDay);
-    return LocalDate.ofEpochDay(randomEpochDay);
+  override fun getRandomValue(): LocalDate {
+    val minEpochDay = min.getLong(ChronoField.EPOCH_DAY)
+    val maxEpochDay = max.getLong(ChronoField.EPOCH_DAY)
+    val randomEpochDay = nextDouble(minEpochDay.toDouble(), maxEpochDay.toDouble()).toLong()
+    return LocalDate.ofEpochDay(randomEpochDay)
   }
 }

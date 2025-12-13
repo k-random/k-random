@@ -23,6 +23,9 @@
  */
 package io.github.krandom.randomizers.range
 
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.beans.Street
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
 import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
@@ -31,62 +34,85 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class DoubleRangeRandomizerTest : AbstractRangeRandomizerTest<Double>() {
-  override val min: Double = 1.0
-  override val max: Double = 10.0
+internal class IntRangeRandomizerTest : AbstractRangeRandomizerTest<Int>() {
+  override val min: Int = 1
+  override val max: Int = 10
 
   @BeforeEach
   fun setUp() {
-    randomizer = DoubleRangeRandomizer(min, max)
+    randomizer = IntRangeRandomizer(min, max)
   }
 
   @Test
   fun `generated value should be within specified range`() {
-    val randomValue: Double = randomizer.getRandomValue()
+    val randomValue: Int = randomizer.getRandomValue()
 
     randomValue shouldBeIn min..max
   }
 
   @Test
   fun `when specified min value is after max value then throw illegal argument exception`() {
-    shouldThrow<IllegalArgumentException> { DoubleRangeRandomizer(max, min) }
+    shouldThrow<IllegalArgumentException> { IntRangeRandomizer(max, min).getRandomValue() }
   }
 
   @Test
   fun `when specified min value is null then should use default min value`() {
-    randomizer = DoubleRangeRandomizer(null, max)
+    randomizer = IntRangeRandomizer(null, max)
 
-    val randomDouble = randomizer.getRandomValue()
+    val randomInteger = randomizer.getRandomValue()
 
-    randomDouble shouldBeLessThanOrEqualTo max
+    randomInteger shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  fun `when specified max value is null then should use default max value`() {
-    randomizer = DoubleRangeRandomizer(min, null)
+  fun `when specified maxvalue is null then should use default max value`() {
+    randomizer = IntRangeRandomizer(min, null)
 
-    val randomDouble = randomizer.getRandomValue()
+    val randomInteger = randomizer.getRandomValue()
 
-    randomDouble shouldBeGreaterThanOrEqualTo min
+    randomInteger shouldBeGreaterThanOrEqualTo min
   }
 
   @Test
   fun `should always generate the same value for the same seed`() {
-    val doubleRangeRandomizer = DoubleRangeRandomizer(min, max, SEED)
+    val intRangeRandomizer = IntRangeRandomizer(min, max, SEED)
 
-    val double = doubleRangeRandomizer.getRandomValue()
+    val i = intRangeRandomizer.getRandomValue()
 
-    double shouldBe 7.508567826974321
+    i shouldBe 7
   }
 
-  /* This test is for the first comment on https://stackoverflow.com/a/3680648/5019386. This test
-   * never fails (tested with IntelliJ's feature "Repeat Test Until Failure") */
+  /*
+   * Integration tests
+   */
   @Test
-  fun `test infinity`() {
-    val doubleRangeRandomizer = DoubleRangeRandomizer(-Double.MAX_VALUE, Double.MAX_VALUE)
+  fun `generated value should be within specified range when used to randomize primitive integer type`() {
+    val parameters =
+      KRandomParameters().randomize(Int::class.javaPrimitiveType, IntRangeRandomizer(min, max))
+    val kRandom = KRandom(parameters)
 
-    val double = doubleRangeRandomizer.getRandomValue()
+    val integer = kRandom.nextObject(Int::class.javaPrimitiveType)
 
-    double shouldBeIn -Double.MAX_VALUE..Double.MAX_VALUE
+    integer shouldBeIn min..max
+  }
+
+  @Test
+  fun `generated value should be within specified range when used to randomize wrapper integer type`() {
+    val parameters = KRandomParameters().randomize(Int::class.java, IntRangeRandomizer(min, max))
+    val kRandom = KRandom(parameters)
+
+    val integer = kRandom.nextObject(Int::class.java)
+
+    integer shouldBeIn min..max
+  }
+
+  @Test
+  fun `generated value should be within specified range when used to randomize non integer type`() {
+    val parameters = KRandomParameters().randomize(Int::class.java, IntRangeRandomizer(min, max))
+    val kRandom = KRandom(parameters)
+
+    val street = kRandom.nextObject(Street::class.java)
+
+    street.number shouldBeIn min..max
   }
 }

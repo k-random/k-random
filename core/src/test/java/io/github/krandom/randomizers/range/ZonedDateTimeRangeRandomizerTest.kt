@@ -21,78 +21,71 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.github.krandom.KRandomParameters
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.date.atSameZone
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.time.ZonedDateTime
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandomParameters;
-import java.time.ZonedDateTime;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class ZonedDateTimeRangeRandomizerTest extends AbstractRangeRandomizerTest<ZonedDateTime> {
-
-  private ZonedDateTime minZonedDateTime, maxZonedDateTime;
+internal class ZonedDateTimeRangeRandomizerTest : AbstractRangeRandomizerTest<ZonedDateTime>() {
+  override val min: ZonedDateTime = KRandomParameters.DEFAULT_DATES_RANGE.getMin().minusYears(50)
+  override val max: ZonedDateTime = KRandomParameters.DEFAULT_DATES_RANGE.getMax().plusYears(50)
 
   @BeforeEach
-  void setUp() {
-    minZonedDateTime = KRandomParameters.DEFAULT_DATES_RANGE.getMin().minusYears(50);
-    maxZonedDateTime = KRandomParameters.DEFAULT_DATES_RANGE.getMax().plusYears(50);
-    randomizer = new ZonedDateTimeRangeRandomizer(minZonedDateTime, maxZonedDateTime);
+  fun setUp() {
+    randomizer = ZonedDateTimeRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedZonedDateTimeShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `generated zoned date time should not throw any exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void generatedZonedDateTimeShouldBeWithinSpecifiedRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(minZonedDateTime, maxZonedDateTime);
+  fun `generated zoned date time should be within specified range`() {
+    val value = randomizer.getRandomValue()
+
+    value shouldBeIn min..max
   }
 
   @Test
-  void generatedZonedDateTimeShouldBeAlwaysTheSameForTheSameSeed() {
-    // Given
-    randomizer = new ZonedDateTimeRangeRandomizer(minZonedDateTime, maxZonedDateTime, SEED);
-    ZonedDateTime expected = ZonedDateTime.parse("2046-10-12T17:24:27Z");
+  fun `generated zoned date time should be always the same for the same seed`() {
+    randomizer = ZonedDateTimeRangeRandomizer(min, max, SEED)
+    val expected = ZonedDateTime.parse("2046-10-12T17:24:27Z")
 
-    // When
-    ZonedDateTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isEqualTo(expected);
+    randomValue shouldBe expected.atSameZone()
   }
 
   @Test
-  void
-      whenSpecifiedMinZonedDateTimeIsAfterMaxZonedDateTime_thenShouldThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new ZonedDateTimeRangeRandomizer(maxZonedDateTime, minZonedDateTime))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min zoned date time is after max zoned date time then should throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { ZonedDateTimeRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinZonedDateTimeIsNull_thenShouldUseDefaultMinValue() {
-    // Given
-    randomizer = new ZonedDateTimeRangeRandomizer(null, maxZonedDateTime);
+  fun `when specified min zoned date time is null then should use default min value`() {
+    randomizer = ZonedDateTimeRangeRandomizer(null, max)
 
-    // When
-    ZonedDateTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isBeforeOrEqualTo(maxZonedDateTime);
+    randomValue shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxZonedDateTimeIsNull_thenShouldUseDefaultMaxValue() {
-    // Given
-    randomizer = new ZonedDateTimeRangeRandomizer(minZonedDateTime, null);
+  fun `when specified max zoned date time is null then should use default max value`() {
+    randomizer = ZonedDateTimeRangeRandomizer(min, null)
 
-    // when
-    ZonedDateTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isAfterOrEqualTo(minZonedDateTime);
+    randomValue shouldBeGreaterThanOrEqualTo min
   }
 }

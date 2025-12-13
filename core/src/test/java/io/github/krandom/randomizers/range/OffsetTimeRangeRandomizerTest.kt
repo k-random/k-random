@@ -21,76 +21,69 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.time.OffsetTime
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import java.time.OffsetTime;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class OffsetTimeRangeRandomizerTest extends AbstractRangeRandomizerTest<OffsetTime> {
-
-  private OffsetTime minTime, maxTime;
+internal class OffsetTimeRangeRandomizerTest : AbstractRangeRandomizerTest<OffsetTime>() {
+  override val min: OffsetTime = OffsetTime.MIN
+  override val max: OffsetTime = OffsetTime.MAX
 
   @BeforeEach
-  void setUp() {
-    minTime = OffsetTime.MIN;
-    maxTime = OffsetTime.MAX;
-    randomizer = new OffsetTimeRangeRandomizer(minTime, maxTime);
+  fun setUp() {
+    randomizer = OffsetTimeRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedOffsetTimeShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `generated offset time should not throw any exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void generatedOffsetTimeShouldBeWithinSpecifiedRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(minTime, maxTime);
+  fun `generated offset time should be within specified range`() {
+    val value = randomizer.getRandomValue()
+
+    value shouldBeIn min..max
   }
 
   @Test
-  void generatedOffsetTimeShouldBeAlwaysTheSameForTheSameSeed() {
-    // Given
-    randomizer = new OffsetTimeRangeRandomizer(minTime, maxTime, SEED);
-    OffsetTime expected = OffsetTime.of(17, 21, 21, 0, minTime.getOffset());
+  fun `generated offset time should be always the same for the same seed`() {
+    randomizer = OffsetTimeRangeRandomizer(min, max, SEED)
+    val expected = OffsetTime.of(17, 21, 21, 0, min.offset)
 
-    // When
-    OffsetTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isEqualTo(expected);
+    randomValue shouldBe expected
   }
 
   @Test
-  void whenSpecifiedMinTimeIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new OffsetTimeRangeRandomizer(maxTime, minTime))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min is after max date then should throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { OffsetTimeRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinTimeIsNull_thenShouldUseDefaultMinValue() {
-    // Given
-    randomizer = new OffsetTimeRangeRandomizer(null, maxTime);
+  fun `when specified min is null then should use default min value`() {
+    randomizer = OffsetTimeRangeRandomizer(null, max)
 
-    // When
-    OffsetTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isBeforeOrEqualTo(maxTime);
+    randomValue shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxTimeIsNull_thenShouldUseDefaultMaxValue() {
-    // Given
-    randomizer = new OffsetTimeRangeRandomizer(minTime, null);
+  fun `when specified max is null then should use default max value`() {
+    randomizer = OffsetTimeRangeRandomizer(min, null)
 
-    // when
-    OffsetTime randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isAfterOrEqualTo(minTime);
+    randomValue shouldBeGreaterThanOrEqualTo min
   }
 }

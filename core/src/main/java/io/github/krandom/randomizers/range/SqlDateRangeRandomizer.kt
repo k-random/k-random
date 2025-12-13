@@ -21,60 +21,37 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import java.sql.Date;
+import java.sql.Date as SqlDate
+import kotlin.random.Random
 
 /**
- * Generate a random {@link java.sql.Date} in a given range.
+ * Generate a random [SqlDate] in a given range.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class SqlDateRangeRandomizer extends AbstractRangeRandomizer<Date> {
+class SqlDateRangeRandomizer
+/**
+ * Create a new [SqlDateRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: SqlDate?, max: SqlDate?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<SqlDate>(min, max, seed) {
+  override val defaultMinValue: SqlDate
+    get() = SqlDate(Long.MIN_VALUE)
 
-  /**
-   * Create a new {@link SqlDateRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public SqlDateRangeRandomizer(final Date min, final Date max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: SqlDate
+    get() = SqlDate(Long.MAX_VALUE)
 
-  /**
-   * Create a new {@link SqlDateRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public SqlDateRangeRandomizer(final Date min, final Date max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min.after(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
-
-  @Override
-  protected Date getDefaultMinValue() {
-    return new Date(Long.MIN_VALUE);
-  }
-
-  @Override
-  protected Date getDefaultMaxValue() {
-    return new Date(Long.MAX_VALUE);
-  }
-
-  @Override
-  public Date getRandomValue() {
-    long minDateTime = min.getTime();
-    long maxDateTime = max.getTime();
-    long randomDateTime = (long) nextDouble(minDateTime, maxDateTime);
-    return new Date(randomDateTime);
+  override fun getRandomValue(): SqlDate {
+    val minDateTime = min.time
+    val maxDateTime = max.time
+    val randomDateTime = nextDouble(minDateTime.toDouble(), maxDateTime.toDouble()).toLong()
+    return SqlDate(randomDateTime)
   }
 }

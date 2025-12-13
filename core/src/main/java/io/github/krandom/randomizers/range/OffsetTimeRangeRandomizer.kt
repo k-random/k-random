@@ -21,59 +21,37 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import io.github.krandom.KRandomParameters;
-import java.time.LocalTime;
-import java.time.OffsetTime;
-import java.time.temporal.ChronoField;
+import io.github.krandom.KRandomParameters
+import java.time.LocalTime
+import java.time.OffsetTime
+import java.time.temporal.ChronoField
+import kotlin.random.Random
 
-/** Generate a random {@link OffsetTime} in the given range. */
-public class OffsetTimeRangeRandomizer extends AbstractRangeRandomizer<OffsetTime> {
+/** Generate a random [OffsetTime] in the given range. */
+class OffsetTimeRangeRandomizer
+/**
+ * Create a new [OffsetTimeRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: OffsetTime?, max: OffsetTime?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<OffsetTime>(min, max, seed) {
+  override val defaultMinValue: OffsetTime
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime().toOffsetTime()
 
-  /**
-   * Create a new {@link OffsetTimeRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public OffsetTimeRangeRandomizer(final OffsetTime min, final OffsetTime max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: OffsetTime
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime().toOffsetTime()
 
-  /**
-   * Create a new {@link OffsetTimeRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public OffsetTimeRangeRandomizer(final OffsetTime min, final OffsetTime max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
-
-  @Override
-  protected OffsetTime getDefaultMinValue() {
-    return KRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime().toOffsetTime();
-  }
-
-  @Override
-  protected OffsetTime getDefaultMaxValue() {
-    return KRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime().toOffsetTime();
-  }
-
-  @Override
-  public OffsetTime getRandomValue() {
-    long minSecondOfDay = min.getLong(ChronoField.SECOND_OF_DAY);
-    long maxSecondOfDay = max.getLong(ChronoField.SECOND_OF_DAY);
-    long randomSecondOfDay = (long) nextDouble(minSecondOfDay, maxSecondOfDay);
-    return OffsetTime.of(LocalTime.ofSecondOfDay(randomSecondOfDay), min.getOffset());
+  override fun getRandomValue(): OffsetTime {
+    val minSecondOfDay = min.getLong(ChronoField.SECOND_OF_DAY)
+    val maxSecondOfDay = max.getLong(ChronoField.SECOND_OF_DAY)
+    val randomSecondOfDay =
+      nextDouble(minSecondOfDay.toDouble(), maxSecondOfDay.toDouble()).toLong()
+    return OffsetTime.of(LocalTime.ofSecondOfDay(randomSecondOfDay), min.offset)
   }
 }

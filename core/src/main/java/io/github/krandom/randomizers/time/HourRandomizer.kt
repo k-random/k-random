@@ -24,7 +24,7 @@
 package io.github.krandom.randomizers.time
 
 import io.github.krandom.api.Randomizer
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import io.github.krandom.randomizers.range.IntRangeRandomizer
 import kotlin.random.Random
 
 /**
@@ -41,10 +41,10 @@ class HourRandomizer
 @JvmOverloads
 constructor(
   seed: Long = Random.nextLong(),
-  private val integerRangeRandomizer: IntegerRangeRandomizer =
-    IntegerRangeRandomizer(HOUR_RANGE.first, HOUR_RANGE.last, seed),
+  private val intRangeRandomizer: IntRangeRandomizer =
+    IntRangeRandomizer(HOUR_RANGE.first, HOUR_RANGE.last, seed),
 ) : Randomizer<Int> {
-  override fun getRandomValue(): Int = integerRangeRandomizer.getRandomValue()
+  override fun getRandomValue(): Int = intRangeRandomizer.getRandomValue()
 
   companion object {
     val HOUR_RANGE = 0..23

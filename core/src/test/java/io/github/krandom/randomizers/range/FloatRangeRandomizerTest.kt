@@ -21,58 +21,61 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.BDDAssertions.then;
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class FloatRangeRandomizerTest extends AbstractRangeRandomizerTest<Float> {
+internal class FloatRangeRandomizerTest : AbstractRangeRandomizerTest<Float>() {
+  override val min: Float = 0.001F
+  override val max: Float = 0.002F
 
   @BeforeEach
-  void setUp() {
-    min = 0.001f;
-    max = 0.002f;
-    randomizer = new FloatRangeRandomizer(min, max);
+  fun setUp() {
+    randomizer = FloatRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedValueShouldBeWithinSpecifiedRange() {
-    Float randomValue = randomizer.getRandomValue();
-    assertThat(randomValue).isBetween(min, max);
+  fun `generated value should be within specified range`() {
+    val randomValue: Float = randomizer.getRandomValue()
+
+    randomValue shouldBeIn min..max
   }
 
   @Test
-  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new FloatRangeRandomizer(max, min))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min value is after max value then throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { FloatRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-    randomizer = new FloatRangeRandomizer(null, max);
-    Float randomFloat = randomizer.getRandomValue();
-    assertThat(randomFloat).isLessThanOrEqualTo(max);
+  fun `when specified min value is null then should use default min value`() {
+    randomizer = FloatRangeRandomizer(null, max)
+
+    val randomFloat = randomizer.getRandomValue()
+
+    randomFloat shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-    randomizer = new FloatRangeRandomizer(min, null);
-    Float randomFloat = randomizer.getRandomValue();
-    assertThat(randomFloat).isGreaterThanOrEqualTo(min);
+  fun `when specified max value is null then should use default max value`() {
+    randomizer = FloatRangeRandomizer(min, null)
+
+    val randomFloat = randomizer.getRandomValue()
+
+    randomFloat shouldBeGreaterThanOrEqualTo min
   }
 
   @Test
-  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-    // given
-    FloatRangeRandomizer floatRangeRandomizer = new FloatRangeRandomizer(min, max, SEED);
+  fun `should always generate the same value for the same seed`() {
+    randomizer = FloatRangeRandomizer(min, max, SEED)
 
-    // when
-    Float f = floatRangeRandomizer.getRandomValue();
+    val float = randomizer.getRandomValue()
 
-    then(f).isEqualTo(0.0017231742f);
+    float shouldBe 0.0017231742f
   }
 }

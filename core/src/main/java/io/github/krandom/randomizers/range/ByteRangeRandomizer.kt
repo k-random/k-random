@@ -21,55 +21,31 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
+
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Byte} in the given range.
+ * Generate a random [Byte] in the given range.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-public class ByteRangeRandomizer extends AbstractRangeRandomizer<Byte> {
+class ByteRangeRandomizer
+/**
+ * Create a new [ByteRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: Byte?, max: Byte?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<Byte>(min, max, seed) {
+  override val defaultMinValue: Byte
+    get() = Byte.MIN_VALUE
 
-  /**
-   * Create a new {@link ByteRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public ByteRangeRandomizer(final Byte min, final Byte max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: Byte
+    get() = Byte.MAX_VALUE
 
-  /**
-   * Create a new {@link ByteRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public ByteRangeRandomizer(final Byte min, final Byte max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min > max) {
-      throw new IllegalArgumentException("max must be greater than min");
-    }
-  }
-
-  @Override
-  public Byte getRandomValue() {
-    return (byte) nextDouble(min, max);
-  }
-
-  @Override
-  protected Byte getDefaultMaxValue() {
-    return Byte.MAX_VALUE;
-  }
-
-  @Override
-  protected Byte getDefaultMinValue() {
-    return Byte.MIN_VALUE;
-  }
+  override fun getRandomValue(): Byte = nextDouble(min.toDouble(), max.toDouble()).toInt().toByte()
 }

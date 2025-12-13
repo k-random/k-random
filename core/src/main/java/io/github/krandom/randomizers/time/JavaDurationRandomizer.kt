@@ -24,7 +24,7 @@
 package io.github.krandom.randomizers.time
 
 import io.github.krandom.api.Randomizer
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import io.github.krandom.randomizers.range.IntRangeRandomizer
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
@@ -47,8 +47,8 @@ class JavaDurationRandomizer
 constructor(
   seed: Long = Random.nextLong(),
   private val unit: TemporalUnit = ChronoUnit.HOURS,
-  private val amountRandomizer: IntegerRangeRandomizer =
-    IntegerRangeRandomizer(DURATION_RANGE.first, DURATION_RANGE.last, seed),
+  private val amountRandomizer: IntRangeRandomizer =
+    IntRangeRandomizer(DURATION_RANGE.first, DURATION_RANGE.last, seed),
 ) : Randomizer<Duration> {
   init {
     requireValid(unit)

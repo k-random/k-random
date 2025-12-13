@@ -26,7 +26,7 @@ package io.github.krandom;
 import static io.github.krandom.util.ReflectionUtils.*;
 
 import io.github.krandom.api.ObjectFactory;
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer;
+import io.github.krandom.randomizers.range.IntRangeRandomizer;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -126,7 +126,7 @@ public class MapPopulator {
 
   private int getRandomMapSize(KRandomParameters parameters) {
     KRandomParameters.Range<Integer> collectionSizeRange = parameters.getCollectionSizeRange();
-    return new IntegerRangeRandomizer(
+    return new IntRangeRandomizer(
             collectionSizeRange.getMin(), collectionSizeRange.getMax(), parameters.getSeed())
         .getRandomValue();
   }

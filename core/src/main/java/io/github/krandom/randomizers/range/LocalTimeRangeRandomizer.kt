@@ -21,71 +21,48 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import java.time.LocalTime;
+import java.time.LocalTime
+import kotlin.random.Random
 
 /**
- * Generate a random {@link LocalTime} in the given range.
+ * Generate a random [LocalTime] in the given range.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class LocalTimeRangeRandomizer extends AbstractRangeRandomizer<LocalTime> {
+class LocalTimeRangeRandomizer
+/**
+ * Create a new [LocalTimeRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: LocalTime?, max: LocalTime?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<LocalTime>(min, max, seed) {
+  override val defaultMinValue: LocalTime
+    get() = LocalTime.MIN
 
-  /**
-   * Create a new {@link LocalTimeRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public LocalTimeRangeRandomizer(final LocalTime min, final LocalTime max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: LocalTime
+    get() = LocalTime.MAX
 
-  /**
-   * Create a new {@link LocalTimeRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public LocalTimeRangeRandomizer(final LocalTime min, final LocalTime max, final long seed) {
-    super(min, max, seed);
-  }
+  override fun getRandomValue(): LocalTime {
+    val minNanoSecond = min.nano
+    val minSecond = min.second
+    val minMinute = min.minute
+    val minHour = min.hour
 
-  @Override
-  protected void checkValues() {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
+    val maxNanoSecond = max.nano
+    val maxSecond = max.second
+    val maxMinute = max.minute
+    val maxHour = max.hour
 
-  @Override
-  protected LocalTime getDefaultMinValue() {
-    return LocalTime.MIN;
-  }
-
-  @Override
-  protected LocalTime getDefaultMaxValue() {
-    return LocalTime.MAX;
-  }
-
-  @Override
-  public LocalTime getRandomValue() {
-    int minNanoSecond = min.getNano();
-    int minSecond = min.getSecond();
-    int minMinute = min.getMinute();
-    int minHour = min.getHour();
-
-    int maxNanoSecond = max.getNano();
-    int maxSecond = max.getSecond();
-    int maxMinute = max.getMinute();
-    int maxHour = max.getHour();
-
-    int randomNanoSecond = (int) nextDouble(minNanoSecond, maxNanoSecond);
-    int randomSecond = (int) nextDouble(minSecond, maxSecond);
-    int randomMinute = (int) nextDouble(minMinute, maxMinute);
-    int randomHour = (int) nextDouble(minHour, maxHour);
-    return LocalTime.of(randomHour, randomMinute, randomSecond, randomNanoSecond);
+    val randomNanoSecond = nextDouble(minNanoSecond.toDouble(), maxNanoSecond.toDouble()).toInt()
+    val randomSecond = nextDouble(minSecond.toDouble(), maxSecond.toDouble()).toInt()
+    val randomMinute = nextDouble(minMinute.toDouble(), maxMinute.toDouble()).toInt()
+    val randomHour = nextDouble(minHour.toDouble(), maxHour.toDouble()).toInt()
+    return LocalTime.of(randomHour, randomMinute, randomSecond, randomNanoSecond)
   }
 }

@@ -21,58 +21,61 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.BDDAssertions.then;
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class ShortRangeRandomizerTest extends AbstractRangeRandomizerTest<Short> {
+internal class ShortRangeRandomizerTest : AbstractRangeRandomizerTest<Short>() {
+  override val min: Short = 1.toShort()
+  override val max: Short = 10.toShort()
 
   @BeforeEach
-  void setUp() {
-    min = (short) 1;
-    max = (short) 10;
-    randomizer = new ShortRangeRandomizer(min, max);
+  fun setUp() {
+    randomizer = ShortRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedValueShouldBeWithinSpecifiedRange() {
-    Short randomValue = randomizer.getRandomValue();
-    assertThat(randomValue).isBetween(min, max);
+  fun `generated value should be within specified range`() {
+    val randomValue: Short = randomizer.getRandomValue()
+
+    randomValue.toInt() shouldBeIn min..max
   }
 
   @Test
-  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new ShortRangeRandomizer(max, min))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min value is after max value then throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { ShortRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-    randomizer = new ShortRangeRandomizer(null, max);
-    Short randomShort = randomizer.getRandomValue();
-    assertThat(randomShort).isLessThanOrEqualTo(max);
+  fun `when specified min value is null then should use default min value`() {
+    randomizer = ShortRangeRandomizer(null, max)
+
+    val randomShort = randomizer.getRandomValue()
+
+    randomShort shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-    randomizer = new ShortRangeRandomizer(min, null);
-    Short randomShort = randomizer.getRandomValue();
-    assertThat(randomShort).isGreaterThanOrEqualTo(min);
+  fun `when specified maxvalue is null then should use default max value`() {
+    randomizer = ShortRangeRandomizer(min, null)
+
+    val randomShort = randomizer.getRandomValue()
+
+    randomShort shouldBeGreaterThanOrEqualTo min
   }
 
   @Test
-  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-    // given
-    ShortRangeRandomizer shortRangeRandomizer = new ShortRangeRandomizer(min, max, SEED);
+  fun shouldAlwaysGenerateTheSameValueForTheSameSeed() {
+    val shortRangeRandomizer = ShortRangeRandomizer(min, max, SEED)
 
-    // when
-    Short s = shortRangeRandomizer.getRandomValue();
+    val s = shortRangeRandomizer.getRandomValue()
 
-    then(s).isEqualTo((short) 7);
+    s shouldBe 7.toShort()
   }
 }

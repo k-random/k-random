@@ -1,44 +1,38 @@
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import java.time.MonthDay;
-import java.time.Year;
+import java.time.MonthDay
+import java.time.Year
+import kotlin.random.Random
 
-public class MonthDayRangeRandomizer extends AbstractRangeRandomizer<MonthDay> {
-  private final LocalDateRangeRandomizer localDateRangeRandomizer;
+private const val JANUARY = 1
+private const val DECEMBER = 12
+private const val FIRST = 1
+private const val THIRTY_FIRST = 31
 
-  public MonthDayRangeRandomizer(final MonthDay min, final MonthDay max) {
-    super(min, max);
-    localDateRangeRandomizer =
-        new LocalDateRangeRandomizer(
-            this.min.atYear(Year.now().getValue()), this.max.atYear(Year.now().getValue()));
-  }
+/** Generate a random [MonthDay] within the given range. */
+class MonthDayRangeRandomizer
+/**
+ * Create a new [MonthDayRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: MonthDay?, max: MonthDay?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<MonthDay>(min, max, seed) {
+  override val defaultMinValue: MonthDay
+    get() = MonthDay.of(JANUARY, FIRST)
 
-  public MonthDayRangeRandomizer(final MonthDay min, final MonthDay max, final long seed) {
-    super(min, max, seed);
-    localDateRangeRandomizer =
-        new LocalDateRangeRandomizer(
-            this.min.atYear(Year.now().getValue()), this.max.atYear(Year.now().getValue()), seed);
-  }
+  override val defaultMaxValue: MonthDay
+    get() = MonthDay.of(DECEMBER, THIRTY_FIRST)
 
-  @Override
-  protected void checkValues() {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
+  private val localDateRangeRandomizer: LocalDateRangeRandomizer =
+    LocalDateRangeRandomizer(
+      this.min.atYear(Year.now().value),
+      this.max.atYear(Year.now().value),
+      seed,
+    )
 
-  @Override
-  protected MonthDay getDefaultMinValue() {
-    return MonthDay.of(1, 1);
-  }
-
-  @Override
-  protected MonthDay getDefaultMaxValue() {
-    return MonthDay.of(12, 31);
-  }
-
-  @Override
-  public MonthDay getRandomValue() {
-    return MonthDay.from(localDateRangeRandomizer.getRandomValue());
-  }
+  override fun getRandomValue(): MonthDay = MonthDay.from(localDateRangeRandomizer.getRandomValue())
 }

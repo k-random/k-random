@@ -21,60 +21,37 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import java.util.Date;
+import java.util.*
+import kotlin.random.Random
 
 /**
- * Generate a random {@link Date} in the given range.
+ * Generate a random [Date] in the given range.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-public class DateRangeRandomizer extends AbstractRangeRandomizer<Date> {
+class DateRangeRandomizer
+/**
+ * Create a new [DateRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: Date?, max: Date?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<Date>(min, max, seed) {
+  override val defaultMinValue: Date
+    get() = Date(Long.MIN_VALUE)
 
-  /**
-   * Create a new {@link DateRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public DateRangeRandomizer(final Date min, final Date max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: Date
+    get() = Date(Long.MAX_VALUE)
 
-  /**
-   * Create a new {@link DateRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public DateRangeRandomizer(final Date min, final Date max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min.after(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
-
-  @Override
-  protected Date getDefaultMinValue() {
-    return new Date(Long.MIN_VALUE);
-  }
-
-  @Override
-  protected Date getDefaultMaxValue() {
-    return new Date(Long.MAX_VALUE);
-  }
-
-  @Override
-  public Date getRandomValue() {
-    long minDateTime = min.getTime();
-    long maxDateTime = max.getTime();
-    long randomDateTime = (long) nextDouble((double) minDateTime, (double) maxDateTime);
-    return new Date(randomDateTime);
+  override fun getRandomValue(): Date {
+    val minDateTime = min.time
+    val maxDateTime = max.time
+    val randomDateTime = nextDouble(minDateTime.toDouble(), maxDateTime.toDouble()).toLong()
+    return Date(randomDateTime)
   }
 }

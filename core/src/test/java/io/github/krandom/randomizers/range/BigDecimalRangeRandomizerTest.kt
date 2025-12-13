@@ -21,124 +21,117 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.BDDAssertions.then;
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.math.BigDecimal
+import java.math.RoundingMode
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.util.ReflectionUtils;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class BigDecimalRangeRandomizerTest extends AbstractRangeRandomizerTest<BigDecimal> {
-
-  private Double min, max;
+internal class BigDecimalRangeRandomizerTest : AbstractRangeRandomizerTest<BigDecimal>() {
+  override val min: BigDecimal = BigDecimal("1.1")
+  override val max: BigDecimal = BigDecimal("9.9")
 
   @BeforeEach
-  void setUp() {
-    min = 1.1;
-    max = 9.9;
-    randomizer = new BigDecimalRangeRandomizer(min, max);
+  fun setUp() {
+    randomizer = BigDecimalRangeRandomizer(min.toDouble(), max.toDouble())
   }
 
   @Test
-  void generatedValueShouldBeWithinSpecifiedRange() {
-    BigDecimal randomValue = randomizer.getRandomValue();
-    assertThat(randomValue.doubleValue()).isBetween(min, max);
+  fun `generated value should be within specified range`() {
+    val randomValue = randomizer.getRandomValue()
+
+    randomValue shouldBeIn min..max
   }
 
   @Test
-  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new BigDecimalRangeRandomizer(max, min))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min value is after max value then throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> {
+      BigDecimalRangeRandomizer(max.toDouble(), min.toDouble())
+    }
   }
 
   @Test
-  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-    randomizer = new BigDecimalRangeRandomizer(null, max);
-    BigDecimal randomBigDecimal = randomizer.getRandomValue();
-    assertThat(randomBigDecimal.doubleValue()).isLessThanOrEqualTo(max);
+  fun `when specified min value is null then should use default min value`() {
+    randomizer = BigDecimalRangeRandomizer(null, max.toDouble())
+
+    val randomBigDecimal = randomizer.getRandomValue()
+
+    randomBigDecimal shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-    randomizer = new BigDecimalRangeRandomizer(min, null);
-    BigDecimal randomBigDecimal = randomizer.getRandomValue();
-    assertThat(randomBigDecimal.doubleValue()).isGreaterThanOrEqualTo(min);
+  fun `when specified max value is null then should use default max value`() {
+    randomizer = BigDecimalRangeRandomizer(min.toDouble(), null)
+
+    val randomBigDecimal = randomizer.getRandomValue()
+
+    randomBigDecimal shouldBeGreaterThanOrEqualTo min
   }
 
   @Test
-  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-    // given
-    BigDecimalRangeRandomizer bigDecimalRangeRandomizer =
-        new BigDecimalRangeRandomizer(min, max, SEED);
+  fun `should always generate the same value for the same seed`() {
+    randomizer = BigDecimalRangeRandomizer(min.toDouble(), max.toDouble(), SEED)
 
-    // when
-    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    val bigDecimal = randomizer.getRandomValue()
 
-    then(bigDecimal).isEqualTo(new BigDecimal("7.46393298637489266411648713983595371246337890625"));
+    bigDecimal shouldBe BigDecimal("7.46393298637489266411648713983595371246337890625")
   }
 
   @Test
-  void generatedValueShouldHaveProvidedPositiveScale() {
-    // given
-    Integer scale = 2;
-    BigDecimalRangeRandomizer bigDecimalRangeRandomizer =
-        new BigDecimalRangeRandomizer(min, max, scale);
+  fun `generated value should have provided positive scale`() {
+    val scale = 2
+    randomizer = BigDecimalRangeRandomizer(min.toDouble(), max.toDouble(), scale = scale)
 
-    // when
-    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    val bigDecimal = randomizer.getRandomValue()
 
-    then(bigDecimal.scale()).isEqualTo(scale);
+    bigDecimal.scale() shouldBe scale
   }
 
   @Test
-  void generatedValueShouldHaveProvidedPositiveScaleAndRoundingMode()
-      throws NoSuchFieldException, IllegalAccessException {
-    // given
-    Integer scale = 2;
-    RoundingMode roundingMode = RoundingMode.DOWN;
-    BigDecimalRangeRandomizer bigDecimalRangeRandomizer =
-        new BigDecimalRangeRandomizer(min, max, scale, roundingMode);
+  @Throws(NoSuchFieldException::class, IllegalAccessException::class)
+  fun `generated value should have provided positive scale and rounding mode`() {
+    val scale = 2
+    val roundingMode = RoundingMode.DOWN
+    randomizer =
+      BigDecimalRangeRandomizer(
+        min = min.toDouble(),
+        max = max.toDouble(),
+        scale = scale,
+        roundingMode = roundingMode,
+      )
 
-    // when
-    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    val bigDecimal = randomizer.getRandomValue()
 
-    then(bigDecimal.scale()).isEqualTo(scale);
-
-    var field = bigDecimalRangeRandomizer.getClass().getDeclaredField("roundingMode");
-    var actualRoundingMode = ReflectionUtils.getFieldValue(bigDecimalRangeRandomizer, field);
-    then(actualRoundingMode).isEqualTo(RoundingMode.DOWN);
+    bigDecimal.scale() shouldBe scale
+    (randomizer as BigDecimalRangeRandomizer).roundingMode shouldBe roundingMode
   }
 
   @Test
-  void generatedValueShouldHaveProvidedNegativeScale() {
-    // given
-    Integer scale = -2;
-    BigDecimalRangeRandomizer bigDecimalRangeRandomizer =
-        new BigDecimalRangeRandomizer(min, max, scale);
+  fun `generated value should have provided negative scale`() {
+    val scale = -2
+    randomizer = BigDecimalRangeRandomizer(min.toDouble(), max.toDouble(), scale = scale)
 
-    // when
-    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    val bigDecimal = randomizer.getRandomValue()
 
-    then(bigDecimal.scale()).isEqualTo(scale);
+    bigDecimal.scale() shouldBe scale
   }
 
   @Test
-  void testCustomRoundingMode() {
-    // given
-    Integer scale = 2;
-    int seed = 123;
-    RoundingMode roundingMode = RoundingMode.DOWN;
-    BigDecimalRangeRandomizer bigDecimalRangeRandomizer =
-        new BigDecimalRangeRandomizer(min, max, seed, scale, roundingMode);
+  fun `test custom rounding mode`() {
+    val scale = 2
+    val seed = 123
+    val roundingMode = RoundingMode.DOWN
+    randomizer =
+      BigDecimalRangeRandomizer(min.toDouble(), max.toDouble(), seed.toLong(), scale, roundingMode)
 
-    // when
-    BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+    val bigDecimal = randomizer.getRandomValue()
 
-    then(bigDecimal).isEqualTo(new BigDecimal("7.46"));
+    bigDecimal shouldBe BigDecimal("7.46")
   }
 }

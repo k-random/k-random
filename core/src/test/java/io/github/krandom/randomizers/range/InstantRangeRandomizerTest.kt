@@ -21,92 +21,78 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.time.Instant
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import java.time.Instant;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-public class InstantRangeRandomizerTest extends AbstractRangeRandomizerTest<Instant> {
-
-  private Instant minInstant, maxInstant;
+internal class InstantRangeRandomizerTest : AbstractRangeRandomizerTest<Instant>() {
+  override val min: Instant = Instant.ofEpochMilli(Long.MIN_VALUE)
+  override val max: Instant = Instant.ofEpochMilli(Long.MAX_VALUE)
 
   @BeforeEach
-  void setUp() {
-    minInstant = Instant.ofEpochMilli(Long.MIN_VALUE);
-    maxInstant = Instant.ofEpochMilli(Long.MAX_VALUE);
-    randomizer = new InstantRangeRandomizer(minInstant, maxInstant);
+  fun setUp() {
+    randomizer = InstantRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedInstantShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `generated instant should not throw any exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void generatedInstantShouldBeWithinSpecifiedRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(minInstant, maxInstant);
+  fun `generated instant should be within specified range`() {
+    randomizer.getRandomValue() shouldBeIn min..max
   }
 
   @Test
-  void generatedInstantShouldBeAlwaysTheSameForTheSameSeed() {
+  fun `generated instant should be always the same for the same seed`() {
+    randomizer = InstantRangeRandomizer(min, max, SEED)
+    val expected = Instant.parse("+130459354-01-19T05:47:51.168Z")
 
-    // Given
-    randomizer = new InstantRangeRandomizer(minInstant, maxInstant, SEED);
-    Instant expected = Instant.parse("+130459354-01-19T05:47:51.168Z");
+    val randomValue = randomizer.getRandomValue()
 
-    // When
-    Instant randomValue = randomizer.getRandomValue();
-
-    // Then
-    assertThat(randomValue).isEqualTo(expected);
+    randomValue shouldBe expected
   }
 
   @Test
-  void whenSpecifiedMinInstantIsAfterMaxInstant_thenShouldThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new InstantRangeRandomizer(maxInstant, minInstant))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min is after max then should throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { InstantRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinInstantIsNull_thenShouldUseDefaultMinValue() {
-    // Given
-    randomizer = new InstantRangeRandomizer(null, maxInstant);
+  fun `when specified min is null then should use default min value`() {
+    randomizer = InstantRangeRandomizer(null, max)
 
-    // When
-    Instant randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isBeforeOrEqualTo(maxInstant);
+    randomValue shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxInstantIsNull_thenShouldUseDefaultMaxValue() {
-    // Given
-    randomizer = new InstantRangeRandomizer(minInstant, null);
+  fun `when specified max is null then should use default max value`() {
+    randomizer = InstantRangeRandomizer(min, null)
 
-    // when
-    Instant randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isAfterOrEqualTo(minInstant);
+    randomValue shouldBeGreaterThanOrEqualTo min
   }
 
   @Test
-  void whenMaxDateIsAfterMidnight_thenShouldNotThrowException() {
-    minInstant = Instant.parse("2019-10-21T23:33:44.00Z");
-    minInstant = Instant.parse("2019-10-22T00:33:22.00Z");
+  fun `when max date is after midnight then should not throw exception`() {
+    val min = Instant.parse("2019-10-21T23:33:44.00Z")
+    val max = Instant.parse("2019-10-22T00:33:22.00Z")
+    randomizer = InstantRangeRandomizer(min, max)
 
-    // Given
-    randomizer = new InstantRangeRandomizer(minInstant, maxInstant);
+    val randomValue = randomizer.getRandomValue()
 
-    // when
-    Instant randomValue = randomizer.getRandomValue();
-
-    // Then
-    assertThat(randomValue).isBetween(minInstant, maxInstant);
+    randomValue shouldBeIn min..max
   }
 }

@@ -21,64 +21,38 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import io.github.krandom.KRandomParameters;
-import java.time.YearMonth;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoField;
+import io.github.krandom.KRandomParameters
+import java.time.YearMonth
+import java.time.temporal.ChronoField
+import kotlin.random.Random
 
-/** Generate a random {@link YearMonth} in the given range. */
-public class YearMonthRangeRandomizer extends AbstractRangeRandomizer<YearMonth> {
+/** Generate a random [YearMonth] in the given range. */
+class YearMonthRangeRandomizer
+/**
+ * Create a new [YearMonthRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: YearMonth?, max: YearMonth?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<YearMonth>(min, max, seed) {
+  override val defaultMinValue: YearMonth
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMin().let { YearMonth.of(it.year, it.month) }
 
-  /**
-   * Create a new {@link YearMonthRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public YearMonthRangeRandomizer(final YearMonth min, final YearMonth max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: YearMonth
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMax().let { YearMonth.of(it.year, it.month) }
 
-  /**
-   * Create a new {@link YearMonthRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public YearMonthRangeRandomizer(final YearMonth min, final YearMonth max, final long seed) {
-    super(min, max, seed);
-  }
-
-  @Override
-  protected void checkValues() {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
-
-  @Override
-  protected YearMonth getDefaultMinValue() {
-    ZonedDateTime defaultDateMin = KRandomParameters.DEFAULT_DATES_RANGE.getMin();
-    return YearMonth.of(defaultDateMin.getYear(), defaultDateMin.getMonth());
-  }
-
-  @Override
-  protected YearMonth getDefaultMaxValue() {
-    ZonedDateTime defaultDateMax = KRandomParameters.DEFAULT_DATES_RANGE.getMax();
-    return YearMonth.of(defaultDateMax.getYear(), defaultDateMax.getMonth());
-  }
-
-  @Override
-  public YearMonth getRandomValue() {
-    long minYear = min.getLong(ChronoField.YEAR);
-    long maxYear = max.getLong(ChronoField.YEAR);
-    long randomYear = (long) nextDouble(minYear, maxYear);
-    long minMonth = min.getLong(ChronoField.MONTH_OF_YEAR);
-    long maxMonth = max.getLong(ChronoField.MONTH_OF_YEAR);
-    long randomMonth = (long) nextDouble(minMonth, maxMonth);
-    return YearMonth.of(Math.toIntExact(randomYear), Math.toIntExact(randomMonth));
+  override fun getRandomValue(): YearMonth {
+    val minYear = min.getLong(ChronoField.YEAR)
+    val maxYear = max.getLong(ChronoField.YEAR)
+    val randomYear = nextDouble(minYear.toDouble(), maxYear.toDouble()).toLong()
+    val minMonth = min.getLong(ChronoField.MONTH_OF_YEAR)
+    val maxMonth = max.getLong(ChronoField.MONTH_OF_YEAR)
+    val randomMonth = nextDouble(minMonth.toDouble(), maxMonth.toDouble()).toLong()
+    return YearMonth.of(Math.toIntExact(randomYear), Math.toIntExact(randomMonth))
   }
 }

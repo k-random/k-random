@@ -21,43 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import io.github.krandom.api.Randomizer;
-import java.math.BigInteger;
+import io.github.krandom.api.Randomizer
+import java.math.BigInteger
+import kotlin.random.Random
 
 /**
- * Generate a random {@link BigInteger} in the given range.
+ * Generate a random [BigInteger] in the given range.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-public class BigIntegerRangeRandomizer implements Randomizer<BigInteger> {
-
-  private final IntegerRangeRandomizer delegate;
-
-  /**
-   * Create a new {@link BigIntegerRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public BigIntegerRangeRandomizer(final Integer min, final Integer max) {
-    delegate = new IntegerRangeRandomizer(min, max);
-  }
-
-  /**
-   * Create a new {@link BigIntegerRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public BigIntegerRangeRandomizer(final Integer min, final Integer max, final long seed) {
-    delegate = new IntegerRangeRandomizer(min, max, seed);
-  }
-
-  @Override
-  public BigInteger getRandomValue() {
-    return new BigInteger(String.valueOf(delegate.getRandomValue()));
-  }
+class BigIntegerRangeRandomizer
+/**
+ * Create a new [BigIntegerRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ * @param delegate the delegate randomizer for the integer range
+ */
+@JvmOverloads
+constructor(
+  min: Int?,
+  max: Int?,
+  seed: Long = Random.nextLong(),
+  private val delegate: IntRangeRandomizer = IntRangeRandomizer(min, max, seed),
+) : Randomizer<BigInteger> {
+  override fun getRandomValue(): BigInteger = BigInteger(delegate.getRandomValue().toString())
 }

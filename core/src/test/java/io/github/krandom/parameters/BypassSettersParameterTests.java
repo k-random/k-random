@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.krandom.KRandom;
 import io.github.krandom.KRandomParameters;
 import io.github.krandom.beans.Salary;
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer;
+import io.github.krandom.randomizers.range.IntRangeRandomizer;
 import org.junit.jupiter.api.Test;
 
 public class BypassSettersParameterTests {
@@ -44,7 +44,7 @@ public class BypassSettersParameterTests {
             .bypassSetters(true)
             .randomize(
                 named("amount").and(ofType(int.class)).and(inClass(Salary.class)),
-                new IntegerRangeRandomizer(-10, -1))
+                new IntRangeRandomizer(-10, -1))
             .excludeField(
                 named("setterInvoked").and(ofType(boolean.class)).and(inClass(Salary.class)));
     KRandom kRandom = new KRandom(parameters);
@@ -66,7 +66,7 @@ public class BypassSettersParameterTests {
             .bypassSetters(true)
             .randomize(
                 named("amount").and(ofType(int.class)).and(inClass(Salary.class)),
-                new IntegerRangeRandomizer(-10, -1));
+                new IntRangeRandomizer(-10, -1));
     KRandom kRandom = new KRandom(parameters);
 
     // when

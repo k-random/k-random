@@ -21,38 +21,31 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import io.github.krandom.randomizers.AbstractRandomizer;
+import io.github.krandom.randomizers.AbstractRandomizer
+import kotlin.random.Random
 
 /**
  * Abstract class for range randomizers.
  *
  * @param <T> the type of objects in the defined range.
- * @author Rémi Alvergnat (toilal.dev@gmail.com)
+ * @author Rémi Alvergnat (toilal.dev@gmail.com) </T>
  */
-public abstract class AbstractRangeRandomizer<T> extends AbstractRandomizer<T> {
+abstract class AbstractRangeRandomizer<T>
+@JvmOverloads
+protected constructor(min: T?, max: T?, seed: Long = Random.nextLong()) :
+  AbstractRandomizer<T>(seed) where T : Comparable<T> {
+  protected val min: T
+  protected val max: T
+  protected abstract val defaultMinValue: T
+  protected abstract val defaultMaxValue: T
 
-  final T min;
-  final T max;
-
-  protected AbstractRangeRandomizer(final T min, final T max) {
-    super();
-    this.min = min != null ? min : getDefaultMinValue();
-    this.max = max != null ? max : getDefaultMaxValue();
-    checkValues();
+  init {
+    this.min = min ?: this.defaultMinValue
+    this.max = max ?: this.defaultMaxValue
+    checkValues()
   }
 
-  protected AbstractRangeRandomizer(final T min, final T max, final long seed) {
-    super(seed);
-    this.min = min != null ? min : getDefaultMinValue();
-    this.max = max != null ? max : getDefaultMaxValue();
-    checkValues();
-  }
-
-  protected abstract void checkValues();
-
-  protected abstract T getDefaultMinValue();
-
-  protected abstract T getDefaultMaxValue();
+  protected fun checkValues() = require(this.min <= this.max) { "max must be greater than min" }
 }

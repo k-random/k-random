@@ -448,7 +448,7 @@ class FieldExclusionTest {
   }
 
   public static class InlineInitializationBeanPrivateConstructor {
-    private List<String> myList = new ArrayList<>();
+    private final List<String> myList = new ArrayList<>();
 
     public List<String> getMyList() {
       return myList;

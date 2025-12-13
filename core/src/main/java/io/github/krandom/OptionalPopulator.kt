@@ -21,42 +21,34 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static io.github.krandom.util.ReflectionUtils.isParameterizedType;
-import static io.github.krandom.util.ReflectionUtils.isPopulatable;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Optional;
+import io.github.krandom.util.ReflectionUtils.isParameterizedType
+import io.github.krandom.util.ReflectionUtils.isPopulatable
+import java.lang.reflect.Field
+import java.lang.reflect.ParameterizedType
+import java.util.*
 
 /**
- * Populator for {@link Optional} type.
+ * Populator for [Optional] type.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-class OptionalPopulator {
-
-  private final KRandom kRandom;
-
-  OptionalPopulator(KRandom kRandom) {
-    this.kRandom = kRandom;
-  }
-
-  Optional<?> getRandomOptional(final Field field, final RandomizationContext context) {
-    Type fieldGenericType = field.getGenericType();
-    if (isParameterizedType(
-        fieldGenericType)) { // populate only parameterized types, raw types will be empty
-      ParameterizedType parameterizedType = (ParameterizedType) fieldGenericType;
-      Type genericType = parameterizedType.getActualTypeArguments()[0];
+internal class OptionalPopulator(private val kRandom: KRandom) {
+  fun getRandomOptional(field: Field, context: RandomizationContext?): Optional<*> {
+    val fieldGenericType = field.genericType
+    return if (
+      isParameterizedType(fieldGenericType)
+    ) { // populate only parameterized types, raw types will be empty
+      val parameterizedType = fieldGenericType as ParameterizedType
+      val genericType = parameterizedType.actualTypeArguments[0]
       if (isPopulatable(genericType)) {
-        return Optional.of(kRandom.doPopulateBean((Class<?>) genericType, context));
+        Optional.of(kRandom.doPopulateBean(genericType as Class<*>, context))
       } else {
-        return Optional.empty();
+        Optional.empty<Any?>()
       }
     } else {
-      return Optional.empty();
+      Optional.empty<Any?>()
     }
   }
 }

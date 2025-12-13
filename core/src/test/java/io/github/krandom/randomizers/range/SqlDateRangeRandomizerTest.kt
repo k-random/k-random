@@ -21,76 +21,69 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import java.sql.Date as SqlDate
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import java.sql.Date;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class SqlDateRangeRandomizerTest extends AbstractRangeRandomizerTest<Date> {
-
-  private Date minDate, maxDate;
+internal class SqlDateRangeRandomizerTest : AbstractRangeRandomizerTest<SqlDate>() {
+  override val min: SqlDate = SqlDate(1460448795091L)
+  override val max: SqlDate = SqlDate(1460448795179L)
 
   @BeforeEach
-  void setUp() {
-    minDate = new Date(1460448795091L);
-    maxDate = new Date(1460448795179L);
-    randomizer = new SqlDateRangeRandomizer(minDate, maxDate);
+  fun setUp() {
+    randomizer = SqlDateRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedDateShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `generated date should not be null`() {
+    randomizer.getRandomValue() shouldNotBe null
   }
 
   @Test
-  void generatedDateShouldBeWithinSpecifiedRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(minDate, maxDate);
+  fun `generated date should be within specified range`() {
+    val value = randomizer.getRandomValue()
+
+    value shouldBeIn min..max
   }
 
   @Test
-  void generatedDateShouldBeAlwaysTheSameForTheSameSeed() {
-    // Given
-    randomizer = new SqlDateRangeRandomizer(minDate, maxDate, SEED);
-    Date expected = new Date(1460448795154L);
+  fun `generated date should be always the same for the same seed`() {
+    randomizer = SqlDateRangeRandomizer(min, max, SEED)
+    val expected = SqlDate(1460448795154L)
 
-    // When
-    Date randomDate = randomizer.getRandomValue();
+    val randomDate = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomDate).isEqualTo(expected);
+    randomDate shouldBe expected
   }
 
   @Test
-  void whenSpecifiedMinDateIsAfterMaxDate_thenShouldThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new DateRangeRandomizer(maxDate, minDate))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min date is after max date then should throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { DateRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinDateIsNull_thenShouldUseDefaultMinValue() {
-    // Given
-    randomizer = new SqlDateRangeRandomizer(null, maxDate);
+  fun `when specified min date is null then should use default min value`() {
+    randomizer = SqlDateRangeRandomizer(null, max)
 
-    // When
-    Date randomDate = randomizer.getRandomValue();
+    val randomDate = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomDate).isBeforeOrEqualTo(maxDate);
+    randomDate shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxDateIsNull_thenShouldUseDefaultMaxValue() {
-    // Given
-    randomizer = new SqlDateRangeRandomizer(minDate, null);
+  fun `when specified max date is null then should use default max value`() {
+    randomizer = SqlDateRangeRandomizer(min, null)
 
-    // when
-    Date randomDate = randomizer.getRandomValue();
+    val randomDate = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomDate).isAfterOrEqualTo(minDate);
+    randomDate shouldBeGreaterThanOrEqualTo min
   }
 }

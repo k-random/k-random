@@ -21,58 +21,61 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.BDDAssertions.then;
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class LongRangeRandomizerTest extends AbstractRangeRandomizerTest<Long> {
+internal class LongRangeRandomizerTest : AbstractRangeRandomizerTest<Long>() {
+  override val min: Long = 1L
+  override val max: Long = 10L
 
   @BeforeEach
-  void setUp() {
-    min = 1L;
-    max = 10L;
-    randomizer = new LongRangeRandomizer(min, max);
+  fun setUp() {
+    randomizer = LongRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedValueShouldBeWithinSpecifiedRange() {
-    Long randomValue = randomizer.getRandomValue();
-    assertThat(randomValue).isBetween(min, max);
+  fun `generated value should be within specified range`() {
+    val randomValue: Long = randomizer.getRandomValue()
+
+    randomValue shouldBeIn min..max
   }
 
   @Test
-  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new LongRangeRandomizer(max, min))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min value is after max value then throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { LongRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-    randomizer = new LongRangeRandomizer(null, max);
-    Long randomLong = randomizer.getRandomValue();
-    assertThat(randomLong).isLessThanOrEqualTo(max);
+  fun `when specified min value is null then should use default min value`() {
+    randomizer = LongRangeRandomizer(null, max)
+
+    val randomLong = randomizer.getRandomValue()
+
+    randomLong shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-    randomizer = new LongRangeRandomizer(min, null);
-    Long randomLong = randomizer.getRandomValue();
-    assertThat(randomLong).isGreaterThanOrEqualTo(min);
+  fun `when specified maxvalue is null then should use default max value`() {
+    randomizer = LongRangeRandomizer(min, null)
+
+    val randomLong = randomizer.getRandomValue()
+
+    randomLong shouldBeGreaterThanOrEqualTo min
   }
 
   @Test
-  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-    // given
-    LongRangeRandomizer longRangeRandomizer = new LongRangeRandomizer(min, max, SEED);
+  fun `should always generate the same value for the same seed`() {
+    val longRangeRandomizer = LongRangeRandomizer(min, max, SEED)
 
-    // when
-    Long l = longRangeRandomizer.getRandomValue();
+    val l = longRangeRandomizer.getRandomValue()
 
-    then(l).isEqualTo(7L);
+    l shouldBe 7L
   }
 }

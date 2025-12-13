@@ -27,7 +27,7 @@ import io.github.krandom.randomizers.AbstractRandomizer;
 
 public class CountryRandomizer extends AbstractRandomizer<Country> {
 
-  private String[] names;
+  private final String[] names;
 
   public CountryRandomizer(String... names) {
     this.names = names;

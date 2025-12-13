@@ -21,76 +21,69 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import java.time.YearMonth
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import java.time.YearMonth;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class YearMonthRangeRandomizerTest extends AbstractRangeRandomizerTest<YearMonth> {
-
-  private YearMonth minYearMonth, maxYearMonth;
+internal class YearMonthRangeRandomizerTest : AbstractRangeRandomizerTest<YearMonth>() {
+  override var min: YearMonth = YearMonth.of(1000, 1)
+  override var max: YearMonth = YearMonth.of(3000, 12)
 
   @BeforeEach
-  void setUp() {
-    minYearMonth = YearMonth.of(1000, 1);
-    maxYearMonth = YearMonth.of(3000, 12);
-    randomizer = new YearMonthRangeRandomizer(minYearMonth, maxYearMonth);
+  fun setUp() {
+    randomizer = YearMonthRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedYearMonthShouldNotBeNull() {
-    assertThat(randomizer.getRandomValue()).isNotNull();
+  fun `generated year month should not throw any exception`() {
+    shouldNotThrowAny { randomizer.getRandomValue() }
   }
 
   @Test
-  void generatedYearMonthShouldBeWithinSpecifiedRange() {
-    assertThat(randomizer.getRandomValue()).isBetween(minYearMonth, maxYearMonth);
+  fun `generated year month should be within specified range`() {
+    val value = randomizer.getRandomValue()
+
+    value shouldBeIn min..max
   }
 
   @Test
-  void generatedYearMonthShouldBeAlwaysTheSameForTheSameSeed() {
-    // Given
-    randomizer = new YearMonthRangeRandomizer(minYearMonth, maxYearMonth, SEED);
-    YearMonth expected = YearMonth.of(2446, 11);
+  fun `generated year month should be always the same for the same seed`() {
+    randomizer = YearMonthRangeRandomizer(min, max, SEED)
+    val expected = YearMonth.of(2446, 11)
 
-    // When
-    YearMonth randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isEqualTo(expected);
+    randomValue shouldBe expected
   }
 
   @Test
-  void whenSpecifiedMinYearMonthIsAfterMaxYearMonth_thenShouldThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new YearMonthRangeRandomizer(maxYearMonth, minYearMonth))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min year month is after max year month then should throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { YearMonthRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinYearMonthIsNull_thenShouldUseDefaultMinValue() {
-    // Given
-    randomizer = new YearMonthRangeRandomizer(null, maxYearMonth);
+  fun `when specified min year month is null then should use default min value`() {
+    randomizer = YearMonthRangeRandomizer(null, max)
 
-    // When
-    YearMonth randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isBeforeOrEqualTo(maxYearMonth);
+    randomValue shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxYearMonthIsNull_thenShouldUseDefaultMaxValue() {
-    // Given
-    randomizer = new YearMonthRangeRandomizer(minYearMonth, null);
+  fun `when specified max year month is null then should use default max value`() {
+    randomizer = YearMonthRangeRandomizer(min, null)
 
-    // when
-    YearMonth randomValue = randomizer.getRandomValue();
+    val randomValue = randomizer.getRandomValue()
 
-    // Then
-    assertThat(randomValue).isAfterOrEqualTo(minYearMonth);
+    randomValue shouldBeGreaterThanOrEqualTo min
   }
 }

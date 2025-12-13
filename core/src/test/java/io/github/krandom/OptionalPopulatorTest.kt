@@ -21,63 +21,61 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.verify
+import java.util.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-import java.lang.reflect.Field;
-import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+@ExtendWith(MockKExtension::class)
+class OptionalPopulatorTest {
+  @MockK private lateinit var kRandom: KRandom
+  @MockK private lateinit var context: RandomizationContext
 
-@ExtendWith(MockitoExtension.class)
-public class OptionalPopulatorTest {
-
-  @Mock private KRandom kRandom;
-  @Mock private RandomizationContext context;
-
-  private OptionalPopulator optionalPopulator;
+  private lateinit var optionalPopulator: OptionalPopulator
 
   @BeforeEach
-  void setUp() {
-    optionalPopulator = new OptionalPopulator(kRandom);
+  fun setUp() {
+    optionalPopulator = OptionalPopulator(kRandom)
   }
 
   @Test
-  void testOptionalRandomization() throws Exception {
+  @Throws(Exception::class)
+  fun testOptionalRandomization() {
     // given
-    Field field = Foo.class.getDeclaredField("name");
-    Mockito.when(kRandom.doPopulateBean(String.class, context)).thenReturn("foobar");
+    val field = Foo::class.java.getDeclaredField("name")
+    every { kRandom.doPopulateBean(String::class.java, context) } returns "foobar"
 
     // when
-    Optional<?> randomOptional = optionalPopulator.getRandomOptional(field, context);
+    val randomOptional = optionalPopulator.getRandomOptional(field, context)
 
     // then
-    assertThat(randomOptional).isPresent();
-    assertThat(randomOptional.get()).isEqualTo("foobar");
+    randomOptional.isPresent.shouldBeTrue()
+    randomOptional.get() shouldBe "foobar"
+    verify { kRandom.doPopulateBean(String::class.java, context) }
   }
 
   @Test
-  void rawOptionalShouldBeGeneratedAsEmpty() throws Exception {
+  @Throws(Exception::class)
+  fun rawOptionalShouldBeGeneratedAsEmpty() {
     // given
-    Field field = Bar.class.getDeclaredField("name");
+    val field = Bar::class.java.getDeclaredField("name")
 
     // when
-    Optional<?> randomOptional = optionalPopulator.getRandomOptional(field, context);
+    val randomOptional = optionalPopulator.getRandomOptional(field, context)
 
     // then
-    assertThat(randomOptional).isEmpty();
+    randomOptional.isEmpty.shouldBeTrue()
   }
 
-  static class Foo {
-    Optional<String> name;
-  }
+  internal data class Foo(val name: Optional<String>)
 
-  static class Bar {
-    Optional name;
-  }
+  internal data class Bar(val name: Optional<*>)
 }

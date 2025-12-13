@@ -21,58 +21,61 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.BDDAssertions.then;
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-class ByteRangeRandomizerTest extends AbstractRangeRandomizerTest<Byte> {
+internal class ByteRangeRandomizerTest : AbstractRangeRandomizerTest<Byte>() {
+  override val min: Byte = 1.toByte()
+  override val max: Byte = 10.toByte()
 
   @BeforeEach
-  void setUp() {
-    min = (byte) 1;
-    max = (byte) 10;
-    randomizer = new ByteRangeRandomizer(min, max);
+  fun setUp() {
+    randomizer = ByteRangeRandomizer(min, max)
   }
 
   @Test
-  void generatedValueShouldBeWithinSpecifiedRange() {
-    Byte randomValue = randomizer.getRandomValue();
-    assertThat(randomValue).isBetween(min, max);
+  fun `generated value should be within specified range`() {
+    val randomValue: Byte = randomizer.getRandomValue()
+
+    randomValue.toInt() shouldBeIn (min..max)
   }
 
   @Test
-  void whenSpecifiedMinValueIsAfterMaxValueThenThrowIllegalArgumentException() {
-    assertThatThrownBy(() -> new ByteRangeRandomizer(max, min))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified min value is after max value then throw illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { ByteRangeRandomizer(max, min) }
   }
 
   @Test
-  void whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
-    randomizer = new ByteRangeRandomizer(null, max);
-    Byte randomByte = randomizer.getRandomValue();
-    assertThat(randomByte).isLessThanOrEqualTo(max);
+  fun whenSpecifiedMinValueIsNullThenShouldUseDefaultMinValue() {
+    randomizer = ByteRangeRandomizer(null, max)
+
+    val randomByte = randomizer.getRandomValue()
+
+    randomByte shouldBeLessThanOrEqualTo max
   }
 
   @Test
-  void whenSpecifiedMaxvalueIsNullThenShouldUseDefaultMaxValue() {
-    randomizer = new ByteRangeRandomizer(min, null);
-    Byte randomByte = randomizer.getRandomValue();
-    assertThat(randomByte).isGreaterThanOrEqualTo(min);
+  fun `when specified max value is null then should use default max value`() {
+    randomizer = ByteRangeRandomizer(min, null)
+
+    val randomByte = randomizer.getRandomValue()
+
+    randomByte shouldBeGreaterThanOrEqualTo min
   }
 
   @Test
-  void shouldAlwaysGenerateTheSameValueForTheSameSeed() {
-    // given
-    ByteRangeRandomizer byteRangeRandomizer = new ByteRangeRandomizer(min, max, SEED);
+  fun `should always generate the same value for the same seed`() {
+    randomizer = ByteRangeRandomizer(min, max, SEED)
 
-    // when
-    Byte b = byteRangeRandomizer.getRandomValue();
+    val byte = randomizer.getRandomValue()
 
-    then(b).isEqualTo((byte) 7);
+    byte shouldBe 7.toByte()
   }
 }

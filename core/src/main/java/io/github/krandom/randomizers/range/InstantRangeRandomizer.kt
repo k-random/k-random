@@ -21,67 +21,52 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range;
+package io.github.krandom.randomizers.range
 
-import java.time.Instant;
+import java.time.Instant
+import kotlin.random.Random
 
-public class InstantRangeRandomizer extends AbstractRangeRandomizer<Instant> {
+/**
+ * Generate random [Instant] values within a range.
+ * - Range is `[min, max)`: `min` inclusive, `max` exclusive.
+ * - If `min` or `max` is `null`, the bound defaults to the smallest or largest representable epoch
+ *   milli (`Long.MIN_VALUE` / `Long.MAX_VALUE`).
+ * - Providing the same `seed` yields deterministic results.
+ */
+class InstantRangeRandomizer
+/**
+ * Create a new [InstantRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: Instant?, max: Instant?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<Instant>(min, max, seed) {
+  override val defaultMinValue: Instant
+    get() = Instant.ofEpochMilli(Long.MIN_VALUE)
 
-  /**
-   * Create a new {@link InstantRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   */
-  public InstantRangeRandomizer(final Instant min, final Instant max) {
-    super(min, max);
-  }
+  override val defaultMaxValue: Instant
+    get() = Instant.ofEpochMilli(Long.MAX_VALUE)
 
-  /**
-   * Create a new {@link InstantRangeRandomizer}.
-   *
-   * @param min min value (inclusive)
-   * @param max max value (exclusive)
-   * @param seed initial seed
-   */
-  public InstantRangeRandomizer(final Instant min, final Instant max, long seed) {
-    super(min, max, seed);
-  }
+  override fun getRandomValue(): Instant {
+    val minEpochMillis: Long =
+      try {
+        min.toEpochMilli()
+      } catch (_: ArithmeticException) {
+        Long.MIN_VALUE
+      }
 
-  @Override
-  protected void checkValues() {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("max must be after min");
-    }
-  }
+    val maxEpochMillis: Long =
+      try {
+        max.toEpochMilli()
+      } catch (_: ArithmeticException) {
+        Long.MAX_VALUE
+      }
 
-  @Override
-  protected Instant getDefaultMinValue() {
-    return Instant.ofEpochMilli(Long.MIN_VALUE);
-  }
-
-  @Override
-  protected Instant getDefaultMaxValue() {
-    return Instant.ofEpochMilli(Long.MAX_VALUE);
-  }
-
-  @Override
-  public Instant getRandomValue() {
-    long minEpochMillis;
-    long maxEpochMillis;
-    try {
-      minEpochMillis = min.toEpochMilli();
-    } catch (ArithmeticException ex) {
-      minEpochMillis = Long.MIN_VALUE;
-    }
-
-    try {
-      maxEpochMillis = max.toEpochMilli();
-    } catch (ArithmeticException ex) {
-      maxEpochMillis = Long.MAX_VALUE;
-    }
-
-    long randomEpochMillis = (long) nextDouble(minEpochMillis, maxEpochMillis);
-    return Instant.ofEpochMilli(randomEpochMillis);
+    val randomEpochMillis =
+      nextDouble(minEpochMillis.toDouble(), maxEpochMillis.toDouble()).toLong()
+    return Instant.ofEpochMilli(randomEpochMillis)
   }
 }
