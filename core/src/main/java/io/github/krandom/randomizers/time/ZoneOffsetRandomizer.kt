@@ -24,7 +24,7 @@
 package io.github.krandom.randomizers.time
 
 import io.github.krandom.api.Randomizer
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import io.github.krandom.randomizers.range.IntRangeRandomizer
 import java.time.ZoneOffset
 import kotlin.random.Random
 
@@ -38,16 +38,16 @@ class ZoneOffsetRandomizer
  * Create a new [ZoneOffsetRandomizer].
  *
  * @param seed initial seed
- * @param integerRangeRandomizer the [Randomizer] used to generate the seconds part of the offset
+ * @param intRangeRandomizer the [Randomizer] used to generate the seconds part of the offset
  */
 @JvmOverloads
 constructor(
   seed: Long = Random.nextLong(),
-  private val integerRangeRandomizer: IntegerRangeRandomizer =
-    IntegerRangeRandomizer(SECONDS_RANGE.first, SECONDS_RANGE.last, seed),
+  private val intRangeRandomizer: IntRangeRandomizer =
+    IntRangeRandomizer(SECONDS_RANGE.first, SECONDS_RANGE.last, seed),
 ) : Randomizer<ZoneOffset> {
   override fun getRandomValue(): ZoneOffset =
-    ZoneOffset.ofTotalSeconds(integerRangeRandomizer.getRandomValue())
+    ZoneOffset.ofTotalSeconds(intRangeRandomizer.getRandomValue())
 
   companion object {
     private val SECONDS_RANGE = -64800..64800

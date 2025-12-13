@@ -25,7 +25,7 @@ package io.github.krandom.randomizers.time
 
 import io.github.krandom.KRandomParameters
 import io.github.krandom.api.Randomizer
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import io.github.krandom.randomizers.range.IntRangeRandomizer
 import java.time.Year
 import kotlin.random.Random
 
@@ -44,8 +44,8 @@ class YearRandomizer
 @JvmOverloads
 constructor(
   seed: Long = Random.nextLong(),
-  private val yearRandomizer: IntegerRangeRandomizer =
-    IntegerRangeRandomizer(
+  private val yearRandomizer: IntRangeRandomizer =
+    IntRangeRandomizer(
       KRandomParameters.DEFAULT_DATES_RANGE.getMin().year,
       KRandomParameters.DEFAULT_DATES_RANGE.getMax().year,
       seed,

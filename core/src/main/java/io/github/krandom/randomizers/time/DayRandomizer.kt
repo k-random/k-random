@@ -24,7 +24,7 @@
 package io.github.krandom.randomizers.time
 
 import io.github.krandom.api.Randomizer
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import io.github.krandom.randomizers.range.IntRangeRandomizer
 import kotlin.random.Random
 
 /**
@@ -41,11 +41,11 @@ class DayRandomizer
 @JvmOverloads
 constructor(
   seed: Long = Random.nextLong(),
-  private val integerRangeRandomizer: IntegerRangeRandomizer =
-    IntegerRangeRandomizer(DAY_RANGE.first, DAY_RANGE.last, seed),
+  private val intRangeRandomizer: IntRangeRandomizer =
+    IntRangeRandomizer(DAY_RANGE.first, DAY_RANGE.last, seed),
 ) : Randomizer<Int> {
   /** Generates a random day value. */
-  override fun getRandomValue(): Int = integerRangeRandomizer.getRandomValue()
+  override fun getRandomValue(): Int = intRangeRandomizer.getRandomValue()
 
   companion object {
     val DAY_RANGE = 1..28

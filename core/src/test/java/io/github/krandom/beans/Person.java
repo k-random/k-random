@@ -26,7 +26,9 @@ package io.github.krandom.beans;
 import io.github.krandom.annotation.Exclude;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class Person extends Human implements Comparable<Person> {
 
   protected transient String email;
@@ -121,12 +123,10 @@ public class Person extends Human implements Comparable<Person> {
 
     Person person = (Person) o;
 
-    if (email != null ? !email.equals(person.email) : person.email != null) return false;
+    if (!Objects.equals(email, person.email)) return false;
     if (gender != person.gender) return false;
-    if (address != null ? !address.equals(person.address) : person.address != null) return false;
-    return !(phoneNumber != null
-        ? !phoneNumber.equals(person.phoneNumber)
-        : person.phoneNumber != null);
+    if (!Objects.equals(address, person.address)) return false;
+    return !(!Objects.equals(phoneNumber, person.phoneNumber));
   }
 
   @Override

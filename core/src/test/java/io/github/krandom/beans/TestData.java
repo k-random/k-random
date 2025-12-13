@@ -26,7 +26,7 @@ package io.github.krandom.beans;
 import io.github.krandom.annotation.Randomizer;
 import io.github.krandom.annotation.RandomizerArgument;
 import io.github.krandom.randomizers.range.DateRangeRandomizer;
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer;
+import io.github.krandom.randomizers.range.IntRangeRandomizer;
 import java.util.Date;
 
 public class TestData {
@@ -42,7 +42,7 @@ public class TestData {
   private Date date;
 
   @Randomizer(
-      value = IntegerRangeRandomizer.class,
+      value = IntRangeRandomizer.class,
       args = {
         @RandomizerArgument(value = "200", type = Integer.class),
         @RandomizerArgument(value = "500", type = Integer.class)

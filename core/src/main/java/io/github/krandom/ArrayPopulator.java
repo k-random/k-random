@@ -23,7 +23,7 @@
  */
 package io.github.krandom;
 
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer;
+import io.github.krandom.randomizers.range.IntRangeRandomizer;
 import java.lang.reflect.Array;
 
 /**
@@ -75,7 +75,7 @@ public class ArrayPopulator {
 
   private int getRandomArraySize(KRandomParameters parameters) {
     KRandomParameters.Range<Integer> collectionSizeRange = parameters.getCollectionSizeRange();
-    return new IntegerRangeRandomizer(
+    return new IntRangeRandomizer(
             collectionSizeRange.getMin(), collectionSizeRange.getMax(), kRandom.nextLong())
         .getRandomValue();
   }

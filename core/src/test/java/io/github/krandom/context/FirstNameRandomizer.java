@@ -27,7 +27,7 @@ import io.github.krandom.randomizers.AbstractRandomizer;
 
 public class FirstNameRandomizer extends AbstractRandomizer<String> {
 
-  private String[] names;
+  private final String[] names;
 
   public FirstNameRandomizer(String... names) {
     this.names = names;

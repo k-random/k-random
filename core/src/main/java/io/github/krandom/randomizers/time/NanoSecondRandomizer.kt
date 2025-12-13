@@ -24,7 +24,7 @@
 package io.github.krandom.randomizers.time
 
 import io.github.krandom.api.Randomizer
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import io.github.krandom.randomizers.range.IntRangeRandomizer
 import kotlin.random.Random
 
 /**
@@ -37,16 +37,16 @@ class NanoSecondRandomizer
  * Create a new [NanoSecondRandomizer].
  *
  * @param seed initial seed
- * @param integerRangeRandomizer the randomizer used to generate the nano-second value.
+ * @param intRangeRandomizer the randomizer used to generate the nano-second value.
  */
 @JvmOverloads
 constructor(
   seed: Long = Random.nextLong(),
-  private val integerRangeRandomizer: IntegerRangeRandomizer =
-    IntegerRangeRandomizer(NANO_SECOND_RANGE.first, NANO_SECOND_RANGE.last, seed),
+  private val intRangeRandomizer: IntRangeRandomizer =
+    IntRangeRandomizer(NANO_SECOND_RANGE.first, NANO_SECOND_RANGE.last, seed),
 ) : Randomizer<Int> {
   override fun getRandomValue(): Int {
-    return integerRangeRandomizer.getRandomValue()
+    return intRangeRandomizer.getRandomValue()
   }
 
   companion object {

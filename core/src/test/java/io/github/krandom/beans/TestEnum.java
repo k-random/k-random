@@ -26,5 +26,5 @@ package io.github.krandom.beans;
 public enum TestEnum {
   ONE_THING,
   ANOTHER_THING,
-  SOMETHING_ELSE;
+  SOMETHING_ELSE
 }

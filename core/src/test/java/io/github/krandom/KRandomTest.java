@@ -390,7 +390,7 @@ class KRandomTest {
   void testMultipleGenericLevels() {
     // given
     abstract class BaseClass<T> {
-      protected T x;
+      protected final T x;
 
       BaseClass(T x) {
         this.x = x;
@@ -402,7 +402,7 @@ class KRandomTest {
     }
 
     abstract class GenericBaseClass<T, P> extends BaseClass<T> {
-      protected P y;
+      protected final P y;
 
       GenericBaseClass(T x, P y) {
         super(x);
@@ -450,7 +450,7 @@ class KRandomTest {
   void testRootGenericType() { // intermediate type in the hierarchy is not generic
     // given
     abstract class BaseClass<T> {
-      protected T x;
+      protected final T x;
 
       BaseClass(T x) {
         this.x = x;

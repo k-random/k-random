@@ -26,7 +26,7 @@ package io.github.krandom.validation
 import io.github.krandom.KRandom
 import io.github.krandom.KRandomParameters
 import io.github.krandom.randomizers.range.BigDecimalRangeRandomizer
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import io.github.krandom.randomizers.range.IntRangeRandomizer
 import io.github.krandom.randomizers.registry.CustomRandomizerRegistry
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -298,8 +298,11 @@ internal class BeanValidationTest {
     // given
     val registry = CustomRandomizerRegistry()
     val scale = 3
-    registry.registerRandomizer(BigDecimal::class.java, BigDecimalRangeRandomizer(5.0, 10.0, scale))
-    registry.registerRandomizer(Int::class.java, IntegerRangeRandomizer(5, 10))
+    registry.registerRandomizer(
+      BigDecimal::class.java,
+      BigDecimalRangeRandomizer(5.0, 10.0, scale = scale),
+    )
+    registry.registerRandomizer(Int::class.java, IntRangeRandomizer(5, 10))
     val parameters = KRandomParameters().randomizerRegistry(registry)
     val kRandom = KRandom(parameters)
 

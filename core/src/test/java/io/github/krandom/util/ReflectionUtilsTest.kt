@@ -244,7 +244,7 @@ internal class ReflectionUtilsTest {
   @Throws(NoSuchFieldException::class)
   fun `test get read method`() {
     getReadMethod(PrimitiveFieldsWithDefaultValuesBean::class.java.getDeclaredField("b"))
-      .isEmpty() shouldBe true
+      .isEmpty shouldBe true
     val readMethod: Optional<Method> = getReadMethod(Foo::class.java.getDeclaredField("bar"))
     readMethod.isPresent shouldBe true
     readMethod.get().name shouldBe "getBar"

@@ -29,7 +29,7 @@ import io.github.krandom.randomizers.range.BigIntegerRangeRandomizer
 import io.github.krandom.randomizers.range.ByteRangeRandomizer
 import io.github.krandom.randomizers.range.DoubleRangeRandomizer
 import io.github.krandom.randomizers.range.FloatRangeRandomizer
-import io.github.krandom.randomizers.range.IntegerRangeRandomizer
+import io.github.krandom.randomizers.range.IntRangeRandomizer
 import io.github.krandom.randomizers.range.LongRangeRandomizer
 import io.github.krandom.randomizers.range.ShortRangeRandomizer
 import io.github.krandom.randomizers.text.StringDelegatingRandomizer
@@ -65,8 +65,7 @@ abstract class AbstractNumberBaseAnnotationHandler internal constructor(seed: Lo
 
       Integer.TYPE,
       Integer::class.java,
-      Int::class.java ->
-        IntegerRangeRandomizer(minValue?.toInt(), maxValue?.toInt(), random.nextLong())
+      Int::class.java -> IntRangeRandomizer(minValue?.toInt(), maxValue?.toInt(), random.nextLong())
 
       JavaLong.TYPE,
       JavaLong::class.java,

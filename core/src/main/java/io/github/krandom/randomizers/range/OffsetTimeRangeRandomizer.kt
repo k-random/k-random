@@ -1,0 +1,57 @@
+/*
+ * The MIT License
+ *
+ *   Copyright (c) 2023, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *
+ *   Permission is hereby granted, free of charge, to any person obtaining a copy
+ *   of this software and associated documentation files (the "Software"), to deal
+ *   in the Software without restriction, including without limitation the rights
+ *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *   copies of the Software, and to permit persons to whom the Software is
+ *   furnished to do so, subject to the following conditions:
+ *
+ *   The above copyright notice and this permission notice shall be included in
+ *   all copies or substantial portions of the Software.
+ *
+ *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *   THE SOFTWARE.
+ */
+package io.github.krandom.randomizers.range
+
+import io.github.krandom.KRandomParameters
+import java.time.LocalTime
+import java.time.OffsetTime
+import java.time.temporal.ChronoField
+import kotlin.random.Random
+
+/** Generate a random [OffsetTime] in the given range. */
+class OffsetTimeRangeRandomizer
+/**
+ * Create a new [OffsetTimeRangeRandomizer].
+ *
+ * @param min min value (inclusive)
+ * @param max max value (exclusive)
+ * @param seed initial seed
+ */
+@JvmOverloads
+constructor(min: OffsetTime?, max: OffsetTime?, seed: Long = Random.nextLong()) :
+  AbstractRangeRandomizer<OffsetTime>(min, max, seed) {
+  override val defaultMinValue: OffsetTime
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime().toOffsetTime()
+
+  override val defaultMaxValue: OffsetTime
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime().toOffsetTime()
+
+  override fun getRandomValue(): OffsetTime {
+    val minSecondOfDay = min.getLong(ChronoField.SECOND_OF_DAY)
+    val maxSecondOfDay = max.getLong(ChronoField.SECOND_OF_DAY)
+    val randomSecondOfDay =
+      nextDouble(minSecondOfDay.toDouble(), maxSecondOfDay.toDouble()).toLong()
+    return OffsetTime.of(LocalTime.ofSecondOfDay(randomSecondOfDay), min.offset)
+  }
+}
