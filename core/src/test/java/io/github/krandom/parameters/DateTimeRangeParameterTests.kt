@@ -21,58 +21,51 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.beans.TimeBean
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.ranges.shouldBeIn
+import java.time.LocalDate
+import java.time.LocalTime
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.beans.TimeBean;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import org.junit.jupiter.api.Test;
-
-class DateTimeRangeParameterTests {
-
+internal class DateTimeRangeParameterTests {
   @Test
-  void testDateRange() {
-    // Given
-    LocalDate minDate = LocalDate.of(2016, 1, 1);
-    LocalDate maxDate = LocalDate.of(2016, 1, 31);
-    KRandomParameters parameters = new KRandomParameters().dateRange(minDate, maxDate);
+  fun `test date range`() {
+    val minDate = LocalDate.of(2016, 1, 1)
+    val maxDate = LocalDate.of(2016, 1, 31)
+    val parameters = KRandomParameters().dateRange(minDate, maxDate)
 
-    // When
-    TimeBean timeBean = new KRandom(parameters).nextObject(TimeBean.class);
+    val timeBean = KRandom(parameters).nextObject(TimeBean::class.java)
 
-    // Then
-    assertThat(timeBean.getLocalDate()).isAfterOrEqualTo(minDate).isBeforeOrEqualTo(maxDate);
+    timeBean.shouldNotBeNull()
+    timeBean.localDate shouldBeIn minDate..maxDate
   }
 
   @Test
-  void testDateMaxRange() {
-    // Given
-    LocalDate minDate = LocalDate.MIN;
-    LocalDate maxDate = LocalDate.MAX;
-    KRandomParameters parameters = new KRandomParameters().dateRange(minDate, maxDate);
+  fun `test date max range`() {
+    val minDate = LocalDate.MIN
+    val maxDate = LocalDate.MAX
+    val parameters = KRandomParameters().dateRange(minDate, maxDate)
 
-    // When
-    TimeBean timeBean = new KRandom(parameters).nextObject(TimeBean.class);
+    val timeBean = KRandom(parameters).nextObject(TimeBean::class.java)
 
-    // Then
-    assertThat(timeBean.getLocalDate()).isAfterOrEqualTo(minDate).isBeforeOrEqualTo(maxDate);
+    timeBean.shouldNotBeNull()
+    timeBean.localDate shouldBeIn minDate..maxDate
   }
 
   @Test
-  void testTimeRange() {
-    // Given
-    LocalTime minTime = LocalTime.of(15, 0, 0);
-    LocalTime maxTime = LocalTime.of(18, 0, 0);
-    KRandomParameters parameters = new KRandomParameters().timeRange(minTime, maxTime);
+  fun `test time range`() {
+    val minTime = LocalTime.of(15, 0, 0)
+    val maxTime = LocalTime.of(18, 0, 0)
+    val parameters = KRandomParameters().timeRange(minTime, maxTime)
 
-    // When
-    TimeBean timeBean = new KRandom(parameters).nextObject(TimeBean.class);
+    val timeBean = KRandom(parameters).nextObject(TimeBean::class.java)
 
-    // Then
-    assertThat(timeBean.getLocalTime()).isAfterOrEqualTo(minTime).isBeforeOrEqualTo(maxTime);
+    timeBean.shouldNotBeNull()
+    timeBean.localTime shouldBeIn minTime..maxTime
   }
 }

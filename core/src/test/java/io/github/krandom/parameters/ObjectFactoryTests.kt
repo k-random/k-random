@@ -21,80 +21,75 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.ObjectCreationException
+import io.github.krandom.api.ObjectFactory
+import io.github.krandom.api.RandomizerContext
+import io.github.krandom.beans.Address
+import io.github.krandom.beans.Person
+import io.github.krandom.beans.Street
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.ObjectCreationException;
-import io.github.krandom.api.ObjectFactory;
-import io.github.krandom.api.RandomizerContext;
-import io.github.krandom.beans.Address;
-import io.github.krandom.beans.Person;
-import io.github.krandom.beans.Street;
-import org.junit.jupiter.api.Test;
-
-class ObjectFactoryTests {
-
+internal class ObjectFactoryTests {
   @Test
-  void testCustomObjectFactory() {
+  fun `test custom object factory`() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .objectFactory(
-                new ObjectFactory() {
-                  @Override
-                  public <T> T createInstance(Class<T> type, RandomizerContext context)
-                      throws ObjectCreationException {
-                    try {
-                      // use custom logic for a specific type
-                      if (type.isAssignableFrom(Address.class)) {
-                        Address address = new Address();
-                        address.setCity("Brussels");
-                        address.setCountry("Belgium");
-                        address.setZipCode("1000");
-
-                        Street street = new Street();
-                        street.setName("main street");
-                        street.setNumber(1);
-                        street.setType((byte) 1);
-                        address.setStreet(street);
-                        return (T) address;
+    val parameters =
+      KRandomParameters()
+        .objectFactory(
+          object : ObjectFactory {
+            @Suppress("UNCHECKED_CAST")
+            @Throws(ObjectCreationException::class)
+            override fun <T> createInstance(type: Class<T>, context: RandomizerContext): T {
+              try {
+                // use custom logic for a specific type
+                if (type.isAssignableFrom(Address::class.java)) {
+                  return Address().apply {
+                    city = "Brussels"
+                    country = "Belgium"
+                    zipCode = "1000"
+                    street =
+                      Street().apply {
+                        name = "main street"
+                        number = 1
+                        streetType = 1
                       }
-                      // use regular constructor for other types
-                      return type.getDeclaredConstructor().newInstance();
-                    } catch (Exception e) {
-                      throw new ObjectCreationException(
-                          "Unable to create a new instance of " + type, e);
-                    }
-                  }
-                });
-    KRandom kRandom = new KRandom(parameters);
+                  } as T
+                }
+                // use regular constructor for other types
+                return type.getDeclaredConstructor().newInstance()
+              } catch (e: Exception) {
+                throw ObjectCreationException("Unable to create a new instance of " + type, e)
+              }
+            }
+          }
+        )
+    val kRandom = KRandom(parameters)
 
-    // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom.nextObject(Person::class.java)
 
-    // then
-    assertThat(person).isNotNull();
-    assertThat(person.getId()).isNotNull();
-    assertThat(person.getName()).isNotNull();
-    assertThat(person.getGender()).isNotNull();
-    assertThat(person.getEmail()).isNotNull();
-    assertThat(person.getPhoneNumber()).isNotNull();
-    assertThat(person.getBirthDate()).isNotNull();
-    assertThat(person.getNicknames()).isNotNull();
-    assertThat(person.getExcluded()).isNull();
-
-    Address address = person.getAddress();
-    assertThat(address).isNotNull();
-    assertThat(address.getCountry()).isEqualTo("Belgium");
-    assertThat(address.getCity()).isEqualTo("Brussels");
-    assertThat(address.getZipCode()).isEqualTo("1000");
-    Street street = address.getStreet();
-    assertThat(street).isNotNull();
-    assertThat(street.getName()).isEqualTo("main street");
-    assertThat(street.getNumber()).isEqualTo(1);
-    assertThat(street.getType()).isEqualTo((byte) 1);
+    person.shouldNotBeNull()
+    person.id.shouldNotBeNull()
+    person.name.shouldNotBeNull()
+    person.gender.shouldNotBeNull()
+    person.email.shouldNotBeNull()
+    person.phoneNumber.shouldNotBeNull()
+    person.birthDate.shouldNotBeNull()
+    person.nicknames.shouldNotBeNull()
+    person.excluded.shouldBeNull()
+    person.address.shouldNotBeNull()
+    person.address.country shouldBe "Belgium"
+    person.address.city shouldBe "Brussels"
+    person.address.zipCode shouldBe "1000"
+    person.address.street.shouldNotBeNull()
+    person.address.street.name shouldBe "main street"
+    person.address.street.number shouldBe 1
+    person.address.street.streetType shouldBe 1.toByte()
   }
 }

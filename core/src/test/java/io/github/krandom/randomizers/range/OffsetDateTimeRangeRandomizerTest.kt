@@ -36,9 +36,9 @@ import org.junit.jupiter.api.Test
 
 internal class OffsetDateTimeRangeRandomizerTest : AbstractRangeRandomizerTest<OffsetDateTime>() {
   override val min: OffsetDateTime =
-    KRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime().minusYears(50)
+    KRandomParameters.DEFAULT_DATES_RANGE.min.toOffsetDateTime().minusYears(50)
   override val max: OffsetDateTime =
-    KRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime().plusYears(50)
+    KRandomParameters.DEFAULT_DATES_RANGE.max.toOffsetDateTime().plusYears(50)
 
   @BeforeEach
   fun setUp() {

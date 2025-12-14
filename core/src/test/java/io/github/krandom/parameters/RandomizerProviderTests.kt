@@ -21,101 +21,74 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.api.Randomizer
+import io.github.krandom.api.RandomizerContext
+import io.github.krandom.api.RandomizerProvider
+import io.github.krandom.api.RandomizerRegistry
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import java.lang.reflect.Field
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.api.RandomizerContext;
-import io.github.krandom.api.RandomizerProvider;
-import io.github.krandom.api.RandomizerRegistry;
-import java.lang.reflect.Field;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
-
-class RandomizerProviderTests {
-
+internal class RandomizerProviderTests {
   @Test
-  void testCustomRandomizerProvider() {
+  @Suppress("UNCHECKED_CAST")
+  fun `test custom randomizer provider`() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .randomizerProvider(
-                new RandomizerProvider() {
+    val parameters =
+      KRandomParameters()
+        .randomizerProvider(
+          object : RandomizerProvider {
+            private lateinit var randomizerRegistries: Set<RandomizerRegistry>
 
-                  private Set<? extends RandomizerRegistry> randomizerRegistries;
+            override fun setRandomizerRegistries(randomizerRegistries: Set<RandomizerRegistry>) {
+              this.randomizerRegistries = randomizerRegistries
+              // may sort registries with a custom sort algorithm (ie, not necessarily with
+              // `@Priority`)
+            }
 
-                  @Override
-                  public void setRandomizerRegistries(
-                      @NotNull Set<? extends RandomizerRegistry> randomizerRegistries) {
-                    this.randomizerRegistries = randomizerRegistries;
-                    // may sort registries with a custom sort algorithm (ie, not necessarily with
-                    // `@Priority`)
-                  }
+            override fun getRandomizerByField(
+              field: Field,
+              context: RandomizerContext,
+            ): Randomizer<*>? {
+              // return custom randomizer based on the context
+              return when (field.name) {
+                "name" if context.currentRandomizationDepth == 0 -> {
+                  Randomizer { "foo" }
+                }
+                "name" if context.currentField == "bestFriend" -> {
+                  Randomizer { "bar" }
+                }
+                else -> null
+              }
+            }
 
-                  @Override
-                  public Randomizer<?> getRandomizerByField(
-                      @NotNull Field field, @NotNull RandomizerContext context) {
-                    // return custom randomizer based on the context
-                    if (field.getName().equals("name")
-                        && context.getCurrentRandomizationDepth() == 0) {
-                      return () -> "foo";
-                    }
-                    if (field.getName().equals("name")
-                        && context.getCurrentField().equals("bestFriend")) {
-                      return () -> "bar";
-                    }
-                    return null;
-                  }
-
-                  @SuppressWarnings("unchecked")
-                  @Override
-                  public <T> Randomizer<T> getRandomizerByType(
-                      @NotNull Class<T> type, @NotNull RandomizerContext context) {
-                    for (RandomizerRegistry randomizerRegistry : randomizerRegistries) {
-                      Randomizer<?> randomizer = randomizerRegistry.getRandomizer(type);
-                      return (Randomizer<T>) randomizer;
-                    }
-                    return null;
-                  }
-                })
-            .randomizationDepth(2);
-    KRandom kRandom = new KRandom(parameters);
+            override fun <T> getRandomizerByType(
+              type: Class<T>,
+              context: RandomizerContext,
+            ): Randomizer<T>? {
+              return randomizerRegistries.firstNotNullOfOrNull { it.getRandomizer(type) }
+                as Randomizer<T>?
+            }
+          }
+        )
+        .randomizationDepth(2)
+    val kRandom = KRandom(parameters)
 
     // when
-    Foo foo = kRandom.nextObject(Foo.class);
+    val foo = kRandom.nextObject(Foo::class.java)
 
     // then
-    assertThat(foo).isNotNull();
-    assertThat(foo.getName()).isEqualTo("foo");
-    assertThat(foo.getBestFriend().getName()).isEqualTo("bar");
-    assertThat(foo.getBestFriend().getBestFriend().getName()).isNull();
+    foo.shouldNotBeNull()
+    foo.name shouldBe "foo"
+    foo.bestFriend.shouldNotBeNull()
+    foo.bestFriend?.name shouldBe "bar"
+    foo.bestFriend?.bestFriend.shouldNotBeNull()
   }
 
-  @SuppressWarnings("unused")
-  static class Foo {
-    private String name;
-    private Foo bestFriend;
-
-    public Foo() {}
-
-    public String getName() {
-      return this.name;
-    }
-
-    public Foo getBestFriend() {
-      return this.bestFriend;
-    }
-
-    public void setName(String name) {
-      this.name = name;
-    }
-
-    public void setBestFriend(Foo bestFriend) {
-      this.bestFriend = bestFriend;
-    }
-  }
+  @Suppress("unused") internal data class Foo(var name: String, var bestFriend: Foo?)
 }

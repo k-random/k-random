@@ -21,30 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.beans.Person
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.beans.Person;
-import org.junit.jupiter.api.Test;
-
-class RandomizationDepthParameterTests {
-
+internal class RandomizationDepthParameterTests {
   @Test
-  void testRandomizationDepth() {
-    // Given
-    KRandomParameters parameters = new KRandomParameters().randomizationDepth(2);
-    KRandom kRandom = new KRandom(parameters);
+  fun `test randomization depth`() {
+    val parameters = KRandomParameters().randomizationDepth(2)
+    val kRandom = KRandom(parameters)
 
-    // When
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom.nextObject(Person::class.java)
 
-    // Then
-    assertThat(person).isNotNull();
-    assertThat(person.getParent()).isNotNull();
-    assertThat(person.getParent().getParent()).isNotNull();
-    assertThat(person.getParent().getParent().getParent()).isNull();
+    person.shouldNotBeNull()
+    person.parent.shouldNotBeNull()
+    person.parent.parent.shouldNotBeNull()
+    person.parent.parent.parent.shouldBeNull()
   }
 }

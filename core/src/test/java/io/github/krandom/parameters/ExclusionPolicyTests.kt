@@ -21,50 +21,44 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.api.ExclusionPolicy
+import io.github.krandom.api.RandomizerContext
+import io.github.krandom.beans.Address
+import io.github.krandom.beans.Person
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import java.lang.reflect.Field
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.api.ExclusionPolicy;
-import io.github.krandom.api.RandomizerContext;
-import io.github.krandom.beans.Address;
-import io.github.krandom.beans.Person;
-import java.lang.reflect.Field;
-import org.junit.jupiter.api.Test;
-
-class ExclusionPolicyTests {
-
+internal class ExclusionPolicyTests {
   @Test
-  void testCustomExclusionPolicy() {
-    // given
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .exclusionPolicy(
-                new ExclusionPolicy() {
-                  @Override
-                  public boolean shouldBeExcluded(Field field, RandomizerContext context) {
-                    return field.getName().equals("birthDate");
-                  }
+  fun `test custom exclusion policy`() {
+    val parameters =
+      KRandomParameters()
+        .exclusionPolicy(
+          object : ExclusionPolicy {
+            override fun shouldBeExcluded(field: Field, context: RandomizerContext): Boolean {
+              return field.name == "birthDate"
+            }
 
-                  @Override
-                  public boolean shouldBeExcluded(Class<?> type, RandomizerContext context) {
-                    return type.isAssignableFrom(Address.class);
-                  }
-                });
-    KRandom kRandom = new KRandom(parameters);
+            override fun shouldBeExcluded(type: Class<*>, context: RandomizerContext): Boolean {
+              return type.isAssignableFrom(Address::class.java)
+            }
+          }
+        )
+    val kRandom = KRandom(parameters)
 
-    // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom.nextObject<Person>(Person::class.java)
 
-    // then
-    assertThat(person).isNotNull();
-    assertThat(person.getName()).isNotNull();
-    assertThat(person.getEmail()).isNotNull();
-    assertThat(person.getPhoneNumber()).isNotNull();
-
-    assertThat(person.getBirthDate()).isNull();
-    assertThat(person.getAddress()).isNull();
+    person.shouldNotBeNull()
+    person.name.shouldNotBeNull()
+    person.email.shouldNotBeNull()
+    person.phoneNumber.shouldNotBeNull()
+    person.birthDate.shouldBeNull()
+    person.address.shouldBeNull()
   }
 }

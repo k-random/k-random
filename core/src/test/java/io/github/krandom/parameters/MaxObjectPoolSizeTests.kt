@@ -21,27 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.beans.PersonTuple
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.beans.PersonTuple;
-import org.junit.jupiter.api.Test;
-
-class MaxObjectPoolSizeTests {
-
+internal class MaxObjectPoolSizeTests {
   @Test
-  void testMaxObjectPoolSize() {
-    // Given
-    KRandomParameters parameters = new KRandomParameters().objectPoolSize(1);
-    KRandom kRandom = new KRandom(parameters);
+  fun `test max object pool size`() {
+    val parameters = KRandomParameters().objectPoolSize(1)
+    val kRandom = KRandom(parameters)
 
-    // When
-    PersonTuple persons = kRandom.nextObject(PersonTuple.class);
+    val persons = kRandom.nextObject(PersonTuple::class.java)
 
-    // Then
-    assertThat(persons.left).isSameAs(persons.right);
+    persons.shouldNotBeNull()
+    persons.left shouldBe persons.right
   }
 }

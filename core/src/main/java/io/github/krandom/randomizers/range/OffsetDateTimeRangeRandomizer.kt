@@ -40,10 +40,10 @@ class OffsetDateTimeRangeRandomizer
 constructor(min: OffsetDateTime?, max: OffsetDateTime?, seed: Long = Random.nextLong()) :
   AbstractRangeRandomizer<OffsetDateTime>(min, max, seed) {
   override val defaultMinValue: OffsetDateTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime()
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.min.toOffsetDateTime()
 
   override val defaultMaxValue: OffsetDateTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime()
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.max.toOffsetDateTime()
 
   private val zonedDateTimeRangeRandomizer: ZonedDateTimeRangeRandomizer =
     ZonedDateTimeRangeRandomizer(this.min.toZonedDateTime(), this.max.toZonedDateTime(), seed)

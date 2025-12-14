@@ -48,9 +48,9 @@ public class ArrayPopulator {
    * Generate a new array of random elements for the specified array {@code fieldType}.
    *
    * <p>The array size is chosen uniformly at random within the collection size range defined by
-   * {@link KRandomParameters#getCollectionSizeRange()} in the provided {@code context}. Each
-   * element is created by delegating to {@link KRandom#doPopulateBean(Class, RandomizationContext)}
-   * for the array component type.
+   * {@link KRandomParameters#collectionSizeRange} in the provided {@code context}. Each element is
+   * created by delegating to {@link KRandom#doPopulateBean(Class, RandomizationContext)} for the
+   * array component type.
    *
    * @param fieldType the expected array type to populate (for example, {@code String[].class});
    *     must represent an array class
@@ -74,9 +74,9 @@ public class ArrayPopulator {
   }
 
   private int getRandomArraySize(KRandomParameters parameters) {
-    KRandomParameters.Range<Integer> collectionSizeRange = parameters.getCollectionSizeRange();
+    KRandomParameters.Range<Integer> collectionSizeRange = parameters.collectionSizeRange;
     return new IntRangeRandomizer(
-            collectionSizeRange.getMin(), collectionSizeRange.getMax(), kRandom.nextLong())
+            collectionSizeRange.min, collectionSizeRange.max, kRandom.nextLong())
         .getRandomValue();
   }
 }

@@ -21,60 +21,68 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static io.github.krandom.FieldPredicates.inClass;
-import static io.github.krandom.FieldPredicates.named;
-import static io.github.krandom.FieldPredicates.ofType;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.FieldPredicates.inClass
+import io.github.krandom.FieldPredicates.named
+import io.github.krandom.FieldPredicates.ofType
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.beans.Salary
+import io.github.krandom.randomizers.range.IntRangeRandomizer
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.ranges.shouldBeIn
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.beans.Salary;
-import io.github.krandom.randomizers.range.IntRangeRandomizer;
-import org.junit.jupiter.api.Test;
-
-public class BypassSettersParameterTests {
-
+class BypassSettersParameterTests {
   @Test
-  void whenBypassSettersIsActivated_thenShouldNotInvokeSetters() {
-    // given
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .bypassSetters(true)
-            .randomize(
-                named("amount").and(ofType(int.class)).and(inClass(Salary.class)),
-                new IntRangeRandomizer(-10, -1))
-            .excludeField(
-                named("setterInvoked").and(ofType(boolean.class)).and(inClass(Salary.class)));
-    KRandom kRandom = new KRandom(parameters);
+  fun `when bypass setters is activated then should not invoke setters`() {
+    val parameters: KRandomParameters =
+      KRandomParameters()
+        .bypassSetters(true)
+        .randomize(
+          named("amount")
+            .and(ofType(Int::class.javaPrimitiveType!!))
+            .and(inClass(Salary::class.java)),
+          IntRangeRandomizer(-10, -1),
+        )
+        .excludeField(
+          named("setterInvoked")
+            .and(ofType(Boolean::class.javaPrimitiveType!!))
+            .and(inClass(Salary::class.java))
+        )
+    val kRandom = KRandom(parameters)
 
-    // when
-    Salary salary = kRandom.nextObject(Salary.class);
+    val salary = kRandom.nextObject(Salary::class.java)
 
-    // then
-    assertThat(salary).isNotNull();
-    assertThat(salary.getAmount()).isBetween(-10, -1);
-    assertThat(salary.isSetterInvoked()).isFalse();
+    salary.shouldNotBeNull()
+    salary.amount shouldBeIn -10..-1
+    salary.isSetterInvoked.shouldNotBeNull()
+    salary.isSetterInvoked.shouldBeFalse()
   }
 
   @Test
-  void whenBypassSettersIsNotActivated_thenShouldInvokeSetters() {
+  fun `when bypass setters is not activated then should invoke setters`() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .bypassSetters(true)
-            .randomize(
-                named("amount").and(ofType(int.class)).and(inClass(Salary.class)),
-                new IntRangeRandomizer(-10, -1));
-    KRandom kRandom = new KRandom(parameters);
+    val parameters: KRandomParameters =
+      KRandomParameters()
+        .bypassSetters(true)
+        .randomize(
+          named("amount")
+            .and(ofType(Int::class.javaPrimitiveType!!))
+            .and(inClass(Salary::class.java)),
+          IntRangeRandomizer(-10, -1),
+        )
+    val kRandom = KRandom(parameters)
 
     // when
-    Salary salary = kRandom.nextObject(Salary.class);
+    val salary = kRandom.nextObject(Salary::class.java)
 
     // then
-    assertThat(salary).isNotNull();
-    assertThat(salary.getAmount()).isBetween(-10, -1);
-    assertThat(salary.isSetterInvoked()).isTrue();
+    salary.shouldNotBeNull()
+    salary.amount shouldBeIn -10..-1
+    salary.isSetterInvoked.shouldBeTrue()
   }
 }

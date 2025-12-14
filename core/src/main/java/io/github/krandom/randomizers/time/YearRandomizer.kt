@@ -46,8 +46,8 @@ constructor(
   seed: Long = Random.nextLong(),
   private val yearRandomizer: IntRangeRandomizer =
     IntRangeRandomizer(
-      KRandomParameters.DEFAULT_DATES_RANGE.getMin().year,
-      KRandomParameters.DEFAULT_DATES_RANGE.getMax().year,
+      KRandomParameters.DEFAULT_DATES_RANGE.min.year,
+      KRandomParameters.DEFAULT_DATES_RANGE.max.year,
       seed,
     ),
 ) : Randomizer<Year> {

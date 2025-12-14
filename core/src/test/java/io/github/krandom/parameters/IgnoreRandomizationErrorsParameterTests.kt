@@ -21,62 +21,39 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.ObjectCreationException
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import java.util.concurrent.Callable
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.ObjectCreationException;
-import java.util.concurrent.Callable;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-class IgnoreRandomizationErrorsParameterTests {
-
-  private KRandom kRandom;
-
-  @Test
-  void whenIgnoreRandomizationErrorsIsActivated_thenShouldReturnNull() {
-    KRandomParameters parameters = new KRandomParameters().ignoreRandomizationErrors(true);
-    kRandom = new KRandom(parameters);
-
-    Foo foo = kRandom.nextObject(Foo.class);
-
-    Assertions.assertThat(foo).isNotNull();
-    Assertions.assertThat(foo.getName()).isNotNull();
-    Assertions.assertThat(foo.getCallable()).isNull();
-  }
+internal class IgnoreRandomizationErrorsParameterTests {
+  private lateinit var kRandom: KRandom
 
   @Test
-  void whenIgnoreRandomizationErrorsIsDeactivated_thenShouldThrowObjectGenerationException() {
-    KRandomParameters parameters = new KRandomParameters().ignoreRandomizationErrors(false);
-    kRandom = new KRandom(parameters);
+  fun `when ignore randomization errors is activated then should return null`() {
+    val parameters = KRandomParameters().ignoreRandomizationErrors(true)
+    kRandom = KRandom(parameters)
 
-    assertThatThrownBy(() -> kRandom.nextObject(Foo.class))
-        .isInstanceOf(ObjectCreationException.class);
+    val foo = kRandom.nextObject(Foo::class.java)
+
+    foo.shouldNotBeNull()
+    foo.name.shouldNotBeNull()
+    foo.callable.shouldBeNull()
   }
 
-  static class Foo {
-    private String name;
-    private Callable<String> callable;
+  @Test
+  fun `when ignore randomization errors is deactivated then should throw object generation exception`() {
+    val parameters = KRandomParameters().ignoreRandomizationErrors(false)
+    kRandom = KRandom(parameters)
 
-    public Foo() {}
-
-    public String getName() {
-      return this.name;
-    }
-
-    public Callable<String> getCallable() {
-      return this.callable;
-    }
-
-    public void setName(String name) {
-      this.name = name;
-    }
-
-    public void setCallable(Callable<String> callable) {
-      this.callable = callable;
-    }
+    shouldThrow<ObjectCreationException> { kRandom.nextObject(Foo::class.java) }
   }
+
+  internal data class Foo(val name: String, val callable: Callable<String>)
 }

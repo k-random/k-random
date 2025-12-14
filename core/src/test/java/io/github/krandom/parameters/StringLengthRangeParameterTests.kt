@@ -21,39 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.beans.Person
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.ranges.shouldBeIn
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.beans.Person;
-import org.junit.jupiter.api.Test;
-
-class StringLengthRangeParameterTests {
-
+internal class StringLengthRangeParameterTests {
   @Test
-  void testStringLengthRange() {
-    // Given
-    int minStringLength = 3;
-    int maxStringLength = 50;
-    KRandomParameters parameters =
-        new KRandomParameters().stringLengthRange(minStringLength, maxStringLength);
-    KRandom kRandom = new KRandom(parameters);
+  fun `test string length range`() {
+    val minStringLength = 3
+    val maxStringLength = 50
+    val parameters = KRandomParameters().stringLengthRange(minStringLength, maxStringLength)
+    val kRandom = KRandom(parameters)
 
-    // When
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom.nextObject(Person::class.java)
 
-    // Then
-    assertThat(person.getName().length()).isBetween(minStringLength, maxStringLength);
-    assertThat(person.getEmail().length()).isBetween(minStringLength, maxStringLength);
-    assertThat(person.getPhoneNumber().length()).isBetween(minStringLength, maxStringLength);
-    assertThat(person.getAddress().getCity().length()).isBetween(minStringLength, maxStringLength);
-    assertThat(person.getAddress().getCountry().length())
-        .isBetween(minStringLength, maxStringLength);
-    assertThat(person.getAddress().getZipCode().length())
-        .isBetween(minStringLength, maxStringLength);
-    assertThat(person.getAddress().getStreet().getName().length())
-        .isBetween(minStringLength, maxStringLength);
+    person.shouldNotBeNull()
+    person.name.length shouldBeIn minStringLength..maxStringLength
+    person.email.length shouldBeIn minStringLength..maxStringLength
+    person.phoneNumber.length shouldBeIn minStringLength..maxStringLength
+    person.address.city.length shouldBeIn minStringLength..maxStringLength
+    person.address.country.length shouldBeIn minStringLength..maxStringLength
+    person.address.zipCode.length shouldBeIn minStringLength..maxStringLength
+    person.address.street.name.length shouldBeIn minStringLength..maxStringLength
   }
 }

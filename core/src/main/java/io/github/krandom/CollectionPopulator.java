@@ -67,9 +67,9 @@ public class CollectionPopulator {
    * </ul>
    *
    * <p>The size of the collection is chosen randomly within the range defined by {@link
-   * KRandomParameters#getCollectionSizeRange()} in the provided {@link RandomizationContext}. If
-   * the field is parameterized (for example {@code List<Person>}), and the element type is
-   * considered populatable, each element is populated using {@link KRandom#doPopulateBean(Class,
+   * KRandomParameters#collectionSizeRange} in the provided {@link RandomizationContext}. If the
+   * field is parameterized (for example {@code List<Person>}), and the element type is considered
+   * populatable, each element is populated using {@link KRandom#doPopulateBean(Class,
    * RandomizationContext)}. For raw types (for example {@code List}) or non-populatable element
    * types, the collection will remain empty.
    *
@@ -106,9 +106,9 @@ public class CollectionPopulator {
   }
 
   private int getRandomCollectionSize(KRandomParameters parameters) {
-    KRandomParameters.Range<Integer> collectionSizeRange = parameters.getCollectionSizeRange();
+    KRandomParameters.Range<Integer> collectionSizeRange = parameters.collectionSizeRange;
     return new IntRangeRandomizer(
-            collectionSizeRange.getMin(), collectionSizeRange.getMax(), kRandom.nextLong())
+            collectionSizeRange.min, collectionSizeRange.max, kRandom.nextLong())
         .getRandomValue();
   }
 }

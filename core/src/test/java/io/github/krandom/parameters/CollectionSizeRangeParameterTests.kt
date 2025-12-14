@@ -21,42 +21,43 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.ranges.shouldBeIn
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import java.util.ArrayList;
-import org.junit.jupiter.api.Test;
-
-class CollectionSizeRangeParameterTests {
-
+internal class CollectionSizeRangeParameterTests {
   @Test
-  void shouldNotAllowNegativeMinCollectionSize() {
-    assertThatThrownBy(() -> new KRandomParameters().collectionSizeRange(-1, 10))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `should not allow negative min collection size`() {
+    shouldThrow<IllegalArgumentException> { KRandomParameters().collectionSizeRange(-1, 10) }
   }
 
   @Test
-  void shouldNotAllowMinCollectionSizeGreaterThanMaxCollectionSize() {
-    assertThatThrownBy(() -> new KRandomParameters().collectionSizeRange(2, 1))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `should not allow min collection size greater than max collection size`() {
+    shouldThrow<IllegalArgumentException> { KRandomParameters().collectionSizeRange(2, 1) }
   }
 
   @Test
-  void generatedCollectionSizeShouldBeInSpecifiedRange() {
-    KRandomParameters parameters = new KRandomParameters().collectionSizeRange(0, 10);
-    assertThat(new KRandom(parameters).nextObject(ArrayList.class).size()).isBetween(0, 10);
+  fun `generated collection size should be in specified range`() {
+    val parameters = KRandomParameters().collectionSizeRange(0, 10)
+
+    val list = KRandom(parameters).nextObject(ArrayList::class.java)
+
+    list.shouldNotBeNull()
+    list.size shouldBeIn 0..10
   }
 
-  @Test // https://github.com/k-random/k-random/issues/191
-  void collectionSizeRangeShouldWorkForArrays() {
-    KRandomParameters parameters = new KRandomParameters().collectionSizeRange(0, 10);
+  @Test
+  fun `collection size range should work for arrays`() {
+    val parameters = KRandomParameters().collectionSizeRange(0, 10)
 
-    String[] strArr = new KRandom(parameters).nextObject(String[].class);
+    val strArr = KRandom(parameters).nextObject(Array<String>::class.java)
 
-    assertThat(strArr.length).isLessThanOrEqualTo(10);
+    strArr.shouldNotBeNull()
+    strArr.size shouldBeIn 0..10
   }
 }

@@ -1,6 +1,7 @@
 package io.github.krandom.validation
 
 import io.github.krandom.KRandom
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldMatch
 import jakarta.validation.constraints.Pattern
@@ -17,10 +18,10 @@ class MixedAnnotationsTest {
   }
 
   @Test
-  // @Disabled("https://github.com/k-random/k-random/issues/22")
   fun `generated bean should be valid according to validation constraints`() {
     val testBean = kRandom.nextObject(TestBean::class.java)
 
+    testBean.shouldNotBeNull()
     testBean.year.length shouldBe 4
     testBean.year shouldMatch """\d{4}"""
   }

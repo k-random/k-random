@@ -4,6 +4,7 @@ import io.github.krandom.KRandom
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
 import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.nulls.shouldNotBeNull
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import jakarta.validation.constraints.Max
@@ -29,6 +30,7 @@ internal class MinMaxAnnotationHandlerTest {
 
     val testBean = kRandom.nextObject(TestBean::class.java)
 
+    testBean.shouldNotBeNull()
     testBean.testMinBigDecimal shouldBeGreaterThanOrEqualTo BigDecimal.TEN
     testBean.testMaxBigDecimal shouldBeLessThanOrEqualTo BigDecimal.TEN
     testBean.testMinBigInteger shouldBeGreaterThanOrEqualTo BigInteger.TEN

@@ -3,6 +3,7 @@ package io.github.krandom.validation
 import io.github.krandom.KRandom
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.nulls.shouldNotBeNull
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import jakarta.validation.constraints.AssertFalse
@@ -21,6 +22,7 @@ internal class AssertFalseAnnotationHandlerTest {
   fun `generated bean should be valid according to validation constraints`() {
     val testBean = kRandom.nextObject(TestBean::class.java)
 
+    testBean.shouldNotBeNull()
     testBean.testBooleanFieldAnnotation.shouldBeFalse()
     testBean.testBooleanMethodAnnotation.shouldBeFalse()
   }

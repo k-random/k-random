@@ -47,6 +47,7 @@ internal class TimeSupportTest {
   fun `three ten types should be populated`() {
     val timeBean = kRandom.nextObject(TimeBean::class.java)
 
+    timeBean.shouldNotBeNull()
     timeBean.duration.shouldNotBeNull()
     timeBean.instant.shouldNotBeNull()
     timeBean.localTime.shouldNotBeNull()
@@ -74,6 +75,7 @@ internal class TimeSupportTest {
 
     val timeBean = kRandom.nextObject(TimeBean::class.java)
 
+    timeBean.shouldNotBeNull()
     timeBean.instant.shouldBeNull()
   }
 }

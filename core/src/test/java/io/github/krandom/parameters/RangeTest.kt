@@ -21,20 +21,18 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandomParameters
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandomParameters;
-import org.junit.jupiter.api.Test;
-
-class RangeTest {
-
+internal class RangeTest {
   @Test
-  void testRange() {
-    KRandomParameters.Range<Integer> range = new KRandomParameters.Range<>(1, 10);
+  fun `test range`() {
+    val range = KRandomParameters.Range(1, 10)
 
-    assertThat(range.getMin()).isEqualTo(1);
-    assertThat(range.getMax()).isEqualTo(10);
+    range.min shouldBe 1
+    range.max shouldBe 10
   }
 }

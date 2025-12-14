@@ -41,10 +41,10 @@ class ZonedDateTimeRangeRandomizer
 constructor(min: ZonedDateTime?, max: ZonedDateTime?, seed: Long = Random.nextLong()) :
   AbstractRangeRandomizer<ZonedDateTime>(min, max, seed) {
   override val defaultMinValue: ZonedDateTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMin()
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.min
 
   override val defaultMaxValue: ZonedDateTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMax()
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.max
 
   override fun getRandomValue(): ZonedDateTime {
     val minSeconds = min.toEpochSecond()

@@ -79,6 +79,7 @@ internal class BeanValidationTest {
     kRandom = KRandom(parameters)
     val bean = kRandom.nextObject(BeanValidationAnnotatedBean::class.java)
 
+    bean.shouldNotBeNull()
     bean.sizedListEmbeddedBean.size shouldBeGreaterThanOrEqualTo 2
     bean.sizedListEmbeddedBean.size shouldBeLessThanOrEqualTo 10
     bean.sizedListEmbeddedBean.forEach { embeddedBean: EmbeddedBean? ->
@@ -99,6 +100,7 @@ internal class BeanValidationTest {
     kRandom = KRandom(parameters)
     val bean = kRandom.nextObject(BeanValidationAnnotatedBean::class.java)
 
+    bean.shouldNotBeNull()
     bean.sizedListEmbeddedBean.size shouldBeGreaterThanOrEqualTo 2
     bean.sizedListEmbeddedBean.size shouldBeLessThanOrEqualTo 10
     bean.sizedListEmbeddedBean.forEach { embeddedBean: EmbeddedBean? ->
@@ -232,7 +234,7 @@ internal class BeanValidationTest {
   fun `generated values for bean without read method`() {
     val bean = kRandom.nextObject(BeanValidationWithoutReadMethodBean::class.java)
 
-    // verify no null fields using reflection (replacement for AssertJ hasNoNullFieldsOrProperties)
+    bean.shouldNotBeNull()
     val allNonNull =
       bean.javaClass.declaredFields.all { field ->
         field.isAccessible = true
@@ -248,6 +250,7 @@ internal class BeanValidationTest {
 
     val bean = random.nextObject(BeanValidationAnnotatedBean::class.java)
 
+    bean.shouldNotBeNull()
     bean.username shouldBe "eOMtThyhVNLWUZNRcBaQKxI"
     bean.maxQuantity shouldBe -2055951745
     bean.minQuantity shouldBe 91531906
@@ -310,6 +313,7 @@ internal class BeanValidationTest {
     val discount = kRandom.nextObject(Discount::class.java)
 
     // then
+    discount.shouldNotBeNull()
     discount.discountEffects.shouldNotBeNull()
     discount.discountEffects.shouldNotBeEmpty()
     discount.discountEffects.forEach { discountEffect: DiscountEffect ->

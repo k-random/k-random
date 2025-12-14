@@ -21,134 +21,115 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.BDDAssertions.then;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.ObjectCreationException
+import io.github.krandom.beans.Ape
+import io.github.krandom.beans.Bar
+import io.github.krandom.beans.ClassUsingAbstractEnum
+import io.github.krandom.beans.ComparableBean
+import io.github.krandom.beans.ComparableBean.AlwaysEqual
+import io.github.krandom.beans.ConcreteBar
+import io.github.krandom.beans.Foo
+import io.github.krandom.beans.Human
+import io.github.krandom.beans.Mamals
+import io.github.krandom.beans.Person
+import io.github.krandom.beans.SocialPerson
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldBeOneOf
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.string.shouldNotBeEmpty
+import io.kotest.matchers.types.shouldBeInstanceOf
+import java.util.Date
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.ObjectCreationException;
-import io.github.krandom.beans.Ape;
-import io.github.krandom.beans.Bar;
-import io.github.krandom.beans.ClassUsingAbstractEnum;
-import io.github.krandom.beans.ComparableBean;
-import io.github.krandom.beans.ConcreteBar;
-import io.github.krandom.beans.Foo;
-import io.github.krandom.beans.Human;
-import io.github.krandom.beans.Mamals;
-import io.github.krandom.beans.Person;
-import io.github.krandom.beans.SocialPerson;
-import java.util.Date;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-class ScanClasspathForConcreteTypesParameterTests {
-
-  private KRandom kRandom;
+internal class ScanClasspathForConcreteTypesParameterTests {
+  private lateinit var kRandom: KRandom
 
   @Test
-  void
-      whenScanClasspathForConcreteTypesIsDisabled_thenShouldFailToPopulateInterfacesAndAbstractClasses() {
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(false);
-    kRandom = new KRandom(parameters);
+  fun `when scan classpath for concrete types is disabled then should fail to populate nonconcrete classes`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(false)
+    kRandom = KRandom(parameters)
 
-    assertThatThrownBy(() -> kRandom.nextObject(Mamals.class))
-        .isInstanceOf(ObjectCreationException.class);
+    shouldThrow<ObjectCreationException> { kRandom.nextObject(Mamals::class.java) }
   }
 
   @Test
-  void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateInterfacesAndAbstractClasses() {
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(true);
-    kRandom = new KRandom(parameters);
+  fun `when scan classpath for concrete types is enabled then should populate nonconcrete classes`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
+    kRandom = KRandom(parameters)
 
-    Mamals mamals = kRandom.nextObject(Mamals.class);
+    val mammals = kRandom.nextObject(Mamals::class.java)
 
-    assertThat(mamals.getMamal())
-        .isOfAnyClassIn(Human.class, Ape.class, Person.class, SocialPerson.class);
-    assertThat(mamals.getMamalImpl())
-        .isOfAnyClassIn(Human.class, Ape.class, Person.class, SocialPerson.class);
+    mammals.shouldNotBeNull()
+    mammals.mamal::class shouldBeOneOf
+      listOf(Human::class, Ape::class, Person::class, SocialPerson::class)
+    mammals.mamalImpl::class shouldBeOneOf
+      listOf(Human::class, Ape::class, Person::class, SocialPerson::class)
   }
 
   @Test
-  void
-      whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateConcreteTypesForFieldsWithGenericParameters() {
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(true);
-    kRandom = new KRandom(parameters);
+  fun `when scan classpath for concrete types is enabled then should populate concrete types`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
+    kRandom = KRandom(parameters)
 
-    ComparableBean comparableBean = kRandom.nextObject(ComparableBean.class);
+    val comparableBean = kRandom.nextObject(ComparableBean::class.java)
 
-    assertThat(comparableBean.getDateComparable())
-        .isOfAnyClassIn(ComparableBean.AlwaysEqual.class, Date.class);
+    comparableBean.shouldNotBeNull()
+    comparableBean.dateComparable::class shouldBeOneOf listOf(AlwaysEqual::class, Date::class)
   }
 
   @Test
-  void
-      whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateAbstractTypesWithConcreteSubTypes() {
-    // Given
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(true);
-    kRandom = new KRandom(parameters);
+  fun `when scan classpath for concrete types is enabled then should populate abstract types with concrete subtypes`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
+    kRandom = KRandom(parameters)
 
-    // When
-    Bar bar = kRandom.nextObject(Bar.class);
+    val bar = kRandom.nextObject(Bar::class.java)
 
-    // Then
-    assertThat(bar).isNotNull();
-    assertThat(bar).isInstanceOf(ConcreteBar.class);
-    // https://github.com/k-random/k-random/issues/204
-    assertThat(bar.getI()).isNotNull();
+    bar.shouldNotBeNull()
+    bar.shouldBeInstanceOf<ConcreteBar>()
+    bar.i.shouldNotBeNull()
   }
 
   @Test
-  void
-      whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateFieldsOfAbstractTypeWithConcreteSubTypes() {
-    // Given
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(true);
-    kRandom = new KRandom(parameters);
+  fun `when scan classpath for concrete types is enabled then should populate fields`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
+    kRandom = KRandom(parameters)
 
-    // When
-    Foo foo = kRandom.nextObject(Foo.class);
+    val foo = kRandom.nextObject(Foo::class.java)
 
-    // Then
-    assertThat(foo).isNotNull();
-    assertThat(foo.getBar()).isInstanceOf(ConcreteBar.class);
-    assertThat(foo.getBar().getName()).isNotEmpty();
+    foo.shouldNotBeNull()
+    foo.bar.shouldBeInstanceOf<ConcreteBar>()
+    foo.bar.name.shouldNotBeEmpty()
   }
 
   @Test
-  void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateAbstractEnumeration() {
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(true);
-    kRandom = new KRandom(parameters);
+  fun `when scan classpath for concrete types is enabled then should populate abstract enumeration`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
+    kRandom = KRandom(parameters)
 
-    ClassUsingAbstractEnum randomValue = kRandom.nextObject(ClassUsingAbstractEnum.class);
+    val randomValue = kRandom.nextObject(ClassUsingAbstractEnum::class.java)
 
-    then(randomValue.getTestEnum()).isNotNull();
+    randomValue.shouldNotBeNull()
+    randomValue.testEnum.shouldNotBeNull()
   }
-
-  // issue https://github.com/k-random/k-random/issues/353
 
   @Test
-  void testScanClasspathForConcreteTypes_whenConcreteTypeIsAnInnerClass() {
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(true);
-    KRandom kRandom = new KRandom(parameters);
+  fun `test scan classpath for concrete types when concrete type is an inner class`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
+    val kRandom = KRandom(parameters)
 
-    Foobar foobar = kRandom.nextObject(Foobar.class);
+    val foobar: Foobar? = kRandom.nextObject(Foobar::class.java)
 
-    Assertions.assertThat(foobar).isNotNull();
-    Assertions.assertThat(foobar.getToto()).isNotNull();
+    foobar.shouldNotBeNull()
+    foobar.toto.shouldBeInstanceOf<Foobar.TotoImpl>()
   }
 
-  public class Foobar {
+  internal data class Foobar(val toto: Toto) {
+    abstract class Toto
 
-    public abstract class Toto {}
-
-    public class TotoImpl extends Toto {}
-
-    private Toto toto;
-
-    public Toto getToto() {
-      return toto;
-    }
+    class TotoImpl : Toto()
   }
 }

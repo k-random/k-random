@@ -41,10 +41,10 @@ class YearMonthRangeRandomizer
 constructor(min: YearMonth?, max: YearMonth?, seed: Long = Random.nextLong()) :
   AbstractRangeRandomizer<YearMonth>(min, max, seed) {
   override val defaultMinValue: YearMonth
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMin().let { YearMonth.of(it.year, it.month) }
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.min.let { YearMonth.of(it.year, it.month) }
 
   override val defaultMaxValue: YearMonth
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMax().let { YearMonth.of(it.year, it.month) }
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.max.let { YearMonth.of(it.year, it.month) }
 
   override fun getRandomValue(): YearMonth {
     val minYear = min.getLong(ChronoField.YEAR)

@@ -21,54 +21,51 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.beans.BeanWithDefaultFieldValues
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.beans.BeanWithDefaultFieldValues;
-import org.junit.jupiter.api.Test;
-
-class OverrideDefaultInitializationParameterTests {
-
+internal class OverrideDefaultInitializationParameterTests {
   @Test
-  void whenOverrideDefaultInitializationParameterIsFalse_thenShouldKeepDefaultFieldValues() {
-    // Given
-    KRandomParameters parameters = new KRandomParameters().overrideDefaultInitialization(false);
-    KRandom kRandom = new KRandom(parameters);
+  fun `when override default initialization parameter is false then should keep default field values`() {
+    val parameters = KRandomParameters().overrideDefaultInitialization(false)
+    val kRandom = KRandom(parameters)
 
-    // When
-    BeanWithDefaultFieldValues bean = kRandom.nextObject(BeanWithDefaultFieldValues.class);
+    val bean = kRandom.nextObject(BeanWithDefaultFieldValues::class.java)
 
-    // Then
-    assertThat(bean.getDefaultNonNullValue()).isEqualTo("default");
-    assertThat(bean.getDefaultNonNullValueSetByConstructor()).isEqualTo("defaultSetByConstructor");
+    bean.shouldNotBeNull()
+    bean.defaultNonNullValue shouldBe "default"
+    bean.defaultNonNullValueSetByConstructor shouldBe "defaultSetByConstructor"
   }
 
   @Test
-  void whenOverrideDefaultInitializationParameterIsTrue_thenShouldRandomizeFields() {
-    // Given
-    KRandomParameters parameters = new KRandomParameters().overrideDefaultInitialization(true);
-    KRandom kRandom = new KRandom(parameters);
+  fun `when override default initialization parameter is true then should randomize fields`() {
+    val parameters = KRandomParameters().overrideDefaultInitialization(true)
+    val kRandom = KRandom(parameters)
 
-    // When
-    BeanWithDefaultFieldValues bean = kRandom.nextObject(BeanWithDefaultFieldValues.class);
+    val bean = kRandom.nextObject(BeanWithDefaultFieldValues::class.java)
 
     // Then
-    assertThat(bean.getDefaultNonNullValue()).isNotEqualTo("default").isNotNull();
-    assertThat(bean.getDefaultNonNullValueSetByConstructor())
-        .isNotEqualTo("defaultSetByConstructor")
-        .isNotNull();
+    bean.shouldNotBeNull()
+    bean.defaultNonNullValue.shouldNotBeNull()
+    bean.defaultNonNullValue shouldNotBe "default"
+    bean.defaultNonNullValueSetByConstructor.shouldNotBeNull()
+    bean.defaultNonNullValueSetByConstructor shouldNotBe "defaultSetByConstructor"
   }
 
   @Test
-  void shouldNotOverrideDefaultFieldValuesByDefault() {
-    // When
-    BeanWithDefaultFieldValues bean = new KRandom().nextObject(BeanWithDefaultFieldValues.class);
+  fun `should not override default field values by default`() {
+    val bean = KRandom().nextObject(BeanWithDefaultFieldValues::class.java)
 
-    // Then
-    assertThat(bean.getDefaultNonNullValue()).isEqualTo("default");
-    assertThat(bean.getDefaultNonNullValueSetByConstructor()).isEqualTo("defaultSetByConstructor");
+    bean.shouldNotBeNull()
+    bean.defaultNonNullValue.shouldNotBeNull()
+    bean.defaultNonNullValue shouldBe "default"
+    bean.defaultNonNullValueSetByConstructor shouldBe "defaultSetByConstructor"
   }
 }

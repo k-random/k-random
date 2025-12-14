@@ -26,4 +26,7 @@
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
+@NullMarked
 package io.github.krandom;
+
+import org.jspecify.annotations.NullMarked;

@@ -36,8 +36,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class ZonedDateTimeRangeRandomizerTest : AbstractRangeRandomizerTest<ZonedDateTime>() {
-  override val min: ZonedDateTime = KRandomParameters.DEFAULT_DATES_RANGE.getMin().minusYears(50)
-  override val max: ZonedDateTime = KRandomParameters.DEFAULT_DATES_RANGE.getMax().plusYears(50)
+  override val min: ZonedDateTime = KRandomParameters.DEFAULT_DATES_RANGE.min.minusYears(50)
+  override val max: ZonedDateTime = KRandomParameters.DEFAULT_DATES_RANGE.max.plusYears(50)
 
   @BeforeEach
   fun setUp() {

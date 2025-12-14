@@ -46,8 +46,8 @@ constructor(
   seed: Long = Random.nextLong(),
   private val delegate: DateRangeRandomizer =
     DateRangeRandomizer(
-      toDate(KRandomParameters.DEFAULT_DATES_RANGE.getMin()),
-      toDate(KRandomParameters.DEFAULT_DATES_RANGE.getMax()),
+      toDate(KRandomParameters.DEFAULT_DATES_RANGE.min),
+      toDate(KRandomParameters.DEFAULT_DATES_RANGE.max),
       seed,
     ),
 ) : Randomizer<Date> {

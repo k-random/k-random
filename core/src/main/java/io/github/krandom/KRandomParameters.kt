@@ -21,359 +21,240 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static java.lang.String.format;
-import static java.time.ZonedDateTime.of;
-
-import io.github.krandom.api.*;
-import io.github.krandom.randomizers.registry.CustomRandomizerRegistry;
-import io.github.krandom.randomizers.registry.ExclusionRandomizerRegistry;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.time.*;
-import java.util.*;
-import java.util.function.Predicate;
+import io.github.krandom.api.ExclusionPolicy
+import io.github.krandom.api.ObjectFactory
+import io.github.krandom.api.Randomizer
+import io.github.krandom.api.RandomizerProvider
+import io.github.krandom.api.RandomizerRegistry
+import io.github.krandom.randomizers.registry.CustomRandomizerRegistry
+import io.github.krandom.randomizers.registry.ExclusionRandomizerRegistry
+import java.lang.reflect.Field
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.Objects
+import java.util.function.Predicate
 
 /**
- * Parameters of an {@link KRandom} instance.
+ * Parameters of an [KRandom] instance.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class KRandomParameters {
-
-  /** Default seed. */
-  public static final long DEFAULT_SEED = 123L;
-
-  /** Default charset for Strings. */
-  public static final Charset DEFAULT_CHARSET = StandardCharsets.US_ASCII;
-
-  /** Default collection size range. */
-  public static final Range<Integer> DEFAULT_COLLECTION_SIZE_RANGE = new Range<>(1, 100);
-
-  /** Number of different objects to generate for a type. */
-  public static final int DEFAULT_OBJECT_POOL_SIZE = 10;
-
-  /** Default value for randomization depth, which mean, that randomization depth is unlimited */
-  public static final int DEFAULT_RANDOMIZATION_DEPTH = Integer.MAX_VALUE;
-
-  /** Default string length size. */
-  public static final Range<Integer> DEFAULT_STRING_LENGTH_RANGE = new Range<>(1, 32);
-
-  /** Default date range in which dates will be generated: [now - 10 years, now + 10 years]. */
-  public static final int DEFAULT_DATE_RANGE = 10;
-
-  /** Reference date around which random dates will be generated. */
-  private static final ZonedDateTime REFERENCE_DATE = of(2020, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
-
-  /** Default dates range. */
-  public static final Range<ZonedDateTime> DEFAULT_DATES_RANGE =
-      new Range<>(
-          REFERENCE_DATE.minusYears(DEFAULT_DATE_RANGE),
-          REFERENCE_DATE.plusYears(DEFAULT_DATE_RANGE));
-
-  private long seed;
-  private int objectPoolSize;
-  private int randomizationDepth;
-  private Charset charset;
-  private boolean scanClasspathForConcreteTypes;
-  private boolean overrideDefaultInitialization;
-  private boolean ignoreRandomizationErrors;
-  private boolean bypassSetters;
-  private Range<Integer> collectionSizeRange;
-  private Range<Integer> stringLengthRange;
-  private Range<LocalDate> dateRange;
-  private Range<LocalTime> timeRange;
-  private ExclusionPolicy exclusionPolicy;
-  private ObjectFactory objectFactory;
-  private RandomizerProvider randomizerProvider;
+@Suppress("TooManyFunctions")
+class KRandomParameters {
+  var seed: Long
+  private var objectPoolSize: Int
+  private var randomizationDepth: Int
+  var charset: Charset
+  var isScanClasspathForConcreteTypes: Boolean = false
+  var isOverrideDefaultInitialization: Boolean = false
+  var isIgnoreRandomizationErrors: Boolean = false
+  var isBypassSetters: Boolean = false
+  @JvmField var collectionSizeRange: Range<Int>
+  var stringLengthRange: Range<Int>
+  var dateRange: Range<LocalDate>
+  var timeRange: Range<LocalTime>
+  private var exclusionPolicy: ExclusionPolicy
+  private var objectFactory: ObjectFactory
+  private var randomizerProvider: RandomizerProvider
 
   // internal params
-  private CustomRandomizerRegistry customRandomizerRegistry;
-  private ExclusionRandomizerRegistry exclusionRandomizerRegistry;
-  private Set<RandomizerRegistry> userRegistries;
-  private Set<Predicate<Field>> fieldExclusionPredicates;
-  private Set<Predicate<Class<?>>> typeExclusionPredicates;
+  var customRandomizerRegistry: CustomRandomizerRegistry
+    private set
 
-  /** Create a new {@link KRandomParameters} with default values. */
-  public KRandomParameters() {
-    seed = DEFAULT_SEED;
-    charset = DEFAULT_CHARSET;
-    scanClasspathForConcreteTypes = false;
-    overrideDefaultInitialization = false;
-    ignoreRandomizationErrors = false;
-    bypassSetters = false;
-    objectPoolSize = DEFAULT_OBJECT_POOL_SIZE;
-    randomizationDepth = DEFAULT_RANDOMIZATION_DEPTH;
-    dateRange =
-        new Range<>(
-            DEFAULT_DATES_RANGE.getMin().toLocalDate(), DEFAULT_DATES_RANGE.getMax().toLocalDate());
-    timeRange = new Range<>(LocalTime.MIN, LocalTime.MAX);
-    collectionSizeRange = DEFAULT_COLLECTION_SIZE_RANGE;
-    stringLengthRange = DEFAULT_STRING_LENGTH_RANGE;
-    customRandomizerRegistry = new CustomRandomizerRegistry();
-    exclusionRandomizerRegistry = new ExclusionRandomizerRegistry();
-    userRegistries = new LinkedHashSet<>();
-    fieldExclusionPredicates = new HashSet<>();
-    typeExclusionPredicates = new HashSet<>();
-    exclusionPolicy = DefaultExclusionPolicy.INSTANCE;
-    objectFactory = new ObjenesisObjectFactory();
-    randomizerProvider = new RegistriesRandomizerProvider();
+  var exclusionRandomizerRegistry: ExclusionRandomizerRegistry
+    private set
+
+  var userRegistries: MutableSet<RandomizerRegistry>
+    private set
+
+  var fieldExclusionPredicates: MutableSet<Predicate<Field>>
+    private set
+
+  var typeExclusionPredicates: MutableSet<Predicate<Class<*>>>
+    private set
+
+  /** Create a new [KRandomParameters] with default values. */
+  init {
+    seed = DEFAULT_SEED
+    charset = DEFAULT_CHARSET
+    objectPoolSize = DEFAULT_OBJECT_POOL_SIZE
+    randomizationDepth = DEFAULT_RANDOMIZATION_DEPTH
+    dateRange = Range(DEFAULT_DATES_RANGE.min.toLocalDate(), DEFAULT_DATES_RANGE.max.toLocalDate())
+    timeRange = Range(LocalTime.MIN, LocalTime.MAX)
+    collectionSizeRange = DEFAULT_COLLECTION_SIZE_RANGE
+    stringLengthRange = DEFAULT_STRING_LENGTH_RANGE
+    customRandomizerRegistry = CustomRandomizerRegistry()
+    exclusionRandomizerRegistry = ExclusionRandomizerRegistry()
+    userRegistries = LinkedHashSet()
+    fieldExclusionPredicates = HashSet()
+    typeExclusionPredicates = HashSet()
+    exclusionPolicy = DefaultExclusionPolicy
+    objectFactory = ObjenesisObjectFactory()
+    randomizerProvider = RegistriesRandomizerProvider()
   }
 
-  public Range<Integer> getCollectionSizeRange() {
-    return collectionSizeRange;
+  fun getObjectPoolSize(): Int {
+    return objectPoolSize
   }
 
-  public void setCollectionSizeRange(final Range<Integer> collectionSizeRange) {
-    this.collectionSizeRange = collectionSizeRange;
+  fun setObjectPoolSize(objectPoolSize: Int) {
+    require(objectPoolSize >= 1) { "objectPoolSize must be >= 1" }
+    this.objectPoolSize = objectPoolSize
   }
 
-  public Range<LocalDate> getDateRange() {
-    return dateRange;
+  fun getRandomizationDepth(): Int {
+    return randomizationDepth
   }
 
-  public void setDateRange(final Range<LocalDate> dateRange) {
-    this.dateRange = dateRange;
+  fun setRandomizationDepth(randomizationDepth: Int) {
+    require(randomizationDepth >= 1) { "randomizationDepth must be >= 1" }
+    this.randomizationDepth = randomizationDepth
   }
 
-  public Range<LocalTime> getTimeRange() {
-    return timeRange;
+  fun getExclusionPolicy(): ExclusionPolicy {
+    return exclusionPolicy
   }
 
-  public void setTimeRange(final Range<LocalTime> timeRange) {
-    this.timeRange = timeRange;
+  fun setExclusionPolicy(exclusionPolicy: ExclusionPolicy) {
+    Objects.requireNonNull(exclusionPolicy, "Exclusion policy must not be null")
+    this.exclusionPolicy = exclusionPolicy
   }
 
-  public Range<Integer> getStringLengthRange() {
-    return stringLengthRange;
+  fun getObjectFactory(): ObjectFactory {
+    return objectFactory
   }
 
-  public void setStringLengthRange(final Range<Integer> stringLengthRange) {
-    this.stringLengthRange = stringLengthRange;
+  fun setObjectFactory(objectFactory: ObjectFactory) {
+    Objects.requireNonNull(objectFactory, "Object factory must not be null")
+    this.objectFactory = objectFactory
   }
 
-  public long getSeed() {
-    return seed;
+  fun getRandomizerProvider(): RandomizerProvider {
+    return randomizerProvider
   }
 
-  public void setSeed(long seed) {
-    this.seed = seed;
-  }
-
-  public int getObjectPoolSize() {
-    return objectPoolSize;
-  }
-
-  public void setObjectPoolSize(int objectPoolSize) {
-    if (objectPoolSize < 1) {
-      throw new IllegalArgumentException("objectPoolSize must be >= 1");
-    }
-    this.objectPoolSize = objectPoolSize;
-  }
-
-  public int getRandomizationDepth() {
-    return randomizationDepth;
-  }
-
-  public void setRandomizationDepth(int randomizationDepth) {
-    if (randomizationDepth < 1) {
-      throw new IllegalArgumentException("randomizationDepth must be >= 1");
-    }
-    this.randomizationDepth = randomizationDepth;
-  }
-
-  public Charset getCharset() {
-    return charset;
-  }
-
-  public void setCharset(Charset charset) {
-    Objects.requireNonNull(charset, "Charset must not be null");
-    this.charset = charset;
-  }
-
-  public boolean isScanClasspathForConcreteTypes() {
-    return scanClasspathForConcreteTypes;
-  }
-
-  public void setScanClasspathForConcreteTypes(boolean scanClasspathForConcreteTypes) {
-    this.scanClasspathForConcreteTypes = scanClasspathForConcreteTypes;
-  }
-
-  public boolean isOverrideDefaultInitialization() {
-    return overrideDefaultInitialization;
-  }
-
-  public void setOverrideDefaultInitialization(boolean overrideDefaultInitialization) {
-    this.overrideDefaultInitialization = overrideDefaultInitialization;
-  }
-
-  public boolean isIgnoreRandomizationErrors() {
-    return ignoreRandomizationErrors;
-  }
-
-  public void setIgnoreRandomizationErrors(boolean ignoreRandomizationErrors) {
-    this.ignoreRandomizationErrors = ignoreRandomizationErrors;
-  }
-
-  public boolean isBypassSetters() {
-    return bypassSetters;
-  }
-
-  public void setBypassSetters(boolean bypassSetters) {
-    this.bypassSetters = bypassSetters;
-  }
-
-  public ExclusionPolicy getExclusionPolicy() {
-    return exclusionPolicy;
-  }
-
-  public void setExclusionPolicy(ExclusionPolicy exclusionPolicy) {
-    Objects.requireNonNull(exclusionPolicy, "Exclusion policy must not be null");
-    this.exclusionPolicy = exclusionPolicy;
-  }
-
-  public ObjectFactory getObjectFactory() {
-    return objectFactory;
-  }
-
-  public void setObjectFactory(ObjectFactory objectFactory) {
-    Objects.requireNonNull(objectFactory, "Object factory must not be null");
-    this.objectFactory = objectFactory;
-  }
-
-  public RandomizerProvider getRandomizerProvider() {
-    return randomizerProvider;
-  }
-
-  public void setRandomizerProvider(RandomizerProvider randomizerProvider) {
-    Objects.requireNonNull(randomizerProvider, "Randomizer provider must not be null");
-    this.randomizerProvider = randomizerProvider;
-  }
-
-  public Set<Predicate<Field>> getFieldExclusionPredicates() {
-    return fieldExclusionPredicates;
-  }
-
-  public Set<Predicate<Class<?>>> getTypeExclusionPredicates() {
-    return typeExclusionPredicates;
-  }
-
-  CustomRandomizerRegistry getCustomRandomizerRegistry() {
-    return customRandomizerRegistry;
-  }
-
-  ExclusionRandomizerRegistry getExclusionRandomizerRegistry() {
-    return exclusionRandomizerRegistry;
-  }
-
-  Set<RandomizerRegistry> getUserRegistries() {
-    return userRegistries;
+  fun setRandomizerProvider(randomizerProvider: RandomizerProvider) {
+    Objects.requireNonNull(randomizerProvider, "Randomizer provider must not be null")
+    this.randomizerProvider = randomizerProvider
   }
 
   /**
-   * Register a custom randomizer for the given field predicate. <strong>The predicate must at least
-   * specify the field type</strong>
+   * Register a custom randomizer for the given field predicate. **The predicate must at least
+   * specify the field type**
    *
    * @param predicate to identify the field
    * @param randomizer to register
    * @param <T> The field type
-   * @return the current {@link KRandomParameters} instance for method chaining
-   * @see FieldPredicates
+   * @return the current [KRandomParameters] instance for method chaining
+   * @see FieldPredicates </T>
    */
-  public <T> KRandomParameters randomize(Predicate<Field> predicate, Randomizer<T> randomizer) {
-    Objects.requireNonNull(predicate, "Predicate must not be null");
-    Objects.requireNonNull(randomizer, "Randomizer must not be null");
-    customRandomizerRegistry.registerRandomizer(predicate, randomizer);
-    return this;
+  fun <T> randomize(predicate: Predicate<Field>, randomizer: Randomizer<T>): KRandomParameters {
+    Objects.requireNonNull(predicate, "Predicate must not be null")
+    Objects.requireNonNull<Randomizer<T>>(randomizer, "Randomizer must not be null")
+    customRandomizerRegistry.registerRandomizer(predicate, randomizer)
+    return this
   }
 
   /**
    * Register a custom randomizer for a given type.
    *
    * @param type class of the type to randomize
-   * @param randomizer the custom {@link Randomizer} to use
+   * @param randomizer the custom [Randomizer] to use
    * @param <T> The field type
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining </T>
    */
-  public <T> KRandomParameters randomize(Class<T> type, Randomizer<T> randomizer) {
-    Objects.requireNonNull(type, "Type must not be null");
-    Objects.requireNonNull(randomizer, "Randomizer must not be null");
-    customRandomizerRegistry.registerRandomizer(type, randomizer);
-    return this;
+  fun <T> randomize(type: Class<T>, randomizer: Randomizer<T>): KRandomParameters {
+    customRandomizerRegistry.registerRandomizer(type, randomizer)
+    return this
   }
 
   /**
    * Exclude a field from being randomized.
    *
    * @param predicate to identify the field to exclude
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    * @see FieldPredicates
    */
-  public KRandomParameters excludeField(Predicate<Field> predicate) {
-    Objects.requireNonNull(predicate, "Predicate must not be null");
-    fieldExclusionPredicates.add(predicate);
-    exclusionRandomizerRegistry.addFieldPredicate(predicate);
-    return this;
+  fun excludeField(predicate: Predicate<Field>): KRandomParameters {
+    Objects.requireNonNull(predicate, "Predicate must not be null")
+    fieldExclusionPredicates.add(predicate)
+    exclusionRandomizerRegistry.addFieldPredicate(predicate)
+    return this
   }
 
   /**
    * Exclude a type from being randomized.
    *
    * @param predicate to identify the type to exclude
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    * @see FieldPredicates
    */
-  public KRandomParameters excludeType(Predicate<Class<?>> predicate) {
-    Objects.requireNonNull(predicate, "Predicate must not be null");
-    typeExclusionPredicates.add(predicate);
-    exclusionRandomizerRegistry.addTypePredicate(predicate);
-    return this;
+  fun excludeType(predicate: Predicate<Class<*>>): KRandomParameters {
+    Objects.requireNonNull(predicate, "Predicate must not be null")
+    typeExclusionPredicates.add(predicate)
+    exclusionRandomizerRegistry.addTypePredicate(predicate)
+    return this
   }
 
   /**
    * Provide a custom exclusion policy.
    *
    * @param exclusionPolicy to use
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters exclusionPolicy(ExclusionPolicy exclusionPolicy) {
-    setExclusionPolicy(exclusionPolicy);
-    return this;
+  fun exclusionPolicy(exclusionPolicy: ExclusionPolicy): KRandomParameters {
+    setExclusionPolicy(exclusionPolicy)
+    return this
   }
 
   /**
    * Provide a custom object factory.
    *
    * @param objectFactory to use
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters objectFactory(ObjectFactory objectFactory) {
-    setObjectFactory(objectFactory);
-    return this;
+  fun objectFactory(objectFactory: ObjectFactory): KRandomParameters {
+    setObjectFactory(objectFactory)
+    return this
   }
 
   /**
    * Provide a custom randomizer provider.
    *
    * @param randomizerProvider to use
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters randomizerProvider(RandomizerProvider randomizerProvider) {
-    setRandomizerProvider(randomizerProvider);
-    return this;
+  fun randomizerProvider(randomizerProvider: RandomizerProvider): KRandomParameters {
+    setRandomizerProvider(randomizerProvider)
+    return this
   }
 
   /**
    * Set the initial random seed.
    *
    * @param seed the initial seed
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters seed(final long seed) {
-    setSeed(seed);
-    return this;
+  fun seed(seed: Long): KRandomParameters {
+    this.seed = seed
+    return this
+  }
+
+  /**
+   * Set the charset to use for character based generation.
+   *
+   * @param charset the charset to use
+   * @return the current [KRandomParameters] instance for method chaining
+   */
+  fun charset(charset: Charset): KRandomParameters {
+    this.charset = charset
+    return this
   }
 
   /**
@@ -381,21 +262,15 @@ public class KRandomParameters {
    *
    * @param minCollectionSize the minimum collection size
    * @param maxCollectionSize the maximum collection size
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters collectionSizeRange(
-      final int minCollectionSize, final int maxCollectionSize) {
-    if (minCollectionSize < 0) {
-      throw new IllegalArgumentException("minCollectionSize must be >= 0");
+  fun collectionSizeRange(minCollectionSize: Int, maxCollectionSize: Int): KRandomParameters {
+    require(minCollectionSize >= 0) { "minCollectionSize must be >= 0" }
+    require(minCollectionSize <= maxCollectionSize) {
+      "minCollectionSize ($minCollectionSize) must be <= than maxCollectionSize ($maxCollectionSize)"
     }
-    if (minCollectionSize > maxCollectionSize) {
-      throw new IllegalArgumentException(
-          format(
-              "minCollectionSize (%s) must be <= than maxCollectionSize (%s)",
-              minCollectionSize, maxCollectionSize));
-    }
-    setCollectionSizeRange(new Range<>(minCollectionSize, maxCollectionSize));
-    return this;
+    this.collectionSizeRange = Range(minCollectionSize, maxCollectionSize)
+    return this
   }
 
   /**
@@ -403,53 +278,37 @@ public class KRandomParameters {
    *
    * @param minStringLength the minimum string length
    * @param maxStringLength the maximum string length
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters stringLengthRange(final int minStringLength, final int maxStringLength) {
-    if (minStringLength < 0) {
-      throw new IllegalArgumentException("minStringLength must be >= 0");
+  fun stringLengthRange(minStringLength: Int, maxStringLength: Int): KRandomParameters {
+    require(minStringLength >= 0) { "minStringLength must be >= 0" }
+    require(minStringLength <= maxStringLength) {
+      "minStringLength ($minStringLength) must be <= than maxStringLength ($maxStringLength)"
     }
-    if (minStringLength > maxStringLength) {
-      throw new IllegalArgumentException(
-          format(
-              "minStringLength (%s) must be <= than maxStringLength (%s)",
-              minStringLength, maxStringLength));
-    }
-    setStringLengthRange(new Range<>(minStringLength, maxStringLength));
-    return this;
+    this.stringLengthRange = Range(minStringLength, maxStringLength)
+    return this
   }
 
   /**
    * Set the number of different objects to generate for a type.
    *
    * @param objectPoolSize the number of objects to generate in the pool
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters objectPoolSize(final int objectPoolSize) {
-    setObjectPoolSize(objectPoolSize);
-    return this;
+  fun objectPoolSize(objectPoolSize: Int): KRandomParameters {
+    setObjectPoolSize(objectPoolSize)
+    return this
   }
 
   /**
    * Set the randomization depth for objects graph.
    *
    * @param randomizationDepth the maximum randomization depth
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters randomizationDepth(final int randomizationDepth) {
-    setRandomizationDepth(randomizationDepth);
-    return this;
-  }
-
-  /**
-   * Set the charset to use for character based fields.
-   *
-   * @param charset the charset to use
-   * @return the current {@link KRandomParameters} instance for method chaining
-   */
-  public KRandomParameters charset(final Charset charset) {
-    setCharset(charset);
-    return this;
+  fun randomizationDepth(randomizationDepth: Int): KRandomParameters {
+    setRandomizationDepth(randomizationDepth)
+    return this
   }
 
   /**
@@ -457,14 +316,12 @@ public class KRandomParameters {
    *
    * @param min date
    * @param max date
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters dateRange(final LocalDate min, final LocalDate max) {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("Min date should be before max date");
-    }
-    setDateRange(new Range<>(min, max));
-    return this;
+  fun dateRange(min: LocalDate, max: LocalDate): KRandomParameters {
+    require(!min.isAfter(max)) { "Min date should be before max date" }
+    this.dateRange = Range(min, max)
+    return this
   }
 
   /**
@@ -472,153 +329,147 @@ public class KRandomParameters {
    *
    * @param min time
    * @param max time
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters timeRange(final LocalTime min, final LocalTime max) {
-    if (min.isAfter(max)) {
-      throw new IllegalArgumentException("Min time should be before max time");
-    }
-    setTimeRange(new Range<>(min, max));
-    return this;
+  fun timeRange(min: LocalTime, max: LocalTime): KRandomParameters {
+    require(!min.isAfter(max)) { "Min time should be before max time" }
+    this.timeRange = Range(min, max)
+    return this
   }
 
   /**
-   * Register a {@link RandomizerRegistry}.
+   * Register a [RandomizerRegistry].
    *
-   * @param registry the {@link RandomizerRegistry} to register
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @param registry the [RandomizerRegistry] to register
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters randomizerRegistry(final RandomizerRegistry registry) {
-    Objects.requireNonNull(registry, "Registry must not be null");
-    userRegistries.add(registry);
-    return this;
+  fun randomizerRegistry(registry: RandomizerRegistry): KRandomParameters {
+    Objects.requireNonNull(registry, "Registry must not be null")
+    userRegistries.add(registry)
+    return this
   }
 
   /**
    * Should the classpath be scanned for concrete types when a field with an interface or abstract
    * class type is encountered?
    *
-   * <p>Deactivated by default.
+   * Deactivated by default.
    *
    * @param scanClasspathForConcreteTypes whether to scan the classpath or not
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters scanClasspathForConcreteTypes(boolean scanClasspathForConcreteTypes) {
-    setScanClasspathForConcreteTypes(scanClasspathForConcreteTypes);
-    return this;
+  fun scanClasspathForConcreteTypes(scanClasspathForConcreteTypes: Boolean): KRandomParameters {
+    this.isScanClasspathForConcreteTypes = scanClasspathForConcreteTypes
+    return this
   }
 
   /**
    * With this parameter, any randomization error will be silently ignored and the corresponding
    * field will be set to null.
    *
-   * <p>Deactivated by default.
+   * Deactivated by default.
    *
    * @param ignoreRandomizationErrors whether to silently ignore randomization errors or not
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters ignoreRandomizationErrors(boolean ignoreRandomizationErrors) {
-    setIgnoreRandomizationErrors(ignoreRandomizationErrors);
-    return this;
+  fun ignoreRandomizationErrors(ignoreRandomizationErrors: Boolean): KRandomParameters {
+    this.isIgnoreRandomizationErrors = ignoreRandomizationErrors
+    return this
   }
 
   /**
-   * Should default initialization of field values be overridden? E.g. should the values of the
-   * {@code strings} and {@code integers} fields below be kept untouched or should they be
-   * randomized.
-   *
-   * <pre>{@code
-   * public class Bean {
-   *     Set<String> strings = new HashSet<>();
-   *     List<Integer> integers;
-   *
-   *     public Bean() {
-   *         integers = Arrays.asList(1, 2, 3);
-   *     }
-   * }
-   * }</pre>
-   *
+   * Should default initialization of field values be overridden? E.g., should the values of the
+   * `strings` and `integers` fields below be kept untouched or should they be randomized.
    * Deactivated by default.
    *
    * @param overrideDefaultInitialization whether to override default initialization of field values
-   *     or not
-   * @return the current {@link KRandomParameters} instance for method chaining
+   *   or not
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters overrideDefaultInitialization(boolean overrideDefaultInitialization) {
-    setOverrideDefaultInitialization(overrideDefaultInitialization);
-    return this;
+  fun overrideDefaultInitialization(overrideDefaultInitialization: Boolean): KRandomParameters {
+    this.isOverrideDefaultInitialization = overrideDefaultInitialization
+    return this
   }
 
   /**
    * Flag to bypass setters if any and use reflection directly instead. False by default.
    *
    * @param bypassSetters true if setters should be ignored
-   * @return the current {@link KRandomParameters} instance for method chaining
+   * @return the current [KRandomParameters] instance for method chaining
    */
-  public KRandomParameters bypassSetters(boolean bypassSetters) {
-    setBypassSetters(bypassSetters);
-    return this;
+  fun bypassSetters(bypassSetters: Boolean): KRandomParameters {
+    this.isBypassSetters = bypassSetters
+    return this
   }
 
   /**
    * Utility class to hold a range of values.
    *
-   * @param <T> type of values
+   * @param <T> type of values </T>
    */
-  public static class Range<T> {
-
-    private T min;
-    private T max;
-
-    public Range(T min, T max) {
-      this.min = min;
-      this.max = max;
-    }
-
-    public T getMin() {
-      return min;
-    }
-
-    public void setMin(T min) {
-      this.min = min;
-    }
-
-    public T getMax() {
-      return max;
-    }
-
-    public void setMax(T max) {
-      this.max = max;
-    }
-  }
+  class Range<T>(@JvmField var min: T, @JvmField var max: T)
 
   /**
    * Return a shallow copy of randomization parameters.
    *
    * @return a shallow copy of randomization parameters.
    */
-  public KRandomParameters copy() {
-    KRandomParameters copy = new KRandomParameters();
-    copy.setSeed(this.getSeed());
-    copy.setObjectPoolSize(this.getObjectPoolSize());
-    copy.setRandomizationDepth(this.getRandomizationDepth());
-    copy.setCharset(this.getCharset());
-    copy.setScanClasspathForConcreteTypes(this.isScanClasspathForConcreteTypes());
-    copy.setOverrideDefaultInitialization(this.isOverrideDefaultInitialization());
-    copy.setIgnoreRandomizationErrors(this.isIgnoreRandomizationErrors());
-    copy.setBypassSetters(this.isBypassSetters());
-    copy.setCollectionSizeRange(this.getCollectionSizeRange());
-    copy.setStringLengthRange(this.getStringLengthRange());
-    copy.setDateRange(this.getDateRange());
-    copy.setTimeRange(this.getTimeRange());
-    copy.setExclusionPolicy(this.getExclusionPolicy());
-    copy.setObjectFactory(this.getObjectFactory());
-    copy.setRandomizerProvider(this.getRandomizerProvider());
-    copy.customRandomizerRegistry = this.getCustomRandomizerRegistry();
-    copy.exclusionRandomizerRegistry = this.getExclusionRandomizerRegistry();
-    copy.userRegistries = this.getUserRegistries();
-    copy.fieldExclusionPredicates = this.getFieldExclusionPredicates();
-    copy.typeExclusionPredicates = this.getTypeExclusionPredicates();
-    return copy;
+  fun copy(): KRandomParameters {
+    val copy = KRandomParameters()
+    copy.seed = this.seed
+    copy.setObjectPoolSize(this.getObjectPoolSize())
+    copy.setRandomizationDepth(this.getRandomizationDepth())
+    copy.charset = this.charset
+    copy.isScanClasspathForConcreteTypes = this.isScanClasspathForConcreteTypes
+    copy.isOverrideDefaultInitialization = this.isOverrideDefaultInitialization
+    copy.isIgnoreRandomizationErrors = this.isIgnoreRandomizationErrors
+    copy.isBypassSetters = this.isBypassSetters
+    copy.collectionSizeRange = this.collectionSizeRange
+    copy.stringLengthRange = this.stringLengthRange
+    copy.dateRange = this.dateRange
+    copy.timeRange = this.timeRange
+    copy.setExclusionPolicy(this.getExclusionPolicy())
+    copy.setObjectFactory(this.getObjectFactory())
+    copy.setRandomizerProvider(this.getRandomizerProvider())
+    copy.customRandomizerRegistry = this.customRandomizerRegistry
+    copy.exclusionRandomizerRegistry = this.exclusionRandomizerRegistry
+    copy.userRegistries = this.userRegistries
+    copy.fieldExclusionPredicates = this.fieldExclusionPredicates
+    copy.typeExclusionPredicates = this.typeExclusionPredicates
+    return copy
+  }
+
+  companion object {
+    /** Default seed. */
+    const val DEFAULT_SEED: Long = 123L
+
+    /** Default charset for Strings. */
+    val DEFAULT_CHARSET: Charset = StandardCharsets.US_ASCII
+
+    /** Default collection size range. */
+    val DEFAULT_COLLECTION_SIZE_RANGE: Range<Int> = Range(1, 100)
+
+    /** Number of different objects to generate for a type. */
+    const val DEFAULT_OBJECT_POOL_SIZE: Int = 10
+
+    /** Default value for randomization depth, which means, that randomization depth is unlimited */
+    const val DEFAULT_RANDOMIZATION_DEPTH: Int = Int.MAX_VALUE
+
+    /** Default string length size. */
+    val DEFAULT_STRING_LENGTH_RANGE: Range<Int> = Range(1, 32)
+
+    /** Default date range in which dates will be generated: [now - 10 years, now + 10 years]. */
+    const val DEFAULT_DATE_RANGE: Int = 10
+
+    /** Reference date around which random dates will be generated. */
+    private val REFERENCE_DATE: ZonedDateTime =
+      ZonedDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+
+    /** Default dates range. */
+    val DEFAULT_DATES_RANGE: Range<ZonedDateTime> =
+      Range(
+        REFERENCE_DATE.minusYears(DEFAULT_DATE_RANGE.toLong()),
+        REFERENCE_DATE.plusYears(DEFAULT_DATE_RANGE.toLong()),
+      )
   }
 }

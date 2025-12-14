@@ -27,7 +27,7 @@ import io.github.krandom.util.ReflectionUtils.isParameterizedType
 import io.github.krandom.util.ReflectionUtils.isPopulatable
 import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
-import java.util.*
+import java.util.Optional
 
 /**
  * Populator for [Optional] type.
@@ -35,7 +35,7 @@ import java.util.*
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 internal class OptionalPopulator(private val kRandom: KRandom) {
-  fun getRandomOptional(field: Field, context: RandomizationContext?): Optional<*> {
+  fun getRandomOptional(field: Field, context: RandomizationContext): Optional<*> {
     val fieldGenericType = field.genericType
     return if (
       isParameterizedType(fieldGenericType)
@@ -43,7 +43,7 @@ internal class OptionalPopulator(private val kRandom: KRandom) {
       val parameterizedType = fieldGenericType as ParameterizedType
       val genericType = parameterizedType.actualTypeArguments[0]
       if (isPopulatable(genericType)) {
-        Optional.of(kRandom.doPopulateBean(genericType as Class<*>, context))
+        Optional.ofNullable(kRandom.doPopulateBean(genericType as Class<*>, context))
       } else {
         Optional.empty<Any?>()
       }
