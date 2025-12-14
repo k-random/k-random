@@ -21,38 +21,44 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range
+package io.github.krandom.parameters
 
+import io.github.krandom.KRandom
 import io.github.krandom.KRandomParameters
-import java.time.Instant
-import java.time.ZonedDateTime
-import kotlin.random.Random
+import io.github.krandom.api.ExclusionPolicy
+import io.github.krandom.api.RandomizerContext
+import io.github.krandom.beans.Address
+import io.github.krandom.beans.Person
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import java.lang.reflect.Field
+import org.junit.jupiter.api.Test
 
-/** Generate a random [ZonedDateTime] in the given range. */
-class ZonedDateTimeRangeRandomizer
-/**
- * Create a new [ZonedDateTimeRangeRandomizer].
- *
- * @param min min value (inclusive)
- * @param max max value (exclusive)
- * @param seed initial seed
- */
-@JvmOverloads
-constructor(min: ZonedDateTime?, max: ZonedDateTime?, seed: Long = Random.nextLong()) :
-  AbstractRangeRandomizer<ZonedDateTime>(min, max, seed) {
-  override val defaultMinValue: ZonedDateTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.min
+internal class ExclusionPolicyTests {
+  @Test
+  fun `test custom exclusion policy`() {
+    val parameters =
+      KRandomParameters()
+        .exclusionPolicy(
+          object : ExclusionPolicy {
+            override fun shouldBeExcluded(field: Field, context: RandomizerContext): Boolean {
+              return field.name == "birthDate"
+            }
 
-  override val defaultMaxValue: ZonedDateTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.max
+            override fun shouldBeExcluded(type: Class<*>, context: RandomizerContext): Boolean {
+              return type.isAssignableFrom(Address::class.java)
+            }
+          }
+        )
+    val kRandom = KRandom(parameters)
 
-  override fun getRandomValue(): ZonedDateTime {
-    val minSeconds = min.toEpochSecond()
-    val maxSeconds = max.toEpochSecond()
-    val seconds = nextDouble(minSeconds.toDouble(), maxSeconds.toDouble()).toLong()
-    val minNanoSeconds = min.nano
-    val maxNanoSeconds = max.nano
-    val nanoSeconds = nextDouble(minNanoSeconds.toDouble(), maxNanoSeconds.toDouble()).toLong()
-    return ZonedDateTime.ofInstant(Instant.ofEpochSecond(seconds, nanoSeconds), min.zone)
+    val person = kRandom.nextObject<Person>(Person::class.java)
+
+    person.shouldNotBeNull()
+    person.name.shouldNotBeNull()
+    person.email.shouldNotBeNull()
+    person.phoneNumber.shouldNotBeNull()
+    person.birthDate.shouldBeNull()
+    person.address.shouldBeNull()
   }
 }

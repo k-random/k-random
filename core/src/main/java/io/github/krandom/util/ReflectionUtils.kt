@@ -39,10 +39,7 @@ import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import java.lang.reflect.WildcardType
 import java.util.ArrayDeque
-import java.util.ArrayList
 import java.util.Deque
-import java.util.HashMap
-import java.util.HashSet
 import java.util.LinkedList
 import java.util.Locale
 import java.util.NavigableSet
@@ -101,7 +98,7 @@ object ReflectionUtils {
    * @return the proxy randomizer </T>
    */
   @JvmStatic
-  fun <T> asRandomizer(supplier: Supplier<T?>): Randomizer<T?> {
+  fun <T> asRandomizer(supplier: Supplier<T>): Randomizer<T> {
     class RandomizerProxy(private val target: Supplier<*>) : InvocationHandler {
       @Throws(Throwable::class)
       override fun invoke(proxy: Any?, method: Method, args: Array<Any?>?): Any? {
@@ -118,7 +115,7 @@ object ReflectionUtils {
       Randomizer::class.java.getClassLoader(),
       arrayOf<Class<*>>(Randomizer::class.java),
       RandomizerProxy(supplier),
-    ) as Randomizer<T?>
+    ) as Randomizer<T>
   }
 
   /**
@@ -503,7 +500,7 @@ object ReflectionUtils {
    * @return empty collection
    */
   @JvmStatic
-  fun createEmptyCollectionForType(fieldType: Class<*>, initialSize: Int): MutableCollection<*>? {
+  fun createEmptyCollectionForType(fieldType: Class<*>, initialSize: Int): MutableCollection<*> {
     rejectUnsupportedTypes(fieldType)
     return try {
       fieldType.getDeclaredConstructor().newInstance() as MutableCollection<*>
@@ -511,7 +508,7 @@ object ReflectionUtils {
       if (fieldType == ArrayBlockingQueue::class.java) {
         ArrayBlockingQueue<Any>(initialSize)
       } else {
-        ObjenesisStd().newInstance(fieldType) as MutableCollection<*>?
+        ObjenesisStd().newInstance(fieldType) as MutableCollection<*>
       }
     }
   }

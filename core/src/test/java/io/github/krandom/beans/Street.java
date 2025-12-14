@@ -29,7 +29,7 @@ public class Street {
 
   private int number;
 
-  private byte type;
+  private byte streetType;
 
   private String name;
 
@@ -39,8 +39,8 @@ public class Street {
     return this.number;
   }
 
-  public byte getType() {
-    return this.type;
+  public byte getStreetType() {
+    return this.streetType;
   }
 
   public String getName() {
@@ -51,8 +51,8 @@ public class Street {
     this.number = number;
   }
 
-  public void setType(byte type) {
-    this.type = type;
+  public void setStreetType(byte streetType) {
+    this.streetType = streetType;
   }
 
   public void setName(String name) {
@@ -64,11 +64,13 @@ public class Street {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Street street = (Street) o;
-    return number == street.number && type == street.type && Objects.equals(name, street.name);
+    return number == street.number
+        && streetType == street.streetType
+        && Objects.equals(name, street.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(number, type, name);
+    return Objects.hash(number, streetType, name);
   }
 }

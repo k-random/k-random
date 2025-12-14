@@ -21,38 +21,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range
+package io.github.krandom.parameters
 
+import io.github.krandom.KRandom
 import io.github.krandom.KRandomParameters
-import java.time.Instant
-import java.time.ZonedDateTime
-import kotlin.random.Random
+import io.github.krandom.beans.Person
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import org.junit.jupiter.api.Test
 
-/** Generate a random [ZonedDateTime] in the given range. */
-class ZonedDateTimeRangeRandomizer
-/**
- * Create a new [ZonedDateTimeRangeRandomizer].
- *
- * @param min min value (inclusive)
- * @param max max value (exclusive)
- * @param seed initial seed
- */
-@JvmOverloads
-constructor(min: ZonedDateTime?, max: ZonedDateTime?, seed: Long = Random.nextLong()) :
-  AbstractRangeRandomizer<ZonedDateTime>(min, max, seed) {
-  override val defaultMinValue: ZonedDateTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.min
+internal class RandomizationDepthParameterTests {
+  @Test
+  fun `test randomization depth`() {
+    val parameters = KRandomParameters().randomizationDepth(2)
+    val kRandom = KRandom(parameters)
 
-  override val defaultMaxValue: ZonedDateTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.max
+    val person = kRandom.nextObject(Person::class.java)
 
-  override fun getRandomValue(): ZonedDateTime {
-    val minSeconds = min.toEpochSecond()
-    val maxSeconds = max.toEpochSecond()
-    val seconds = nextDouble(minSeconds.toDouble(), maxSeconds.toDouble()).toLong()
-    val minNanoSeconds = min.nano
-    val maxNanoSeconds = max.nano
-    val nanoSeconds = nextDouble(minNanoSeconds.toDouble(), maxNanoSeconds.toDouble()).toLong()
-    return ZonedDateTime.ofInstant(Instant.ofEpochSecond(seconds, nanoSeconds), min.zone)
+    person.shouldNotBeNull()
+    person.parent.shouldNotBeNull()
+    person.parent.parent.shouldNotBeNull()
+    person.parent.parent.parent.shouldBeNull()
   }
 }

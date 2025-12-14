@@ -21,20 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.beans.Person
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.ranges.shouldBeIn
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandomParameters;
-import org.junit.jupiter.api.Test;
-
-class RangeTest {
-
+internal class StringLengthRangeParameterTests {
   @Test
-  void testRange() {
-    KRandomParameters.Range<Integer> range = new KRandomParameters.Range<>(1, 10);
+  fun `test string length range`() {
+    val minStringLength = 3
+    val maxStringLength = 50
+    val parameters = KRandomParameters().stringLengthRange(minStringLength, maxStringLength)
+    val kRandom = KRandom(parameters)
 
-    assertThat(range.getMin()).isEqualTo(1);
-    assertThat(range.getMax()).isEqualTo(10);
+    val person = kRandom.nextObject(Person::class.java)
+
+    person.shouldNotBeNull()
+    person.name.length shouldBeIn minStringLength..maxStringLength
+    person.email.length shouldBeIn minStringLength..maxStringLength
+    person.phoneNumber.length shouldBeIn minStringLength..maxStringLength
+    person.address.city.length shouldBeIn minStringLength..maxStringLength
+    person.address.country.length shouldBeIn minStringLength..maxStringLength
+    person.address.zipCode.length shouldBeIn minStringLength..maxStringLength
+    person.address.street.name.length shouldBeIn minStringLength..maxStringLength
   }
 }

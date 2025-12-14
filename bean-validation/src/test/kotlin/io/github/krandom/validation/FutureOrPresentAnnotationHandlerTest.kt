@@ -3,6 +3,7 @@ package io.github.krandom.validation
 import io.github.krandom.KRandom
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.nulls.shouldNotBeNull
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import jakarta.validation.constraints.FutureOrPresent
@@ -37,6 +38,7 @@ internal class FutureOrPresentAnnotationHandlerTest {
   fun `generated bean should be valid according to validation constraints`() {
     val testBean = kRandom.nextObject(TestBean::class.java)
 
+    testBean.shouldNotBeNull()
     testBean.testDate shouldBeGreaterThanOrEqualTo Date.from(Instant.now())
     testBean.testCalendar shouldBeGreaterThanOrEqualTo Calendar.getInstance()
     testBean.testInstant shouldBeGreaterThanOrEqualTo Instant.now()

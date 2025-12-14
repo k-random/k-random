@@ -21,30 +21,43 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.ranges.shouldBeIn
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.beans.Person;
-import org.junit.jupiter.api.Test;
-
-class RandomizationDepthParameterTests {
+internal class CollectionSizeRangeParameterTests {
+  @Test
+  fun `should not allow negative min collection size`() {
+    shouldThrow<IllegalArgumentException> { KRandomParameters().collectionSizeRange(-1, 10) }
+  }
 
   @Test
-  void testRandomizationDepth() {
-    // Given
-    KRandomParameters parameters = new KRandomParameters().randomizationDepth(2);
-    KRandom kRandom = new KRandom(parameters);
+  fun `should not allow min collection size greater than max collection size`() {
+    shouldThrow<IllegalArgumentException> { KRandomParameters().collectionSizeRange(2, 1) }
+  }
 
-    // When
-    Person person = kRandom.nextObject(Person.class);
+  @Test
+  fun `generated collection size should be in specified range`() {
+    val parameters = KRandomParameters().collectionSizeRange(0, 10)
 
-    // Then
-    assertThat(person).isNotNull();
-    assertThat(person.getParent()).isNotNull();
-    assertThat(person.getParent().getParent()).isNotNull();
-    assertThat(person.getParent().getParent().getParent()).isNull();
+    val list = KRandom(parameters).nextObject(ArrayList::class.java)
+
+    list.shouldNotBeNull()
+    list.size shouldBeIn 0..10
+  }
+
+  @Test
+  fun `collection size range should work for arrays`() {
+    val parameters = KRandomParameters().collectionSizeRange(0, 10)
+
+    val strArr = KRandom(parameters).nextObject(Array<String>::class.java)
+
+    strArr.shouldNotBeNull()
+    strArr.size shouldBeIn 0..10
   }
 }

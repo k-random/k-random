@@ -33,6 +33,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.EnumMap;
 import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Populates {@link Map}-typed fields with random entries.
@@ -66,8 +67,8 @@ public class MapPopulator {
    * Generate a random {@link Map} for the given map-typed {@link Field}.
    *
    * <p>The size of the map is chosen randomly within the configured {@link
-   * KRandomParameters#getCollectionSizeRange() collection size range}. Only parameterized map types
-   * are populated; raw maps are returned empty. If the target type is an {@link java.util.EnumMap}
+   * KRandomParameters#collectionSizeRange collection size range}. Only parameterized map types are
+   * populated; raw maps are returned empty. If the target type is an {@link java.util.EnumMap}
    * without a resolvable key type, {@code null} is returned.
    *
    * @param field a field whose type implements {@link Map}
@@ -75,7 +76,8 @@ public class MapPopulator {
    * @return a concrete map instance filled with random entries, empty, or {@code null} when the key
    *     type cannot be resolved
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Nullable
   public Map<?, ?> getRandomMap(final Field field, final RandomizationContext context) {
     int randomSize = getRandomMapSize(context.getParameters());
     Class<?> fieldType = field.getType();
@@ -115,7 +117,7 @@ public class MapPopulator {
         for (int index = 0; index < randomSize; index++) {
           Object randomKey = kRandom.doPopulateBean((Class<?>) keyType, context);
           Object randomValue = kRandom.doPopulateBean((Class<?>) valueType, context);
-          if (randomKey != null) {
+          if (randomKey != null && randomValue != null) {
             map.put(randomKey, randomValue);
           }
         }
@@ -125,9 +127,9 @@ public class MapPopulator {
   }
 
   private int getRandomMapSize(KRandomParameters parameters) {
-    KRandomParameters.Range<Integer> collectionSizeRange = parameters.getCollectionSizeRange();
+    KRandomParameters.Range<Integer> collectionSizeRange = parameters.collectionSizeRange;
     return new IntRangeRandomizer(
-            collectionSizeRange.getMin(), collectionSizeRange.getMax(), parameters.getSeed())
+            collectionSizeRange.min, collectionSizeRange.max, parameters.getSeed())
         .getRandomValue();
   }
 }

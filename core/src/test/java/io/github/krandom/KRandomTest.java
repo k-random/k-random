@@ -94,6 +94,7 @@ class KRandomTest {
     assertThat(person.getId()).isNotNull();
   }
 
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   void staticFieldsShouldNotBePopulated() {
     try {
@@ -147,7 +148,10 @@ class KRandomTest {
     Person person = kRandom.nextObject(Person.class);
 
     // Then
+    assertThat(person).isNotNull();
+    assertThat(person.getEmail()).isNotNull();
     assertThat(person.getEmail()).isEqualTo(FOO);
+    assertThat(person.getName()).isNotNull();
     assertThat(person.getName()).isNotEqualTo(FOO);
   }
 
@@ -497,7 +501,7 @@ class KRandomTest {
     assertThat(street).isNotNull();
     assertThat(street.getName()).isNotEmpty();
     assertThat(street.getNumber()).isNotNull();
-    assertThat(street.getType()).isNotNull();
+    assertThat(street.getStreetType()).isNotNull();
   }
 
   @Disabled("Dummy test to see possible reasons of randomization failures")

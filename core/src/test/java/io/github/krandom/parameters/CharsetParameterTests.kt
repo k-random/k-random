@@ -21,37 +21,30 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static io.github.krandom.util.CharacterUtils.collectPrintableCharactersOf;
-import static io.github.krandom.util.CharacterUtils.filterLetters;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.beans.Person
+import io.github.krandom.util.CharacterUtils.collectPrintableCharactersOf
+import io.github.krandom.util.CharacterUtils.filterLetters
+import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.nulls.shouldNotBeNull
+import java.nio.charset.StandardCharsets
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.beans.Person;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import org.junit.jupiter.api.Test;
-
-class CharsetParameterTests {
-
+internal class CharsetParameterTests {
   @Test
-  void testCharset() {
-    // Given
-    Charset charset = StandardCharsets.UTF_8;
-    List<Character> letters = filterLetters(collectPrintableCharactersOf(charset));
-    KRandomParameters parameters = new KRandomParameters().charset(charset);
-    KRandom kRandom = new KRandom(parameters);
+  fun `test charset`() {
+    val charset = StandardCharsets.UTF_8
+    val letters: Set<Char> = filterLetters(collectPrintableCharactersOf(charset)).toSet()
+    val parameters = KRandomParameters().charset(charset)
+    val kRandom = KRandom(parameters)
 
-    // When
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom.nextObject(Person::class.java)
 
-    // Then
-    char[] chars = person.getName().toCharArray();
-    for (char c : chars) {
-      assertThat(letters).contains(c);
-    }
+    person.shouldNotBeNull()
+    val chars = person.name.toCharArray().toSet()
+    letters shouldContainAll chars
   }
 }

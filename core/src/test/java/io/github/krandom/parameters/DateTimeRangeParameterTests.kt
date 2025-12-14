@@ -21,61 +21,51 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.time
+package io.github.krandom.parameters
 
-import io.github.krandom.FieldPredicates.inClass
-import io.github.krandom.FieldPredicates.named
-import io.github.krandom.FieldPredicates.ofType
 import io.github.krandom.KRandom
 import io.github.krandom.KRandomParameters
 import io.github.krandom.beans.TimeBean
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
-import java.time.Instant
-import org.junit.jupiter.api.BeforeEach
+import io.kotest.matchers.ranges.shouldBeIn
+import java.time.LocalDate
+import java.time.LocalTime
 import org.junit.jupiter.api.Test
 
-internal class TimeSupportTest {
-  private lateinit var kRandom: KRandom
+internal class DateTimeRangeParameterTests {
+  @Test
+  fun `test date range`() {
+    val minDate = LocalDate.of(2016, 1, 1)
+    val maxDate = LocalDate.of(2016, 1, 31)
+    val parameters = KRandomParameters().dateRange(minDate, maxDate)
 
-  @BeforeEach
-  fun setUp() {
-    kRandom = KRandom()
+    val timeBean = KRandom(parameters).nextObject(TimeBean::class.java)
+
+    timeBean.shouldNotBeNull()
+    timeBean.localDate shouldBeIn minDate..maxDate
   }
 
   @Test
-  fun `three ten types should be populated`() {
-    val timeBean = kRandom.nextObject(TimeBean::class.java)
+  fun `test date max range`() {
+    val minDate = LocalDate.MIN
+    val maxDate = LocalDate.MAX
+    val parameters = KRandomParameters().dateRange(minDate, maxDate)
+
+    val timeBean = KRandom(parameters).nextObject(TimeBean::class.java)
 
     timeBean.shouldNotBeNull()
-    timeBean.duration.shouldNotBeNull()
-    timeBean.instant.shouldNotBeNull()
-    timeBean.localTime.shouldNotBeNull()
-    timeBean.localDate.shouldNotBeNull()
-    timeBean.localDateTime.shouldNotBeNull()
-    timeBean.monthDay.shouldNotBeNull()
-    timeBean.offsetDateTime.shouldNotBeNull()
-    timeBean.offsetTime.shouldNotBeNull()
-    timeBean.period.shouldNotBeNull()
-    timeBean.yearMonth.shouldNotBeNull()
-    timeBean.year.shouldNotBeNull()
-    timeBean.zonedDateTime.shouldNotBeNull()
-    timeBean.zoneOffset.shouldNotBeNull()
-    timeBean.zoneId.shouldNotBeNull()
+    timeBean.localDate shouldBeIn minDate..maxDate
   }
 
   @Test
-  fun `three ten randomizers can be overridden by custom randomizers`() {
-    val parameters =
-      KRandomParameters()
-        .excludeField(
-          named("instant").and(ofType(Instant::class.java)).and(inClass(TimeBean::class.java))
-        )
-    kRandom = KRandom(parameters)
+  fun `test time range`() {
+    val minTime = LocalTime.of(15, 0, 0)
+    val maxTime = LocalTime.of(18, 0, 0)
+    val parameters = KRandomParameters().timeRange(minTime, maxTime)
 
-    val timeBean = kRandom.nextObject(TimeBean::class.java)
+    val timeBean = KRandom(parameters).nextObject(TimeBean::class.java)
 
     timeBean.shouldNotBeNull()
-    timeBean.instant.shouldBeNull()
+    timeBean.localTime shouldBeIn minTime..maxTime
   }
 }

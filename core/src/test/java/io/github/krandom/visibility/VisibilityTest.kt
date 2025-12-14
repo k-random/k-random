@@ -34,7 +34,7 @@ internal class VisibilityTest {
   @Test
   fun canPassSupplierLambdaFromOtherPackage() {
     val test = "test"
-    val supplier: Supplier<String?> = Supplier { test }
+    val supplier: Supplier<String> = Supplier { test }
     val parameters = KRandomParameters().randomize(String::class.java, asRandomizer(supplier))
     val kRandom = KRandom(parameters)
 

@@ -21,27 +21,39 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters;
+package io.github.krandom.parameters
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.KRandom
+import io.github.krandom.KRandomParameters
+import io.github.krandom.ObjectCreationException
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import java.util.concurrent.Callable
+import org.junit.jupiter.api.Test
 
-import io.github.krandom.KRandom;
-import io.github.krandom.KRandomParameters;
-import io.github.krandom.beans.PersonTuple;
-import org.junit.jupiter.api.Test;
-
-class MaxObjectPoolSizeTests {
+internal class IgnoreRandomizationErrorsParameterTests {
+  private lateinit var kRandom: KRandom
 
   @Test
-  void testMaxObjectPoolSize() {
-    // Given
-    KRandomParameters parameters = new KRandomParameters().objectPoolSize(1);
-    KRandom kRandom = new KRandom(parameters);
+  fun `when ignore randomization errors is activated then should return null`() {
+    val parameters = KRandomParameters().ignoreRandomizationErrors(true)
+    kRandom = KRandom(parameters)
 
-    // When
-    PersonTuple persons = kRandom.nextObject(PersonTuple.class);
+    val foo = kRandom.nextObject(Foo::class.java)
 
-    // Then
-    assertThat(persons.left).isSameAs(persons.right);
+    foo.shouldNotBeNull()
+    foo.name.shouldNotBeNull()
+    foo.callable.shouldBeNull()
   }
+
+  @Test
+  fun `when ignore randomization errors is deactivated then should throw object generation exception`() {
+    val parameters = KRandomParameters().ignoreRandomizationErrors(false)
+    kRandom = KRandom(parameters)
+
+    shouldThrow<ObjectCreationException> { kRandom.nextObject(Foo::class.java) }
+  }
+
+  internal data class Foo(val name: String, val callable: Callable<String>)
 }

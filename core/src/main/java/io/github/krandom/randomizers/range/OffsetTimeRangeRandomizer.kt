@@ -42,10 +42,10 @@ class OffsetTimeRangeRandomizer
 constructor(min: OffsetTime?, max: OffsetTime?, seed: Long = Random.nextLong()) :
   AbstractRangeRandomizer<OffsetTime>(min, max, seed) {
   override val defaultMinValue: OffsetTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMin().toOffsetDateTime().toOffsetTime()
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.min.toOffsetDateTime().toOffsetTime()
 
   override val defaultMaxValue: OffsetTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.getMax().toOffsetDateTime().toOffsetTime()
+    get() = KRandomParameters.DEFAULT_DATES_RANGE.max.toOffsetDateTime().toOffsetTime()
 
   override fun getRandomValue(): OffsetTime {
     val minSecondOfDay = min.getLong(ChronoField.SECOND_OF_DAY)

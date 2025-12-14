@@ -21,38 +21,18 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.randomizers.range
+package io.github.krandom.parameters
 
 import io.github.krandom.KRandomParameters
-import java.time.Instant
-import java.time.ZonedDateTime
-import kotlin.random.Random
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 
-/** Generate a random [ZonedDateTime] in the given range. */
-class ZonedDateTimeRangeRandomizer
-/**
- * Create a new [ZonedDateTimeRangeRandomizer].
- *
- * @param min min value (inclusive)
- * @param max max value (exclusive)
- * @param seed initial seed
- */
-@JvmOverloads
-constructor(min: ZonedDateTime?, max: ZonedDateTime?, seed: Long = Random.nextLong()) :
-  AbstractRangeRandomizer<ZonedDateTime>(min, max, seed) {
-  override val defaultMinValue: ZonedDateTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.min
+internal class RangeTest {
+  @Test
+  fun `test range`() {
+    val range = KRandomParameters.Range(1, 10)
 
-  override val defaultMaxValue: ZonedDateTime
-    get() = KRandomParameters.DEFAULT_DATES_RANGE.max
-
-  override fun getRandomValue(): ZonedDateTime {
-    val minSeconds = min.toEpochSecond()
-    val maxSeconds = max.toEpochSecond()
-    val seconds = nextDouble(minSeconds.toDouble(), maxSeconds.toDouble()).toLong()
-    val minNanoSeconds = min.nano
-    val maxNanoSeconds = max.nano
-    val nanoSeconds = nextDouble(minNanoSeconds.toDouble(), maxNanoSeconds.toDouble()).toLong()
-    return ZonedDateTime.ofInstant(Instant.ofEpochSecond(seconds, nanoSeconds), min.zone)
+    range.min shouldBe 1
+    range.max shouldBe 10
   }
 }

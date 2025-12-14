@@ -34,6 +34,7 @@ import java.lang.reflect.RecordComponent;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Extension of {@link java.util.Random} that is able to generate random Java objects.
@@ -99,6 +100,7 @@ public class KRandom extends Random {
    * @return a random instance of the given type
    * @throws ObjectCreationException when unable to create a new instance of the given type
    */
+  @Nullable
   public <T> T nextObject(final Class<T> type) {
     if (type.isRecord()) {
       return createRandomRecord(type);
@@ -116,12 +118,13 @@ public class KRandom extends Random {
    * @return a stream of random instances of the given type
    * @throws ObjectCreationException when unable to create a new instance of the given type
    */
+  @SuppressWarnings("DataFlowIssue")
   public <T> Stream<T> objects(final Class<T> type, final int streamSize) {
     if (streamSize < 0) {
       throw new IllegalArgumentException("The stream size must be positive");
     }
 
-    return Stream.generate(() -> nextObject(type)).limit(streamSize);
+    return Stream.generate(() -> nextObject(type)).filter(Objects::nonNull).limit(streamSize);
   }
 
   private <T> T createRandomRecord(Class<T> recordType) {
@@ -140,7 +143,7 @@ public class KRandom extends Random {
     }
   }
 
-  <T> T doPopulateBean(final Class<T> type, final RandomizationContext context) {
+  @Nullable <T> T doPopulateBean(final Class<T> type, final RandomizationContext context) {
     if (exclusionPolicy.shouldBeExcluded(type, context)) {
       return null;
     }

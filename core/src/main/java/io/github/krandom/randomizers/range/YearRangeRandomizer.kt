@@ -41,10 +41,10 @@ class YearRangeRandomizer
 constructor(min: Year?, max: Year?, seed: Long = Random.nextLong()) :
   AbstractRangeRandomizer<Year>(min, max, seed) {
   override val defaultMinValue: Year
-    get() = Year.of(KRandomParameters.DEFAULT_DATES_RANGE.getMin().year)
+    get() = Year.of(KRandomParameters.DEFAULT_DATES_RANGE.min.year)
 
   override val defaultMaxValue: Year
-    get() = Year.of(KRandomParameters.DEFAULT_DATES_RANGE.getMax().year)
+    get() = Year.of(KRandomParameters.DEFAULT_DATES_RANGE.max.year)
 
   override fun getRandomValue(): Year {
     val minYear = min.getLong(ChronoField.YEAR)

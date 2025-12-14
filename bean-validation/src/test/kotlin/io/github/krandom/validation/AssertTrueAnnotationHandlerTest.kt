@@ -3,6 +3,7 @@ package io.github.krandom.validation
 import io.github.krandom.KRandom
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.nulls.shouldNotBeNull
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import jakarta.validation.constraints.AssertTrue
@@ -24,6 +25,7 @@ internal class AssertTrueAnnotationHandlerTest {
     val testBean = kRandom.nextObject(TestBean::class.java)
 
     // then
+    testBean.shouldNotBeNull()
     testBean.isTestBooleanFieldAnnotation.shouldBeTrue()
     testBean.testBooleanMethodAnnotation.shouldBeTrue()
   }

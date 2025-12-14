@@ -29,6 +29,7 @@ import io.github.krandom.beans.Street
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
 import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.ranges.shouldBeIn
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
@@ -88,11 +89,12 @@ internal class IntRangeRandomizerTest : AbstractRangeRandomizerTest<Int>() {
   @Test
   fun `generated value should be within specified range when used to randomize primitive integer type`() {
     val parameters =
-      KRandomParameters().randomize(Int::class.javaPrimitiveType, IntRangeRandomizer(min, max))
+      KRandomParameters().randomize(Int::class.javaPrimitiveType!!, IntRangeRandomizer(min, max))
     val kRandom = KRandom(parameters)
 
-    val integer = kRandom.nextObject(Int::class.javaPrimitiveType)
+    val integer = kRandom.nextObject(Int::class.javaPrimitiveType!!)
 
+    integer.shouldNotBeNull()
     integer shouldBeIn min..max
   }
 
@@ -103,7 +105,7 @@ internal class IntRangeRandomizerTest : AbstractRangeRandomizerTest<Int>() {
 
     val integer = kRandom.nextObject(Int::class.java)
 
-    integer shouldBeIn min..max
+    integer!! shouldBeIn min..max
   }
 
   @Test
@@ -113,6 +115,7 @@ internal class IntRangeRandomizerTest : AbstractRangeRandomizerTest<Int>() {
 
     val street = kRandom.nextObject(Street::class.java)
 
+    street.shouldNotBeNull()
     street.number shouldBeIn min..max
   }
 }

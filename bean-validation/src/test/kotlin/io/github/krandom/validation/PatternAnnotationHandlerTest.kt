@@ -2,6 +2,7 @@ package io.github.krandom.validation
 
 import io.github.krandom.KRandom
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldMatch
 import jakarta.validation.Validation
 import jakarta.validation.Validator
@@ -23,6 +24,7 @@ internal class PatternAnnotationHandlerTest {
   fun generatedBeanShouldBeValidAccordingToValidationConstraints() {
     val testBean = kRandom.nextObject(TestBean::class.java)
 
+    testBean.shouldNotBeNull()
     testBean.testString shouldMatch REGEX
   }
 

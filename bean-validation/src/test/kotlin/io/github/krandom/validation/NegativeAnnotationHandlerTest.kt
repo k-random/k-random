@@ -3,6 +3,7 @@ package io.github.krandom.validation
 import io.github.krandom.KRandom
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.comparables.shouldBeLessThan
+import io.kotest.matchers.nulls.shouldNotBeNull
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import jakarta.validation.constraints.Negative
@@ -30,6 +31,7 @@ internal class NegativeAnnotationHandlerTest {
 
     val testBean = kRandom.nextObject(TestBean::class.java)
 
+    testBean.shouldNotBeNull()
     testBean.testBigDecimal shouldBeLessThan BigDecimal.ZERO
     testBean.testBigInteger shouldBeLessThan BigInteger.ZERO
     testBean.testByte shouldBeLessThan byteValue
