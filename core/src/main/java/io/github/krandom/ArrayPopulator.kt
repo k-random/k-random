@@ -21,62 +21,53 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import io.github.krandom.randomizers.range.IntRangeRandomizer;
-import java.lang.reflect.Array;
+import io.github.krandom.randomizers.range.IntRangeRandomizer
+import java.lang.reflect.Array
 
 /**
  * Random array populator.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class ArrayPopulator {
-
-  private final KRandom kRandom;
-
+class ArrayPopulator
+/**
+ * Create a new array populator backed by the given [KRandom] instance.
+ *
+ * @param kRandom the random data generator used to populate array elements; must not be null
+ */
+(private val kRandom: KRandom) {
   /**
-   * Create a new array populator backed by the given {@link KRandom} instance.
+   * Generate a new array of random elements for the specified array `fieldType`.
    *
-   * @param kRandom the random data generator used to populate array elements; must not be null
-   */
-  public ArrayPopulator(final KRandom kRandom) {
-    this.kRandom = kRandom;
-  }
-
-  /**
-   * Generate a new array of random elements for the specified array {@code fieldType}.
+   * The array size is chosen uniformly at random within the collection size range defined by
+   * [KRandomParameters.collectionSizeRange] in the provided `context`. Each element is created by
+   * delegating to [KRandom.doPopulateBean] for the array component type.
    *
-   * <p>The array size is chosen uniformly at random within the collection size range defined by
-   * {@link KRandomParameters#collectionSizeRange} in the provided {@code context}. Each element is
-   * created by delegating to {@link KRandom#doPopulateBean(Class, RandomizationContext)} for the
-   * array component type.
-   *
-   * @param fieldType the expected array type to populate (for example, {@code String[].class});
-   *     must represent an array class
+   * @param fieldType the expected array type to populate (for example, `String[].class`); must
+   *   represent an array class
    * @param context the current randomization context providing parameters and state; must not be
-   *     null
+   *   null
    * @return a newly created array of the requested component type with a random length and randomly
-   *     populated elements
-   * @throws NullPointerException if {@code fieldType} is not an array type (i.e., its component
-   *     type is {@code null}) or if {@code context} is {@code null}
+   *   populated elements
+   * @throws NullPointerException if `fieldType` is not an array type (i.e., its component type is
+   *   `null`) or if `context` is `null`
    * @throws NegativeArraySizeException if the configured size range yields a negative size
    */
-  public Object getRandomArray(final Class<?> fieldType, final RandomizationContext context) {
-    Class<?> componentType = fieldType.getComponentType();
-    int randomSize = getRandomArraySize(context.getParameters());
-    Object result = Array.newInstance(componentType, randomSize);
-    for (int i = 0; i < randomSize; i++) {
-      Object randomElement = kRandom.doPopulateBean(componentType, context);
-      Array.set(result, i, randomElement);
+  fun getRandomArray(fieldType: Class<*>, context: RandomizationContext): Any {
+    val componentType = fieldType.componentType
+    val randomSize = getRandomArraySize(context.parameters)
+    val result = Array.newInstance(componentType, randomSize)
+    for (i in 0..<randomSize) {
+      Array.set(result, i, kRandom.doPopulateBean(componentType, context))
     }
-    return result;
+    return result
   }
 
-  private int getRandomArraySize(KRandomParameters parameters) {
-    KRandomParameters.Range<Integer> collectionSizeRange = parameters.collectionSizeRange;
-    return new IntRangeRandomizer(
-            collectionSizeRange.min, collectionSizeRange.max, kRandom.nextLong())
-        .getRandomValue();
+  private fun getRandomArraySize(parameters: KRandomParameters): Int {
+    val collectionSizeRange: KRandomParameters.Range<Int> = parameters.collectionSizeRange
+    return IntRangeRandomizer(collectionSizeRange.min, collectionSizeRange.max, kRandom.nextLong())
+      .getRandomValue()
   }
 }

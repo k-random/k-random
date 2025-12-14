@@ -21,130 +21,131 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import io.github.krandom.beans.ArrayBean
+import io.github.krandom.beans.Person
+import io.kotest.inspectors.forAll
+import io.kotest.matchers.collections.shouldContainOnly
+import io.kotest.matchers.collections.shouldNotContain
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.string.shouldNotBeEmpty
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-import io.github.krandom.beans.ArrayBean;
-import io.github.krandom.beans.Person;
-import java.lang.reflect.Array;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+@Suppress("UNCHECKED_CAST")
+@ExtendWith(MockKExtension::class)
+internal class ArrayPopulatorTest {
+  @MockK private lateinit var context: RandomizationContext
+  @MockK private lateinit var kRandom: KRandom
 
-@ExtendWith(MockitoExtension.class)
-class ArrayPopulatorTest {
-
-  private static final int INT = 10;
-  private static final String STRING = "FOO";
-
-  @Mock private RandomizationContext context;
-  @Mock private KRandom kRandom;
-
-  private ArrayPopulator arrayPopulator;
+  private lateinit var arrayPopulator: ArrayPopulator
 
   @BeforeEach
-  void setUp() {
-    arrayPopulator = new ArrayPopulator(kRandom);
+  fun setUp() {
+    arrayPopulator = ArrayPopulator(kRandom)
   }
 
   @Test
-  void getRandomArray() {
-    when(context.getParameters()).thenReturn(new KRandomParameters().collectionSizeRange(INT, INT));
-    when(kRandom.doPopulateBean(String.class, context)).thenReturn(STRING);
+  fun `get random array`() {
+    every { context.parameters } returns KRandomParameters().collectionSizeRange(INT, INT)
+    every { kRandom.doPopulateBean(String::class.java, context) } returns STRING
+    every { kRandom.nextLong() } returns INT.toLong()
 
-    String[] strings = (String[]) arrayPopulator.getRandomArray(String[].class, context);
+    val strings =
+      (arrayPopulator.getRandomArray(Array<String>::class.java, context) as Array<String>).toSet()
 
-    assertThat(strings).containsOnly(STRING);
+    strings shouldContainOnly setOf(STRING)
   }
 
   /*
    * Integration tests for arrays population
    */
-
   @Test
-  void testArrayPopulation() {
-    KRandom kRandom = new KRandom();
+  fun `test array population`() {
+    val kRandom = KRandom()
 
-    final String[] strings = kRandom.nextObject(String[].class);
+    val strings = kRandom.nextObject(Array<String>::class.java)
 
-    assertThat(strings).isNotNull();
+    strings.shouldNotBeNull()
   }
 
   @Test
-  void testPrimitiveArrayPopulation() {
-    KRandom kRandom = new KRandom();
+  fun `test primitive array population`() {
+    val kRandom = KRandom()
 
-    final int[] ints = kRandom.nextObject(int[].class);
+    val ints = kRandom.nextObject(IntArray::class.java)
 
-    assertThat(ints).isNotNull();
+    ints.shouldNotBeNull()
   }
 
   @Test
-  void primitiveArraysShouldBeCorrectlyPopulated() {
-    KRandom kRandom = new KRandom();
+  fun `primitive arrays should be correctly populated`() {
+    val kRandom = KRandom()
 
-    final ArrayBean bean = kRandom.nextObject(ArrayBean.class);
+    val bean = kRandom.nextObject(ArrayBean::class.java)
 
     // primitive types
-    assertThat(toObjectArray(bean.getByteArray())).hasOnlyElementsOfType(Byte.class);
-    assertThat(toObjectArray(bean.getShortArray())).hasOnlyElementsOfType(Short.class);
-    assertThat(toObjectArray(bean.getIntArray())).hasOnlyElementsOfType(Integer.class);
-    assertThat(toObjectArray(bean.getLongArray())).hasOnlyElementsOfType(Long.class);
-    assertThat(toObjectArray(bean.getFloatArray())).hasOnlyElementsOfType(Float.class);
-    assertThat(toObjectArray(bean.getDoubleArray())).hasOnlyElementsOfType(Double.class);
-    assertThat(toObjectArray(bean.getCharArray())).hasOnlyElementsOfType(Character.class);
-    assertThat(toObjectArray(bean.getBooleanArray())).hasOnlyElementsOfType(Boolean.class);
+    bean.shouldNotBeNull()
+    bean.byteArray.toList().forAll { it.shouldBeInstanceOf<Byte>() }
+    bean.shortArray.toList().forAll { it.shouldBeInstanceOf<Short>() }
+    bean.intArray.toList().forAll { it.shouldBeInstanceOf<Int>() }
+    bean.longArray.toList().forAll { it.shouldBeInstanceOf<Long>() }
+    bean.floatArray.toList().forAll { it.shouldBeInstanceOf<Float>() }
+    bean.doubleArray.toList().forAll { it.shouldBeInstanceOf<Double>() }
+    bean.charArray.toList().forAll { it.shouldBeInstanceOf<Char>() }
+    bean.booleanArray.toList().forAll { it.shouldBeInstanceOf<Boolean>() }
   }
 
   @Test
-  void wrapperTypeArraysShouldBeCorrectlyPopulated() {
-    KRandom kRandom = new KRandom();
+  fun `wrapper type arrays should be correctly populated`() {
+    val kRandom = KRandom()
 
-    final ArrayBean bean = kRandom.nextObject(ArrayBean.class);
+    val bean = kRandom.nextObject(ArrayBean::class.java)
 
     // wrapper types
-    assertThat(bean.getBytes()).hasOnlyElementsOfType(Byte.class);
-    assertThat(bean.getShorts()).hasOnlyElementsOfType(Short.class);
-    assertThat(bean.getIntegers()).hasOnlyElementsOfType(Integer.class);
-    assertThat(bean.getLongs()).hasOnlyElementsOfType(Long.class);
-    assertThat(bean.getFloats()).hasOnlyElementsOfType(Float.class);
-    assertThat(bean.getDoubles()).hasOnlyElementsOfType(Double.class);
-    assertThat(bean.getCharacters()).hasOnlyElementsOfType(Character.class);
-    assertThat(bean.getBooleans()).hasOnlyElementsOfType(Boolean.class);
+    bean.shouldNotBeNull()
+    bean.bytes.forAll { it.shouldBeInstanceOf<Byte>() }
+    bean.shorts.forAll { it.shouldBeInstanceOf<Short>() }
+    bean.integers.forAll { it.shouldBeInstanceOf<Int>() }
+    bean.longs.forAll { it.shouldBeInstanceOf<Long>() }
+    bean.floats.forAll { it.shouldBeInstanceOf<Float>() }
+    bean.doubles.forAll { it.shouldBeInstanceOf<Double>() }
+    bean.characters.forAll { it.shouldBeInstanceOf<Char>() }
+    bean.booleans.forAll { it.shouldBeInstanceOf<Boolean>() }
   }
 
   @Test
-  void arraysWithCustomTypesShouldBeCorrectlyPopulated() {
-    KRandom kRandom = new KRandom();
+  fun `arrays with custom types should be correctly populated`() {
+    val kRandom = KRandom()
 
-    final ArrayBean bean = kRandom.nextObject(ArrayBean.class);
+    val bean = kRandom.nextObject(ArrayBean::class.java)
 
     // custom types
-    assertThat(bean.getStrings()).doesNotContain(null, "");
+    bean.shouldNotBeNull()
+    bean.strings.shouldNotContain(null)
+    bean.strings.shouldNotContain("")
 
-    Person[] persons = bean.getPersons();
-    assertContainsOnlyNonEmptyPersons(persons);
+    val persons = bean.persons
+    assertContainsOnlyNonEmptyPersons(persons)
   }
 
-  private void assertContainsOnlyNonEmptyPersons(final Person[] persons) {
-    for (Person person : persons) {
-      assertThat(person).isNotNull();
-      assertThat(person.getAddress().getCity()).isNotEmpty();
-      assertThat(person.getAddress().getZipCode()).isNotEmpty();
-      assertThat(person.getName()).isNotEmpty();
+  private fun assertContainsOnlyNonEmptyPersons(persons: Array<Person>) {
+    for (person in persons) {
+      person.shouldNotBeNull()
+      person.address.city.shouldNotBeEmpty()
+      person.address.zipCode.shouldNotBeEmpty()
+      person.name.shouldNotBeEmpty()
     }
   }
 
-  private Object[] toObjectArray(Object primitiveArray) {
-    int length = Array.getLength(primitiveArray);
-    Object[] objectArray = new Object[length];
-    for (int i = 0; i < length; ++i) {
-      objectArray[i] = Array.get(primitiveArray, i);
-    }
-    return objectArray;
+  companion object {
+    private const val INT = 10
+    private const val STRING = "FOO"
   }
 }
