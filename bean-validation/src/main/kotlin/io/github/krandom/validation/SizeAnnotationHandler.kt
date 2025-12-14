@@ -129,7 +129,7 @@ internal class SizeAnnotationHandler(parameters: KRandomParameters) :
 
     // populate only parameterized types, raw types will be empty
     val genericType = field.genericType
-    if (collection != null && isParameterizedType(genericType)) {
+    if (isParameterizedType(genericType)) {
       val pType = genericType as ParameterizedType
       val elementType = pType.actualTypeArguments[0]
       if (isPopulatable(elementType)) {
