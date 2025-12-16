@@ -52,7 +52,7 @@ interface RandomizerContext {
    *
    * @return currently randomized object
    */
-  val currentObject: Any
+  fun getCurrentObject(): Any
 
   /**
    * Return the full path to the current field being randomized (starting from the first field in
@@ -60,14 +60,14 @@ interface RandomizerContext {
    *
    * @return full path to the current field being randomized
    */
-  val currentField: String
+  fun getCurrentField(): String
 
   /**
    * Get the current level in the hierarchy of the object graph.
    *
    * @return current level in the hierarchy of the object graph.
    */
-  val currentRandomizationDepth: Int
+  fun getCurrentRandomizationDepth(): Int
 
   /**
    * Return the currently used parameters by the enclosing [KRandom].

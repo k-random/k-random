@@ -57,10 +57,10 @@ internal class RandomizerProviderTests {
             ): Randomizer<*>? {
               // return custom randomizer based on the context
               return when (field.name) {
-                "name" if context.currentRandomizationDepth == 0 -> {
+                "name" if context.getCurrentRandomizationDepth() == 0 -> {
                   Randomizer { "foo" }
                 }
-                "name" if context.currentField == "bestFriend" -> {
+                "name" if context.getCurrentField() == "bestFriend" -> {
                   Randomizer { "bar" }
                 }
                 else -> null

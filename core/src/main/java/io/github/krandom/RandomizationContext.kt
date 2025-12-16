@@ -21,129 +21,77 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static java.util.stream.Collectors.toList;
-
-import io.github.krandom.api.RandomizerContext;
-import java.lang.reflect.Field;
-import java.util.*;
+import io.github.krandom.api.RandomizerContext
+import java.util.IdentityHashMap
+import java.util.Random
+import java.util.Stack
+import kotlin.random.asKotlinRandom
 
 /**
- * Context object for a single call on {@link KRandom#nextObject(Class)}. It contains a map acting
- * as a cache of populated beans to avoid infinite recursion.
+ * Context object for a single call on [KRandom.nextObject]. It contains a map acting as a cache of
+ * populated beans to avoid infinite recursion.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-public class RandomizationContext implements RandomizerContext {
+class RandomizationContext
+@JvmOverloads
+constructor(
+  override val targetType: Class<*>,
+  override val parameters: KRandomParameters,
+  private val populatedBeans: MutableMap<Class<*>, MutableList<Any>> = IdentityHashMap(),
+  private val stack: Stack<RandomizationContextStackItem> = Stack<RandomizationContextStackItem>(),
+  private val random: Random = Random(parameters.seed),
+) : RandomizerContext {
 
-  private final KRandomParameters parameters;
+  override lateinit var rootObject: Any
 
-  private final Map<Class<?>, List<Object>> populatedBeans;
-
-  private final Stack<RandomizationContextStackItem> stack;
-
-  private final Class<?> type;
-
-  private final Random random;
-
-  private Object rootObject;
-
-  public RandomizationContext(final Class<?> type, final KRandomParameters parameters) {
-    this.type = type;
-    populatedBeans = new IdentityHashMap<>();
-    stack = new Stack<>();
-    this.parameters = parameters;
-    this.random = new Random(parameters.getSeed());
-  }
-
-  void addPopulatedBean(final Class<?> type, Object object) {
-    int objectPoolSize = parameters.getObjectPoolSize();
-    List<Object> objects = populatedBeans.get(type);
+  fun addPopulatedBean(type: Class<*>, any: Any) {
+    val objectPoolSize = parameters.getObjectPoolSize()
+    var objects = populatedBeans[type]
     if (objects == null) {
-      objects = new ArrayList<>(objectPoolSize);
+      objects = ArrayList<Any>(objectPoolSize)
     }
-    if (objects.size() < objectPoolSize) {
-      objects.add(object);
+    if (objects.size < objectPoolSize) {
+      objects.add(any)
     }
-    populatedBeans.put(type, objects);
+    populatedBeans[type] = objects
   }
 
-  Object getPopulatedBean(final Class<?> type) {
-    int actualPoolSize = populatedBeans.get(type).size();
-    int randomIndex = actualPoolSize > 1 ? random.nextInt(actualPoolSize) : 0;
-    return populatedBeans.get(type).get(randomIndex);
+  fun getPopulatedBean(type: Class<*>): Any = populatedBeans[type]!!.random(random.asKotlinRandom())
+
+  fun hasAlreadyRandomizedType(type: Class<*>): Boolean =
+    populatedBeans.containsKey(type) &&
+      populatedBeans[type]!!.size == parameters.getObjectPoolSize()
+
+  fun pushStackItem(field: RandomizationContextStackItem) {
+    stack.push(field)
   }
 
-  boolean hasAlreadyRandomizedType(final Class<?> type) {
-    return populatedBeans.containsKey(type)
-        && populatedBeans.get(type).size() == parameters.getObjectPoolSize();
+  fun popStackItem() {
+    stack.pop()
   }
 
-  void pushStackItem(final RandomizationContextStackItem field) {
-    stack.push(field);
+  fun hasExceededRandomizationDepth(): Boolean {
+    val currentRandomizationDepth = stack.size
+    return currentRandomizationDepth > parameters.getRandomizationDepth()
   }
 
-  void popStackItem() {
-    stack.pop();
-  }
-
-  String getFieldFullName(final Field field) {
-    List<String> pathToField = getStackedFieldNames();
-    pathToField.add(field.getName());
-    return String.join(".", toLowerCase(pathToField));
-  }
-
-  boolean hasExceededRandomizationDepth() {
-    int currentRandomizationDepth = stack.size();
-    return currentRandomizationDepth > parameters.getRandomizationDepth();
-  }
-
-  private List<String> getStackedFieldNames() {
-    return stack.stream().map(i -> i.getField().getName()).collect(toList());
-  }
-
-  private List<String> toLowerCase(final List<String> strings) {
-    return strings.stream().map(String::toLowerCase).collect(toList());
-  }
-
-  void setRandomizedObject(Object randomizedObject) {
-    if (this.rootObject == null) {
-      this.rootObject = randomizedObject;
+  fun setRandomizedObject(randomizedObject: Any) {
+    if (!::rootObject.isInitialized) {
+      this.rootObject = randomizedObject
     }
   }
 
-  @Override
-  public Class<?> getTargetType() {
-    return type;
-  }
-
-  @Override
-  public Object getCurrentObject() {
+  override fun getCurrentObject(): Any =
     if (stack.empty()) {
-      return rootObject;
+      rootObject
     } else {
-      return stack.lastElement().getAny();
+      stack.lastElement().any
     }
-  }
 
-  @Override
-  public String getCurrentField() {
-    return String.join(".", getStackedFieldNames());
-  }
+  override fun getCurrentField(): String = stack.joinToString(".") { it.field.name }
 
-  @Override
-  public int getCurrentRandomizationDepth() {
-    return stack.size();
-  }
-
-  @Override
-  public Object getRootObject() {
-    return this.rootObject;
-  }
-
-  @Override
-  public KRandomParameters getParameters() {
-    return parameters;
-  }
+  override fun getCurrentRandomizationDepth(): Int = stack.size
 }

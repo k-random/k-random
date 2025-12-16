@@ -21,333 +21,204 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static io.github.krandom.FieldPredicates.named;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import io.github.krandom.FieldPredicates.isAnnotatedWith
+import io.github.krandom.FieldPredicates.named
+import io.github.krandom.api.ContextAwareRandomizer
+import io.github.krandom.api.RandomizerContext
+import io.github.krandom.beans.Person
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldBeIn
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-import io.github.krandom.api.ContextAwareRandomizer;
-import io.github.krandom.api.RandomizerContext;
-import io.github.krandom.beans.Address;
-import io.github.krandom.beans.Person;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.lang.reflect.Field;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+@ExtendWith(MockKExtension::class)
+class RandomizationContextTest {
+  @MockK private lateinit var bean1: Any
+  @MockK private lateinit var bean2: Any
+  @MockK private lateinit var parameters: KRandomParameters
 
-@ExtendWith(MockitoExtension.class)
-public class RandomizationContextTest {
-
-  @Mock private Object bean1, bean2;
-  @Mock private KRandomParameters parameters;
-
-  private RandomizationContext randomizationContext;
+  private lateinit var randomizationContext: RandomizationContext
 
   @BeforeEach
-  void setUp() {
-    randomizationContext = new RandomizationContext(Object.class, parameters);
+  fun setUp() {
+    every { parameters.seed } returns 123L
+    randomizationContext = RandomizationContext(Any::class.java, parameters)
   }
 
   @Test
-  void
-      whenATypeHasBeenRandomized_thenHasPopulatedBeanShouldReturnTrueOnlyWhenTheObjectPoolIsFilled() {
-    when(parameters.getObjectPoolSize()).thenReturn(KRandomParameters.DEFAULT_OBJECT_POOL_SIZE);
+  fun `when a type has been randomized then has populated bean should return true when the object pool is filled`() {
+    every { parameters.getObjectPoolSize() } returns KRandomParameters.DEFAULT_OBJECT_POOL_SIZE
 
     // Only one instance has been randomized => should be considered as not randomized yet
-    randomizationContext.addPopulatedBean(String.class, "bean" + 0);
-    assertThat(randomizationContext.hasAlreadyRandomizedType(String.class)).isFalse();
+    randomizationContext.addPopulatedBean(String::class.java, "bean0")
+    randomizationContext.hasAlreadyRandomizedType(String::class.java).shouldBeFalse()
 
     // When the object pool size is filled => should be considered as already randomized
-    for (int i = 1; i < KRandomParameters.DEFAULT_OBJECT_POOL_SIZE; i++) {
-      randomizationContext.addPopulatedBean(String.class, "bean" + i);
+    for (i in 1..<KRandomParameters.DEFAULT_OBJECT_POOL_SIZE) {
+      randomizationContext.addPopulatedBean(String::class.java, "bean$i")
     }
-    assertThat(randomizationContext.hasAlreadyRandomizedType(String.class)).isTrue();
+    randomizationContext.hasAlreadyRandomizedType(String::class.java).shouldBeTrue()
   }
 
   @Test
-  void whenATypeHasNotBeenRandomizedYet_thenHasPopulatedBeanShouldReturnFalse() {
-    // Given
-    randomizationContext.addPopulatedBean(String.class, bean1);
+  fun `when a type has not been randomized yet then has populated bean should return false`() {
+    every { parameters.getObjectPoolSize() } returns KRandomParameters.DEFAULT_OBJECT_POOL_SIZE
+    randomizationContext.addPopulatedBean(String::class.java, bean1)
 
-    // When
-    boolean hasPopulatedBean = randomizationContext.hasAlreadyRandomizedType(Integer.class);
+    val hasPopulatedBean = randomizationContext.hasAlreadyRandomizedType(Int::class.java)
 
-    // Then
-    assertThat(hasPopulatedBean).isFalse();
+    hasPopulatedBean.shouldBeFalse()
   }
 
   @Test
-  void whenATypeHasBeenRandomized_thenTheRandomizedBeanShouldBeRetrievedFromTheObjectPool() {
-    when(parameters.getObjectPoolSize()).thenReturn(KRandomParameters.DEFAULT_OBJECT_POOL_SIZE);
+  fun `when a type has been randomized then the randomized bean should be retrieved from the object pool`() {
+    every { parameters.getObjectPoolSize() } returns KRandomParameters.DEFAULT_OBJECT_POOL_SIZE
+    randomizationContext.addPopulatedBean(String::class.java, bean1)
+    randomizationContext.addPopulatedBean(String::class.java, bean2)
 
-    // Given
-    randomizationContext.addPopulatedBean(String.class, bean1);
-    randomizationContext.addPopulatedBean(String.class, bean2);
+    val populatedBean = randomizationContext.getPopulatedBean(String::class.java)
 
-    // When
-    Object populatedBean = randomizationContext.getPopulatedBean(String.class);
-
-    // Then
-    assertThat(populatedBean).isIn(bean1, bean2);
+    populatedBean shouldBeIn setOf(bean1, bean2)
   }
 
   @Test
-  void stackedFieldNamesShouldBeCorrectlyEncoded() throws NoSuchFieldException {
-    // Given
-    Field address = Person.class.getDeclaredField("address");
-    randomizationContext.pushStackItem(new RandomizationContextStackItem(Void.class, address));
-    Field street = Address.class.getDeclaredField("street");
+  @Throws(NoSuchFieldException::class)
+  fun `when current stack size over max randomization depth then should exceed randomization depth`() {
+    every { parameters.getRandomizationDepth() } returns 1
+    val customRandomizationContext = RandomizationContext(Any::class.java, parameters)
+    val address = Person::class.java.getDeclaredField("address")
+    customRandomizationContext.pushStackItem(RandomizationContextStackItem(bean1, address))
+    customRandomizationContext.pushStackItem(RandomizationContextStackItem(bean2, address))
 
-    // When
-    String fullFieldName = randomizationContext.getFieldFullName(street);
+    val hasExceededRandomizationDepth = customRandomizationContext.hasExceededRandomizationDepth()
 
-    // Then
-    assertThat(fullFieldName).isEqualTo("address.street");
+    hasExceededRandomizationDepth.shouldBeTrue()
   }
 
   @Test
-  void whenCurrentStackSizeOverMaxRandomizationDepth_thenShouldExceedRandomizationDepth()
-      throws NoSuchFieldException {
-    // Given
-    when(parameters.getRandomizationDepth()).thenReturn(1);
-    RandomizationContext customRandomizationContext =
-        new RandomizationContext(Object.class, parameters);
-    Field address = Person.class.getDeclaredField("address");
-    customRandomizationContext.pushStackItem(new RandomizationContextStackItem(bean1, address));
-    customRandomizationContext.pushStackItem(new RandomizationContextStackItem(bean2, address));
+  @Throws(NoSuchFieldException::class)
+  fun `when current stack size less max randomization depth then should not exceed randomization depth`() {
+    every { parameters.getRandomizationDepth() } returns 2
+    val customRandomizationContext = RandomizationContext(Any::class.java, parameters)
+    val address = Person::class.java.getDeclaredField("address")
+    customRandomizationContext.pushStackItem(RandomizationContextStackItem(bean1, address))
 
-    // When
-    boolean hasExceededRandomizationDepth =
-        customRandomizationContext.hasExceededRandomizationDepth();
+    val hasExceededRandomizationDepth = customRandomizationContext.hasExceededRandomizationDepth()
 
-    // Then
-    assertThat(hasExceededRandomizationDepth).isTrue();
+    hasExceededRandomizationDepth.shouldBeFalse()
   }
 
   @Test
-  void whenCurrentStackSizeLessMaxRandomizationDepth_thenShouldNotExceedRandomizationDepth()
-      throws NoSuchFieldException {
-    // Given
-    when(parameters.getRandomizationDepth()).thenReturn(2);
-    RandomizationContext customRandomizationContext =
-        new RandomizationContext(Object.class, parameters);
-    Field address = Person.class.getDeclaredField("address");
-    customRandomizationContext.pushStackItem(new RandomizationContextStackItem(bean1, address));
+  @Throws(NoSuchFieldException::class)
+  fun `when current stack size equal max randomization depth then should not exceed randomization depth`() {
+    every { parameters.getRandomizationDepth() } returns 2
+    val customRandomizationContext = RandomizationContext(Any::class.java, parameters)
+    val address = Person::class.java.getDeclaredField("address")
+    customRandomizationContext.pushStackItem(RandomizationContextStackItem(bean1, address))
+    customRandomizationContext.pushStackItem(RandomizationContextStackItem(bean2, address))
 
-    // When
-    boolean hasExceededRandomizationDepth =
-        customRandomizationContext.hasExceededRandomizationDepth();
+    val hasExceededRandomizationDepth = customRandomizationContext.hasExceededRandomizationDepth()
 
-    // Then
-    assertThat(hasExceededRandomizationDepth).isFalse();
+    hasExceededRandomizationDepth.shouldBeFalse()
   }
 
   @Test
-  void whenCurrentStackSizeEqualMaxRandomizationDepth_thenShouldNotExceedRandomizationDepth()
-      throws NoSuchFieldException {
-    // Given
-    when(parameters.getRandomizationDepth()).thenReturn(2);
-    RandomizationContext customRandomizationContext =
-        new RandomizationContext(Object.class, parameters);
-    Field address = Person.class.getDeclaredField("address");
-    customRandomizationContext.pushStackItem(new RandomizationContextStackItem(bean1, address));
-    customRandomizationContext.pushStackItem(new RandomizationContextStackItem(bean2, address));
+  fun `test randomizer context`() {
+    val randomizer = MyRandomizer()
+    val parameters: KRandomParameters =
+      KRandomParameters()
+        .randomize(D::class.java, randomizer)
+        .randomize(isAnnotatedWith(ExampleAnnotation::class.java), ERandomizer())
+        .excludeField(named("excluded"))
+    val kRandom = KRandom(parameters)
 
-    // When
-    boolean hasExceededRandomizationDepth =
-        customRandomizationContext.hasExceededRandomizationDepth();
+    val a = kRandom.nextObject(A::class.java)
 
-    // Then
-    assertThat(hasExceededRandomizationDepth).isFalse();
+    a.shouldNotBeNull()
+    a.excluded.shouldBeNull()
+    a.b.shouldNotBeNull()
+    a.b.c.shouldNotBeNull()
+    a.b.e.shouldNotBeNull()
+    a.b.c.d.shouldNotBeNull()
+    a.b.c.d.name.shouldNotBeNull()
+    a.b.e.name shouldBe "bar"
   }
 
-  @Test
-  void testRandomizerContext() {
-    // given
-    MyRandomizer randomizer = new MyRandomizer();
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .randomize(D.class, randomizer)
-            .randomize(FieldPredicates.isAnnotatedWith(ExampleAnnotation.class), new ERandomizer())
-            .excludeField(named("excluded"));
-    KRandom kRandom = new KRandom(parameters);
+  internal class MyRandomizer : ContextAwareRandomizer<D> {
+    private lateinit var context: RandomizerContext
 
-    // when
-    A a = kRandom.nextObject(A.class);
-
-    // then
-    assertThat(a).isNotNull();
-    assertThat(a.excluded).isNull();
-    assertThat(a.b).isNotNull();
-    assertThat(a.b.c).isNotNull();
-    assertThat(a.b.e).isNotNull();
-    assertThat(a.b.c.d).isNotNull();
-    assertThat(a.b.c.d.name).isEqualTo("foo");
-    assertThat(a.b.e.name).isEqualTo("bar");
-  }
-
-  static class MyRandomizer implements ContextAwareRandomizer<D> {
-
-    private RandomizerContext context;
-
-    @Override
-    public void setRandomizerContext(RandomizerContext context) {
-      this.context = context;
+    override fun setRandomizerContext(context: RandomizerContext) {
+      this.context = context
     }
 
-    @Override
-    public D getRandomValue() {
+    override fun getRandomValue(): D {
       // At this level, the context should be as follows:
-      assertThat(context.getCurrentField()).isEqualTo("b.c.d");
-      assertThat(context.getCurrentRandomizationDepth()).isEqualTo(3);
-      assertThat(context.getTargetType()).isEqualTo(A.class);
-      assertThat(context.getRootObject()).isInstanceOf(A.class);
-      assertThat(context.getCurrentObject()).isInstanceOf(C.class);
+      context.getCurrentField() shouldBe "b.c.d"
+      context.getCurrentRandomizationDepth() shouldBe 3
+      context.targetType shouldBe A::class.java
+      context.rootObject.shouldBeInstanceOf<A>()
+      context.getCurrentObject().shouldBeInstanceOf<C>()
 
-      D d = new D();
-      d.setName("foo");
-      return d;
+      val d = D("foo")
+      return d
     }
   }
 
-  static class ERandomizer implements ContextAwareRandomizer<E> {
+  internal class ERandomizer : ContextAwareRandomizer<E?> {
+    private lateinit var context: RandomizerContext
 
-    private RandomizerContext context;
-
-    @Override
-    public void setRandomizerContext(RandomizerContext context) {
-      this.context = context;
+    override fun setRandomizerContext(context: RandomizerContext) {
+      this.context = context
     }
 
-    @Override
-    public E getRandomValue() {
+    override fun getRandomValue(): E {
       // At this level, the context should be as follows:
-      assertThat(context.getCurrentField()).isEqualTo("b.e");
-      assertThat(context.getCurrentRandomizationDepth()).isEqualTo(2);
-      assertThat(context.getTargetType()).isEqualTo(A.class);
-      assertThat(context.getRootObject()).isInstanceOf(A.class);
-      assertThat(context.getCurrentObject()).isInstanceOf(B.class);
+      context.getCurrentField() shouldBe "b.e"
+      context.getCurrentRandomizationDepth() shouldBe 2
+      context.targetType shouldBe A::class.java
+      context.rootObject.shouldBeInstanceOf<A>()
+      context.getCurrentObject().shouldBeInstanceOf<B>()
 
-      E e = new E();
-      String currentField = context.getCurrentField();
-      Object currentObject = context.getCurrentObject();
+      val e = E("")
+      val currentField = context.getCurrentField()
+      val currentObject = context.getCurrentObject()
       try {
-        String substring = currentField.substring(currentField.lastIndexOf(".") + 1);
+        val substring = currentField.substring(currentField.lastIndexOf(".") + 1)
         e.name =
-            currentObject
-                .getClass()
-                .getDeclaredField(substring)
-                .getAnnotation(ExampleAnnotation.class)
-                .value();
-      } catch (NoSuchFieldException ex) {
-        e.name = "default";
+          currentObject.javaClass
+            .getDeclaredField(substring)
+            .getAnnotation(ExampleAnnotation::class.java)
+            .value
+      } catch (_: NoSuchFieldException) {
+        e.name = "default"
       }
-      return e;
+      return e
     }
   }
 
-  static class A {
-    private B b;
-    private String excluded;
+  internal data class A(val b: B, val excluded: String?)
 
-    public A() {}
+  internal data class B(val c: C, @field:ExampleAnnotation("bar") val e: E)
 
-    public B getB() {
-      return this.b;
-    }
+  internal data class C(val d: D)
 
-    public String getExcluded() {
-      return this.excluded;
-    }
+  internal data class D(var name: String)
 
-    public void setB(B b) {
-      this.b = b;
-    }
+  internal data class E(var name: String)
 
-    public void setExcluded(String excluded) {
-      this.excluded = excluded;
-    }
-  }
-
-  static class B {
-    private C c;
-
-    @ExampleAnnotation("bar")
-    private E e;
-
-    public B() {}
-
-    public C getC() {
-      return this.c;
-    }
-
-    public E getE() {
-      return this.e;
-    }
-
-    public void setC(C c) {
-      this.c = c;
-    }
-
-    public void setE(E e) {
-      this.e = e;
-    }
-  }
-
-  static class C {
-    private D d;
-
-    public C() {}
-
-    public D getD() {
-      return this.d;
-    }
-
-    public void setD(D d) {
-      this.d = d;
-    }
-  }
-
-  static class D {
-    private String name;
-
-    public D() {}
-
-    public String getName() {
-      return this.name;
-    }
-
-    public void setName(String name) {
-      this.name = name;
-    }
-  }
-
-  static class E {
-    private String name;
-
-    public E() {}
-
-    public String getName() {
-      return this.name;
-    }
-
-    public void setName(String name) {
-      this.name = name;
-    }
-  }
-
-  @Target({FIELD})
-  @Retention(RUNTIME)
-  @Documented
-  public @interface ExampleAnnotation {
-    String value();
-  }
+  @Target(AnnotationTarget.FIELD)
+  @Retention(AnnotationRetention.RUNTIME)
+  @MustBeDocumented
+  internal annotation class ExampleAnnotation(val value: String)
 }

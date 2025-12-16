@@ -30,4 +30,4 @@ import java.lang.reflect.Field
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-internal data class RandomizationContextStackItem(val any: Any, val field: Field)
+data class RandomizationContextStackItem(val any: Any, val field: Field)
