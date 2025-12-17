@@ -41,10 +41,10 @@ import io.kotest.matchers.string.shouldNotBeEmpty
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import kotlin.random.Random
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import kotlin.random.Random
 
 @ExtendWith(MockKExtension::class)
 @Suppress("UNCHECKED_CAST")
