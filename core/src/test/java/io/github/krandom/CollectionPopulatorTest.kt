@@ -21,436 +21,399 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import io.github.krandom.beans.CollectionBean
+import io.github.krandom.beans.CompositeCollectionBean
+import io.github.krandom.beans.CustomList
+import io.github.krandom.beans.DelayedQueueBean
+import io.github.krandom.beans.Person
+import io.github.krandom.beans.SynchronousQueueBean
+import io.github.krandom.beans.TypeVariableCollectionBean
+import io.github.krandom.beans.WildCardCollectionBean
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.inspectors.forAll
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.maps.shouldBeEmpty
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.string.shouldNotBeEmpty
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import kotlin.random.Random
 
-import io.github.krandom.beans.CollectionBean;
-import io.github.krandom.beans.CompositeCollectionBean;
-import io.github.krandom.beans.CustomList;
-import io.github.krandom.beans.DelayedQueueBean;
-import io.github.krandom.beans.Person;
-import io.github.krandom.beans.SynchronousQueueBean;
-import io.github.krandom.beans.TypeVariableCollectionBean;
-import io.github.krandom.beans.WildCardCollectionBean;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+@ExtendWith(MockKExtension::class)
+@Suppress("UNCHECKED_CAST")
+internal class CollectionPopulatorTest {
+  @MockK private lateinit var context: RandomizationContext
+  @MockK private lateinit var kRandom: KRandom
+  private lateinit var parameters: KRandomParameters
 
-@ExtendWith(MockitoExtension.class)
-@SuppressWarnings({"unchecked", "rawtypes"})
-class CollectionPopulatorTest {
-
-  private static final int SIZE = 2;
-  private static final String STRING = "foo";
-
-  @Mock private RandomizationContext context;
-  @Mock private KRandom kRandom;
-  private KRandomParameters parameters;
-
-  private CollectionPopulator collectionPopulator;
+  private lateinit var collectionPopulator: CollectionPopulator
 
   @BeforeEach
-  void setUp() {
-    parameters = new KRandomParameters().collectionSizeRange(SIZE, SIZE);
-    collectionPopulator = new CollectionPopulator(kRandom);
+  fun setUp() {
+    parameters = KRandomParameters().collectionSizeRange(SIZE, SIZE)
+    collectionPopulator = CollectionPopulator(kRandom)
+    every { kRandom.nextLong() } returns Random.nextLong()
   }
 
   /*
    * Unit tests for CollectionPopulator class
    */
   @Test
-  void rawInterfaceCollectionTypesMustBeReturnedEmpty() throws Exception {
-    // Given
-    when(context.getParameters()).thenReturn(parameters);
-    Field field = Foo.class.getDeclaredField("rawInterfaceList");
+  @Throws(Exception::class)
+  fun `raw interface collection types must be returned empty`() {
+    every { context.parameters } returns parameters
+    val field = Foo::class.java.getDeclaredField("rawInterfaceList")
 
-    // When
-    Collection<?> collection = collectionPopulator.getRandomCollection(field, context);
+    val collection = collectionPopulator.getRandomCollection(field, context)
 
-    // Then
-    assertThat(collection).isEmpty();
+    collection.shouldBeEmpty()
   }
 
   @Test
-  void rawConcreteCollectionTypesMustBeReturnedEmpty() throws Exception {
-    // Given
-    when(context.getParameters()).thenReturn(parameters);
-    Field field = Foo.class.getDeclaredField("rawConcreteList");
+  @Throws(Exception::class)
+  fun `raw concrete collection types must be returned empty`() {
+    every { context.parameters } returns parameters
+    val field = Foo::class.java.getDeclaredField("rawConcreteList")
 
-    // When
-    Collection<?> collection = collectionPopulator.getRandomCollection(field, context);
+    val collection = collectionPopulator.getRandomCollection(field, context)
 
-    // Then
-    assertThat(collection).isEmpty();
+    collection.shouldBeEmpty()
   }
 
   @Test
-  void typedInterfaceCollectionTypesMightBePopulated() throws Exception {
-    // Given
-    when(context.getParameters()).thenReturn(parameters);
-    when(kRandom.doPopulateBean(String.class, context)).thenReturn(STRING);
-    Field field = Foo.class.getDeclaredField("typedInterfaceList");
+  @Throws(Exception::class)
+  fun `typed interface collection types might be populated`() {
+    every { context.parameters } returns parameters
+    every { kRandom.doPopulateBean(String::class.java, context) } returns STRING
+    val field = Foo::class.java.getDeclaredField("typedInterfaceList")
 
-    // When
-    @SuppressWarnings("unchecked")
-    Collection<String> collection =
-        (Collection<String>) collectionPopulator.getRandomCollection(field, context);
+    val collection =
+      collectionPopulator.getRandomCollection(field, context) as MutableCollection<String>
 
-    // Then
-    assertThat(collection).containsExactly(STRING, STRING);
+    collection shouldContainExactly listOf(STRING, STRING)
   }
 
   @Test
-  void typedConcreteCollectionTypesMightBePopulated() throws Exception {
-    // Given
-    when(context.getParameters()).thenReturn(parameters);
-    when(kRandom.doPopulateBean(String.class, context)).thenReturn(STRING);
-    Field field = Foo.class.getDeclaredField("typedConcreteList");
+  @Throws(Exception::class)
+  fun `typed concrete collection types might be populated`() {
+    every { context.parameters } returns parameters
+    every { kRandom.doPopulateBean(String::class.java, context) } returns STRING
+    val field = Foo::class.java.getDeclaredField("typedConcreteList")
 
-    // When
-    @SuppressWarnings("unchecked")
-    Collection<String> collection =
-        (Collection<String>) collectionPopulator.getRandomCollection(field, context);
+    val collection =
+      collectionPopulator.getRandomCollection(field, context) as MutableCollection<String>
 
-    // Then
-    assertThat(collection).containsExactly(STRING, STRING);
+    collection shouldContainExactly listOf(STRING, STRING)
   }
 
-  @SuppressWarnings("rawtypes")
-  class Foo {
-    private List rawInterfaceList;
-    private List<String> typedInterfaceList;
-    private ArrayList rawConcreteList;
-    private ArrayList<String> typedConcreteList;
-
-    public Foo() {}
-
-    public List getRawInterfaceList() {
-      return this.rawInterfaceList;
-    }
-
-    public List<String> getTypedInterfaceList() {
-      return this.typedInterfaceList;
-    }
-
-    public ArrayList getRawConcreteList() {
-      return this.rawConcreteList;
-    }
-
-    public ArrayList<String> getTypedConcreteList() {
-      return this.typedConcreteList;
-    }
-
-    public void setRawInterfaceList(List rawInterfaceList) {
-      this.rawInterfaceList = rawInterfaceList;
-    }
-
-    public void setTypedInterfaceList(List<String> typedInterfaceList) {
-      this.typedInterfaceList = typedInterfaceList;
-    }
-
-    public void setRawConcreteList(ArrayList rawConcreteList) {
-      this.rawConcreteList = rawConcreteList;
-    }
-
-    public void setTypedConcreteList(ArrayList<String> typedConcreteList) {
-      this.typedConcreteList = typedConcreteList;
-    }
-  }
+  @Suppress("unused")
+  internal data class Foo(
+    val rawInterfaceList: MutableList<*>,
+    val typedInterfaceList: MutableList<String>,
+    val rawConcreteList: ArrayList<*>,
+    val typedConcreteList: ArrayList<String>,
+  )
 
   /*
    * Integration tests for Collection types population
    */
-
   @Test
-  void rawCollectionInterfacesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `raw collection interfaces should be empty`() {
+    val kRandom = KRandom()
 
-    final CollectionBean collectionsBean = kRandom.nextObject(CollectionBean.class);
+    val collectionsBean = kRandom.nextObject(CollectionBean::class.java)
 
-    assertThat(collectionsBean).isNotNull();
-
-    assertThat(collectionsBean.getCollection()).isEmpty();
-    assertThat(collectionsBean.getSet()).isEmpty();
-    assertThat(collectionsBean.getSortedSet()).isEmpty();
-    assertThat(collectionsBean.getNavigableSet()).isEmpty();
-    assertThat(collectionsBean.getList()).isEmpty();
-    assertThat(collectionsBean.getQueue()).isEmpty();
-    assertThat(collectionsBean.getBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getTransferQueue()).isEmpty();
-    assertThat(collectionsBean.getDeque()).isEmpty();
-    assertThat(collectionsBean.getBlockingDeque()).isEmpty();
+    collectionsBean.shouldNotBeNull()
+    collectionsBean.collection.shouldBeEmpty()
+    collectionsBean.set.shouldBeEmpty()
+    collectionsBean.sortedSet.shouldBeEmpty()
+    collectionsBean.navigableSet.shouldBeEmpty()
+    collectionsBean.list.shouldBeEmpty()
+    collectionsBean.queue.shouldBeEmpty()
+    collectionsBean.blockingQueue.shouldBeEmpty()
+    collectionsBean.transferQueue.shouldBeEmpty()
+    collectionsBean.deque.shouldBeEmpty()
+    collectionsBean.blockingDeque.shouldBeEmpty()
   }
 
   @Test
-  void unboundedWildCardTypedCollectionInterfacesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `unbounded wild card typed collection interfaces should be empty`() {
+    val kRandom = KRandom()
 
-    final WildCardCollectionBean collectionsBean = kRandom.nextObject(WildCardCollectionBean.class);
+    val collectionsBean = kRandom.nextObject(WildCardCollectionBean::class.java)
 
-    assertThat(collectionsBean).isNotNull();
-
-    assertThat(collectionsBean.getUnboundedWildCardTypedCollection()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedSet()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedSortedSet()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedNavigableSet()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedList()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedQueue()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedTransferQueue()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedDeque()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedBlockingDeque()).isEmpty();
+    collectionsBean.shouldNotBeNull()
+    collectionsBean.unboundedWildCardTypedCollection.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedSet.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedSortedSet.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedNavigableSet.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedList.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedQueue.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedBlockingQueue.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedTransferQueue.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedDeque.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedBlockingDeque.shouldBeEmpty()
   }
 
   @Test
-  void boundedWildCardTypedCollectionInterfacesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `bounded wild card typed collection interfaces should be empty`() {
+    val kRandom = KRandom()
 
-    final WildCardCollectionBean collectionsBean = kRandom.nextObject(WildCardCollectionBean.class);
+    val collectionsBean = kRandom.nextObject(WildCardCollectionBean::class.java)
 
-    assertThat(collectionsBean).isNotNull();
-
-    assertThat(collectionsBean.getBoundedWildCardTypedCollection()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedSet()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedSortedSet()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedNavigableSet()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedList()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedQueue()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedTransferQueue()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedDeque()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedBlockingDeque()).isEmpty();
+    collectionsBean.shouldNotBeNull()
+    collectionsBean.boundedWildCardTypedCollection.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedSet.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedSortedSet.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedNavigableSet.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedList.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedQueue.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedBlockingQueue.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedTransferQueue.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedDeque.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedBlockingDeque.shouldBeEmpty()
   }
 
   @Test
-  void typedCollectionInterfacesShouldNotBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `typed collection interfaces should not be empty`() {
+    val kRandom = KRandom()
 
-    final CollectionBean collectionsBean = kRandom.nextObject(CollectionBean.class);
+    val collectionsBean = kRandom.nextObject(CollectionBean::class.java)
 
-    assertThat(collectionsBean).isNotNull();
-
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedCollection());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedSet());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedSortedSet());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedNavigableSet());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedList());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedQueue());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedBlockingQueue());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedTransferQueue());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedDeque());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedBlockingDeque());
+    collectionsBean.shouldNotBeNull()
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedCollection)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedSet)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedSortedSet)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedNavigableSet)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedList)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedQueue)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedBlockingQueue)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedTransferQueue)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedDeque)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedBlockingDeque)
   }
 
   @Test
-  void rawCollectionClassesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `raw collection classes should be empty`() {
+    val kRandom = KRandom()
 
-    final CollectionBean collectionsBean = kRandom.nextObject(CollectionBean.class);
+    val collectionsBean = kRandom.nextObject(CollectionBean::class.java)
 
-    assertThat(collectionsBean).isNotNull();
-
-    assertThat(collectionsBean.getArrayList()).isEmpty();
-    assertThat(collectionsBean.getLinkedList()).isEmpty();
-    assertThat(collectionsBean.getVector()).isEmpty();
-    assertThat(collectionsBean.getStack()).isEmpty();
-    assertThat(collectionsBean.getHashSet()).isEmpty();
-    assertThat(collectionsBean.getLinkedHashSet()).isEmpty();
-    assertThat(collectionsBean.getTreeSet()).isEmpty();
-    assertThat(collectionsBean.getConcurrentSkipListSet()).isEmpty();
-    assertThat(collectionsBean.getArrayBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getLinkedBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getConcurrentLinkedQueue()).isEmpty();
-    assertThat(collectionsBean.getLinkedTransferQueue()).isEmpty();
-    assertThat(collectionsBean.getPriorityQueue()).isEmpty();
-    assertThat(collectionsBean.getPriorityBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getArrayDeque()).isEmpty();
-    assertThat(collectionsBean.getLinkedBlockingDeque()).isEmpty();
-    assertThat(collectionsBean.getConcurrentLinkedDeque()).isEmpty();
+    collectionsBean.shouldNotBeNull()
+    collectionsBean.arrayList.shouldBeEmpty()
+    collectionsBean.linkedList.shouldBeEmpty()
+    collectionsBean.vector.shouldBeEmpty()
+    collectionsBean.stack.shouldBeEmpty()
+    collectionsBean.hashSet.shouldBeEmpty()
+    collectionsBean.linkedHashSet.shouldBeEmpty()
+    collectionsBean.treeSet.shouldBeEmpty()
+    collectionsBean.concurrentSkipListSet.shouldBeEmpty()
+    collectionsBean.arrayBlockingQueue.shouldBeEmpty()
+    collectionsBean.linkedBlockingQueue.shouldBeEmpty()
+    collectionsBean.concurrentLinkedQueue.shouldBeEmpty()
+    collectionsBean.linkedTransferQueue.shouldBeEmpty()
+    collectionsBean.priorityQueue.shouldBeEmpty()
+    collectionsBean.priorityBlockingQueue.shouldBeEmpty()
+    collectionsBean.arrayDeque.shouldBeEmpty()
+    collectionsBean.linkedBlockingDeque.shouldBeEmpty()
+    collectionsBean.concurrentLinkedDeque.shouldBeEmpty()
   }
 
   @Test
-  void unboundedWildCardTypedCollectionClassesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `unbounded wild card typed collection classes should be empty`() {
+    val kRandom = KRandom()
 
-    final WildCardCollectionBean collectionsBean = kRandom.nextObject(WildCardCollectionBean.class);
+    val collectionsBean = kRandom.nextObject(WildCardCollectionBean::class.java)
 
-    assertThat(collectionsBean).isNotNull();
-
-    assertThat(collectionsBean.getUnboundedWildCardTypedArrayList()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedLinkedList()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedVector()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedStack()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedHashSet()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedLinkedHashSet()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedTreeSet()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedConcurrentSkipListSet()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedArrayBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedLinkedBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedConcurrentLinkedQueue()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedLinkedTransferQueue()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedPriorityQueue()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedPriorityBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedArrayDeque()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedLinkedBlockingDeque()).isEmpty();
-    assertThat(collectionsBean.getUnboundedWildCardTypedConcurrentLinkedDeque()).isEmpty();
+    collectionsBean.shouldNotBeNull()
+    collectionsBean.unboundedWildCardTypedArrayList.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedLinkedList.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedVector.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedStack.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedHashSet.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedLinkedHashSet.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedTreeSet.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedConcurrentSkipListSet.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedArrayBlockingQueue.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedLinkedBlockingQueue.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedConcurrentLinkedQueue.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedLinkedTransferQueue.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedPriorityQueue.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedPriorityBlockingQueue.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedArrayDeque.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedLinkedBlockingDeque.shouldBeEmpty()
+    collectionsBean.unboundedWildCardTypedConcurrentLinkedDeque.shouldBeEmpty()
   }
 
   @Test
-  void boundedWildCardTypedCollectionClassesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `bounded wild card typed collection classes should be empty`() {
+    val kRandom = KRandom()
 
-    final WildCardCollectionBean collectionsBean = kRandom.nextObject(WildCardCollectionBean.class);
+    val collectionsBean = kRandom.nextObject(WildCardCollectionBean::class.java)
 
-    assertThat(collectionsBean).isNotNull();
-
-    assertThat(collectionsBean.getBoundedWildCardTypedArrayList()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedLinkedList()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedVector()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedStack()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedHashSet()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedLinkedHashSet()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedTreeSet()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedConcurrentSkipListSet()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedArrayBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedLinkedBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedConcurrentLinkedQueue()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedLinkedTransferQueue()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedPriorityQueue()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedPriorityBlockingQueue()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedArrayDeque()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedLinkedBlockingDeque()).isEmpty();
-    assertThat(collectionsBean.getBoundedWildCardTypedConcurrentLinkedDeque()).isEmpty();
+    collectionsBean.shouldNotBeNull()
+    collectionsBean.boundedWildCardTypedArrayList.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedLinkedList.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedVector.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedStack.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedHashSet.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedLinkedHashSet.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedTreeSet.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedConcurrentSkipListSet.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedArrayBlockingQueue.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedLinkedBlockingQueue.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedConcurrentLinkedQueue.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedLinkedTransferQueue.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedPriorityQueue.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedPriorityBlockingQueue.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedArrayDeque.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedLinkedBlockingDeque.shouldBeEmpty()
+    collectionsBean.boundedWildCardTypedConcurrentLinkedDeque.shouldBeEmpty()
   }
 
   @Test
-  void typedCollectionClassesShouldNoBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `typed collection classes should no be empty`() {
+    val kRandom = KRandom()
 
-    final CollectionBean collectionsBean = kRandom.nextObject(CollectionBean.class);
+    val collectionsBean = kRandom.nextObject(CollectionBean::class.java)
 
-    assertThat(collectionsBean).isNotNull();
-
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedArrayList());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedLinkedList());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedVector());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedStack());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedHashSet());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedLinkedHashSet());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedTreeSet());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedConcurrentSkipListSet());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedArrayBlockingQueue());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedLinkedBlockingQueue());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedConcurrentLinkedQueue());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedLinkedTransferQueue());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedPriorityQueue());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedPriorityBlockingQueue());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedArrayDeque());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedLinkedBlockingDeque());
-    assertContainsOnlyNonEmptyPersons(collectionsBean.getTypedConcurrentLinkedDeque());
+    collectionsBean.shouldNotBeNull()
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedArrayList)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedLinkedList)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedVector)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedStack)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedHashSet)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedLinkedHashSet)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedTreeSet)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedConcurrentSkipListSet)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedArrayBlockingQueue)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedLinkedBlockingQueue)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedConcurrentLinkedQueue)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedLinkedTransferQueue)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedPriorityQueue)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedPriorityBlockingQueue)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedArrayDeque)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedLinkedBlockingDeque)
+    assertContainsOnlyNonEmptyPersons(collectionsBean.typedConcurrentLinkedDeque)
   }
 
   @Test
-  void compositeCollectionTypesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `composite collection types should be empty`() {
+    val kRandom = KRandom()
 
-    CompositeCollectionBean compositeCollectionBean =
-        kRandom.nextObject(CompositeCollectionBean.class);
+    val compositeCollectionBean = kRandom.nextObject(CompositeCollectionBean::class.java)
 
-    assertThat(compositeCollectionBean.getListOfLists()).isEmpty();
-    assertThat(compositeCollectionBean.getTypedListOfLists()).isEmpty();
-    assertThat(compositeCollectionBean.getSetOfSets()).isEmpty();
-    assertThat(compositeCollectionBean.getTypedSetOfSets()).isEmpty();
-    assertThat(compositeCollectionBean.getQueueOfQueues()).isEmpty();
-    assertThat(compositeCollectionBean.getTypedQueueOdQueues()).isEmpty();
+    compositeCollectionBean.shouldNotBeNull()
+    compositeCollectionBean.listOfLists.shouldBeEmpty()
+    compositeCollectionBean.typedListOfLists.shouldBeEmpty()
+    compositeCollectionBean.setOfSets.shouldBeEmpty()
+    compositeCollectionBean.typedSetOfSets.shouldBeEmpty()
+    compositeCollectionBean.queueOfQueues.shouldBeEmpty()
+    compositeCollectionBean.typedQueueOdQueues.shouldBeEmpty()
   }
 
   @Test
-  void synchronousQueueTypeMustBeRejected() {
-    KRandom kRandom = new KRandom();
+  fun `synchronous queue type must be rejected`() {
+    val kRandom = KRandom()
 
-    assertThatThrownBy(() -> kRandom.nextObject(SynchronousQueueBean.class))
-        .isInstanceOf(ObjectCreationException.class);
+    shouldThrow<ObjectCreationException> { kRandom.nextObject(SynchronousQueueBean::class.java) }
   }
 
   @Test
-  void delayedQueueTypeMustBeRejected() {
-    KRandom kRandom = new KRandom();
+  fun `delayed queue type must be rejected`() {
+    val kRandom = KRandom()
 
-    assertThatThrownBy(() -> kRandom.nextObject(DelayedQueueBean.class))
-        .isInstanceOf(ObjectCreationException.class);
+    shouldThrow<ObjectCreationException> { kRandom.nextObject(DelayedQueueBean::class.java) }
   }
 
   @Test
-  void rawInterfaceCollectionTypesMustBeGeneratedEmpty() {
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(true);
-    kRandom = new KRandom(parameters);
-    List<?> list = kRandom.nextObject(List.class);
-    assertThat(list).isEmpty();
+  fun `raw interface collection types must be generated empty`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
+    kRandom = KRandom(parameters)
+
+    val list = kRandom.nextObject(MutableList::class.java)
+
+    list.shouldNotBeNull()
+    list.shouldBeEmpty()
   }
 
   @Test
-  void rawConcreteCollectionTypesMustBeGeneratedEmpty() {
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(true);
-    kRandom = new KRandom(parameters);
-    ArrayList<?> list = kRandom.nextObject(ArrayList.class);
-    assertThat(list).isEmpty();
+  fun `raw concrete collection types must be generated empty`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
+    kRandom = KRandom(parameters)
+
+    val list = kRandom.nextObject(ArrayList::class.java)
+
+    list.shouldNotBeNull()
+    list.shouldBeEmpty()
   }
 
   @Test
-  void rawInterfaceMapTypesMustBeGeneratedEmpty() {
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(true);
-    kRandom = new KRandom(parameters);
-    Map<?, ?> map = kRandom.nextObject(Map.class);
-    assertThat(map).isEmpty();
+  fun `raw interface map types must be generated empty`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
+    kRandom = KRandom(parameters)
+
+    val map = kRandom.nextObject(MutableMap::class.java)
+
+    map.shouldNotBeNull()
+    map.shouldBeEmpty()
   }
 
   @Test
-  void rawConcreteMapTypesMustBeGeneratedEmpty() {
-    KRandomParameters parameters = new KRandomParameters().scanClasspathForConcreteTypes(true);
-    kRandom = new KRandom(parameters);
-    HashMap<?, ?> map = kRandom.nextObject(HashMap.class);
-    assertThat(map).isEmpty();
+  fun `raw concrete map types must be generated empty`() {
+    val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
+    kRandom = KRandom(parameters)
+
+    val map = kRandom.nextObject(HashMap::class.java)
+
+    map.shouldNotBeNull()
+    map.shouldBeEmpty()
   }
 
   @Test
-  void userDefinedCollectionTypeShouldBePopulated() {
-    KRandom kRandom = new KRandom();
+  fun `user defined collection type should be populated`() {
+    val kRandom = KRandom()
 
-    CustomList customList = kRandom.nextObject(CustomList.class);
+    val customList = kRandom.nextObject(CustomList::class.java)
 
-    assertThat(customList).isNotNull();
-    assertThat(customList.getName()).isNotNull();
+    customList.shouldNotBeNull()
+    customList.name.shouldNotBeNull()
   }
 
   @Test
-  void typeVariableCollectionTypesMustBeGeneratedEmpty() {
-    KRandom kRandom = new KRandom();
-    TypeVariableCollectionBean<String, String> bean =
-        kRandom.nextObject(TypeVariableCollectionBean.class);
-    assertThat(bean.getCollection()).isEmpty();
-    assertThat(bean.getList()).isEmpty();
-    assertThat(bean.getSet()).isEmpty();
-    assertThat(bean.getMap()).isEmpty();
+  fun `type variable collection types must be generated empty`() {
+    val kRandom = KRandom()
+
+    val bean =
+      kRandom.nextObject(TypeVariableCollectionBean::class.java)
+        as TypeVariableCollectionBean<String, String>?
+
+    bean.shouldNotBeNull()
+    bean.collection.shouldBeEmpty()
+    bean.list.shouldBeEmpty()
+    bean.set.shouldBeEmpty()
+    bean.map.shouldBeEmpty()
   }
 
-  private void assertContainsOnlyNonEmptyPersons(Collection<Person> persons) {
-    for (Person Person : persons) {
-      assertThat(Person).isNotNull();
-      assertThat(Person.getAddress().getCity()).isNotEmpty();
-      assertThat(Person.getAddress().getZipCode()).isNotEmpty();
-      assertThat(Person.getName()).isNotEmpty();
+  companion object {
+    private const val SIZE = 2
+    private const val STRING = "foo"
+
+    @JvmStatic
+    private fun assertContainsOnlyNonEmptyPersons(persons: MutableCollection<Person?>) {
+      persons.forAll { person ->
+        person.shouldNotBeNull()
+        person.address.city.shouldNotBeEmpty()
+        person.address.zipCode.shouldNotBeEmpty()
+        person.name.shouldNotBeEmpty()
+      }
     }
   }
 }

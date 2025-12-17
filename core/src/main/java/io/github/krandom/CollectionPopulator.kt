@@ -21,94 +21,83 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static io.github.krandom.util.ReflectionUtils.*;
-
-import io.github.krandom.randomizers.range.IntRangeRandomizer;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
+import io.github.krandom.randomizers.range.IntRangeRandomizer
+import io.github.krandom.util.ReflectionUtils.createEmptyCollectionForType
+import io.github.krandom.util.ReflectionUtils.getEmptyImplementationForCollectionInterface
+import io.github.krandom.util.ReflectionUtils.isInterface
+import io.github.krandom.util.ReflectionUtils.isParameterizedType
+import io.github.krandom.util.ReflectionUtils.isPopulatable
+import java.lang.reflect.Field
+import java.lang.reflect.ParameterizedType
 
 /**
  * Random collection populator.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-public class CollectionPopulator {
-
-  private final KRandom kRandom;
-
+class CollectionPopulator
+/**
+ * Create a new collection populator backed by the given [KRandom] instance.
+ *
+ * The provided `KRandom` is used to determine the collection size (according to [ ]) and to
+ * populate elements of the target collection when the field is parameterized with a populatable
+ * element type.
+ *
+ * @param kRandom the random data generator and engine used for population (must not be `null`)
+ */
+(private val kRandom: KRandom) {
   /**
-   * Create a new collection populator backed by the given {@link KRandom} instance.
+   * Create and populate a random [Collection] for the given field.
    *
-   * <p>The provided {@code KRandom} is used to determine the collection size (according to {@link
-   * KRandomParameters}) and to populate elements of the target collection when the field is
-   * parameterized with a populatable element type.
+   * The resulting collection type depends on the field declaration:
+   * * If the field type is a collection interface, a default concrete implementation is
+   *   instantiated.
+   * * If the field type is a concrete collection class, an empty instance of that class is created.
    *
-   * @param kRandom the random data generator and engine used for population (must not be {@code
-   *     null})
-   */
-  public CollectionPopulator(final KRandom kRandom) {
-    this.kRandom = kRandom;
-  }
-
-  /**
-   * Create and populate a random {@link Collection} for the given field.
-   *
-   * <p>The resulting collection type depends on the field declaration:
-   *
-   * <ul>
-   *   <li>If the field type is a collection interface, a default concrete implementation is
-   *       instantiated.
-   *   <li>If the field type is a concrete collection class, an empty instance of that class is
-   *       created.
-   * </ul>
-   *
-   * <p>The size of the collection is chosen randomly within the range defined by {@link
-   * KRandomParameters#collectionSizeRange} in the provided {@link RandomizationContext}. If the
-   * field is parameterized (for example {@code List<Person>}), and the element type is considered
-   * populatable, each element is populated using {@link KRandom#doPopulateBean(Class,
-   * RandomizationContext)}. For raw types (for example {@code List}) or non-populatable element
-   * types, the collection will remain empty.
+   * The size of the collection is chosen randomly within the range defined by
+   * [ ][KRandomParameters.collectionSizeRange] in the provided [RandomizationContext]. If the field
+   * is parameterized (for example `List<Person>`), and the element type is considered populatable,
+   * each element is populated using [KRandom.doPopulateBean]. For raw types (for example `List`) or
+   * non-populatable element types, the collection will remain empty.
    *
    * @param field the collection-typed field that should be populated
    * @param context the randomization context providing parameters and state
    * @return a new collection instance with a random size and, when applicable, randomly populated
-   *     elements
+   *   elements
    */
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  public Collection<?> getRandomCollection(final Field field, final RandomizationContext context) {
-    int randomSize = getRandomCollectionSize(context.getParameters());
-    Class<?> fieldType = field.getType();
-    Type fieldGenericType = field.getGenericType();
-    Collection collection;
+  @Suppress("UNCHECKED_CAST")
+  fun getRandomCollection(field: Field, context: RandomizationContext): MutableCollection<*> {
+    val randomSize = getRandomCollectionSize(context.parameters)
+    val fieldType = field.type
+    val fieldGenericType = field.genericType
 
-    if (isInterface(fieldType)) {
-      collection = getEmptyImplementationForCollectionInterface(fieldType);
-    } else {
-      collection = createEmptyCollectionForType(fieldType, randomSize);
-    }
+    val collection: MutableCollection<Any> =
+      (if (isInterface(fieldType)) {
+        getEmptyImplementationForCollectionInterface(fieldType)
+      } else {
+        createEmptyCollectionForType(fieldType, randomSize)
+      })
+        as MutableCollection<Any>
 
-    if (isParameterizedType(
-        fieldGenericType)) { // populate only parametrized types, raw types will be empty
-      ParameterizedType parameterizedType = (ParameterizedType) fieldGenericType;
-      Type type = parameterizedType.getActualTypeArguments()[0];
+    if (
+      isParameterizedType(fieldGenericType)
+    ) { // populate only parametrized types, raw types will be empty
+      val parameterizedType = fieldGenericType as ParameterizedType
+      val type = parameterizedType.actualTypeArguments[0]
       if (isPopulatable(type)) {
-        for (int i = 0; i < randomSize; i++) {
-          Object item = kRandom.doPopulateBean((Class<?>) type, context);
-          collection.add(item);
+        repeat(randomSize) {
+          kRandom.doPopulateBean(type as Class<*>, context)?.let { collection.add(it) }
         }
       }
     }
-    return collection;
+    return collection
   }
 
-  private int getRandomCollectionSize(KRandomParameters parameters) {
-    KRandomParameters.Range<Integer> collectionSizeRange = parameters.collectionSizeRange;
-    return new IntRangeRandomizer(
-            collectionSizeRange.min, collectionSizeRange.max, kRandom.nextLong())
-        .getRandomValue();
+  private fun getRandomCollectionSize(parameters: KRandomParameters): Int {
+    val collectionSizeRange: KRandomParameters.Range<Int> = parameters.collectionSizeRange
+    return IntRangeRandomizer(collectionSizeRange.min, collectionSizeRange.max, kRandom.nextLong())
+      .getRandomValue()
   }
 }
