@@ -21,349 +21,284 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.Mockito.when;
+import io.github.krandom.api.ObjectFactory
+import io.github.krandom.beans.CompositeMapBean
+import io.github.krandom.beans.CustomMap
+import io.github.krandom.beans.EnumMapBean
+import io.github.krandom.beans.MapBean
+import io.github.krandom.beans.Person
+import io.github.krandom.beans.WildCardMapBean
+import io.kotest.inspectors.forAll
+import io.kotest.matchers.maps.shouldBeEmpty
+import io.kotest.matchers.maps.shouldContainExactly
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.string.shouldNotBeEmpty
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-import io.github.krandom.api.ObjectFactory;
-import io.github.krandom.beans.CompositeMapBean;
-import io.github.krandom.beans.CustomMap;
-import io.github.krandom.beans.EnumMapBean;
-import io.github.krandom.beans.MapBean;
-import io.github.krandom.beans.Person;
-import io.github.krandom.beans.WildCardMapBean;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-@ExtendWith(MockitoExtension.class)
-@SuppressWarnings({"unchecked", "rawtypes"})
-class MapPopulatorTest {
-
-  private static final int SIZE = 1;
-  private static final String FOO = "foo";
-  private static final String BAR = "bar";
-
-  @Mock private RandomizationContext context;
-  @Mock private KRandom kRandom;
-  private KRandomParameters parameters;
-
-  private MapPopulator mapPopulator;
+@ExtendWith(MockKExtension::class)
+@Suppress("UNCHECKED_CAST")
+internal class MapPopulatorTest {
+  @MockK private lateinit var context: RandomizationContext
+  @MockK private lateinit var kRandom: KRandom
+  private lateinit var parameters: KRandomParameters
+  private lateinit var mapPopulator: MapPopulator
 
   @BeforeEach
-  void setUp() {
-    parameters = new KRandomParameters().collectionSizeRange(SIZE, SIZE);
-    ObjectFactory objectFactory = new ObjenesisObjectFactory();
-    mapPopulator = new MapPopulator(kRandom, objectFactory);
+  fun setUp() {
+    parameters = KRandomParameters().collectionSizeRange(SIZE, SIZE)
+    val objectFactory: ObjectFactory = ObjenesisObjectFactory()
+    mapPopulator = MapPopulator(kRandom, objectFactory)
   }
 
   /*
    * Unit tests for MapPopulator class
    */
-
   @Test
-  void rawInterfaceMapTypesMustBeGeneratedEmpty() throws Exception {
-    // Given
-    when(context.getParameters()).thenReturn(parameters);
-    Field field = Foo.class.getDeclaredField("rawMap");
+  @Throws(Exception::class)
+  fun `raw interface map types must be generated empty`() {
+    every { context.parameters } returns parameters
+    val field = Foo::class.java.getDeclaredField("rawMap")
 
-    // When
-    Map<?, ?> randomMap = mapPopulator.getRandomMap(field, context);
+    val randomMap = mapPopulator.getRandomMap(field, context)
 
-    // Then
-    assertThat(randomMap).isEmpty();
+    randomMap.shouldNotBeNull()
+    randomMap.shouldBeEmpty()
   }
 
   @Test
-  void rawConcreteMapTypesMustBeGeneratedEmpty() throws Exception {
-    // Given
-    when(context.getParameters()).thenReturn(parameters);
-    Field field = Foo.class.getDeclaredField("concreteMap");
+  @Throws(Exception::class)
+  fun `raw concrete map types must be generated empty`() {
+    every { context.parameters } returns parameters
+    val field = Foo::class.java.getDeclaredField("concreteMap")
 
-    // When
-    Map<?, ?> randomMap = mapPopulator.getRandomMap(field, context);
+    val randomMap = mapPopulator.getRandomMap(field, context)
 
-    // Then
-    assertThat(randomMap).isEmpty();
+    randomMap.shouldNotBeNull()
+    randomMap.shouldBeEmpty()
   }
 
   @Test
-  void typedInterfaceMapTypesMightBePopulated() throws Exception {
-    // Given
-    when(context.getParameters()).thenReturn(parameters);
-    when(kRandom.doPopulateBean(String.class, context)).thenReturn(FOO, BAR);
-    Field field = Foo.class.getDeclaredField("typedMap");
+  @Throws(Exception::class)
+  fun `typed interface map types might be populated`() {
+    every { context.parameters } returns parameters
+    every { kRandom.doPopulateBean(String::class.java, context) } returnsMany listOf(FOO, BAR)
+    val field = Foo::class.java.getDeclaredField("typedMap")
 
-    // When
-    Map<String, String> randomMap = (Map<String, String>) mapPopulator.getRandomMap(field, context);
+    val randomMap = mapPopulator.getRandomMap(field, context) as MutableMap<String, String>?
 
-    // Then
-    assertThat(randomMap).containsExactly(entry(FOO, BAR));
+    randomMap.shouldNotBeNull()
+    randomMap shouldContainExactly mapOf(FOO to BAR)
   }
 
   @Test
-  void typedConcreteMapTypesMightBePopulated() throws Exception {
-    // Given
-    when(context.getParameters()).thenReturn(parameters);
-    when(kRandom.doPopulateBean(String.class, context)).thenReturn(FOO, BAR);
-    Field field = Foo.class.getDeclaredField("typedConcreteMap");
+  @Throws(Exception::class)
+  fun `typed concrete map types might be populated`() {
+    every { context.parameters } returns parameters
+    every { kRandom.doPopulateBean(String::class.java, context) } returnsMany listOf(FOO, BAR)
+    val field = Foo::class.java.getDeclaredField("typedConcreteMap")
 
-    // When
-    Map<String, String> randomMap = (Map<String, String>) mapPopulator.getRandomMap(field, context);
+    val randomMap = mapPopulator.getRandomMap(field, context) as MutableMap<String, String>?
 
-    // Then
-    assertThat(randomMap).containsExactly(entry(FOO, BAR));
+    randomMap.shouldNotBeNull()
+    randomMap shouldContainExactly mapOf(FOO to BAR)
   }
 
   @Test
-  void notAddNullKeysToMap() throws NoSuchFieldException {
-    // Given
-    when(context.getParameters()).thenReturn(parameters);
-    when(kRandom.doPopulateBean(String.class, context)).thenReturn(null);
-    Field field = Foo.class.getDeclaredField("typedConcreteMap");
+  @Throws(NoSuchFieldException::class)
+  fun `not add null keys to map`() {
+    every { context.parameters } returns parameters
+    every { kRandom.doPopulateBean(String::class.java, context) } returns null
+    val field = Foo::class.java.getDeclaredField("typedConcreteMap")
 
-    // When
-    Map<String, String> randomMap = (Map<String, String>) mapPopulator.getRandomMap(field, context);
+    val randomMap = mapPopulator.getRandomMap(field, context) as MutableMap<String, String>?
 
-    // Then
-    assertThat(randomMap).isEmpty();
+    randomMap.shouldNotBeNull()
+    randomMap.shouldBeEmpty()
   }
 
-  class Foo {
-    private Map rawMap;
-    private HashMap concreteMap;
-    private Map<String, String> typedMap;
-    private HashMap<String, String> typedConcreteMap;
-
-    public Foo() {}
-
-    public Map getRawMap() {
-      return this.rawMap;
-    }
-
-    public HashMap getConcreteMap() {
-      return this.concreteMap;
-    }
-
-    public Map<String, String> getTypedMap() {
-      return this.typedMap;
-    }
-
-    public HashMap<String, String> getTypedConcreteMap() {
-      return this.typedConcreteMap;
-    }
-
-    public void setRawMap(Map rawMap) {
-      this.rawMap = rawMap;
-    }
-
-    public void setConcreteMap(HashMap concreteMap) {
-      this.concreteMap = concreteMap;
-    }
-
-    public void setTypedMap(Map<String, String> typedMap) {
-      this.typedMap = typedMap;
-    }
-
-    public void setTypedConcreteMap(HashMap<String, String> typedConcreteMap) {
-      this.typedConcreteMap = typedConcreteMap;
-    }
-  }
+  @Suppress("unused")
+  internal class Foo(
+    val rawMap: MutableMap<*, *>,
+    val concreteMap: HashMap<*, *>,
+    val typedMap: MutableMap<String, String>,
+    val typedConcreteMap: HashMap<String, String>,
+  )
 
   /*
    * Integration tests for map types population
    */
-
   @Test
-  void rawMapInterfacesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `raw map interfaces should be empty`() {
+    val kRandom = KRandom()
 
-    final MapBean mapBean = kRandom.nextObject(MapBean.class);
+    val mapBean = kRandom.nextObject(MapBean::class.java)
 
-    assertThat(mapBean).isNotNull();
-
-    assertThat(mapBean.getMap()).isEmpty();
-    assertThat(mapBean.getSortedMap()).isEmpty();
-    assertThat(mapBean.getNavigableMap()).isEmpty();
-    assertThat(mapBean.getConcurrentMap()).isEmpty();
-    assertThat(mapBean.getConcurrentNavigableMap()).isEmpty();
+    mapBean.shouldNotBeNull()
+    mapBean.map.shouldBeEmpty()
+    mapBean.sortedMap.shouldBeEmpty()
+    mapBean.navigableMap.shouldBeEmpty()
+    mapBean.concurrentMap.shouldBeEmpty()
+    mapBean.concurrentNavigableMap.shouldBeEmpty()
   }
 
   @Test
-  void typedMapInterfacesShouldNotBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `typed map interfaces should not be empty`() {
+    val kRandom = KRandom()
 
-    final MapBean mapBean = kRandom.nextObject(MapBean.class);
+    val mapBean = kRandom.nextObject(MapBean::class.java)
 
-    assertThat(mapBean).isNotNull();
-
-    assertContainsNonZeroIntegers(mapBean.getTypedMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedMap().values());
-
-    assertContainsNonZeroIntegers(mapBean.getTypedSortedMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedSortedMap().values());
-
-    assertContainsNonZeroIntegers(mapBean.getTypedNavigableMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedNavigableMap().values());
-
-    assertContainsNonZeroIntegers(mapBean.getTypedConcurrentMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedConcurrentMap().values());
-
-    assertContainsNonZeroIntegers(mapBean.getTypedConcurrentNavigableMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedConcurrentNavigableMap().values());
+    mapBean.shouldNotBeNull()
+    assertContainsNonZeroIntegers(mapBean.typedMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedSortedMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedSortedMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedNavigableMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedNavigableMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedConcurrentMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedConcurrentMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedConcurrentNavigableMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedConcurrentNavigableMap.values)
   }
 
   @Test
-  void rawMapClassesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `raw map classes should be empty`() {
+    val kRandom = KRandom()
 
-    final MapBean mapBean = kRandom.nextObject(MapBean.class);
+    val mapBean = kRandom.nextObject(MapBean::class.java)
 
-    assertThat(mapBean).isNotNull();
-
-    assertThat(mapBean.getHashMap()).isEmpty();
-    assertThat(mapBean.getHashtable()).isEmpty();
-    assertThat(mapBean.getLinkedHashMap()).isEmpty();
-    assertThat(mapBean.getWeakHashMap()).isEmpty();
-    assertThat(mapBean.getIdentityHashMap()).isEmpty();
-    assertThat(mapBean.getTreeMap()).isEmpty();
-    assertThat(mapBean.getConcurrentSkipListMap()).isEmpty();
+    mapBean.shouldNotBeNull()
+    mapBean.hashMap.shouldBeEmpty()
+    mapBean.hashtable.shouldBeEmpty()
+    mapBean.linkedHashMap.shouldBeEmpty()
+    mapBean.weakHashMap.shouldBeEmpty()
+    mapBean.identityHashMap.shouldBeEmpty()
+    mapBean.treeMap.shouldBeEmpty()
+    mapBean.concurrentSkipListMap.shouldBeEmpty()
   }
 
   @Test
-  void typedMapClassesShouldNotBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `typed map classes should not be empty`() {
+    val kRandom = KRandom()
 
-    final MapBean mapBean = kRandom.nextObject(MapBean.class);
+    val mapBean = kRandom.nextObject(MapBean::class.java)
 
-    assertThat(mapBean).isNotNull();
-
-    assertContainsNonZeroIntegers(mapBean.getTypedHashMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedHashMap().values());
-
-    assertContainsNonZeroIntegers(mapBean.getTypedHashtable().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedHashtable().values());
-
-    assertContainsNonZeroIntegers(mapBean.getTypedLinkedHashMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedLinkedHashMap().values());
-
-    assertContainsNonZeroIntegers(mapBean.getTypedWeakHashMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedWeakHashMap().values());
-
-    assertContainsNonZeroIntegers(mapBean.getTypedIdentityHashMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedIdentityHashMap().values());
-
-    assertContainsNonZeroIntegers(mapBean.getTypedTreeMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedTreeMap().values());
-
-    assertContainsNonZeroIntegers(mapBean.getTypedConcurrentSkipListMap().keySet());
-    assertContainsOnlyNonEmptyPersons(mapBean.getTypedConcurrentSkipListMap().values());
+    mapBean.shouldNotBeNull()
+    assertContainsNonZeroIntegers(mapBean.typedHashMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedHashMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedHashtable.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedHashtable.values)
+    assertContainsNonZeroIntegers(mapBean.typedLinkedHashMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedLinkedHashMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedWeakHashMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedWeakHashMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedIdentityHashMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedIdentityHashMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedTreeMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedTreeMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedConcurrentSkipListMap.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedConcurrentSkipListMap.values)
   }
 
   @Test
-  void wildcardTypedMapInterfacesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `wildcard typed map interfaces should be empty`() {
+    val kRandom = KRandom()
 
-    final WildCardMapBean wildCardMapBean = kRandom.nextObject(WildCardMapBean.class);
+    val wildCardMapBean = kRandom.nextObject(WildCardMapBean::class.java)
 
-    assertThat(wildCardMapBean).isNotNull();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedMap()).isEmpty();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedSortedMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedSortedMap()).isEmpty();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedNavigableMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedNavigableMap()).isEmpty();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedConcurrentMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedConcurrentMap()).isEmpty();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedConcurrentNavigableMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedConcurrentNavigableMap()).isEmpty();
+    wildCardMapBean.shouldNotBeNull()
+    wildCardMapBean.boundedWildCardTypedMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedSortedMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedSortedMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedNavigableMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedNavigableMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedConcurrentMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedConcurrentMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedConcurrentNavigableMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedConcurrentNavigableMap.shouldBeEmpty()
   }
 
   @Test
-  void wildcardTypedMapClassesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `wildcard typed map classes should be empty`() {
+    val kRandom = KRandom()
 
-    final WildCardMapBean wildCardMapBean = kRandom.nextObject(WildCardMapBean.class);
+    val wildCardMapBean = kRandom.nextObject(WildCardMapBean::class.java)
 
-    assertThat(wildCardMapBean).isNotNull();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedHashMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedHashMap()).isEmpty();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedHashtable()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedHashtable()).isEmpty();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedLinkedHashMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedHinkedHashMap()).isEmpty();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedWeakHashMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedWeakHashMap()).isEmpty();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedIdentityHashMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedIdentityHashMap()).isEmpty();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedTreeMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedTreeMap()).isEmpty();
-
-    assertThat(wildCardMapBean.getBoundedWildCardTypedConcurrentSkipListMap()).isEmpty();
-    assertThat(wildCardMapBean.getUnboundedWildCardTypedConcurrentSkipListMap()).isEmpty();
+    wildCardMapBean.shouldNotBeNull()
+    wildCardMapBean.boundedWildCardTypedHashMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedHashMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedHashMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedHashMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedLinkedHashMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedHinkedHashMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedWeakHashMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedWeakHashMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedIdentityHashMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedIdentityHashMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedTreeMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedTreeMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedConcurrentSkipListMap.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedConcurrentSkipListMap.shouldBeEmpty()
   }
 
   @Test
-  void compositeMapTypesShouldBeEmpty() {
-    KRandom kRandom = new KRandom();
+  fun `composite map types should be empty`() {
+    val kRandom = KRandom()
 
-    CompositeMapBean compositeMapBean = kRandom.nextObject(CompositeMapBean.class);
+    val compositeMapBean = kRandom.nextObject(CompositeMapBean::class.java)
 
-    assertThat(compositeMapBean.getPersonToNicknames()).isEmpty();
-    assertThat(compositeMapBean.getPersonToAccounts()).isEmpty();
-    assertThat(compositeMapBean.getReallyStrangeCompositeDataStructure()).isEmpty();
+    compositeMapBean.shouldNotBeNull()
+    compositeMapBean.personToNicknames.shouldBeEmpty()
+    compositeMapBean.personToAccounts.shouldBeEmpty()
+    compositeMapBean.reallyStrangeCompositeDataStructure.shouldBeEmpty()
   }
 
   @Test
-  void userDefinedMapTypeShouldBePopulated() {
-    KRandom kRandom = new KRandom();
+  fun `user defined map type should be populated`() {
+    val kRandom = KRandom()
 
-    CustomMap customMap = kRandom.nextObject(CustomMap.class);
+    val customMap = kRandom.nextObject(CustomMap::class.java)
 
-    assertThat(customMap).isNotNull();
-    assertThat(customMap.getName()).isNotNull();
+    customMap.shouldNotBeNull()
+    customMap.name.shouldNotBeNull()
   }
 
   @Test
-  void enumMapTypeShouldBePopulated() {
-    KRandom kRandom = new KRandom();
+  fun `enum map type should be populated`() {
+    val kRandom = KRandom()
 
-    EnumMapBean enumMapBean = kRandom.nextObject(EnumMapBean.class);
+    val enumMapBean = kRandom.nextObject(EnumMapBean::class.java)
 
-    assertThat(enumMapBean).isNotNull();
-    assertThat(enumMapBean.getTypedEnumMap()).isNotNull();
-    assertThat(enumMapBean.getUntypedEnumMap()).isNull();
+    enumMapBean.shouldNotBeNull()
+    enumMapBean.typedEnumMap.shouldNotBeNull()
+    enumMapBean.untypedEnumMap.shouldBeNull()
   }
 
-  private void assertContainsOnlyNonEmptyPersons(Collection<Person> persons) {
-    for (Person person : persons) {
-      assertThat(person).isNotNull();
-      assertThat(person.getAddress().getCity()).isNotEmpty();
-      assertThat(person.getAddress().getZipCode()).isNotEmpty();
-      assertThat(person.getName()).isNotEmpty();
+  private fun assertContainsOnlyNonEmptyPersons(persons: MutableCollection<Person?>) {
+    persons.forAll {
+      it.shouldNotBeNull()
+      it.address.city.shouldNotBeEmpty()
+      it.address.zipCode.shouldNotBeEmpty()
+      it.name.shouldNotBeEmpty()
     }
   }
 
-  private void assertContainsNonZeroIntegers(final Collection collection) {
-    assertThat(collection).hasOnlyElementsOfType(Integer.class).doesNotContain(0);
+  private fun assertContainsNonZeroIntegers(collection: MutableCollection<*>) {
+    collection.forAll { it.shouldBeInstanceOf<Int>() }
+  }
+
+  companion object {
+    private const val SIZE = 1
+    private const val FOO = "foo"
+    private const val BAR = "bar"
   }
 }

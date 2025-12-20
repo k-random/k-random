@@ -23,7 +23,7 @@
  */
 package io.github.krandom.randomizers.range
 
-import java.util.*
+import java.util.Date
 import kotlin.random.Random
 
 /**

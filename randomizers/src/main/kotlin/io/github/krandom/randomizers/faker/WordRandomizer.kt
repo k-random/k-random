@@ -23,7 +23,7 @@
  */
 package io.github.krandom.randomizers.faker
 
-import java.util.*
+import java.util.Locale
 import kotlin.random.Random
 
 /**
