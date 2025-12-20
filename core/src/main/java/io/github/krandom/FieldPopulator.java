@@ -23,7 +23,17 @@
  */
 package io.github.krandom;
 
-import static io.github.krandom.util.ReflectionUtils.*;
+import static io.github.krandom.util.ReflectionUtils.filterSameParameterizedTypes;
+import static io.github.krandom.util.ReflectionUtils.getPublicConcreteSubTypesOf;
+import static io.github.krandom.util.ReflectionUtils.isAbstract;
+import static io.github.krandom.util.ReflectionUtils.isArrayType;
+import static io.github.krandom.util.ReflectionUtils.isCollectionType;
+import static io.github.krandom.util.ReflectionUtils.isEnumType;
+import static io.github.krandom.util.ReflectionUtils.isMapType;
+import static io.github.krandom.util.ReflectionUtils.isOptionalType;
+import static io.github.krandom.util.ReflectionUtils.isTypeVariable;
+import static io.github.krandom.util.ReflectionUtils.setFieldValue;
+import static io.github.krandom.util.ReflectionUtils.setProperty;
 
 import io.github.krandom.api.ContextAwareRandomizer;
 import io.github.krandom.api.Randomizer;
@@ -35,6 +45,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Component that encapsulates the logic of generating a random value for a given field. It
@@ -121,6 +132,7 @@ class FieldPopulator {
     context.popStackItem();
   }
 
+  @Nullable
   private Randomizer<?> getRandomizer(Field field, RandomizationContext context) {
     // issue 241: if there is no custom randomizer by field, then check by type
     Randomizer<?> randomizer = randomizerProvider.getRandomizerByField(field, context);
@@ -137,6 +149,7 @@ class FieldPopulator {
     return randomizer;
   }
 
+  @Nullable
   private Object generateRandomValue(final Field field, final RandomizationContext context) {
     Class<?> fieldType = field.getType();
     Type fieldGenericType = field.getGenericType();

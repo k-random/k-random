@@ -23,7 +23,7 @@
  */
 package io.github.krandom.randomizers.faker
 
-import java.util.*
+import java.util.Random
 
 /**
  * A [io.github.krandom.annotation.Randomizer] that generates random passwords.
