@@ -148,7 +148,7 @@ class RandomizerAnnotationTest {
     }
   }
 
-  private class Bar {
+  private static class Bar {
     @Randomizer(RandomizerWithoutDefaultConstrcutor.class)
     private String name;
   }
