@@ -21,185 +21,157 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
+import io.github.krandom.api.ContextAwareRandomizer
+import io.github.krandom.api.Randomizer
+import io.github.krandom.beans.ArrayBean
+import io.github.krandom.beans.CollectionBean
+import io.github.krandom.beans.Human
+import io.github.krandom.beans.MapBean
+import io.github.krandom.beans.Person
+import io.github.krandom.randomizers.misc.SkipRandomizer
+import io.kotest.matchers.equals.shouldBeEqual
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-import io.github.krandom.api.ContextAwareRandomizer;
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.beans.ArrayBean;
-import io.github.krandom.beans.CollectionBean;
-import io.github.krandom.beans.Human;
-import io.github.krandom.beans.MapBean;
-import io.github.krandom.beans.Person;
-import io.github.krandom.randomizers.misc.SkipRandomizer;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+@ExtendWith(MockKExtension::class)
+internal class FieldPopulatorTest {
+  @MockK(relaxed = true) private lateinit var kRandom: KRandom
+  @MockK(relaxed = true) private lateinit var randomizerProvider: RegistriesRandomizerProvider
+  @MockK(relaxed = true) private lateinit var randomizer: Randomizer<*>
+  @MockK(relaxed = true) private lateinit var contextAwareRandomizer: ContextAwareRandomizer<*>
+  @MockK(relaxed = true) private lateinit var arrayPopulator: ArrayPopulator
+  @MockK(relaxed = true) private lateinit var collectionPopulator: CollectionPopulator
+  @MockK(relaxed = true) private lateinit var mapPopulator: MapPopulator
+  @MockK(relaxed = true) private lateinit var optionalPopulator: OptionalPopulator
 
-@ExtendWith(MockitoExtension.class)
-@SuppressWarnings("unchecked")
-class FieldPopulatorTest {
-
-  private static final String NAME = "foo";
-
-  @Mock private KRandom kRandom;
-  @Mock private RegistriesRandomizerProvider randomizerProvider;
-  @Mock private Randomizer randomizer;
-  @Mock private ContextAwareRandomizer contextAwareRandomizer;
-  @Mock private ArrayPopulator arrayPopulator;
-  @Mock private CollectionPopulator collectionPopulator;
-  @Mock private MapPopulator mapPopulator;
-  @Mock private OptionalPopulator optionalPopulator;
-
-  private FieldPopulator fieldPopulator;
+  private lateinit var fieldPopulator: FieldPopulator
 
   @BeforeEach
-  void setUp() {
+  fun setUp() {
+    every { randomizerProvider.getRandomizerByField(any(), any()) } returns null
+    every { randomizerProvider.getRandomizerByType(any<Class<*>>(), any()) } returns null
     fieldPopulator =
-        new FieldPopulator(
-            kRandom,
-            randomizerProvider,
-            arrayPopulator,
-            collectionPopulator,
-            mapPopulator,
-            optionalPopulator);
+      FieldPopulator(
+        kRandom,
+        randomizerProvider,
+        arrayPopulator,
+        collectionPopulator,
+        mapPopulator,
+        optionalPopulator,
+      )
   }
 
   @Test
-  void whenSkipRandomizerIsRegisteredForTheField_thenTheFieldShouldBeSkipped() throws Exception {
-    // Given
-    Field name = Human.class.getDeclaredField("name");
-    Human human = new Human();
-    randomizer = new SkipRandomizer();
-    RandomizationContext context = new RandomizationContext(Human.class, new KRandomParameters());
-    when(randomizerProvider.getRandomizerByField(name, context)).thenReturn(randomizer);
+  @Throws(Exception::class)
+  fun `when skip randomizer is registered for the field then the field should be skipped`() {
+    val name = Human::class.java.getDeclaredField("name")
+    val human = Human()
+    randomizer = SkipRandomizer()
+    val context = RandomizationContext(Human::class.java, KRandomParameters())
+    every { randomizerProvider.getRandomizerByField(name, context) } returns randomizer
 
-    // When
-    fieldPopulator.populateField(human, name, context);
+    fieldPopulator.populateField(human, name, context)
 
-    // Then
-    assertThat(human.getName()).isNull();
+    human.name.shouldBeNull()
   }
 
   @Test
-  void whenCustomRandomizerIsRegisteredForTheField_thenTheFieldShouldBePopulatedWithTheRandomValue()
-      throws Exception {
-    // Given
-    Field name = Human.class.getDeclaredField("name");
-    Human human = new Human();
-    RandomizationContext context = new RandomizationContext(Human.class, new KRandomParameters());
-    when(randomizerProvider.getRandomizerByField(name, context)).thenReturn(randomizer);
-    when(randomizer.getRandomValue()).thenReturn(NAME);
+  @Throws(Exception::class)
+  fun `when custom randomizer is registered for the field then the field should be populated with the random value`() {
+    val name = Human::class.java.getDeclaredField("name")
+    val human = Human()
+    val context = RandomizationContext(Human::class.java, KRandomParameters())
+    every { randomizerProvider.getRandomizerByField(name, context) } returns randomizer
+    every { randomizer.getRandomValue() } returns NAME
 
-    // When
-    fieldPopulator.populateField(human, name, context);
+    fieldPopulator.populateField(human, name, context)
 
-    // Then
-    assertThat(human.getName()).isEqualTo(NAME);
+    human.name shouldBe NAME
   }
 
   @Test
-  void
-      whenContextAwareRandomizerIsRegisteredForTheField_thenTheFieldShouldBeOnTopOfTheSuppliedContextStack()
-          throws Exception {
-    // Given
-    Field name = Human.class.getDeclaredField("name");
-    Human human = new Human();
-    RandomizationContext context = new RandomizationContext(Human.class, new KRandomParameters());
-    final Human[] currentObjectFromContext = new Human[1];
-    when(randomizerProvider.getRandomizerByField(name, context)).thenReturn(contextAwareRandomizer);
-    when(contextAwareRandomizer.getRandomValue()).thenReturn(NAME);
-    doAnswer(
-            invocationOnMock -> {
-              currentObjectFromContext[0] =
-                  (Human)
-                      invocationOnMock
-                          .getArgument(0, RandomizationContext.class)
-                          .getCurrentObject();
-              return null;
-            })
-        .when(contextAwareRandomizer)
-        .setRandomizerContext(context);
+  @Throws(Exception::class)
+  fun `when context aware randomizer is registered for the field then should be on top of the supplied stack`() {
+    val name = Human::class.java.getDeclaredField("name")
+    val human = Human()
+    val context = RandomizationContext(Human::class.java, KRandomParameters())
+    val currentObjectFromContext = arrayOfNulls<Human>(1)
+    every { randomizerProvider.getRandomizerByField(name, context) } returns contextAwareRandomizer
+    every { contextAwareRandomizer.getRandomValue() } returns NAME
+    every { contextAwareRandomizer.setRandomizerContext(context) } answers
+      {
+        currentObjectFromContext[0] = firstArg<RandomizationContext>().getCurrentObject() as Human
+      }
 
-    // When
-    fieldPopulator.populateField(human, name, context);
+    fieldPopulator.populateField(human, name, context)
 
-    // Then
-    assertThat(currentObjectFromContext[0]).isEqualTo(human);
+    currentObjectFromContext[0] shouldBe human
   }
 
   @Test
-  void whenTheFieldIsOfTypeArray_thenShouldDelegatePopulationToArrayPopulator() throws Exception {
-    // Given
-    Field strings = ArrayBean.class.getDeclaredField("strings");
-    ArrayBean arrayBean = new ArrayBean();
-    String[] object = new String[0];
-    RandomizationContext context =
-        new RandomizationContext(ArrayBean.class, new KRandomParameters());
-    when(arrayPopulator.getRandomArray(strings.getType(), context)).thenReturn(object);
+  @Throws(Exception::class)
+  fun `when the field is of type array then should delegate population to array populator`() {
+    val strings = ArrayBean::class.java.getDeclaredField("strings")
+    val arrayBean = ArrayBean()
+    val array = arrayOfNulls<String>(0)
+    val context = RandomizationContext(ArrayBean::class.java, KRandomParameters())
+    every { arrayPopulator.getRandomArray(strings.type, context) } returns array
 
-    // When
-    fieldPopulator.populateField(arrayBean, strings, context);
+    fieldPopulator.populateField(arrayBean, strings, context)
 
-    // Then
-    assertThat(arrayBean.getStrings()).isEqualTo(object);
+    arrayBean.strings shouldBeEqual array
   }
 
   @Test
-  void whenTheFieldIsOfTypeCollection_thenShouldDelegatePopulationToCollectionPopulator()
-      throws Exception {
-    // Given
-    Field strings = CollectionBean.class.getDeclaredField("typedCollection");
-    CollectionBean collectionBean = new CollectionBean();
-    Collection<Person> persons = Collections.emptyList();
-    RandomizationContext context =
-        new RandomizationContext(CollectionBean.class, new KRandomParameters());
+  @Throws(Exception::class)
+  fun `when the field is of type collection then should delegate population to collection populator`() {
+    val strings = CollectionBean::class.java.getDeclaredField("typedCollection")
+    val collectionBean = CollectionBean()
+    val persons: MutableCollection<Person> = mutableListOf()
+    val context = RandomizationContext(CollectionBean::class.java, KRandomParameters())
+    every { collectionPopulator.getRandomCollection(strings, context) } returns persons
 
-    // When
-    fieldPopulator.populateField(collectionBean, strings, context);
+    fieldPopulator.populateField(collectionBean, strings, context)
 
-    // Then
-    assertThat(collectionBean.getTypedCollection()).isEqualTo(persons);
+    collectionBean.typedCollection shouldBeEqual persons
   }
 
   @Test
-  void whenTheFieldIsOfTypeMap_thenShouldDelegatePopulationToMapPopulator() throws Exception {
-    // Given
-    Field strings = MapBean.class.getDeclaredField("typedMap");
-    MapBean mapBean = new MapBean();
-    Map<Integer, Person> idToPerson = new HashMap<>();
-    RandomizationContext context = new RandomizationContext(MapBean.class, new KRandomParameters());
+  @Throws(Exception::class)
+  fun `when the field is of type map then should delegate population to map populator`() {
+    val strings = MapBean::class.java.getDeclaredField("typedMap")
+    val mapBean = MapBean()
+    val idToPerson: MutableMap<Int, Person> = mutableMapOf()
+    val context = RandomizationContext(MapBean::class.java, KRandomParameters())
 
-    // When
-    fieldPopulator.populateField(mapBean, strings, context);
+    fieldPopulator.populateField(mapBean, strings, context)
 
-    // Then
-    assertThat(mapBean.getTypedMap()).isEqualTo(idToPerson);
+    mapBean.typedMap shouldBeEqual idToPerson
   }
 
   @Test
-  void whenRandomizationDepthIsExceeded_thenFieldsAreNotInitialized() throws Exception {
-    // Given
-    Field name = Human.class.getDeclaredField("name");
-    Human human = new Human();
-    RandomizationContext context = Mockito.mock(RandomizationContext.class);
-    when(context.hasExceededRandomizationDepth()).thenReturn(true);
+  @Throws(Exception::class)
+  fun `when randomization depth is exceeded then fields are not initialized`() {
+    val name = Human::class.java.getDeclaredField("name")
+    val human = Human()
+    val context = mockk<RandomizationContext>(relaxed = true)
+    every { context.hasExceededRandomizationDepth() } returns true
 
-    // When
-    fieldPopulator.populateField(human, name, context);
+    fieldPopulator.populateField(human, name, context)
 
-    // Then
-    assertThat(human.getName()).isNull();
+    human.name.shouldBeNull()
+  }
+
+  companion object {
+    private const val NAME = "foo"
   }
 }

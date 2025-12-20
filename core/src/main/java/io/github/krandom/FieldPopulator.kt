@@ -21,214 +21,192 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static io.github.krandom.util.ReflectionUtils.filterSameParameterizedTypes;
-import static io.github.krandom.util.ReflectionUtils.getPublicConcreteSubTypesOf;
-import static io.github.krandom.util.ReflectionUtils.isAbstract;
-import static io.github.krandom.util.ReflectionUtils.isArrayType;
-import static io.github.krandom.util.ReflectionUtils.isCollectionType;
-import static io.github.krandom.util.ReflectionUtils.isEnumType;
-import static io.github.krandom.util.ReflectionUtils.isMapType;
-import static io.github.krandom.util.ReflectionUtils.isOptionalType;
-import static io.github.krandom.util.ReflectionUtils.isTypeVariable;
-import static io.github.krandom.util.ReflectionUtils.setFieldValue;
-import static io.github.krandom.util.ReflectionUtils.setProperty;
-
-import io.github.krandom.api.ContextAwareRandomizer;
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.api.RandomizerProvider;
-import io.github.krandom.randomizers.misc.SkipRandomizer;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.util.List;
-import org.jspecify.annotations.Nullable;
+import io.github.krandom.api.ContextAwareRandomizer
+import io.github.krandom.api.Randomizer
+import io.github.krandom.api.RandomizerProvider
+import io.github.krandom.randomizers.misc.SkipRandomizer
+import io.github.krandom.util.ReflectionUtils.filterSameParameterizedTypes
+import io.github.krandom.util.ReflectionUtils.getPublicConcreteSubTypesOf
+import io.github.krandom.util.ReflectionUtils.isAbstract
+import io.github.krandom.util.ReflectionUtils.isArrayType
+import io.github.krandom.util.ReflectionUtils.isCollectionType
+import io.github.krandom.util.ReflectionUtils.isEnumType
+import io.github.krandom.util.ReflectionUtils.isMapType
+import io.github.krandom.util.ReflectionUtils.isOptionalType
+import io.github.krandom.util.ReflectionUtils.isTypeVariable
+import io.github.krandom.util.ReflectionUtils.setFieldValue
+import io.github.krandom.util.ReflectionUtils.setProperty
+import java.lang.reflect.Field
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+import java.lang.reflect.TypeVariable
+import kotlin.random.asKotlinRandom
 
 /**
  * Component that encapsulates the logic of generating a random value for a given field. It
  * collaborates with a:
- *
- * <ul>
- *   <li>{@link KRandom} whenever the field is a user defined type.
- *   <li>{@link ArrayPopulator} whenever the field is an array type.
- *   <li>{@link CollectionPopulator} whenever the field is a collection type.
- *   <li>{@link CollectionPopulator}whenever the field is a map type.
- * </ul>
+ * * [KRandom] whenever the field is a user defined type.
+ * * [ArrayPopulator] whenever the field is an array type.
+ * * [CollectionPopulator] whenever the field is a collection type.
+ * * [CollectionPopulator]whenever the field is a map type.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-class FieldPopulator {
-
-  private final KRandom kRandom;
-
-  private final ArrayPopulator arrayPopulator;
-
-  private final CollectionPopulator collectionPopulator;
-
-  private final MapPopulator mapPopulator;
-
-  private final OptionalPopulator optionalPopulator;
-
-  private final RandomizerProvider randomizerProvider;
-
-  FieldPopulator(
-      final KRandom kRandom,
-      final RandomizerProvider randomizerProvider,
-      final ArrayPopulator arrayPopulator,
-      final CollectionPopulator collectionPopulator,
-      final MapPopulator mapPopulator,
-      OptionalPopulator optionalPopulator) {
-    this.kRandom = kRandom;
-    this.randomizerProvider = randomizerProvider;
-    this.arrayPopulator = arrayPopulator;
-    this.collectionPopulator = collectionPopulator;
-    this.mapPopulator = mapPopulator;
-    this.optionalPopulator = optionalPopulator;
-  }
-
-  void populateField(final Object target, final Field field, final RandomizationContext context)
-      throws IllegalAccessException {
-    Randomizer<?> randomizer = getRandomizer(field, context);
-    if (randomizer instanceof SkipRandomizer) {
-      return;
+@Suppress("SwallowedException")
+internal class FieldPopulator(
+  private val kRandom: KRandom,
+  private val randomizerProvider: RandomizerProvider,
+  private val arrayPopulator: ArrayPopulator,
+  private val collectionPopulator: CollectionPopulator,
+  private val mapPopulator: MapPopulator,
+  private val optionalPopulator: OptionalPopulator,
+) {
+  @Throws(IllegalAccessException::class)
+  fun populateField(target: Any, field: Field, context: RandomizationContext) {
+    val randomizer = getRandomizer(field, context)
+    if (randomizer is SkipRandomizer) {
+      return
     }
-    context.pushStackItem(new RandomizationContextStackItem(target, field));
-    if (randomizer instanceof ContextAwareRandomizer) {
-      ((ContextAwareRandomizer<?>) randomizer).setRandomizerContext(context);
+    context.pushStackItem(RandomizationContextStackItem(target, field))
+    if (randomizer is ContextAwareRandomizer<*>) {
+      randomizer.setRandomizerContext(context)
     }
     if (!context.hasExceededRandomizationDepth()) {
-      Object value;
+      val value: Any?
       if (randomizer != null) {
-        value = randomizer.getRandomValue();
+        value = randomizer.getRandomValue()
       } else {
         try {
-          value = generateRandomValue(field, context);
-        } catch (ObjectCreationException e) {
-          String exceptionMessage =
-              String.format(
-                  "Unable to create type: %s for field: %s of class: %s",
-                  field.getType().getName(), field.getName(), target.getClass().getName());
+          value = generateRandomValue(field, context)
+        } catch (e: ObjectCreationException) {
+          val exceptionMessage =
+            "Unable to create type: ${field.type.getName()} " +
+              "for field: ${field.name} " +
+              "of class: ${target.javaClass.getName()}"
           // FIXME catch ObjectCreationException and throw ObjectCreationException ?
-          throw new ObjectCreationException(exceptionMessage, e);
+          throw ObjectCreationException(exceptionMessage, e)
         }
       }
-      if (context.getParameters().isBypassSetters()) {
-        setFieldValue(target, field, value);
+      if (context.parameters.isBypassSetters) {
+        setFieldValue(target, field, value)
       } else {
         try {
-          setProperty(target, field, value);
-        } catch (InvocationTargetException e) {
-          String exceptionMessage =
-              String.format(
-                  "Unable to invoke setter for field %s of class %s",
-                  field.getName(), target.getClass().getName());
-          throw new ObjectCreationException(exceptionMessage, e.getCause());
+          setProperty(target, field, value)
+        } catch (e: InvocationTargetException) {
+          val exceptionMessage =
+            "Unable to invoke setter for field ${field.name} of class ${target.javaClass.getName()}"
+          throw ObjectCreationException(exceptionMessage, e.cause!!)
         }
       }
     }
-    context.popStackItem();
+    context.popStackItem()
   }
 
-  @Nullable
-  private Randomizer<?> getRandomizer(Field field, RandomizationContext context) {
+  private fun getRandomizer(field: Field, context: RandomizationContext): Randomizer<*>? {
     // issue 241: if there is no custom randomizer by field, then check by type
-    Randomizer<?> randomizer = randomizerProvider.getRandomizerByField(field, context);
+    var randomizer = randomizerProvider.getRandomizerByField(field, context)
     if (randomizer == null) {
-      Type genericType = field.getGenericType();
+      val genericType = field.genericType
       if (isTypeVariable(genericType)) {
         // if generic type, retrieve actual type from declaring class
-        Class<?> type = getParametrizedType(field, context);
-        randomizer = randomizerProvider.getRandomizerByType(type, context);
+        val type = getParametrizedType(field, context)
+        randomizer = randomizerProvider.getRandomizerByType(type, context)
       } else {
-        randomizer = randomizerProvider.getRandomizerByType(field.getType(), context);
+        randomizer = randomizerProvider.getRandomizerByType(field.type, context)
       }
     }
-    return randomizer;
+    return randomizer
   }
 
-  @Nullable
-  private Object generateRandomValue(final Field field, final RandomizationContext context) {
-    Class<?> fieldType = field.getType();
-    Type fieldGenericType = field.getGenericType();
+  private fun generateRandomValue(field: Field, context: RandomizationContext): Any? {
+    val fieldType = field.type
+    val fieldGenericType = field.genericType
 
-    if (isArrayType(fieldType)) {
-      return arrayPopulator.getRandomArray(fieldType, context);
+    return if (isArrayType(fieldType)) {
+      arrayPopulator.getRandomArray(fieldType, context)
     } else if (isCollectionType(fieldType)) {
-      return collectionPopulator.getRandomCollection(field, context);
+      collectionPopulator.getRandomCollection(field, context)
     } else if (isMapType(fieldType)) {
-      return mapPopulator.getRandomMap(field, context);
+      mapPopulator.getRandomMap(field, context)
     } else if (isOptionalType(fieldType)) {
-      return optionalPopulator.getRandomOptional(field, context);
+      optionalPopulator.getRandomOptional(field, context)
     } else {
-      if (context.getParameters().isScanClasspathForConcreteTypes()
-          && isAbstract(fieldType)
-          && !isEnumType(fieldType) /*enums can be abstract, but cannot inherit*/) {
-        List<Class<?>> parameterizedTypes =
-            filterSameParameterizedTypes(getPublicConcreteSubTypesOf(fieldType), fieldGenericType);
+      if (
+        context.parameters.isScanClasspathForConcreteTypes &&
+          isAbstract(fieldType) &&
+          !isEnumType(fieldType) /*enums can be abstract, but cannot inherit*/
+      ) {
+        val parameterizedTypes: List<Class<*>> =
+          filterSameParameterizedTypes(getPublicConcreteSubTypesOf(fieldType), fieldGenericType)
         if (parameterizedTypes.isEmpty()) {
-          throw new ObjectCreationException(
-              "Unable to find a matching concrete subtype of type: " + fieldType);
+          throw ObjectCreationException(
+            "Unable to find a matching concrete subtype of type: $fieldType"
+          )
         } else {
-          Class<?> randomConcreteSubType =
-              parameterizedTypes.get(kRandom.nextInt(parameterizedTypes.size()));
-          return kRandom.doPopulateBean(randomConcreteSubType, context);
+          val randomConcreteSubType = parameterizedTypes.random(kRandom.asKotlinRandom())
+          kRandom.doPopulateBean(randomConcreteSubType, context)
         }
       } else {
-        Type genericType = field.getGenericType();
+        val genericType = field.genericType
         if (isTypeVariable(genericType)) {
           // if generic type, try to retrieve actual type from hierarchy
-          Class<?> type = getParametrizedType(field, context);
-          return kRandom.doPopulateBean(type, context);
+          val type = getParametrizedType(field, context)
+          kRandom.doPopulateBean(type, context)
+        } else {
+          kRandom.doPopulateBean(fieldType, context)
         }
-        return kRandom.doPopulateBean(fieldType, context);
       }
     }
   }
 
-  private Class<?> getParametrizedType(Field field, RandomizationContext context) {
-    Class<?> declaringClass = field.getDeclaringClass();
-    TypeVariable<? extends Class<?>>[] typeParameters = declaringClass.getTypeParameters();
-    Type genericSuperclass = getGenericSuperClass(context);
-    ParameterizedType parameterizedGenericSuperType = (ParameterizedType) genericSuperclass;
-    Type[] actualTypeArguments = parameterizedGenericSuperType.getActualTypeArguments();
-    Type actualTypeArgument = null;
-    for (int i = 0; i < typeParameters.length; i++) {
-      if (field.getGenericType().equals(typeParameters[i])) {
-        actualTypeArgument = actualTypeArguments[i];
+  private fun getParametrizedType(field: Field, context: RandomizationContext): Class<*> {
+    val declaringClass = field.declaringClass
+    val typeParameters: Array<out TypeVariable<out Class<*>?>?>? =
+      declaringClass.getTypeParameters()
+    val genericSuperclass = getGenericSuperClass(context)
+    val parameterizedGenericSuperType = genericSuperclass as ParameterizedType
+    val actualTypeArguments = parameterizedGenericSuperType.actualTypeArguments
+    var actualTypeArgument: Type? = null
+    for (i in typeParameters?.indices!!) {
+      if (field.genericType == typeParameters[i]) {
+        actualTypeArgument = actualTypeArguments[i]
       }
     }
     if (actualTypeArgument == null) {
-      return field.getClass();
+      return field.javaClass
     }
-    Class<?> aClass;
-    String typeName = null;
+    val aClass: Class<*>
+    var typeName: String? = null
     try {
-      typeName = actualTypeArgument.getTypeName();
-      aClass = Class.forName(typeName);
-    } catch (ClassNotFoundException e) {
-      String message =
-          String.format(
-              "Unable to load class %s of generic field %s in class %s. Please refer to the"
-                  + " documentation as this generic type may not be supported for randomization.",
-              typeName, field.getName(), field.getDeclaringClass().getName());
-      throw new ObjectCreationException(message, e);
+      typeName = actualTypeArgument.typeName
+      aClass = Class.forName(typeName)
+    } catch (e: ClassNotFoundException) {
+      val message =
+        String.format(
+          "Unable to load class %s of generic field %s in class %s. Please refer to the" +
+            " documentation as this generic type may not be supported for randomization.",
+          typeName,
+          field.name,
+          field.declaringClass.getName(),
+        )
+      throw ObjectCreationException(message, e)
     }
-    return aClass;
+    return aClass
   }
 
   // find the generic base class in the hierarchy (which might not be the first super type)
-  private Type getGenericSuperClass(RandomizationContext context) {
-    Class<?> targetType = context.getTargetType();
-    Type genericSuperclass = targetType.getGenericSuperclass();
-    while (targetType != null && !(genericSuperclass instanceof ParameterizedType)) {
-      targetType = targetType.getSuperclass();
+  private fun getGenericSuperClass(context: RandomizationContext): Type {
+    var targetType: Class<*>? = context.targetType
+    var genericSuperclass = targetType!!.getGenericSuperclass()
+    while (targetType != null && genericSuperclass !is ParameterizedType) {
+      targetType = targetType.getSuperclass()
       if (targetType != null) {
-        genericSuperclass = targetType.getGenericSuperclass();
+        genericSuperclass = targetType.getGenericSuperclass()
       }
     }
-    return genericSuperclass;
+    return genericSuperclass
   }
 }

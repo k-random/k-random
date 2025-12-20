@@ -23,7 +23,10 @@
  */
 package io.github.krandom.beans;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class CustomList implements List<String> {
 
