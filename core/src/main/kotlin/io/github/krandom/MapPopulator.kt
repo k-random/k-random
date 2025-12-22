@@ -113,8 +113,8 @@ constructor(private val kRandom: KRandom, private val objectFactory: ObjectFacto
     val valueType = fieldGenericType.actualTypeArguments[1]
     if (isPopulatable(keyType) && isPopulatable(valueType)) {
       repeat(randomSize) {
-        val randomKey: Any? = kRandom.doPopulateBean(keyType as Class<*>, context)
-        val randomValue: Any? = kRandom.doPopulateBean(valueType as Class<*>, context)
+        val randomKey: Any? = kRandom.doPopulateBean(keyType as Class<Any>, context)
+        val randomValue: Any? = kRandom.doPopulateBean(valueType as Class<Any>, context)
         if (randomKey != null && randomValue != null) {
           map[randomKey] = randomValue
         }

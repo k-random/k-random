@@ -31,6 +31,7 @@ import java.lang.reflect.Array
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
+@Suppress("UNCHECKED_CAST")
 class ArrayPopulator
 /**
  * Create a new array populator backed by the given [KRandom] instance.
@@ -60,7 +61,7 @@ class ArrayPopulator
     val randomSize = getRandomArraySize(context.parameters)
     val result = Array.newInstance(componentType, randomSize)
     for (i in 0..<randomSize) {
-      Array.set(result, i, kRandom.doPopulateBean(componentType, context))
+      Array.set(result, i, kRandom.doPopulateBean(componentType as Class<Any>, context))
     }
     return result
   }

@@ -21,19 +21,8 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom.beans
 
-public abstract class MammalImpl implements Mammal {
-
-  private String name;
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.name = name;
-  }
+abstract class MammalImpl : Mammal {
+  override var name: String? = null
 }

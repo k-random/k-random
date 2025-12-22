@@ -21,26 +21,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom.beans
 
-public class PersonTuple {
-  public Person left, right;
-
-  public PersonTuple() {}
-
-  public Person getLeft() {
-    return this.left;
-  }
-
-  public Person getRight() {
-    return this.right;
-  }
-
-  public void setLeft(Person left) {
-    this.left = left;
-  }
-
-  public void setRight(Person right) {
-    this.right = right;
-  }
+class PersonTuple {
+  var left: Person? = null
+  var right: Person? = null
 }

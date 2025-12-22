@@ -21,120 +21,50 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom.beans
 
-import io.github.krandom.annotation.Exclude;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import io.github.krandom.annotation.Exclude
+import java.util.Date
 
-@SuppressWarnings("unused")
-public class Person extends Human implements Comparable<Person> {
+@Suppress("unused")
+open class Person : Human(), Comparable<Person> {
+  @Transient var email: String? = null
 
-  protected transient String email;
+  var gender: Gender? = null
 
-  protected Gender gender;
+  var address: Address? = null
 
-  protected Address address;
+  var birthDate: Date? = null
 
-  protected Date birthDate;
+  var phoneNumber: String? = null
 
-  protected String phoneNumber;
+  var nicknames: MutableList<String?>? = null
 
-  protected List<String> nicknames;
+  var parent: Person? = null
 
-  protected Person parent;
+  @Exclude var excluded: String? = null
 
-  @Exclude protected String excluded;
-
-  public String getEmail() {
-    return email;
+  override fun compareTo(other: Person): Int {
+    return this.name!!.compareTo(other.name!!)
   }
 
-  public void setEmail(String email) {
-    this.email = email;
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+
+    val person = other as Person
+
+    if (email != person.email) return false
+    if (gender != person.gender) return false
+    if (address != person.address) return false
+    return phoneNumber == person.phoneNumber
   }
 
-  public Gender getGender() {
-    return gender;
-  }
-
-  public void setGender(Gender gender) {
-    this.gender = gender;
-  }
-
-  public Address getAddress() {
-    return address;
-  }
-
-  public void setAddress(Address address) {
-    this.address = address;
-  }
-
-  public List<String> getNicknames() {
-    return nicknames;
-  }
-
-  public void setNicknames(List<String> nicknames) {
-    this.nicknames = nicknames;
-  }
-
-  public Date getBirthDate() {
-    return birthDate;
-  }
-
-  public void setBirthDate(Date birthdate) {
-    this.birthDate = birthdate;
-  }
-
-  public String getPhoneNumber() {
-    return phoneNumber;
-  }
-
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
-  }
-
-  public String getExcluded() {
-    return excluded;
-  }
-
-  public void setExcluded(String excluded) {
-    this.excluded = excluded;
-  }
-
-  public Person getParent() {
-    return parent;
-  }
-
-  public void setParent(Person parent) {
-    this.parent = parent;
-  }
-
-  @Override
-  public int compareTo(Person person) {
-    return name.compareTo(person.getName());
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    Person person = (Person) o;
-
-    if (!Objects.equals(email, person.email)) return false;
-    if (gender != person.gender) return false;
-    if (!Objects.equals(address, person.address)) return false;
-    return !(!Objects.equals(phoneNumber, person.phoneNumber));
-  }
-
-  @Override
-  public int hashCode() {
-    int result = email != null ? email.hashCode() : 0;
-    result = 31 * result + (gender != null ? gender.hashCode() : 0);
-    result = 31 * result + (address != null ? address.hashCode() : 0);
-    result = 31 * result + (phoneNumber != null ? phoneNumber.hashCode() : 0);
-    return result;
+  override fun hashCode(): Int {
+    var result = email?.hashCode() ?: 0
+    result = 31 * result + (gender?.hashCode() ?: 0)
+    result = 31 * result + (address?.hashCode() ?: 0)
+    result = 31 * result + (phoneNumber?.hashCode() ?: 0)
+    return result
   }
 }

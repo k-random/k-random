@@ -21,11 +21,8 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom.beans
 
-public interface Mammal {
-
-  String getName();
-
-  void setName(String name);
+interface Mammal {
+  var name: String?
 }

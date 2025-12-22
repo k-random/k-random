@@ -21,21 +21,8 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom.beans
 
-import java.util.Set;
-
-public class SocialPerson extends Person {
-
-  private Set<Person> friends;
-
-  public SocialPerson() {}
-
-  public Set<Person> getFriends() {
-    return friends;
-  }
-
-  public void setFriends(Set<Person> friends) {
-    this.friends = friends;
-  }
+class SocialPerson : Person() {
+  var friends: MutableSet<Person>? = null
 }

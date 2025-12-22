@@ -143,19 +143,19 @@ internal class SeedParameterTests {
         name = "lGnpmpDuLcCWwviSUKnVxGJJtsu"
         email = "yedUsFwdkelQbxeTeQOvaScfqIOOmaa"
         phoneNumber = "dpHYZGhtgdntugzvvKAXLhM"
-        gender = Gender.FEMALE
+        gender = Gender.NONBINARY
         address =
-          Address().apply {
-            city = "VLhpfQGTMDYpsBZxvfBoeygjb"
-            country = "UMaAIKKIkknjWEXJUfPxxQHeWKEJ"
-            zipCode = "RYtGKbgicZaHCBRQDSx"
+          Address(
+            city = "VLhpfQGTMDYpsBZxvfBoeygjb",
+            country = "UMaAIKKIkknjWEXJUfPxxQHeWKEJ",
+            zipCode = "RYtGKbgicZaHCBRQDSx",
             street =
               Street().apply {
                 name = "JxkyvRnL"
                 number = -1188957731
                 streetType = -35
-              }
-          }
+              },
+          )
       }
   }
 }

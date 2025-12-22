@@ -23,10 +23,10 @@
  */
 package io.github.krandom.beans;
 
-public abstract class GenericBaseClass<T> {
+public abstract class GenericBaseClassSeparateFile<T> {
   private final T x;
 
-  public GenericBaseClass(T x) {
+  public GenericBaseClassSeparateFile(T x) {
     this.x = x;
   }
 

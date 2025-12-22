@@ -21,49 +21,13 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom.beans
 
-import java.util.List;
+class Node {
+  var value: String? = null
 
-public class Node {
+  var left: Node? = null
+  var right: Node? = null
 
-  private String value;
-
-  private Node left, right;
-
-  private List<Node> parents;
-
-  public Node() {}
-
-  public String getValue() {
-    return this.value;
-  }
-
-  public Node getLeft() {
-    return this.left;
-  }
-
-  public Node getRight() {
-    return this.right;
-  }
-
-  public List<Node> getParents() {
-    return this.parents;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  public void setLeft(Node left) {
-    this.left = left;
-  }
-
-  public void setRight(Node right) {
-    this.right = right;
-  }
-
-  public void setParents(List<Node> parents) {
-    this.parents = parents;
-  }
+  var parents: MutableList<Node>? = null
 }

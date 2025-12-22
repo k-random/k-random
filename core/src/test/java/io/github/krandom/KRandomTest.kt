@@ -21,510 +21,447 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static io.github.krandom.FieldPredicates.*;
-import static java.sql.Timestamp.valueOf;
-import static java.time.LocalDateTime.of;
-import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.assertj.core.util.Arrays.asList;
-import static org.mockito.Mockito.when;
+import io.github.krandom.FieldPredicates.hasModifiers
+import io.github.krandom.FieldPredicates.inClass
+import io.github.krandom.FieldPredicates.named
+import io.github.krandom.FieldPredicates.ofType
+import io.github.krandom.api.Randomizer
+import io.github.krandom.beans.AbstractBean
+import io.github.krandom.beans.BoundedBaseClass
+import io.github.krandom.beans.Gender
+import io.github.krandom.beans.GenericBaseClassSeparateFile
+import io.github.krandom.beans.Human
+import io.github.krandom.beans.ImmutableBean
+import io.github.krandom.beans.Node
+import io.github.krandom.beans.Person
+import io.github.krandom.beans.Salary
+import io.github.krandom.beans.Street
+import io.github.krandom.beans.TestBean
+import io.github.krandom.beans.TestData
+import io.github.krandom.beans.TestEnum
+import io.github.krandom.util.ReflectionUtils
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.inspectors.forAll
+import io.kotest.matchers.collections.shouldBeIn
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.comparables.shouldBeGreaterThan
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.ranges.shouldBeIn
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotBeEmpty
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import java.lang.reflect.Modifier
+import java.text.SimpleDateFormat
+import java.util.Date
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.fail
 
-import io.github.krandom.api.Randomizer;
-import io.github.krandom.beans.*;
-import io.github.krandom.util.ReflectionUtils;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.stream.Stream;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-@ExtendWith(MockitoExtension.class)
-class KRandomTest {
-
-  private static final String FOO = "foo";
-
-  @Mock private Randomizer<String> randomizer;
-
-  private KRandom kRandom;
+@Suppress("ArrayInDataClass")
+@ExtendWith(MockKExtension::class)
+internal class KRandomTest {
+  @MockK private lateinit var randomizer: Randomizer<String>
+  private lateinit var kRandom: KRandom
 
   @BeforeEach
-  void setUp() {
-    kRandom = new KRandom();
+  fun setUp() {
+    kRandom = KRandom()
   }
 
   @Test
-  void generatedBeansShouldBeCorrectlyPopulated() {
-    Person person = kRandom.nextObject(Person.class);
-    validatePerson(person);
+  fun `generated beans should be correctly populated`() {
+    val person = kRandom.nextObject(Person::class.java)
+
+    validatePerson(person)
   }
 
   @Test
-  void shouldFailIfSetterInvocationFails() {
-    KRandom kRandom = new KRandom();
-    Throwable thrown = catchThrowable(() -> kRandom.nextObject(Salary.class));
+  fun `should fail if setter invocation fails`() {
+    val kRandom = KRandom()
 
-    assertThat(thrown)
-        .isInstanceOf(ObjectCreationException.class)
-        .hasMessageContaining(
-            "Unable to create a random instance of type class io.github.krandom.beans.Salary");
+    val thrown = shouldThrow<ObjectCreationException> { kRandom.nextObject(Salary::class.java) }
 
-    Throwable cause = thrown.getCause();
-    assertThat(cause)
-        .isInstanceOf(ObjectCreationException.class)
-        .hasMessageContaining(
-            "Unable to invoke setter for field amount of class io.github.krandom.beans.Salary");
-
-    Throwable rootCause = cause.getCause();
-    assertThat(rootCause)
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining("Amount must be positive");
+    thrown.message shouldContain
+      "Unable to create a random instance of type class io.github.krandom.beans.Salary"
+    thrown.cause.shouldNotBeNull()
+    thrown.cause.shouldBeInstanceOf<ObjectCreationException>()
+    thrown.cause!!.message shouldContain
+      "Unable to invoke setter for field amount of class io.github.krandom.beans.Salary"
+    thrown.cause!!.cause.shouldNotBeNull()
+    thrown.cause!!.cause.shouldBeInstanceOf<IllegalArgumentException>()
+    thrown.cause!!.cause!!.message shouldContain "Amount must be positive"
   }
 
   @Test
-  void finalFieldsShouldBePopulated() {
-    Person person = kRandom.nextObject(Person.class);
+  fun `final fields should be populated`() {
+    val person = kRandom.nextObject(Person::class.java)
 
-    assertThat(person).isNotNull();
-    assertThat(person.getId()).isNotNull();
+    person.shouldNotBeNull()
+    person.id.shouldNotBeNull()
   }
 
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
-  void staticFieldsShouldNotBePopulated() {
+  fun `static fields should not be populated`() {
     try {
-      Human human = kRandom.nextObject(Human.class);
-      assertThat(human).isNotNull();
-    } catch (Exception e) {
-      fail("Should be able to populate types with private static final fields.", e);
+      val human = kRandom.nextObject(Human::class.java)
+
+      human.shouldNotBeNull()
+    } catch (e: Exception) {
+      fail("Should be able to populate types with static fields.", e)
     }
   }
 
   @Test
-  void immutableBeansShouldBePopulated() {
-    final ImmutableBean immutableBean = kRandom.nextObject(ImmutableBean.class);
-    assertThat(immutableBean).hasNoNullFieldsOrProperties();
+  fun `immutable beans should be populated`() {
+    val immutableBean = kRandom.nextObject(ImmutableBean::class.java)
+
+    immutableBean.shouldNotBeNull()
+    immutableBean.finalCollection.shouldNotBeNull()
+    immutableBean.finalValue.shouldNotBeNull()
   }
 
   @Test
-  void generatedBeansNumberShouldBeEqualToSpecifiedNumber() {
-    Stream<Person> persons = kRandom.objects(Person.class, 2);
+  fun `generated beans number should be equal to specified number`() {
+    val persons: List<Person> = kRandom.objects(Person::class.java, 2)
 
-    assertThat(persons).hasSize(2).hasOnlyElementsOfType(Person.class);
+    persons shouldHaveSize 2
+    persons.forAll { it.shouldBeInstanceOf<Person>() }
   }
 
   @Test
-  void customRandomzierForFieldsShouldBeUsedToPopulateObjects() {
-    when(randomizer.getRandomValue()).thenReturn(FOO);
+  fun `custom randomzier for fields should be used to populate objects`() {
+    every { randomizer.getRandomValue() } returns FOO
+    val parameters =
+      KRandomParameters()
+        .randomize(
+          named("name").and(ofType(String::class.java)).and(inClass(Human::class.java)),
+          randomizer,
+        )
+    kRandom = KRandom(parameters)
 
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .randomize(
-                named("name").and(ofType(String.class)).and(inClass(Human.class)), randomizer);
-    kRandom = new KRandom(parameters);
+    val person = kRandom.nextObject(Person::class.java)
 
-    Person person = kRandom.nextObject(Person.class);
-
-    assertThat(person).isNotNull();
-    assertThat(person.getName()).isEqualTo(FOO);
+    person.shouldNotBeNull()
+    person.name shouldBe FOO
   }
 
   @Test
-  void customRandomzierForFieldsShouldBeUsedToPopulateFieldsWithOneModifier() {
-    when(randomizer.getRandomValue()).thenReturn(FOO);
+  fun `custom randomzier for fields should be used to populate fields with one modifier`() {
+    every { randomizer.getRandomValue() } returns FOO
 
-    // Given
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .randomize(hasModifiers(Modifier.TRANSIENT).and(ofType(String.class)), randomizer);
-    kRandom = new KRandom(parameters);
+    val parameters =
+      KRandomParameters()
+        .randomize(hasModifiers(Modifier.TRANSIENT).and(ofType(String::class.java)), randomizer)
+    kRandom = KRandom(parameters)
 
-    // When
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom.nextObject(Person::class.java)
 
-    // Then
-    assertThat(person).isNotNull();
-    assertThat(person.getEmail()).isNotNull();
-    assertThat(person.getEmail()).isEqualTo(FOO);
-    assertThat(person.getName()).isNotNull();
-    assertThat(person.getName()).isNotEqualTo(FOO);
+    person.shouldNotBeNull()
+    person.email.shouldNotBeNull()
+    person.email shouldBe FOO
+    person.name.shouldNotBeNull()
+    person.name shouldNotBe FOO
   }
 
   @Test
-  void customRandomzierForFieldsShouldBeUsedToPopulateFieldsWithMultipleModifier() {
-    // Given
-    when(randomizer.getRandomValue()).thenReturn(FOO);
-    int modifiers = Modifier.TRANSIENT | Modifier.PROTECTED;
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .randomize(hasModifiers(modifiers).and(ofType(String.class)), randomizer);
-    kRandom = new KRandom(parameters);
+  fun `custom randomzier for fields should be used to populate fields with multiple modifier`() {
+    every { randomizer.getRandomValue() } returns FOO
+    val modifiers = Modifier.TRANSIENT or Modifier.PRIVATE
+    val parameters =
+      KRandomParameters()
+        .randomize(hasModifiers(modifiers).and(ofType(String::class.java)), randomizer)
+    kRandom = KRandom(parameters)
 
-    // When
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom.nextObject(Person::class.java)
 
-    // Then
-    assertThat(person.getEmail()).isEqualTo(FOO);
-    assertThat(person.getName()).isNotEqualTo(FOO);
+    person.shouldNotBeNull()
+    person.email shouldBe FOO
+    person.name shouldNotBe FOO
   }
 
   @Test
-  void customRandomzierForTypesShouldBeUsedToPopulateObjects() {
-    when(randomizer.getRandomValue()).thenReturn(FOO);
+  fun `custom randomzier for types should be used to populate objects`() {
+    every { randomizer.getRandomValue() } returns FOO
+    val parameters: KRandomParameters =
+      KRandomParameters().randomize(String::class.java, randomizer)
+    kRandom = KRandom(parameters)
 
-    KRandomParameters parameters = new KRandomParameters().randomize(String.class, randomizer);
-    kRandom = new KRandom(parameters);
+    val string = kRandom.nextObject(String::class.java)
 
-    String string = kRandom.nextObject(String.class);
-
-    assertThat(string).isEqualTo(FOO);
+    string shouldBe FOO
   }
 
   @Test
-  void customRandomzierForTypesShouldBeUsedToPopulateFields() {
-    when(randomizer.getRandomValue()).thenReturn(FOO);
+  fun `custom randomzier for types should be used to populate fields`() {
+    every { randomizer.getRandomValue() } returns FOO
+    val parameters: KRandomParameters =
+      KRandomParameters().randomize(String::class.java, randomizer)
+    kRandom = KRandom(parameters)
 
-    KRandomParameters parameters = new KRandomParameters().randomize(String.class, randomizer);
-    kRandom = new KRandom(parameters);
+    val human = kRandom.nextObject(Human::class.java)
 
-    Human human = kRandom.nextObject(Human.class);
-
-    assertThat(human.getName()).isEqualTo(FOO);
+    human.shouldNotBeNull()
+    human.name shouldBe FOO
   }
 
   @Test
-  void whenSpecifiedNumberOfBeansToGenerateIsNegative_thenShouldThrowAnIllegalArgumentException() {
-    assertThatThrownBy(() -> kRandom.objects(Person.class, -2))
-        .isInstanceOf(IllegalArgumentException.class);
+  fun `when specified number to generate is negative then should throw an illegal argument exception`() {
+    shouldThrow<IllegalArgumentException> { kRandom.objects(Person::class.java, -2) }
   }
 
   @Test
-  void whenUnableToInstantiateField_thenShouldThrowObjectGenerationException() {
-    assertThatThrownBy(() -> kRandom.nextObject(AbstractBean.class))
-        .isInstanceOf(ObjectCreationException.class);
+  fun `when unable to instantiate field then should throw object generation exception`() {
+    shouldThrow<ObjectCreationException> { kRandom.nextObject(AbstractBean::class.java) }
   }
 
   @Test
-  void beansWithRecursiveStructureMustNotCauseStackOverflowException() {
-    Node node = kRandom.nextObject(Node.class);
+  fun `beans with recursive structure must not cause stack overflow exception`() {
+    val node = kRandom.nextObject(Node::class.java)
 
-    assertThat(node).hasNoNullFieldsOrProperties();
+    node.shouldNotBeNull()
+    node.left.shouldNotBeNull()
+    node.right.shouldNotBeNull()
+    node.parents.shouldNotBeNull()
+    node.value.shouldNotBeNull()
   }
 
   @Test
-  void objectTypeMustBeCorrectlyPopulated() {
-    Object object = kRandom.nextObject(Object.class);
+  fun `any type must be correctly populated`() {
+    val any = kRandom.nextObject(Any::class.java)
 
-    assertThat(object).isNotNull();
+    any.shouldNotBeNull()
   }
 
   @Test
-  void annotatedRandomizerArgumentsShouldBeCorrectlyParsed() {
-    TestData data = kRandom.nextObject(TestData.class);
+  fun `annotated randomizer arguments should be correctly parsed`() {
+    val startDateString = "2016-01-10 00:00:00"
+    val endDateString = "2016-01-30 23:59:59"
+    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    val startDate: Date = formatter.parse(startDateString)
+    val endDate: Date = formatter.parse(endDateString)
 
-    then(data.getDate())
-        .isBetween(valueOf(of(2016, 1, 10, 0, 0, 0)), valueOf(of(2016, 1, 30, 23, 59, 59)));
-    then(data.getPrice()).isBetween(200, 500);
+    val data = kRandom.nextObject(TestData::class.java)
+
+    data.shouldNotBeNull()
+    data.date shouldBeIn startDate..endDate
+    data.price shouldBeIn 200..500
   }
 
   @Test
-  void nextEnumShouldNotAlwaysReturnTheSameValue() {
-    HashSet<TestEnum> distinctEnumBeans = new HashSet<>();
-    for (int i = 0; i < 10; i++) {
-      distinctEnumBeans.add(kRandom.nextObject(TestEnum.class));
-    }
+  fun `next enum should not always return the same value`() {
+    val distinctEnumBeans = HashSet<TestEnum?>()
 
-    assertThat(distinctEnumBeans.size()).isGreaterThan(1);
+    repeat(10) { distinctEnumBeans.add(kRandom.nextObject(TestEnum::class.java)) }
+
+    distinctEnumBeans.size shouldBeGreaterThan 1
   }
 
   @Test
-  void fieldsOfTypeClassShouldBeSkipped() {
+  fun `fields of type class should be skipped`() {
     try {
-      TestBean testBean = kRandom.nextObject(TestBean.class);
-      assertThat(testBean.getException()).isNull();
-      assertThat(testBean.getClazz()).isNull();
-    } catch (Exception e) {
-      fail("Should skip fields of type Class");
+      val testBean = kRandom.nextObject(TestBean::class.java)
+
+      testBean.shouldNotBeNull()
+      testBean.exception.shouldBeNull()
+      testBean.clazz.shouldBeNull()
+    } catch (_: Exception) {
+      fail("Should skip fields of type Class")
     }
   }
 
   @Test
-  void differentCollectionsShouldBeRandomizedWithDifferentSizes() {
-    // given
-    class Foo {
-      List<String> names;
-      List<String> addresses;
-    }
+  fun `different collections should be randomized with different sizes`() {
+    data class Foo(val names: List<String?>, val addresses: List<String?>)
 
-    // when
-    Foo foo = new KRandom().nextObject(Foo.class);
+    val foo = KRandom().nextObject(Foo::class.java)
 
-    // then
-    assertThat(foo.names.size()).isNotEqualTo(foo.addresses.size());
+    foo.shouldNotBeNull()
+    foo.names.size shouldNotBe foo.addresses.size
   }
 
   @Test
-  void differentArraysShouldBeRandomizedWithDifferentSizes() {
-    // given
-    class Foo {
-      String[] names;
-      String[] addresses;
-    }
+  fun `different arrays should be randomized with different sizes`() {
+    data class Foo(val names: Array<String>, val addresses: Array<String>)
 
-    // when
-    Foo foo = new KRandom().nextObject(Foo.class);
+    val foo = KRandom().nextObject(Foo::class.java)
 
-    // then
-    assertThat(foo.names.length).isNotEqualTo(foo.addresses.length);
+    foo.shouldNotBeNull()
+    foo.names.size shouldNotBe foo.addresses.size
   }
 
   @Test
-  void testGenericTypeRandomization() {
-    // given
-    class Base<T> {
-      T t;
-    }
-    class Concrete extends Base<String> {}
+  fun `test generic type randomization`() {
+    val concrete = kRandom.nextObject(Concrete::class.java)
 
-    // when
-    Concrete concrete = kRandom.nextObject(Concrete.class);
-
-    // then
-    assertThat(concrete.t).isInstanceOf(String.class);
-    assertThat(concrete.t).isNotEmpty();
+    concrete.shouldNotBeNull()
+    concrete.t.shouldNotBeNull()
+    concrete.t.shouldBeInstanceOf<String>()
+    concrete.t!!.isNotEmpty()
   }
 
   @Test
-  void testMultipleGenericTypeRandomization() {
-    // given
-    class Base<T, S> {
-      T t;
-      S s;
-    }
-    class Concrete extends Base<String, Long> {}
+  fun `test multiple generic type randomization`() {
+    val concreteMultipleGeneric = kRandom.nextObject(ConcreteMultipleGeneric::class.java)
 
-    // when
-    Concrete concrete = kRandom.nextObject(Concrete.class);
-
-    // then
-    assertThat(concrete.t).isInstanceOf(String.class);
-    assertThat(concrete.s).isInstanceOf(Long.class);
-    assertThat(concrete.t).isNotEmpty();
-    assertThat(concrete.s).isNotNull();
+    concreteMultipleGeneric.shouldNotBeNull()
+    concreteMultipleGeneric.t.shouldNotBeNull()
+    concreteMultipleGeneric.t.shouldBeInstanceOf<String>()
+    concreteMultipleGeneric.t.shouldNotBeEmpty()
+    concreteMultipleGeneric.s.shouldNotBeNull()
+    concreteMultipleGeneric.s.shouldBeInstanceOf<Long>()
   }
 
   @Test
-  void genericBaseClass() {
-    // given
-    class Concrete extends GenericBaseClass<Integer> {
-      private final String y;
+  fun `generic base class`() {
+    val concreteWithGenericBaseClass = kRandom.nextObject(ConcreteWithGenericBaseClass::class.java)
 
-      public Concrete(int x, String y) {
-        super(x);
-        this.y = y;
-      }
-
-      public String getY() {
-        return y;
-      }
-    }
-
-    // when
-    Concrete concrete = kRandom.nextObject(Concrete.class);
-
-    // then
-    assertThat(concrete.getX().getClass()).isEqualTo(Integer.class);
-    assertThat(concrete.getY().getClass()).isEqualTo(String.class);
+    concreteWithGenericBaseClass.shouldNotBeNull()
+    concreteWithGenericBaseClass.x.shouldBeInstanceOf<Int>()
+    concreteWithGenericBaseClass.y.shouldBeInstanceOf<String>()
   }
 
   @Test
-  void genericBaseClassWithBean() {
-    // given
-    class Concrete extends GenericBaseClass<Street> {
-      private final String y;
+  fun `generic base class with bean`() {
+    class Concrete(x: Street?, val y: String?) : GenericBaseClassSeparateFile<Street?>(x)
 
-      public Concrete(Street x, String y) {
-        super(x);
-        this.y = y;
-      }
+    val concrete = kRandom.nextObject(Concrete::class.java)
 
-      public String getY() {
-        return y;
-      }
-    }
-
-    // when
-    Concrete concrete = kRandom.nextObject(Concrete.class);
-
-    // then
-    assertThat(concrete.getX().getClass()).isEqualTo(Street.class);
-    assertThat(concrete.getY().getClass()).isEqualTo(String.class);
+    concrete.shouldNotBeNull()
+    concrete.x.shouldNotBeNull()
+    concrete.x.shouldBeInstanceOf<Street>()
+    concrete.y.shouldNotBeNull()
+    concrete.y.shouldBeInstanceOf<String>()
   }
 
   @Test
-  void boundedBaseClass() {
-    // given
-    class Concrete extends BoundedBaseClass<BoundedBaseClass.IntWrapper> {
-      private final String y;
+  fun `bounded base class`() {
+    class Concrete(x: IntWrapper?, val y: String?) :
+      BoundedBaseClass<BoundedBaseClass.IntWrapper?>(x)
 
-      public Concrete(BoundedBaseClass.IntWrapper x, String y) {
-        super(x);
-        this.y = y;
-      }
+    val concrete = kRandom.nextObject(Concrete::class.java)
 
-      public String getY() {
-        return y;
-      }
-    }
-
-    // when
-    Concrete concrete = kRandom.nextObject(Concrete.class);
-
-    // then
-    assertThat(concrete.getX().getClass()).isEqualTo(BoundedBaseClass.IntWrapper.class);
-    assertThat(concrete.getY().getClass()).isEqualTo(String.class);
+    concrete.shouldNotBeNull()
+    concrete.x.shouldNotBeNull()
+    concrete.x.shouldBeInstanceOf<BoundedBaseClass.IntWrapper>()
+    concrete.y.shouldNotBeNull()
+    concrete.y.shouldBeInstanceOf<String>()
   }
 
   @Test
-  void testMultipleGenericLevels() {
-    // given
-    abstract class BaseClass<T> {
-      protected final T x;
+  fun testMultipleGenericLevels() {
+    abstract class BaseClass<T>(val x: T?)
 
-      BaseClass(T x) {
-        this.x = x;
-      }
+    abstract class GenericBaseClass<T, P>(x: T?, val y: P?) : BaseClass<T?>(x)
 
-      public T getX() {
-        return x;
-      }
-    }
+    class Concrete(x: String?, y: Long?) : GenericBaseClass<String?, Long?>(x, y)
 
-    abstract class GenericBaseClass<T, P> extends BaseClass<T> {
-      protected final P y;
+    val concrete = kRandom.nextObject(Concrete::class.java)
 
-      GenericBaseClass(T x, P y) {
-        super(x);
-        this.y = y;
-      }
-
-      public P getY() {
-        return y;
-      }
-    }
-
-    class Concrete extends GenericBaseClass<String, Long> {
-      Concrete(String x, Long y) {
-        super(x, y);
-      }
-    }
-
-    // when
-    Concrete concrete = kRandom.nextObject(Concrete.class);
-
-    // then
-    assertThat(concrete.getX()).isInstanceOf(String.class);
-    assertThat(concrete.getY()).isInstanceOf(Long.class);
+    concrete.shouldNotBeNull()
+    concrete.x.shouldNotBeNull()
+    concrete.y.shouldNotBeNull()
+    concrete.x.shouldBeInstanceOf<String>()
+    concrete.y.shouldBeInstanceOf<Long>()
   }
 
   @Test
-  void testComplexGenericTypeRandomization() { // not supported
-    // given
-    class Base<T> {
-      T t;
+  fun testComplexGenericTypeRandomization() { // not supported
+    open class Base<T> {
+      var t: T? = null
     }
-    class Concrete extends Base<List<String>> {}
 
-    assertThatThrownBy(
-            // when
-            () -> kRandom.nextObject(Concrete.class))
-        // then
-        .isInstanceOf(ObjectCreationException.class)
-        .hasMessage(
-            "Unable to create a random instance of type class"
-                + " io.github.krandom.KRandomTest$7Concrete");
+    class Concrete : Base<MutableList<String?>?>()
+
+    val creationException =
+      shouldThrow<ObjectCreationException> { kRandom.nextObject(Concrete::class.java) }
+
+    creationException.message shouldContain "Unable to create a random instance of type class"
   }
 
   @Test
-  void testRootGenericType() { // intermediate type in the hierarchy is not generic
-    // given
-    abstract class BaseClass<T> {
-      protected final T x;
+  fun `test root generic type`() { // intermediate type in the hierarchy is not generic
+    val concreteFromRootGenericType = kRandom.nextObject(ConcreteFromRootGenericType::class.java)
 
-      BaseClass(T x) {
-        this.x = x;
-      }
-
-      public T getX() {
-        return x;
-      }
-    }
-    abstract class GenericBaseClass extends BaseClass<String> {
-      GenericBaseClass(String x) {
-        super(x);
-      }
-    }
-    class Concrete extends GenericBaseClass {
-      Concrete(String x) {
-        super(x);
-      }
-    }
-
-    // when
-    Concrete concrete = kRandom.nextObject(Concrete.class);
-
-    // then
-    assertThat(concrete.getX()).isInstanceOf(String.class);
+    concreteFromRootGenericType.shouldNotBeNull()
+    concreteFromRootGenericType.x.shouldBeInstanceOf<String>()
   }
 
-  private void validatePerson(final Person person) {
-    assertThat(person).isNotNull();
-    assertThat(person.getEmail()).isNotEmpty();
-    assertThat(person.getGender()).isIn(asList(Gender.values()));
-    assertThat(person.getBirthDate()).isNotNull();
-    assertThat(person.getPhoneNumber()).isNotEmpty();
-    assertThat(person.getNicknames()).isNotNull();
-    assertThat(person.getName()).isNotEmpty();
-
-    final Address address = person.getAddress();
-    assertThat(address).isNotNull();
-    assertThat(address.getCity()).isNotEmpty();
-    assertThat(address.getCountry()).isNotEmpty();
-    assertThat(address.getZipCode()).isNotEmpty();
-
-    final Street street = address.getStreet();
-    assertThat(street).isNotNull();
-    assertThat(street.getName()).isNotEmpty();
-    assertThat(street.getNumber()).isNotNull();
-    assertThat(street.getStreetType()).isNotNull();
+  private fun validatePerson(person: Person?) {
+    person.shouldNotBeNull()
+    person.email.shouldNotBeEmpty()
+    person.gender shouldBeIn Gender.entries
+    person.birthDate.shouldNotBeNull()
+    person.phoneNumber.shouldNotBeEmpty()
+    person.nicknames.shouldNotBeNull()
+    person.name.shouldNotBeEmpty()
+    val address = person.address
+    address.shouldNotBeNull()
+    address.city.shouldNotBeEmpty()
+    address.country.shouldNotBeEmpty()
+    address.zipCode.shouldNotBeEmpty()
+    val street = address.street
+    street.shouldNotBeNull()
+    street.name.shouldNotBeEmpty()
+    street.number.shouldNotBeNull()
+    street.streetType.shouldNotBeNull()
   }
 
   @Disabled("Dummy test to see possible reasons of randomization failures")
   @Test
-  void tryToRandomizeAllPublicConcreteTypesInTheClasspath() {
-    int success = 0;
-    int failure = 0;
-    List<Class<?>> publicConcreteTypes = ReflectionUtils.getPublicConcreteSubTypesOf(Object.class);
-    System.out.println(
-        "Found " + publicConcreteTypes.size() + " public concrete types in the classpath");
-    for (Class<?> aClass : publicConcreteTypes) {
+  fun `try to randomize all public concrete types in the classpath`() {
+    var success = 0
+    var failure = 0
+    val publicConcreteTypes: List<Class<*>> =
+      ReflectionUtils.getPublicConcreteSubTypesOf(Any::class.java)
+    println("Found ${publicConcreteTypes.size} public concrete types in the classpath")
+    for (aClass in publicConcreteTypes) {
       try {
-        kRandom.nextObject(aClass);
-        System.out.println(aClass.getName() + " has been successfully randomized");
-        success++;
-      } catch (Throwable e) {
-        System.err.println("Unable to populate a random instance of type: " + aClass.getName());
-        e.printStackTrace();
-        System.err.println("----------------------------------------------");
-        failure++;
+        kRandom.nextObject(aClass)
+        println("${aClass.getName()} has been successfully randomized")
+        success++
+      } catch (e: Throwable) {
+        System.err.println("Unable to populate a random instance of type: ${aClass.getName()}")
+        System.err.println(e)
+        System.err.println("----------------------------------------------")
+        failure++
       }
     }
-    System.out.println("Success: " + success);
-    System.out.println("Failure: " + failure);
+    println("Success: $success")
+    println("Failure: $failure")
+  }
+
+  open class Base<T> {
+    var t: T? = null
+  }
+
+  class Concrete : Base<String>()
+
+  open class MultipleGenericBase<T, S> {
+    var t: T? = null
+    var s: S? = null
+  }
+
+  class ConcreteMultipleGeneric : MultipleGenericBase<String?, Long?>()
+
+  class ConcreteWithGenericBaseClass(x: Int, val y: String) : GenericBaseClassSeparateFile<Int>(x)
+
+  abstract class BaseClass<T>(val x: T?)
+
+  abstract class GenericBaseClass(x: String?) : BaseClass<String?>(x)
+
+  class ConcreteFromRootGenericType(x: String?) : GenericBaseClass(x)
+
+  companion object {
+    private const val FOO = "foo"
   }
 }

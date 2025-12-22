@@ -21,439 +21,426 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom;
+package io.github.krandom
 
-import static io.github.krandom.FieldPredicates.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.krandom.FieldPredicates.hasModifiers
+import io.github.krandom.FieldPredicates.inClass
+import io.github.krandom.FieldPredicates.isAnnotatedWith
+import io.github.krandom.FieldPredicates.named
+import io.github.krandom.FieldPredicates.ofType
+import io.github.krandom.api.ContextAwareRandomizer
+import io.github.krandom.api.RandomizerContext
+import io.github.krandom.beans.Address
+import io.github.krandom.beans.Human
+import io.github.krandom.beans.Person
+import io.github.krandom.beans.Street
+import io.github.krandom.beans.Website
+import io.github.krandom.beans.exclusion.A
+import io.github.krandom.beans.exclusion.B
+import io.github.krandom.beans.exclusion.C
+import java.lang.Deprecated
+import java.lang.reflect.Modifier
+import kotlin.String
+import kotlin.Suppress
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.junit.jupiter.MockitoExtension
 
-import io.github.krandom.api.ContextAwareRandomizer;
-import io.github.krandom.api.RandomizerContext;
-import io.github.krandom.beans.*;
-import io.github.krandom.beans.exclusion.A;
-import io.github.krandom.beans.exclusion.B;
-import io.github.krandom.beans.exclusion.C;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-@ExtendWith(MockitoExtension.class)
-class FieldExclusionTest {
-
-  private KRandom kRandom;
+@ExtendWith(MockitoExtension::class)
+internal class FieldExclusionTest {
+  private var kRandom: KRandom? = null
 
   @BeforeEach
-  void setUp() {
-    kRandom = new KRandom();
+  fun setUp() {
+    kRandom = KRandom()
   }
 
   @Test
-  void excludedFieldsShouldNotBePopulated() {
+  fun excludedFieldsShouldNotBePopulated() {
     // given
-    KRandomParameters parameters = new KRandomParameters().excludeField(named("name"));
-    kRandom = new KRandom(parameters);
+    val parameters = KRandomParameters().excludeField(named("name"))
+    kRandom = KRandom(parameters)
 
     // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom!!.nextObject(Person::class.java)
 
     // then
-    assertThat(person).isNotNull();
-    assertThat(person.getName()).isNull();
+    Assertions.assertThat<Person?>(person).isNotNull()
+    Assertions.assertThat(person!!.name).isNull()
   }
 
   @Test
-  void excludedFieldsUsingSkipRandomizerShouldNotBePopulated() {
+  fun excludedFieldsUsingSkipRandomizerShouldNotBePopulated() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .excludeField(named("name").and(ofType(String.class)).and(inClass(Human.class)));
-    kRandom = new KRandom(parameters);
+    val parameters =
+      KRandomParameters()
+        .excludeField(named("name").and(ofType(String::class.java)).and(inClass(Human::class.java)))
+    kRandom = KRandom(parameters)
 
     // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom!!.nextObject(Person::class.java)
 
     // then
-    assertThat(person).isNotNull();
-    assertThat(person.getName()).isNull();
+    Assertions.assertThat<Person?>(person).isNotNull()
+    Assertions.assertThat(person!!.name).isNull()
   }
 
   @Test
-  void excludedFieldsUsingFieldDefinitionShouldNotBePopulated() {
+  fun excludedFieldsUsingFieldDefinitionShouldNotBePopulated() {
     // given
-    KRandomParameters parameters = new KRandomParameters().excludeField(named("name"));
-    kRandom = new KRandom(parameters);
+    val parameters = KRandomParameters().excludeField(named("name"))
+    kRandom = KRandom(parameters)
 
     // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom!!.nextObject(Person::class.java)
 
     // then
-    assertThat(person).isNotNull();
-    assertThat(person.getAddress()).isNotNull();
-    assertThat(person.getAddress().getStreet()).isNotNull();
+    Assertions.assertThat<Person?>(person).isNotNull()
+    Assertions.assertThat<Address?>(person!!.address).isNotNull()
+    Assertions.assertThat<Street?>(person!!.address!!.street).isNotNull()
 
     // person.name and street.name should be null
-    assertThat(person.getName()).isNull();
-    assertThat(person.getAddress().getStreet().getName()).isNull();
+    Assertions.assertThat(person!!.name).isNull()
+    Assertions.assertThat(person!!.address!!.street!!.getName()).isNull()
   }
 
   @Test
-  void excludedDottedFieldsShouldNotBePopulated() {
+  fun excludedDottedFieldsShouldNotBePopulated() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters().excludeField(named("name").and(inClass(Street.class)));
-    kRandom = new KRandom(parameters);
+    val parameters =
+      KRandomParameters().excludeField(named("name").and(inClass(Street::class.java)))
+    kRandom = KRandom(parameters)
 
     // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom!!.nextObject(Person::class.java)
 
     // then
-    assertThat(person).isNotNull();
-    assertThat(person.getAddress()).isNotNull();
-    assertThat(person.getAddress().getStreet()).isNotNull();
-    assertThat(person.getAddress().getStreet().getName()).isNull();
+    Assertions.assertThat<Person?>(person).isNotNull()
+    Assertions.assertThat<Address?>(person!!.address).isNotNull()
+    Assertions.assertThat<Street?>(person!!.address!!.street).isNotNull()
+    Assertions.assertThat(person!!.address!!.street!!.getName()).isNull()
   }
 
   @Test
-  void fieldsExcludedWithAnnotationShouldNotBePopulated() {
-    Person person = kRandom.nextObject(Person.class);
+  fun fieldsExcludedWithAnnotationShouldNotBePopulated() {
+    val person = kRandom!!.nextObject(Person::class.java)
 
-    assertThat(person).isNotNull();
-    assertThat(person.getExcluded()).isNull();
+    Assertions.assertThat<Person?>(person).isNotNull()
+    Assertions.assertThat(person!!.excluded).isNull()
   }
 
   @Test
-  @SuppressWarnings("deprecation")
-  void fieldsExcludedWithAnnotationViaFieldDefinitionShouldNotBePopulated() {
+  @Suppress("deprecation")
+  fun fieldsExcludedWithAnnotationViaFieldDefinitionShouldNotBePopulated() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters().excludeField(isAnnotatedWith(Deprecated.class));
-    kRandom = new KRandom(parameters);
+    val parameters = KRandomParameters().excludeField(isAnnotatedWith(Deprecated::class.java))
+    kRandom = KRandom(parameters)
 
     // when
-    Website website = kRandom.nextObject(Website.class);
+    val website = kRandom!!.nextObject(Website::class.java)
 
     // then
-    assertThat(website).isNotNull();
-    assertThat(website.getProvider()).isNull();
+    Assertions.assertThat<Website?>(website).isNotNull()
+    Assertions.assertThat(website!!.getProvider()).isNull()
   }
 
   @Test
-  void fieldsExcludedFromTypeViaFieldDefinitionShouldNotBePopulated() {
+  fun fieldsExcludedFromTypeViaFieldDefinitionShouldNotBePopulated() {
     // given
-    KRandomParameters parameters = new KRandomParameters().excludeField(inClass(Address.class));
-    kRandom = new KRandom(parameters);
+    val parameters = KRandomParameters().excludeField(inClass(Address::class.java))
+    kRandom = KRandom(parameters)
 
     // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom!!.nextObject(Person::class.java)
 
     // then
-    assertThat(person).isNotNull();
-    assertThat(person.getAddress()).isNotNull();
+    Assertions.assertThat<Person?>(person).isNotNull()
+    Assertions.assertThat<Address?>(person!!.address).isNotNull()
     // all fields declared in class Address must be null
-    assertThat(person.getAddress().getCity()).isNull();
-    assertThat(person.getAddress().getStreet()).isNull();
-    assertThat(person.getAddress().getZipCode()).isNull();
-    assertThat(person.getAddress().getCountry()).isNull();
+    Assertions.assertThat(person!!.address!!.city).isNull()
+    Assertions.assertThat<Street?>(person!!.address!!.street).isNull()
+    Assertions.assertThat(person!!.address!!.zipCode).isNull()
+    Assertions.assertThat(person!!.address!!.country).isNull()
   }
 
   @Test
-  void testFirstLevelExclusion() {
-    KRandomParameters parameters =
-        new KRandomParameters().excludeField(named("b2").and(inClass(C.class)));
-    kRandom = new KRandom(parameters);
+  fun testFirstLevelExclusion() {
+    val parameters = KRandomParameters().excludeField(named("b2").and(inClass(C::class.java)))
+    kRandom = KRandom(parameters)
 
-    C c = kRandom.nextObject(C.class);
+    val c = kRandom!!.nextObject(C::class.java)
 
-    assertThat(c).isNotNull();
+    Assertions.assertThat<C?>(c).isNotNull()
 
     // B1 and its "children" must not be null
-    assertThat(c.getB1()).isNotNull();
-    assertThat(c.getB1().getA1()).isNotNull();
-    assertThat(c.getB1().getA1().getS1()).isNotNull();
-    assertThat(c.getB1().getA1().getS2()).isNotNull();
-    assertThat(c.getB1().getA2()).isNotNull();
-    assertThat(c.getB1().getA2().getS1()).isNotNull();
-    assertThat(c.getB1().getA2().getS2()).isNotNull();
+    Assertions.assertThat<B?>(c!!.b1).isNotNull()
+    Assertions.assertThat<A>(c!!.b1!!.a1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a1.s1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a1.s2).isNotNull()
+    Assertions.assertThat<A>(c!!.b1!!.a2).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a2.s1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a2.s2).isNotNull()
 
     // B2 must be null
-    assertThat(c.getB2()).isNull();
+    Assertions.assertThat<B?>(c!!.b2).isNull()
   }
 
   @Test
-  void testSecondLevelExclusion() { // goal: exclude only b2.a2
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .randomize(
-                ofType(A.class).and(inClass(B.class)),
-                new ContextAwareRandomizer<A>() {
-                  private RandomizerContext context;
+  fun testSecondLevelExclusion() { // goal: exclude only b2.a2
+    val parameters =
+      KRandomParameters()
+        .randomize<A?>(
+          ofType(A::class.java).and(inClass(B::class.java)),
+          object : ContextAwareRandomizer<A?> {
+            private var context: RandomizerContext? = null
 
-                  @Override
-                  public void setRandomizerContext(RandomizerContext context) {
-                    this.context = context;
-                  }
+            override fun setRandomizerContext(context: RandomizerContext) {
+              this.context = context
+            }
 
-                  @Override
-                  public A getRandomValue() {
-                    if (context.getCurrentField().equals("b2.a2")) {
-                      return null;
-                    }
-                    return new KRandom().nextObject(A.class);
-                  }
-                });
-    kRandom = new KRandom(parameters);
-    C c = kRandom.nextObject(C.class);
+            override fun getRandomValue(): A? {
+              if (context!!.getCurrentField() == "b2.a2") {
+                return null
+              }
+              return KRandom().nextObject(A::class.java)
+            }
+          },
+        )
+    kRandom = KRandom(parameters)
+    val c = kRandom!!.nextObject(C::class.java)
 
-    assertThat(c).isNotNull();
+    Assertions.assertThat<C?>(c).isNotNull()
 
     // B1 and its "children" must not be null
-    assertThat(c.getB1()).isNotNull();
-    assertThat(c.getB1().getA1()).isNotNull();
-    assertThat(c.getB1().getA1().getS1()).isNotNull();
-    assertThat(c.getB1().getA1().getS2()).isNotNull();
-    assertThat(c.getB1().getA2()).isNotNull();
-    assertThat(c.getB1().getA2().getS1()).isNotNull();
-    assertThat(c.getB1().getA2().getS2()).isNotNull();
+    Assertions.assertThat<B?>(c!!.b1).isNotNull()
+    Assertions.assertThat<A>(c!!.b1!!.a1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a1.s1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a1.s2).isNotNull()
+    Assertions.assertThat<A>(c!!.b1!!.a2).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a2.s1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a2.s2).isNotNull()
 
     // Only B2.A2 must be null
-    assertThat(c.getB2()).isNotNull();
-    assertThat(c.getB2().getA1()).isNotNull();
-    assertThat(c.getB2().getA1().getS1()).isNotNull();
-    assertThat(c.getB2().getA1().getS2()).isNotNull();
-    assertThat(c.getB2().getA2()).isNull();
+    Assertions.assertThat<B?>(c!!.b2).isNotNull()
+    Assertions.assertThat<A>(c!!.b2!!.a1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a1.s1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a1.s2).isNotNull()
+    Assertions.assertThat<A>(c!!.b2!!.a2).isNull()
   }
 
   @Test
-  void testThirdLevelExclusion() { // goal: exclude only b2.a2.s2
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .randomize(
-                FieldPredicates.named("s2").and(inClass(A.class)),
-                new ContextAwareRandomizer<String>() {
-                  private RandomizerContext context;
+  fun testThirdLevelExclusion() { // goal: exclude only b2.a2.s2
+    val parameters =
+      KRandomParameters()
+        .randomize<String?>(
+          named("s2").and(inClass(A::class.java)),
+          object : ContextAwareRandomizer<String?> {
+            private var context: RandomizerContext? = null
 
-                  @Override
-                  public void setRandomizerContext(RandomizerContext context) {
-                    this.context = context;
-                  }
+            override fun setRandomizerContext(context: RandomizerContext) {
+              this.context = context
+            }
 
-                  @Override
-                  public String getRandomValue() {
-                    if (context.getCurrentField().equals("b2.a2.s2")) {
-                      return null;
-                    }
-                    return new KRandom().nextObject(String.class);
-                  }
-                });
-    kRandom = new KRandom(parameters);
-    C c = kRandom.nextObject(C.class);
+            override fun getRandomValue(): String? {
+              if (context!!.getCurrentField() == "b2.a2.s2") {
+                return null
+              }
+              return KRandom().nextObject(String::class.java)
+            }
+          },
+        )
+    kRandom = KRandom(parameters)
+    val c = kRandom!!.nextObject(C::class.java)
 
     // B1 and its "children" must not be null
-    assertThat(c.getB1()).isNotNull();
-    assertThat(c.getB1().getA1()).isNotNull();
-    assertThat(c.getB1().getA1().getS1()).isNotNull();
-    assertThat(c.getB1().getA1().getS2()).isNotNull();
-    assertThat(c.getB1().getA2()).isNotNull();
-    assertThat(c.getB1().getA2().getS1()).isNotNull();
-    assertThat(c.getB1().getA2().getS2()).isNotNull();
+    Assertions.assertThat<B?>(c!!.b1).isNotNull()
+    Assertions.assertThat<A>(c!!.b1!!.a1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a1.s1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a1.s2).isNotNull()
+    Assertions.assertThat<A>(c!!.b1!!.a2).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a2.s1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a2.s2).isNotNull()
 
     // Only B2.A2.S2 must be null
-    assertThat(c.getB2()).isNotNull();
-    assertThat(c.getB2().getA1()).isNotNull();
-    assertThat(c.getB2().getA1().getS1()).isNotNull();
-    assertThat(c.getB2().getA1().getS2()).isNotNull();
-    assertThat(c.getB2().getA2().getS1()).isNotNull();
-    assertThat(c.getB2().getA2().getS2()).isNull();
+    Assertions.assertThat<B?>(c!!.b2).isNotNull()
+    Assertions.assertThat<A>(c!!.b2!!.a1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a1.s1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a1.s2).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a2.s1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a2.s2).isNull()
   }
 
   @Test
-  void testFirstLevelCollectionExclusion() {
-    KRandomParameters parameters =
-        new KRandomParameters().excludeField(FieldPredicates.named("b3").and(inClass(C.class)));
-    kRandom = new KRandom(parameters);
+  fun testFirstLevelCollectionExclusion() {
+    val parameters = KRandomParameters().excludeField(named("b3").and(inClass(C::class.java)))
+    kRandom = KRandom(parameters)
 
-    C c = kRandom.nextObject(C.class);
+    val c = kRandom!!.nextObject(C::class.java)
 
-    assertThat(c).isNotNull();
-
-    // B1 and its "children" must not be null
-    assertThat(c.getB1()).isNotNull();
-    assertThat(c.getB1().getA1()).isNotNull();
-    assertThat(c.getB1().getA1().getS1()).isNotNull();
-    assertThat(c.getB1().getA1().getS2()).isNotNull();
-    assertThat(c.getB1().getA2()).isNotNull();
-    assertThat(c.getB1().getA2().getS1()).isNotNull();
-    assertThat(c.getB1().getA2().getS2()).isNotNull();
+    Assertions.assertThat<C?>(c).isNotNull()
 
     // B1 and its "children" must not be null
-    assertThat(c.getB2()).isNotNull();
-    assertThat(c.getB2().getA1()).isNotNull();
-    assertThat(c.getB2().getA1().getS1()).isNotNull();
-    assertThat(c.getB2().getA1().getS2()).isNotNull();
-    assertThat(c.getB2().getA2()).isNotNull();
-    assertThat(c.getB2().getA2().getS1()).isNotNull();
-    assertThat(c.getB2().getA2().getS2()).isNotNull();
+    Assertions.assertThat<B?>(c!!.b1).isNotNull()
+    Assertions.assertThat<A>(c!!.b1!!.a1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a1.s1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a1.s2).isNotNull()
+    Assertions.assertThat<A>(c!!.b1!!.a2).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a2.s1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a2.s2).isNotNull()
+
+    // B1 and its "children" must not be null
+    Assertions.assertThat<B?>(c!!.b2).isNotNull()
+    Assertions.assertThat<A>(c!!.b2!!.a1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a1.s1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a1.s2).isNotNull()
+    Assertions.assertThat<A>(c!!.b2!!.a2).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a2.s1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a2.s2).isNotNull()
 
     // B3 must be null
-    assertThat(c.getB3()).isNull();
+    Assertions.assertThat<B>(c!!.b3).isNull()
   }
 
   @Test
-  void testSecondLevelCollectionExclusion() { // b3.a2 does not make sense, should be ignored
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .randomize(
-                FieldPredicates.named("a2").and(inClass(B.class)),
-                new ContextAwareRandomizer<A>() {
-                  private RandomizerContext context;
+  fun testSecondLevelCollectionExclusion() { // b3.a2 does not make sense, should be ignored
+    val parameters =
+      KRandomParameters()
+        .randomize<A?>(
+          named("a2").and(inClass(B::class.java)),
+          object : ContextAwareRandomizer<A?> {
+            private var context: RandomizerContext? = null
 
-                  @Override
-                  public void setRandomizerContext(RandomizerContext context) {
-                    this.context = context;
-                  }
+            override fun setRandomizerContext(context: RandomizerContext) {
+              this.context = context
+            }
 
-                  @Override
-                  public A getRandomValue() {
-                    if (context.getCurrentField().equals("b3.a2")) {
-                      return null;
-                    }
-                    return new KRandom().nextObject(A.class);
-                  }
-                });
-    kRandom = new KRandom(parameters);
+            override fun getRandomValue(): A? {
+              if (context!!.getCurrentField() == "b3.a2") {
+                return null
+              }
+              return KRandom().nextObject(A::class.java)
+            }
+          },
+        )
+    kRandom = KRandom(parameters)
 
-    C c = kRandom.nextObject(C.class);
+    val c = kRandom!!.nextObject(C::class.java)
 
-    assertThat(c).isNotNull();
+    Assertions.assertThat<C?>(c).isNotNull()
 
     // B1 and its "children" must not be null
-    assertThat(c.getB1()).isNotNull();
-    assertThat(c.getB1().getA1()).isNotNull();
-    assertThat(c.getB1().getA1().getS1()).isNotNull();
-    assertThat(c.getB1().getA1().getS2()).isNotNull();
-    assertThat(c.getB1().getA2()).isNotNull();
-    assertThat(c.getB1().getA2().getS1()).isNotNull();
-    assertThat(c.getB1().getA2().getS2()).isNotNull();
+    Assertions.assertThat<B?>(c!!.b1).isNotNull()
+    Assertions.assertThat<A>(c!!.b1!!.a1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a1.s1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a1.s2).isNotNull()
+    Assertions.assertThat<A>(c!!.b1!!.a2).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a2.s1).isNotNull()
+    Assertions.assertThat(c!!.b1!!.a2.s2).isNotNull()
 
     // B2 and its "children" must not be null
-    assertThat(c.getB2()).isNotNull();
-    assertThat(c.getB2().getA1()).isNotNull();
-    assertThat(c.getB2().getA1().getS1()).isNotNull();
-    assertThat(c.getB2().getA1().getS2()).isNotNull();
-    assertThat(c.getB2().getA2()).isNotNull();
-    assertThat(c.getB2().getA2().getS1()).isNotNull();
-    assertThat(c.getB2().getA2().getS2()).isNotNull();
+    Assertions.assertThat<B?>(c!!.b2).isNotNull()
+    Assertions.assertThat<A>(c!!.b2!!.a1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a1.s1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a1.s2).isNotNull()
+    Assertions.assertThat<A>(c!!.b2!!.a2).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a2.s1).isNotNull()
+    Assertions.assertThat(c!!.b2!!.a2.s2).isNotNull()
 
     // B3 must not be null
-    assertThat(c.getB3()).isNotNull();
+    Assertions.assertThat<B>(c!!.b3).isNotNull()
   }
 
   @Test
-  void whenFieldIsExcluded_thenItsInlineInitializationShouldBeUsedAsIs() {
+  fun whenFieldIsExcluded_thenItsInlineInitializationShouldBeUsedAsIs() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .excludeField(
-                named("myList")
-                    .and(ofType(List.class))
-                    .and(inClass(InlineInitializationBean.class)));
-    kRandom = new KRandom(parameters);
+    val parameters =
+      KRandomParameters()
+        .excludeField(
+          named("myList")
+            .and(ofType(MutableList::class.java))
+            .and(inClass(InlineInitializationBean::class.java))
+        )
+    kRandom = KRandom(parameters)
 
     // when
-    InlineInitializationBean bean = kRandom.nextObject(InlineInitializationBean.class);
+    val bean: InlineInitializationBean? = kRandom!!.nextObject(InlineInitializationBean::class.java)
 
     // then
-    assertThat(bean).isNotNull();
-    assertThat(bean.getMyList()).isEmpty();
+    Assertions.assertThat<InlineInitializationBean?>(bean).isNotNull()
+    Assertions.assertThat<String?>(bean!!.myList).isEmpty()
   }
 
   @Test
-  void
-      whenFieldIsExcluded_thenItsInlineInitializationShouldBeUsedAsIs_EvenIfBeanHasNoPublicConstructor() {
+  fun whenFieldIsExcluded_thenItsInlineInitializationShouldBeUsedAsIs_EvenIfBeanHasNoPublicConstructor() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters()
-            .excludeField(
-                named("myList")
-                    .and(ofType(List.class))
-                    .and(inClass(InlineInitializationBeanPrivateConstructor.class)));
-    kRandom = new KRandom(parameters);
+    val parameters =
+      KRandomParameters()
+        .excludeField(
+          named("myList")
+            .and(ofType(MutableList::class.java))
+            .and(inClass(InlineInitializationBeanPrivateConstructor::class.java))
+        )
+    kRandom = KRandom(parameters)
 
     // when
-    InlineInitializationBeanPrivateConstructor bean =
-        kRandom.nextObject(InlineInitializationBeanPrivateConstructor.class);
+    val bean: InlineInitializationBeanPrivateConstructor? =
+      kRandom!!.nextObject(InlineInitializationBeanPrivateConstructor::class.java)
 
     // then
-    assertThat(bean.getMyList()).isEmpty();
+    Assertions.assertThat<String?>(bean!!.myList).isEmpty()
   }
 
   @Test
-  void fieldsExcludedWithOneModifierShouldNotBePopulated() {
+  fun fieldsExcludedWithOneModifierShouldNotBePopulated() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters().excludeField(hasModifiers(Modifier.TRANSIENT));
-    kRandom = new KRandom(parameters);
+    val parameters = KRandomParameters().excludeField(hasModifiers(Modifier.TRANSIENT))
+    kRandom = KRandom(parameters)
 
     // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom!!.nextObject(Person::class.java)
 
     // then
-    assertThat(person).isNotNull();
-    assertThat(person.getEmail()).isNull();
+    Assertions.assertThat<Person?>(person).isNotNull()
+    Assertions.assertThat(person!!.email).isNull()
   }
 
   @Test
-  void fieldsExcludedWithTwoModifiersShouldNotBePopulated() {
+  fun fieldsExcludedWithTwoModifiersShouldNotBePopulated() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters().excludeField(hasModifiers(Modifier.TRANSIENT | Modifier.PROTECTED));
-    kRandom = new KRandom(parameters);
+    val parameters =
+      KRandomParameters().excludeField(hasModifiers(Modifier.TRANSIENT or Modifier.PRIVATE))
+    kRandom = KRandom(parameters)
 
     // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom!!.nextObject(Person::class.java)
 
     // then
-    assertThat(person).isNotNull();
-    assertThat(person.getEmail()).isNull();
+    Assertions.assertThat<Person?>(person).isNotNull()
+    Assertions.assertThat(person!!.email).isNull()
   }
 
   @Test
-  void fieldsExcludedWithTwoModifiersShouldBePopulatedIfOneModifierIsNotFit() {
+  fun fieldsExcludedWithTwoModifiersShouldBePopulatedIfOneModifierIsNotFit() {
     // given
-    KRandomParameters parameters =
-        new KRandomParameters().excludeField(hasModifiers(Modifier.TRANSIENT | Modifier.PUBLIC));
-    kRandom = new KRandom(parameters);
+    val parameters =
+      KRandomParameters().excludeField(hasModifiers(Modifier.TRANSIENT or Modifier.PUBLIC))
+    kRandom = KRandom(parameters)
 
     // when
-    Person person = kRandom.nextObject(Person.class);
+    val person = kRandom!!.nextObject(Person::class.java)
 
     // then
-    assertThat(person).isNotNull();
-    assertThat(person.getEmail()).isNotNull();
+    Assertions.assertThat<Person?>(person).isNotNull()
+    Assertions.assertThat(person!!.email).isNotNull()
   }
 
-  public static class InlineInitializationBean {
-    private List<String> myList = new ArrayList<>();
-
-    public List<String> getMyList() {
-      return myList;
-    }
-
-    public void setMyList(List<String> myList) {
-      this.myList = myList;
-    }
+  class InlineInitializationBean {
+    var myList: MutableList<String?>? = ArrayList<String?>()
   }
 
-  public static class InlineInitializationBeanPrivateConstructor {
-    private final List<String> myList = new ArrayList<>();
-
-    public List<String> getMyList() {
-      return myList;
-    }
-
-    private InlineInitializationBeanPrivateConstructor() {}
+  class InlineInitializationBeanPrivateConstructor private constructor() {
+    val myList: MutableList<String?> = ArrayList<String?>()
   }
 }

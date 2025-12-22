@@ -21,14 +21,35 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom
 
-public class GenericBaseClass2<T, U> {
-  private final T x;
-  private final U y;
+import io.github.krandom.util.ReflectionUtils.isParameterizedType
+import io.github.krandom.util.ReflectionUtils.isPopulatable
+import java.lang.reflect.Field
+import java.lang.reflect.ParameterizedType
+import java.util.Optional
 
-  public GenericBaseClass2(T x, U y) {
-    this.x = x;
-    this.y = y;
+/**
+ * Populator for [Optional] type.
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+@Suppress("UNCHECKED_CAST")
+internal class OptionalPopulator(private val kRandom: KRandom) {
+  fun getRandomOptional(field: Field, context: RandomizationContext): Optional<*> {
+    val fieldGenericType = field.genericType
+    return if (
+      isParameterizedType(fieldGenericType)
+    ) { // populate only parameterized types, raw types will be empty
+      val parameterizedType = fieldGenericType as ParameterizedType
+      val genericType = parameterizedType.actualTypeArguments[0]
+      if (isPopulatable(genericType)) {
+        Optional.ofNullable(kRandom.doPopulateBean<Any>(genericType as Class<Any>, context))
+      } else {
+        Optional.empty<Any?>()
+      }
+    } else {
+      Optional.empty<Any?>()
+    }
   }
 }

@@ -21,46 +21,12 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom.beans
 
-import java.util.List;
-
-public class Mamals {
-
-  private Mammal mamal;
-  private MammalImpl mamalImpl;
-  private List<Mammal> mamalList;
-  private List<MammalImpl> mamalImplList;
-
-  public Mammal getMamal() {
-    return mamal;
-  }
-
-  public void setMamal(Mammal mamal) {
-    this.mamal = mamal;
-  }
-
-  public MammalImpl getMamalImpl() {
-    return mamalImpl;
-  }
-
-  public void setMamalImpl(MammalImpl mamalImpl) {
-    this.mamalImpl = mamalImpl;
-  }
-
-  public List<Mammal> getMamalList() {
-    return mamalList;
-  }
-
-  public void setMamalList(List<Mammal> mamalList) {
-    this.mamalList = mamalList;
-  }
-
-  public List<MammalImpl> getMamalImplList() {
-    return mamalImplList;
-  }
-
-  public void setMamalImplList(List<MammalImpl> mamalImplList) {
-    this.mamalImplList = mamalImplList;
-  }
+@Suppress("unused")
+class Mammals {
+  var mammal: Mammal? = null
+  var mammalImpl: MammalImpl? = null
+  var mammalList: MutableList<Mammal>? = null
+  var mammalImplList: MutableList<MammalImpl>? = null
 }

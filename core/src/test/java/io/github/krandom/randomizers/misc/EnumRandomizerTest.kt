@@ -36,7 +36,7 @@ internal class EnumRandomizerTest {
   enum class Gender {
     MALE,
     FEMALE,
-    NON_BINARY,
+    NONBINARY,
   }
 
   @Nested
@@ -56,7 +56,7 @@ internal class EnumRandomizerTest {
 
       val gender = randomizer.getRandomValue()
 
-      gender shouldBe Gender.NON_BINARY
+      gender shouldBe Gender.NONBINARY
     }
 
     @Test

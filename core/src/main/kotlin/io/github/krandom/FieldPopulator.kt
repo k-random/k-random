@@ -55,7 +55,7 @@ import kotlin.random.asKotlinRandom
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-@Suppress("SwallowedException")
+@Suppress("SwallowedException", "UNCHECKED_CAST")
 internal class FieldPopulator(
   private val kRandom: KRandom,
   private val randomizerProvider: RandomizerProvider,
@@ -147,16 +147,16 @@ internal class FieldPopulator(
           )
         } else {
           val randomConcreteSubType = parameterizedTypes.random(kRandom.asKotlinRandom())
-          kRandom.doPopulateBean(randomConcreteSubType, context)
+          kRandom.doPopulateBean(randomConcreteSubType as Class<Any>, context)
         }
       } else {
         val genericType = field.genericType
         if (isTypeVariable(genericType)) {
           // if generic type, try to retrieve actual type from hierarchy
           val type = getParametrizedType(field, context)
-          kRandom.doPopulateBean(type, context)
+          kRandom.doPopulateBean(type as Class<Any>, context)
         } else {
-          kRandom.doPopulateBean(fieldType, context)
+          kRandom.doPopulateBean(fieldType as Class<Any>, context)
         }
       }
     }

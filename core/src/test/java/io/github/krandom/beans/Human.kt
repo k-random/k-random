@@ -21,27 +21,14 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom.beans
 
-public class Human implements Mammal {
+open class Human : Mammal {
+  val id: Long? = null
 
-  public static final long SERIAL_VERSION_UID = 593716507559065802L;
+  override var name: String? = null
 
-  protected final Long id = null;
-
-  protected String name;
-
-  public Human() {}
-
-  public Long getId() {
-    return id;
-  }
-
-  public String getName() {
-    return this.name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
+  companion object {
+    const val SERIAL_VERSION_UID: Long = 593716507559065802L
   }
 }

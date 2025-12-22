@@ -21,23 +21,16 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom.beans
 
-public enum AbstractEnum {
-  VAL1() {
-
-    @Override
-    public String test() {
-      return "1";
-    }
+@Suppress("unused")
+enum class AbstractEnum {
+  VAL1 {
+    override fun test() = "1"
   },
-  VAL2() {
-
-    @Override
-    public String test() {
-      return "2";
-    }
+  VAL2 {
+    override fun test() = "2"
   };
 
-  public abstract String test();
+  abstract fun test(): String
 }

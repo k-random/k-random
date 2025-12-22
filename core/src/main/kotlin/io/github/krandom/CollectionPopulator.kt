@@ -88,7 +88,7 @@ class CollectionPopulator
       val type = parameterizedType.actualTypeArguments[0]
       if (isPopulatable(type)) {
         repeat(randomSize) {
-          kRandom.doPopulateBean(type as Class<*>, context)?.let { collection.add(it) }
+          kRandom.doPopulateBean(type as Class<Any>, context)?.let { collection.add(it) }
         }
       }
     }

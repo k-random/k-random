@@ -21,39 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans.exclusion;
+package io.github.krandom.beans.exclusion
 
-import java.util.List;
-
-public class C {
-
-  private B b1;
-  private B b2;
-  private List<B> b3;
-
-  public C() {}
-
-  public B getB1() {
-    return this.b1;
-  }
-
-  public B getB2() {
-    return this.b2;
-  }
-
-  public List<B> getB3() {
-    return this.b3;
-  }
-
-  public void setB1(B b1) {
-    this.b1 = b1;
-  }
-
-  public void setB2(B b2) {
-    this.b2 = b2;
-  }
-
-  public void setB3(List<B> b3) {
-    this.b3 = b3;
-  }
-}
+data class C(val b1: B?, val b2: B?, val b3: List<B>?)

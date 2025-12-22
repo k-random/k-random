@@ -21,41 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.context;
+package io.github.krandom.context
 
-import io.github.krandom.api.ContextAwareRandomizer;
-import io.github.krandom.api.RandomizerContext;
+import io.github.krandom.api.ContextAwareRandomizer
+import io.github.krandom.api.RandomizerContext
 
 /**
  * A city randomizer that depends on the country of the currently randomized object. The currently
  * randomized object can be retrieved from the randomization context.
  */
-public class CityRandomizer implements ContextAwareRandomizer<City> {
+class CityRandomizer : ContextAwareRandomizer<City?> {
+  private lateinit var context: RandomizerContext
 
-  private RandomizerContext context;
-
-  @Override
-  public void setRandomizerContext(RandomizerContext context) {
-    this.context = context;
+  override fun setRandomizerContext(context: RandomizerContext) {
+    this.context = context
   }
 
-  @Override
-  public City getRandomValue() {
-    Person person = (Person) context.getRootObject();
-    Country country = person.getCountry();
-    if (country == null) {
-      return null;
-    }
-    String countryName = country.getName();
-    if (countryName != null && countryName.equalsIgnoreCase("france")) {
-      return new City("paris");
-    }
-    if (countryName != null && countryName.equalsIgnoreCase("germany")) {
-      return new City("berlin");
-    }
-    if (countryName != null && countryName.equalsIgnoreCase("belgium")) {
-      return new City("brussels");
-    }
-    return null;
+  override fun getRandomValue(): City? {
+    val person = context.rootObject as Person
+    val country = person.country ?: return null
+    val countryName = country.name
+    return if (countryName != null && countryName.equals("france", ignoreCase = true)) {
+      City("paris")
+    } else if (countryName != null && countryName.equals("germany", ignoreCase = true)) {
+      City("berlin")
+    } else if (countryName != null && countryName.equals("belgium", ignoreCase = true)) {
+      City("brussels")
+    } else null
   }
 }

@@ -21,8 +21,7 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans;
+package io.github.krandom.beans
 
-import java.util.List;
-
-public record ImmutableBean(String finalValue, List<String> finalCollection) {}
+@JvmRecord
+data class ImmutableBean(val finalValue: String?, val finalCollection: MutableList<String>?)

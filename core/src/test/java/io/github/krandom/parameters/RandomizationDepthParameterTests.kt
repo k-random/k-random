@@ -40,7 +40,7 @@ internal class RandomizationDepthParameterTests {
 
     person.shouldNotBeNull()
     person.parent.shouldNotBeNull()
-    person.parent.parent.shouldNotBeNull()
-    person.parent.parent.parent.shouldBeNull()
+    person.parent!!.parent.shouldNotBeNull()
+    person.parent!!.parent!!.parent.shouldBeNull()
   }
 }

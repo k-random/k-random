@@ -21,28 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.beans.exclusion;
+package io.github.krandom.beans.exclusion
 
-public class B {
-
-  private A a1;
-  private A a2;
-
-  public B() {}
-
-  public A getA1() {
-    return this.a1;
-  }
-
-  public A getA2() {
-    return this.a2;
-  }
-
-  public void setA1(A a1) {
-    this.a1 = a1;
-  }
-
-  public void setA2(A a2) {
-    this.a2 = a2;
-  }
-}
+data class B(val a1: A, val a2: A)

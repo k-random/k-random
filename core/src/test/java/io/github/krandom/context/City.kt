@@ -21,22 +21,14 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.context;
+package io.github.krandom.context
 
-public class City {
-  private String name;
+class City {
+  var name: String? = null
 
-  public City(String name) {
-    this.name = name;
+  constructor(name: String?) {
+    this.name = name
   }
 
-  public City() {}
-
-  public String getName() {
-    return this.name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
+  constructor()
 }
