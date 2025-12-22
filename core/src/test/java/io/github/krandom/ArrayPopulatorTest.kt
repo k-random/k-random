@@ -138,8 +138,8 @@ internal class ArrayPopulatorTest {
   private fun assertContainsOnlyNonEmptyPersons(persons: Array<Person>) {
     for (person in persons) {
       person.shouldNotBeNull()
-      person.address.city.shouldNotBeEmpty()
-      person.address.zipCode.shouldNotBeEmpty()
+      person.address!!.city.shouldNotBeEmpty()
+      person.address!!.zipCode.shouldNotBeEmpty()
       person.name.shouldNotBeEmpty()
     }
   }

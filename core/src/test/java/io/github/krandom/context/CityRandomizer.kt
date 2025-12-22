@@ -21,26 +21,32 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters
+package io.github.krandom.context
 
-import io.github.krandom.KRandom
-import io.github.krandom.KRandomParameters
-import io.github.krandom.beans.Person
-import io.kotest.matchers.nulls.shouldBeNull
-import io.kotest.matchers.nulls.shouldNotBeNull
-import org.junit.jupiter.api.Test
+import io.github.krandom.api.ContextAwareRandomizer
+import io.github.krandom.api.RandomizerContext
 
-internal class RandomizationDepthParameterTests {
-  @Test
-  fun `test randomization depth`() {
-    val parameters = KRandomParameters().randomizationDepth(2)
-    val kRandom = KRandom(parameters)
+/**
+ * A city randomizer that depends on the country of the currently randomized object. The currently
+ * randomized object can be retrieved from the randomization context.
+ */
+class CityRandomizer : ContextAwareRandomizer<City?> {
+  private lateinit var context: RandomizerContext
 
-    val person = kRandom.nextObject(Person::class.java)
+  override fun setRandomizerContext(context: RandomizerContext) {
+    this.context = context
+  }
 
-    person.shouldNotBeNull()
-    person.parent.shouldNotBeNull()
-    person.parent!!.parent.shouldNotBeNull()
-    person.parent!!.parent!!.parent.shouldBeNull()
+  override fun getRandomValue(): City? {
+    val person = context.rootObject as Person
+    val country = person.country ?: return null
+    val countryName = country.name
+    return if (countryName != null && countryName.equals("france", ignoreCase = true)) {
+      City("paris")
+    } else if (countryName != null && countryName.equals("germany", ignoreCase = true)) {
+      City("berlin")
+    } else if (countryName != null && countryName.equals("belgium", ignoreCase = true)) {
+      City("brussels")
+    } else null
   }
 }

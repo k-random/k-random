@@ -41,12 +41,12 @@ internal class StringLengthRangeParameterTests {
     val person = kRandom.nextObject(Person::class.java)
 
     person.shouldNotBeNull()
-    person.name.length shouldBeIn minStringLength..maxStringLength
-    person.email.length shouldBeIn minStringLength..maxStringLength
-    person.phoneNumber.length shouldBeIn minStringLength..maxStringLength
-    person.address.city.length shouldBeIn minStringLength..maxStringLength
-    person.address.country.length shouldBeIn minStringLength..maxStringLength
-    person.address.zipCode.length shouldBeIn minStringLength..maxStringLength
-    person.address.street.name.length shouldBeIn minStringLength..maxStringLength
+    person.name!!.length shouldBeIn minStringLength..maxStringLength
+    person.email!!.length shouldBeIn minStringLength..maxStringLength
+    person.phoneNumber!!.length shouldBeIn minStringLength..maxStringLength
+    person.address!!.city!!.length shouldBeIn minStringLength..maxStringLength
+    person.address!!.country!!.length shouldBeIn minStringLength..maxStringLength
+    person.address!!.zipCode!!.length shouldBeIn minStringLength..maxStringLength
+    person.address!!.street!!.name.length shouldBeIn minStringLength..maxStringLength
   }
 }

@@ -50,22 +50,23 @@ internal class ObjectFactoryTests {
               try {
                 // use custom logic for a specific type
                 if (type.isAssignableFrom(Address::class.java)) {
-                  return Address().apply {
-                    city = "Brussels"
-                    country = "Belgium"
-                    zipCode = "1000"
+                  return Address(
+                    city = "Brussels",
+                    country = "Belgium",
+                    zipCode = "1000",
                     street =
                       Street().apply {
                         name = "main street"
                         number = 1
                         streetType = 1
-                      }
-                  } as T
+                      },
+                  )
+                    as T
                 }
                 // use regular constructor for other types
                 return type.getDeclaredConstructor().newInstance()
               } catch (e: Exception) {
-                throw ObjectCreationException("Unable to create a new instance of " + type, e)
+                throw ObjectCreationException("Unable to create a new instance of $type", e)
               }
             }
           }
@@ -84,12 +85,12 @@ internal class ObjectFactoryTests {
     person.nicknames.shouldNotBeNull()
     person.excluded.shouldBeNull()
     person.address.shouldNotBeNull()
-    person.address.country shouldBe "Belgium"
-    person.address.city shouldBe "Brussels"
-    person.address.zipCode shouldBe "1000"
-    person.address.street.shouldNotBeNull()
-    person.address.street.name shouldBe "main street"
-    person.address.street.number shouldBe 1
-    person.address.street.streetType shouldBe 1.toByte()
+    person.address!!.country shouldBe "Belgium"
+    person.address!!.city shouldBe "Brussels"
+    person.address!!.zipCode shouldBe "1000"
+    person.address!!.street.shouldNotBeNull()
+    person.address!!.street!!.name shouldBe "main street"
+    person.address!!.street!!.number shouldBe 1
+    person.address!!.street!!.streetType shouldBe 1.toByte()
   }
 }

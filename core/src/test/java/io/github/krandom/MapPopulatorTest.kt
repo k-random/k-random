@@ -143,11 +143,11 @@ internal class MapPopulatorTest {
     val mapBean = kRandom.nextObject(MapBean::class.java)
 
     mapBean.shouldNotBeNull()
-    mapBean.map.shouldBeEmpty()
-    mapBean.sortedMap.shouldBeEmpty()
-    mapBean.navigableMap.shouldBeEmpty()
-    mapBean.concurrentMap.shouldBeEmpty()
-    mapBean.concurrentNavigableMap.shouldBeEmpty()
+    mapBean.map!!.shouldBeEmpty()
+    mapBean.sortedMap!!.shouldBeEmpty()
+    mapBean.navigableMap!!.shouldBeEmpty()
+    mapBean.concurrentMap!!.shouldBeEmpty()
+    mapBean.concurrentNavigableMap!!.shouldBeEmpty()
   }
 
   @Test
@@ -157,16 +157,16 @@ internal class MapPopulatorTest {
     val mapBean = kRandom.nextObject(MapBean::class.java)
 
     mapBean.shouldNotBeNull()
-    assertContainsNonZeroIntegers(mapBean.typedMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedMap.values)
-    assertContainsNonZeroIntegers(mapBean.typedSortedMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedSortedMap.values)
-    assertContainsNonZeroIntegers(mapBean.typedNavigableMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedNavigableMap.values)
-    assertContainsNonZeroIntegers(mapBean.typedConcurrentMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedConcurrentMap.values)
-    assertContainsNonZeroIntegers(mapBean.typedConcurrentNavigableMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedConcurrentNavigableMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedMap!!.values)
+    assertContainsNonZeroIntegers(mapBean.typedSortedMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedSortedMap!!.values)
+    assertContainsNonZeroIntegers(mapBean.typedNavigableMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedNavigableMap!!.values)
+    assertContainsNonZeroIntegers(mapBean.typedConcurrentMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedConcurrentMap!!.values)
+    assertContainsNonZeroIntegers(mapBean.typedConcurrentNavigableMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedConcurrentNavigableMap!!.values)
   }
 
   @Test
@@ -176,13 +176,13 @@ internal class MapPopulatorTest {
     val mapBean = kRandom.nextObject(MapBean::class.java)
 
     mapBean.shouldNotBeNull()
-    mapBean.hashMap.shouldBeEmpty()
-    mapBean.hashtable.shouldBeEmpty()
-    mapBean.linkedHashMap.shouldBeEmpty()
-    mapBean.weakHashMap.shouldBeEmpty()
-    mapBean.identityHashMap.shouldBeEmpty()
-    mapBean.treeMap.shouldBeEmpty()
-    mapBean.concurrentSkipListMap.shouldBeEmpty()
+    mapBean.hashMap!!.shouldBeEmpty()
+    mapBean.hashtable!!.shouldBeEmpty()
+    mapBean.linkedHashMap!!.shouldBeEmpty()
+    mapBean.weakHashMap!!.shouldBeEmpty()
+    mapBean.identityHashMap!!.shouldBeEmpty()
+    mapBean.treeMap!!.shouldBeEmpty()
+    mapBean.concurrentSkipListMap!!.shouldBeEmpty()
   }
 
   @Test
@@ -192,20 +192,20 @@ internal class MapPopulatorTest {
     val mapBean = kRandom.nextObject(MapBean::class.java)
 
     mapBean.shouldNotBeNull()
-    assertContainsNonZeroIntegers(mapBean.typedHashMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedHashMap.values)
-    assertContainsNonZeroIntegers(mapBean.typedHashtable.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedHashtable.values)
-    assertContainsNonZeroIntegers(mapBean.typedLinkedHashMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedLinkedHashMap.values)
-    assertContainsNonZeroIntegers(mapBean.typedWeakHashMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedWeakHashMap.values)
-    assertContainsNonZeroIntegers(mapBean.typedIdentityHashMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedIdentityHashMap.values)
-    assertContainsNonZeroIntegers(mapBean.typedTreeMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedTreeMap.values)
-    assertContainsNonZeroIntegers(mapBean.typedConcurrentSkipListMap.keys)
-    assertContainsOnlyNonEmptyPersons(mapBean.typedConcurrentSkipListMap.values)
+    assertContainsNonZeroIntegers(mapBean.typedHashMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedHashMap!!.values)
+    assertContainsNonZeroIntegers(mapBean.typedHashtable!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedHashtable!!.values)
+    assertContainsNonZeroIntegers(mapBean.typedLinkedHashMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedLinkedHashMap!!.values)
+    assertContainsNonZeroIntegers(mapBean.typedWeakHashMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedWeakHashMap!!.values)
+    assertContainsNonZeroIntegers(mapBean.typedIdentityHashMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedIdentityHashMap!!.values)
+    assertContainsNonZeroIntegers(mapBean.typedTreeMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedTreeMap!!.values)
+    assertContainsNonZeroIntegers(mapBean.typedConcurrentSkipListMap!!.keys)
+    assertContainsOnlyNonEmptyPersons(mapBean.typedConcurrentSkipListMap!!.values)
   }
 
   @Test
@@ -215,16 +215,16 @@ internal class MapPopulatorTest {
     val wildCardMapBean = kRandom.nextObject(WildCardMapBean::class.java)
 
     wildCardMapBean.shouldNotBeNull()
-    wildCardMapBean.boundedWildCardTypedMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedMap.shouldBeEmpty()
-    wildCardMapBean.boundedWildCardTypedSortedMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedSortedMap.shouldBeEmpty()
-    wildCardMapBean.boundedWildCardTypedNavigableMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedNavigableMap.shouldBeEmpty()
-    wildCardMapBean.boundedWildCardTypedConcurrentMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedConcurrentMap.shouldBeEmpty()
-    wildCardMapBean.boundedWildCardTypedConcurrentNavigableMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedConcurrentNavigableMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedMap!!.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedSortedMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedSortedMap!!.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedNavigableMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedNavigableMap!!.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedConcurrentMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedConcurrentMap!!.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedConcurrentNavigableMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedConcurrentNavigableMap!!.shouldBeEmpty()
   }
 
   @Test
@@ -234,20 +234,20 @@ internal class MapPopulatorTest {
     val wildCardMapBean = kRandom.nextObject(WildCardMapBean::class.java)
 
     wildCardMapBean.shouldNotBeNull()
-    wildCardMapBean.boundedWildCardTypedHashMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedHashMap.shouldBeEmpty()
-    wildCardMapBean.boundedWildCardTypedHashMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedHashMap.shouldBeEmpty()
-    wildCardMapBean.boundedWildCardTypedLinkedHashMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedHinkedHashMap.shouldBeEmpty()
-    wildCardMapBean.boundedWildCardTypedWeakHashMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedWeakHashMap.shouldBeEmpty()
-    wildCardMapBean.boundedWildCardTypedIdentityHashMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedIdentityHashMap.shouldBeEmpty()
-    wildCardMapBean.boundedWildCardTypedTreeMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedTreeMap.shouldBeEmpty()
-    wildCardMapBean.boundedWildCardTypedConcurrentSkipListMap.shouldBeEmpty()
-    wildCardMapBean.unboundedWildCardTypedConcurrentSkipListMap.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedHashMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedHashMap!!.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedHashMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedHashMap!!.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedLinkedHashMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedHinkedHashMap!!.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedWeakHashMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedWeakHashMap!!.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedIdentityHashMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedIdentityHashMap!!.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedTreeMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedTreeMap!!.shouldBeEmpty()
+    wildCardMapBean.boundedWildCardTypedConcurrentSkipListMap!!.shouldBeEmpty()
+    wildCardMapBean.unboundedWildCardTypedConcurrentSkipListMap!!.shouldBeEmpty()
   }
 
   @Test
@@ -283,11 +283,10 @@ internal class MapPopulatorTest {
     enumMapBean.untypedEnumMap.shouldBeNull()
   }
 
-  private fun assertContainsOnlyNonEmptyPersons(persons: MutableCollection<Person?>) {
+  private fun assertContainsOnlyNonEmptyPersons(persons: MutableCollection<Person>) {
     persons.forAll {
-      it.shouldNotBeNull()
-      it.address.city.shouldNotBeEmpty()
-      it.address.zipCode.shouldNotBeEmpty()
+      it.address!!.city.shouldNotBeEmpty()
+      it.address!!.zipCode.shouldNotBeEmpty()
       it.name.shouldNotBeEmpty()
     }
   }

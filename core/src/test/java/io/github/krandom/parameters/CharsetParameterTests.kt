@@ -44,7 +44,8 @@ internal class CharsetParameterTests {
     val person = kRandom.nextObject(Person::class.java)
 
     person.shouldNotBeNull()
-    val chars = person.name.toCharArray().toSet()
+    person.name.shouldNotBeNull()
+    val chars = person.name!!.toCharArray().toSet()
     letters shouldContainAll chars
   }
 }

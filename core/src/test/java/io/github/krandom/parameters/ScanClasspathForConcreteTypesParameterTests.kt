@@ -34,7 +34,7 @@ import io.github.krandom.beans.ComparableBean.AlwaysEqual
 import io.github.krandom.beans.ConcreteBar
 import io.github.krandom.beans.Foo
 import io.github.krandom.beans.Human
-import io.github.krandom.beans.Mamals
+import io.github.krandom.beans.Mammals
 import io.github.krandom.beans.Person
 import io.github.krandom.beans.SocialPerson
 import io.kotest.assertions.throwables.shouldThrow
@@ -53,7 +53,7 @@ internal class ScanClasspathForConcreteTypesParameterTests {
     val parameters = KRandomParameters().scanClasspathForConcreteTypes(false)
     kRandom = KRandom(parameters)
 
-    shouldThrow<ObjectCreationException> { kRandom.nextObject(Mamals::class.java) }
+    shouldThrow<ObjectCreationException> { kRandom.nextObject(Mammals::class.java) }
   }
 
   @Test
@@ -61,12 +61,12 @@ internal class ScanClasspathForConcreteTypesParameterTests {
     val parameters = KRandomParameters().scanClasspathForConcreteTypes(true)
     kRandom = KRandom(parameters)
 
-    val mammals = kRandom.nextObject(Mamals::class.java)
+    val mammals = kRandom.nextObject(Mammals::class.java)
 
     mammals.shouldNotBeNull()
-    mammals.mamal::class shouldBeOneOf
+    mammals.mammal!!::class shouldBeOneOf
       listOf(Human::class, Ape::class, Person::class, SocialPerson::class)
-    mammals.mamalImpl::class shouldBeOneOf
+    mammals.mammalImpl!!::class shouldBeOneOf
       listOf(Human::class, Ape::class, Person::class, SocialPerson::class)
   }
 

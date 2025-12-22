@@ -410,8 +410,8 @@ internal class CollectionPopulatorTest {
     private fun assertContainsOnlyNonEmptyPersons(persons: MutableCollection<Person?>) {
       persons.forAll { person ->
         person.shouldNotBeNull()
-        person.address.city.shouldNotBeEmpty()
-        person.address.zipCode.shouldNotBeEmpty()
+        person.address!!.city.shouldNotBeEmpty()
+        person.address!!.zipCode.shouldNotBeEmpty()
         person.name.shouldNotBeEmpty()
       }
     }

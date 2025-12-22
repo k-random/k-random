@@ -105,7 +105,7 @@ internal class ReflectionUtilsTest {
 
   @Test
   fun `test get inherited fields`() {
-    getInheritedFields(SocialPerson::class.java) shouldHaveSize 11
+    getInheritedFields(SocialPerson::class.java) shouldHaveSize 12
   }
 
   @Test

@@ -21,26 +21,16 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters
+package io.github.krandom.beans;
 
-import io.github.krandom.KRandom
-import io.github.krandom.KRandomParameters
-import io.github.krandom.beans.Person
-import io.kotest.matchers.nulls.shouldBeNull
-import io.kotest.matchers.nulls.shouldNotBeNull
-import org.junit.jupiter.api.Test
+public abstract class GenericBaseClassSeparateFile<T> {
+  private final T x;
 
-internal class RandomizationDepthParameterTests {
-  @Test
-  fun `test randomization depth`() {
-    val parameters = KRandomParameters().randomizationDepth(2)
-    val kRandom = KRandom(parameters)
+  public GenericBaseClassSeparateFile(T x) {
+    this.x = x;
+  }
 
-    val person = kRandom.nextObject(Person::class.java)
-
-    person.shouldNotBeNull()
-    person.parent.shouldNotBeNull()
-    person.parent!!.parent.shouldNotBeNull()
-    person.parent!!.parent!!.parent.shouldBeNull()
+  public T getX() {
+    return x;
   }
 }

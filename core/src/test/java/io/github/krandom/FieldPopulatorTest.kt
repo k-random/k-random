@@ -33,6 +33,7 @@ import io.github.krandom.beans.Person
 import io.github.krandom.randomizers.misc.SkipRandomizer
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -155,7 +156,8 @@ internal class FieldPopulatorTest {
 
     fieldPopulator.populateField(mapBean, strings, context)
 
-    mapBean.typedMap shouldBeEqual idToPerson
+    mapBean.typedMap.shouldNotBeNull()
+    mapBean.typedMap!! shouldBeEqual idToPerson
   }
 
   @Test
