@@ -13,7 +13,7 @@ org-assertj-assertj-core = "3.27.6"
 org-glassfish-jakarta-el = "4.0.2"
 org-hibernate-validator-hibernate-validator = "9.1.0.Final"
 org-jspecify-jspecify = "1.0.0"
-org-junit = "6.0.1"
+org-junit = "6.0.2"
 org-mockito-mockito = "5.21.0"
 org-objenesis-objenesis = "3.4"
 # keep-sorted end
