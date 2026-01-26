@@ -15,7 +15,7 @@ org-hibernate-validator-hibernate-validator = "9.1.0.Final"
 org-jspecify-jspecify = "1.0.0"
 org-junit = "6.0.2"
 org-mockito-mockito = "5.21.0"
-org-objenesis-objenesis = "3.4"
+org-objenesis-objenesis = "3.5"
 # keep-sorted end
 
 [libraries]
