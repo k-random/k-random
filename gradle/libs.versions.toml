@@ -5,7 +5,7 @@
 # keep-sorted start
 com-oneeyedmen-okeydoke = "2.0.3"
 io-github-classgraph-classgraph = "4.8.184"
-io-kotest-kotest-assertions-core = "6.0.7"
+io-kotest-kotest-assertions-core = "6.1.2"
 io-mockk-mockk = "1.14.9"
 jakarta-validation-jakarta-validation-api = "3.1.1"
 net-datafaker-datafaker = "2.5.3"
