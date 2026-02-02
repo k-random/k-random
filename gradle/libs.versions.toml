@@ -6,7 +6,7 @@
 com-oneeyedmen-okeydoke = "2.0.3"
 io-github-classgraph-classgraph = "4.8.184"
 io-kotest-kotest-assertions-core = "6.0.7"
-io-mockk-mockk = "1.14.7"
+io-mockk-mockk = "1.14.9"
 jakarta-validation-jakarta-validation-api = "3.1.1"
 net-datafaker-datafaker = "2.5.3"
 org-assertj-assertj-core = "3.27.6"
