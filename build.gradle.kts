@@ -5,7 +5,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 plugins {
   id("com.diffplug.spotless") version "8.2.0"
   id("com.palantir.git-version") version "4.2.0"
-  id("org.jetbrains.dokka") version "2.0.0" apply false
+  id("org.jetbrains.dokka") version "2.1.0" apply false
   id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
   id("org.jetbrains.kotlinx.kover") version "0.9.4" apply false
   java
