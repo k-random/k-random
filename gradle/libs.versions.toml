@@ -12,6 +12,7 @@ net-datafaker-datafaker = "2.5.3"
 org-assertj-assertj-core = "3.27.6"
 org-glassfish-jakarta-el = "4.0.2"
 org-hibernate-validator-hibernate-validator = "9.1.0.Final"
+org-jetbrains-dokka = "2.1.0"
 org-jspecify-jspecify = "1.0.0"
 org-junit = "6.0.2"
 org-mockito-mockito = "5.21.0"
@@ -38,3 +39,7 @@ org-mockito-mockito-core = { module = "org.mockito:mockito-core", version.ref = 
 org-mockito-mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "org-mockito-mockito" }
 org-objenesis-objenesis = { module = "org.objenesis:objenesis", version.ref = "org-objenesis-objenesis" }
 # keep-sorted end
+
+[plugins]
+dokka = { id = "org.jetbrains.dokka", version.ref = "org-jetbrains-dokka" }
+dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "org-jetbrains-dokka" }
