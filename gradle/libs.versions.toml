@@ -3,7 +3,7 @@
 
 [versions]
 # keep-sorted start
-com-diffplug-spotless = "8.2.0"
+com-diffplug-spotless = "8.2.1"
 com-oneeyedmen-okeydoke = "2.0.3"
 com-palantir-git-version = "4.2.0"
 io-github-classgraph-classgraph = "4.8.184"
