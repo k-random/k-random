@@ -21,26 +21,35 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters
+package io.github.krandom
 
-import io.github.krandom.KRandom
-import io.github.krandom.KRandomParameters
-import io.github.krandom.beans.Person
-import io.kotest.matchers.nulls.shouldBeNull
-import io.kotest.matchers.nulls.shouldNotBeNull
-import org.junit.jupiter.api.Test
+import io.github.krandom.util.ReflectionUtils.isParameterizedType
+import io.github.krandom.util.ReflectionUtils.isPopulatable
+import java.lang.reflect.Field
+import java.lang.reflect.ParameterizedType
+import java.util.Optional
 
-internal class RandomizationDepthParameterTests {
-  @Test
-  fun `test randomization depth`() {
-    val parameters = KRandomParameters().randomizationDepth(2)
-    val kRandom = KRandom(parameters)
-
-    val person = kRandom.nextObject(Person::class.java)
-
-    person.shouldNotBeNull()
-    person.parent.shouldNotBeNull()
-    person.parent!!.parent.shouldNotBeNull()
-    person.parent!!.parent!!.parent.shouldBeNull()
+/**
+ * Populator for [Optional] type.
+ *
+ * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ */
+@Suppress("UNCHECKED_CAST")
+internal class OptionalPopulator(private val kRandom: KRandom) {
+  fun getRandomOptional(field: Field, context: RandomizationContext): Optional<*> {
+    val fieldGenericType = field.genericType
+    return if (
+      isParameterizedType(fieldGenericType)
+    ) { // populate only parameterized types, raw types will be empty
+      val parameterizedType = fieldGenericType as ParameterizedType
+      val genericType = parameterizedType.actualTypeArguments[0]
+      if (isPopulatable(genericType)) {
+        Optional.ofNullable(kRandom.doPopulateBean<Any>(genericType as Class<Any>, context))
+      } else {
+        Optional.empty<Any?>()
+      }
+    } else {
+      Optional.empty<Any?>()
+    }
   }
 }

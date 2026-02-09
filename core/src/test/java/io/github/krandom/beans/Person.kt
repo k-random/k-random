@@ -21,26 +21,50 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.krandom.parameters
+package io.github.krandom.beans
 
-import io.github.krandom.KRandom
-import io.github.krandom.KRandomParameters
-import io.github.krandom.beans.Person
-import io.kotest.matchers.nulls.shouldBeNull
-import io.kotest.matchers.nulls.shouldNotBeNull
-import org.junit.jupiter.api.Test
+import io.github.krandom.annotation.Exclude
+import java.util.Date
 
-internal class RandomizationDepthParameterTests {
-  @Test
-  fun `test randomization depth`() {
-    val parameters = KRandomParameters().randomizationDepth(2)
-    val kRandom = KRandom(parameters)
+@Suppress("unused")
+open class Person : Human(), Comparable<Person> {
+  @Transient var email: String? = null
 
-    val person = kRandom.nextObject(Person::class.java)
+  var gender: Gender? = null
 
-    person.shouldNotBeNull()
-    person.parent.shouldNotBeNull()
-    person.parent!!.parent.shouldNotBeNull()
-    person.parent!!.parent!!.parent.shouldBeNull()
+  var address: Address? = null
+
+  var birthDate: Date? = null
+
+  var phoneNumber: String? = null
+
+  var nicknames: MutableList<String?>? = null
+
+  var parent: Person? = null
+
+  @Exclude var excluded: String? = null
+
+  override fun compareTo(other: Person): Int {
+    return this.name!!.compareTo(other.name!!)
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+
+    val person = other as Person
+
+    if (email != person.email) return false
+    if (gender != person.gender) return false
+    if (address != person.address) return false
+    return phoneNumber == person.phoneNumber
+  }
+
+  override fun hashCode(): Int {
+    var result = email?.hashCode() ?: 0
+    result = 31 * result + (gender?.hashCode() ?: 0)
+    result = 31 * result + (address?.hashCode() ?: 0)
+    result = 31 * result + (phoneNumber?.hashCode() ?: 0)
+    return result
   }
 }
