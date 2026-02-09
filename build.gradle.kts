@@ -1,15 +1,16 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
 import groovy.lang.Closure
-import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaExtension
 
 plugins {
-  id("com.diffplug.spotless") version "8.2.0"
-  id("com.palantir.git-version") version "4.2.0"
-  id("org.jetbrains.dokka") version "2.0.0" apply false
-  id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
-  id("org.jetbrains.kotlinx.kover") version "0.9.4" apply false
+  alias(libs.plugins.spotless)
+  alias(libs.plugins.git.version)
+  alias(libs.plugins.dokka) apply false
+  alias(libs.plugins.dokka.javadoc) apply false
+  alias(libs.plugins.detekt) apply false
+  alias(libs.plugins.kover) apply false
   java
-  kotlin("jvm")
+  alias(libs.plugins.kotlin.jvm)
   `maven-publish`
   signing
 }
@@ -30,22 +31,21 @@ subprojects {
   apply(plugin = "java-library")
   apply(plugin = "maven-publish")
   apply(plugin = "org.jetbrains.dokka")
+  apply(plugin = "org.jetbrains.dokka-javadoc")
   apply(plugin = "io.gitlab.arturbosch.detekt")
   apply(plugin = "org.jetbrains.kotlinx.kover")
   java {
     withJavadocJar()
     withSourcesJar()
   }
-  tasks.withType<DokkaTask>().configureEach {
-    dokkaSourceSets {
-      configureEach {
-        sourceRoots.from(file("src/main/java"))
-        jdkVersion.set(21)
-      }
+  configure<DokkaExtension> {
+    dokkaSourceSets.configureEach {
+      sourceRoots.from(file("src/main/java"))
+      jdkVersion.set(21)
     }
   }
   tasks.named<Javadoc>("javadoc").configure { enabled = false }
-  tasks.named<Jar>("javadocJar") { from(tasks.named("dokkaJavadoc")) }
+  tasks.named<Jar>("javadocJar") { from(tasks.named("dokkaGeneratePublicationJavadoc")) }
   configure<SpotlessExtension> {
     java { googleJavaFormat() }
     kotlin { ktfmt().googleStyle() }
