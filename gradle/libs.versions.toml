@@ -3,16 +3,22 @@
 
 [versions]
 # keep-sorted start
+com-diffplug-spotless = "8.2.0"
 com-oneeyedmen-okeydoke = "2.0.3"
+com-palantir-git-version = "4.2.0"
 io-github-classgraph-classgraph = "4.8.184"
+io-gitlab-arturbosch-detekt = "1.23.8"
 io-kotest-kotest-assertions-core = "6.1.2"
 io-mockk-mockk = "1.14.9"
 jakarta-validation-jakarta-validation-api = "3.1.1"
 net-datafaker-datafaker = "2.5.3"
 org-assertj-assertj-core = "3.27.6"
 org-glassfish-jakarta-el = "4.0.2"
+org-gradle-toolchains-foojay-resolver-convention = "1.0.0"
 org-hibernate-validator-hibernate-validator = "9.1.0.Final"
 org-jetbrains-dokka = "2.1.0"
+org-jetbrains-kotlin = "2.3.0"
+org-jetbrains-kotlinx-kover = "0.9.4"
 org-jspecify-jspecify = "1.0.0"
 org-junit = "6.0.2"
 org-mockito-mockito = "5.21.0"
@@ -41,5 +47,13 @@ org-objenesis-objenesis = { module = "org.objenesis:objenesis", version.ref = "o
 # keep-sorted end
 
 [plugins]
+# keep-sorted start
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "io-gitlab-arturbosch-detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "org-jetbrains-dokka" }
 dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "org-jetbrains-dokka" }
+foojay-resolver = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "org-gradle-toolchains-foojay-resolver-convention" }
+git-version = { id = "com.palantir.git-version", version.ref = "com-palantir-git-version" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "org-jetbrains-kotlinx-kover" }
+spotless = { id = "com.diffplug.spotless", version.ref = "com-diffplug-spotless" }
+# keep-sorted end

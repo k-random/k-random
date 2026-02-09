@@ -3,14 +3,14 @@ import groovy.lang.Closure
 import org.jetbrains.dokka.gradle.DokkaExtension
 
 plugins {
-  id("com.diffplug.spotless") version "8.2.0"
-  id("com.palantir.git-version") version "4.2.0"
+  alias(libs.plugins.spotless)
+  alias(libs.plugins.git.version)
   alias(libs.plugins.dokka) apply false
   alias(libs.plugins.dokka.javadoc) apply false
-  id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
-  id("org.jetbrains.kotlinx.kover") version "0.9.4" apply false
+  alias(libs.plugins.detekt) apply false
+  alias(libs.plugins.kover) apply false
   java
-  kotlin("jvm")
+  alias(libs.plugins.kotlin.jvm)
   `maven-publish`
   signing
 }
