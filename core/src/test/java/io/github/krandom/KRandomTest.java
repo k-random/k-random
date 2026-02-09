@@ -94,7 +94,6 @@ class KRandomTest {
     assertThat(person.getId()).isNotNull();
   }
 
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   void staticFieldsShouldNotBePopulated() {
     try {
@@ -113,7 +112,7 @@ class KRandomTest {
 
   @Test
   void generatedBeansNumberShouldBeEqualToSpecifiedNumber() {
-    Stream<Person> persons = kRandom.objects(Person.class, 2);
+    Stream<Person> persons = kRandom.objects(Person.class, 2).stream();
 
     assertThat(persons).hasSize(2).hasOnlyElementsOfType(Person.class);
   }

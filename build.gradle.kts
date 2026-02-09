@@ -79,7 +79,7 @@ subprojects {
             developer {
               id = "Alex-Schiff"
               name = "Alex Schiff"
-              email = "alex.schiff@protonmail.com"
+              email = "alex@alexschiff.dev"
               url = "https://github.com/Alex-Schiff"
               roles = listOf("Lead developer")
             }
