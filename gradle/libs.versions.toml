@@ -5,7 +5,7 @@
 # keep-sorted start
 com-diffplug-spotless = "8.2.0"
 com-oneeyedmen-okeydoke = "2.0.3"
-com-palantir-git-version = "4.2.0"
+com-palantir-git-version = "4.3.0"
 io-github-classgraph-classgraph = "4.8.184"
 io-gitlab-arturbosch-detekt = "1.23.8"
 io-kotest-kotest-assertions-core = "6.1.2"
